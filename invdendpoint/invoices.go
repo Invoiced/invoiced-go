@@ -49,5 +49,6 @@ type Invoice struct {
 	PdfUrl                       string         `json:"pdf_url,omitempty"`
 	CSVUrl                       string         `json:"csv_url,omitempty"`
 	LatePaymentRemindersDisabled bool           `json:"late_payment_reminders_disabled,omitempty"`
+	MetaData                     interface{}    `json:"metadata,omitempty"`
 	//add disabled payment methods
 }

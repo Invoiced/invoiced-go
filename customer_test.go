@@ -1,16 +1,36 @@
 package invdapi
 
 import (
+	"encoding/json"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"log"
 	"reflect"
 	"strconv"
 	"testing"
 	"time"
 )
 
-func TestLogger(t *testing.T) {
-	log.Println("STARTING CUSTOMER TEST")
+type customerMetaData struct {
+	IntegrationName string `json:"integration_name,omitempty"`
+}
+
+func TestCustomerMetaData(t *testing.T) {
+
+	m := new(customerMetaData)
+	m.IntegrationName = "QBO"
+	mockCustomer := new(invdendpoint.Customer)
+	mockCustomer.Id = 34
+	mockCustomer.MetaData = m
+
+	b, err := json.Marshal(mockCustomer)
+
+	if err != nil {
+		panic(err)
+	}
+
+	if string(b) != `{"id":34,"metadata":{"integration_name":"QBO"}}` {
+		t.Fatal("Json is wrong")
+	}
+
 }
 
 func TestCustomerCreate(t *testing.T) {
