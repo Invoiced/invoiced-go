@@ -27,6 +27,10 @@ type Connection struct {
 	url             string
 }
 
+type InvoicedToken struct {
+	Key string `json:"invoicedApiKey"`
+}
+
 func NewConnection(key string) *Connection {
 	c := new(Connection)
 	c.key = key
