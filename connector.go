@@ -13,6 +13,7 @@ import (
 
 const requestURL = "https://api.invoiced.com"
 const requestType = "application/json"
+const invoicedToken = "invoicedToken"
 
 const version = "0.1"
 
