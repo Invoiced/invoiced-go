@@ -19,7 +19,7 @@ func (c *Connection) ListTransaction(id int64) (*invdendpoint.Transaction, *APIE
 
 }
 
-func (c *Connection) ListAllTransactionAuto(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (*invdendpoint.Transactions, *APIError) {
+func (c *Connection) ListAllTransactionsAuto(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (*invdendpoint.Transactions, *APIError) {
 	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
