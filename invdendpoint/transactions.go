@@ -2,6 +2,8 @@ package invdendpoint
 
 const TransactionsEndPoint = "/transactions/"
 
+type Transactions []Transaction
+
 type Transaction struct {
 	Id                int64       `json:"id,omitempty"`
 	Customer          int64       `json:"customer,omitempty"`

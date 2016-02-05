@@ -19,6 +19,31 @@ func (c *Connection) ListTransaction(id int64) (*invdendpoint.Transaction, *APIE
 
 }
 
+func (c *Connection) ListAllTransactionAuto(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (*invdendpoint.Transactions, *APIError) {
+	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
+	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+
+	transactions := new(invdendpoint.Transactions)
+
+NEXT:
+	tmpTransactions := new(invdendpoint.Transactions)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, tmpTransactions)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	*transactions = append(*transactions, *tmpTransactions...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	return transactions, apiErr
+
+}
+
 func (c *Connection) DeleteTransaction(id int64) *APIError {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), id)
 
