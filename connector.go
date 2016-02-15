@@ -12,6 +12,7 @@ import (
 )
 
 const requestURL = "https://api.invoiced.com"
+const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
 const InvoicedTokenString = "invoicedToken"
 
@@ -32,10 +33,15 @@ type InvoicedToken struct {
 	Key string `json:"invoicedApiKey"`
 }
 
-func NewConnection(key string) *Connection {
+func NewConnection(key string, devMode bool) *Connection {
 	c := new(Connection)
 	c.key = key
 	c.client = new(http.Client)
+	if devMode {
+		c.url = devRequestURL
+	} else {
+		c.url = requestURL
+	}
 	c.url = requestURL
 
 	return c

@@ -4,10 +4,82 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-func (c *Connection) ListSubscription(id int64) (*invdendpoint.Subscription, *APIError) {
+type Subscription struct {
+	*Connection
+	*invdendpoint.Subscription
+}
+
+type Subscriptions []*Subscription
+
+func (c *Connection) NewSubscription() *Subscription {
+	subscription := new(invdendpoint.Subscription)
+	return &Subscription{c, subscription}
+
+}
+
+func (c *Subscription) Count() (int64, *APIError) {
+	endPoint := c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+
+	count, apiErr := c.count(endPoint)
+
+	if apiErr != nil {
+		return -1, apiErr
+	}
+
+	return count, nil
+
+}
+
+func (c *Subscription) Create(subscription *Subscription) (*Subscription, *APIError) {
+	endPoint := c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	subResp := new(Subscription)
+
+	apiErr := c.create(endPoint, subscription, subResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	subResp.Connection = c.Connection
+
+	return subResp, nil
+
+}
+
+func (c *Subscription) Delete() *APIError {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
+
+	apiErr := c.delete(endPoint)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	return nil
+
+}
+
+func (c *Subscription) Save() *APIError {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
+	subResp := new(Subscription)
+	apiErr := c.update(endPoint, c, subResp)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	c.Subscription = subResp.Subscription
+
+	return nil
+
+}
+
+func (c *Subscription) Retrieve(id int64) (*Subscription, *APIError) {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), id)
 
-	subscription := new(invdendpoint.Subscription)
+	custEndPoint := new(invdendpoint.Subscription)
+
+	subscription := &Subscription{c.Connection, custEndPoint}
 
 	_, apiErr := c.retrieveDataFromAPI(endPoint, subscription)
 
@@ -15,37 +87,76 @@ func (c *Connection) ListSubscription(id int64) (*invdendpoint.Subscription, *AP
 		return nil, apiErr
 	}
 
-	return subscription, apiErr
+	return subscription, nil
 
 }
 
-func (c *Connection) DeleteSubscription(id int64) *APIError {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), id)
-
-	apiErr := c.delete(endPoint)
-
-	return apiErr
-
-}
-
-func (c *Connection) UpdateSubscription(id int64, subscriptionToUpdate *invdendpoint.Subscription) (*invdendpoint.Subscription, *APIError) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), id)
-
-	subscriptionCreated := new(invdendpoint.Subscription)
-
-	apiErr := c.update(endPoint, subscriptionToUpdate, subscriptionCreated)
-
-	return subscriptionCreated, apiErr
-
-}
-
-func (c *Connection) CreateSubscription(subscriptionToCreate *invdendpoint.Subscription) (*invdendpoint.Subscription, *APIError) {
+func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, *APIError) {
 	endPoint := c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	subscriptionCreated := new(invdendpoint.Subscription)
+	subscriptions := make(Subscriptions, 0)
 
-	apiErr := c.create(endPoint, subscriptionToCreate, subscriptionCreated)
+NEXT:
+	tmpSubscriptions := make(Subscriptions, 0)
 
-	return subscriptionCreated, apiErr
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpSubscriptions)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	subscriptions = append(subscriptions, tmpSubscriptions...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, subscription := range subscriptions {
+		subscription.Connection = c.Connection
+
+	}
+
+	return subscriptions, nil
+
+}
+
+func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, string, *APIError) {
+	endPoint := c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+
+	subscriptions := make(Subscriptions, 0)
+
+	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &subscriptions)
+
+	if apiErr != nil {
+		return nil, "", apiErr
+	}
+
+	for _, subscription := range subscriptions {
+		subscription.Connection = c.Connection
+
+	}
+
+	return subscriptions, nextEndPoint, nil
+
+}
+
+func (c *Subscription) ListSubscriptionByNumber(subscriptionNumber string) (*Subscription, *APIError) {
+
+	filter := invdendpoint.NewFilter()
+	filter.Set("number", subscriptionNumber)
+
+	subscriptions, apiError := c.ListAll(filter, nil)
+
+	if apiError != nil {
+		return nil, apiError
+	}
+
+	if len(subscriptions) == 0 {
+		return nil, nil
+	}
+
+	return subscriptions[0], nil
 
 }

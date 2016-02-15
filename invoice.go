@@ -4,100 +4,50 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-func (c *Connection) ListAllInvoicesAuto(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (*invdendpoint.Invoices, *APIError) {
-	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
-
-	invoices := new(invdendpoint.Invoices)
-
-NEXT:
-	tmpInvoices := new(invdendpoint.Invoices)
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, invoices)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	*invoices = append(*invoices, *tmpInvoices...)
-
-	if endPoint != "" {
-		goto NEXT
-	}
-
-	return invoices, apiErr
-
+type Invoice struct {
+	*Connection
+	*invdendpoint.Invoice
 }
 
-func (c *Connection) ListAllInvoices(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (*invdendpoint.Invoices, string, *APIError) {
-	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+type Invoices []*Invoice
 
-	invoices := new(invdendpoint.Invoices)
-
-	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, invoices)
-
-	if apiErr != nil {
-		return nil, "", apiErr
-	}
-
-	return invoices, nextEndPoint, apiErr
-
-}
-
-func (c *Connection) ListInvoice(id int64) (*invdendpoint.Invoice, *APIError) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), id)
-
+func (c *Connection) NewInvoice() *Invoice {
 	invoice := new(invdendpoint.Invoice)
-
-	_, apiErr := c.retrieveDataFromAPI(endPoint, invoice)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	return invoice, apiErr
+	return &Invoice{c, invoice}
 
 }
 
-func (c *Connection) CountInvoice() (int64, *APIError) {
+func (c *Invoice) Count() (int64, *APIError) {
 	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
 
 	count, apiErr := c.count(endPoint)
 
-	return count, apiErr
+	if apiErr != nil {
+		return -1, apiErr
+	}
+
+	return count, nil
 
 }
 
-func (c *Connection) CreateInvoice(invoice *invdendpoint.Invoice) (*invdendpoint.Invoice, *APIError) {
+func (c *Invoice) Create(invoice *Invoice) (*Invoice, *APIError) {
 	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
-	invoiceResponse := new(invdendpoint.Invoice)
+	invResp := new(Invoice)
 
-	apiErr := c.create(endPoint, invoice, invoiceResponse)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	return invoiceResponse, apiErr
-
-}
-
-func (c *Connection) UpdateInvoice(id int64, invoice *invdendpoint.Invoice) (*invdendpoint.Invoice, *APIError) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), id)
-	invoiceResponse := new(invdendpoint.Invoice)
-
-	apiErr := c.update(endPoint, invoice, invoiceResponse)
+	apiErr := c.create(endPoint, invoice, invResp)
 
 	if apiErr != nil {
 		return nil, apiErr
 	}
 
-	return invoiceResponse, apiErr
+	invResp.Connection = c.Connection
+
+	return invResp, nil
 
 }
 
-func (c *Connection) DeleteInvoice(id int64) *APIError {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), id)
+func (c *Invoice) Delete() *APIError {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
 
 	apiErr := c.delete(endPoint)
 
@@ -105,6 +55,108 @@ func (c *Connection) DeleteInvoice(id int64) *APIError {
 		return apiErr
 	}
 
-	return apiErr
+	return nil
+
+}
+
+func (c *Invoice) Save() *APIError {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
+	invResp := new(Invoice)
+	apiErr := c.update(endPoint, c, invResp)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	c.Invoice = invResp.Invoice
+
+	return nil
+
+}
+
+func (c *Invoice) Retrieve(id int64) (*Invoice, *APIError) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), id)
+
+	custEndPoint := new(invdendpoint.Invoice)
+
+	invoice := &Invoice{c.Connection, custEndPoint}
+
+	_, apiErr := c.retrieveDataFromAPI(endPoint, invoice)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	return invoice, nil
+
+}
+
+func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, *APIError) {
+	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
+	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+
+	invoices := make(Invoices, 0)
+
+NEXT:
+	tmpInvoices := make(Invoices, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpInvoices)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	invoices = append(invoices, tmpInvoices...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, invoice := range invoices {
+		invoice.Connection = c.Connection
+
+	}
+
+	return invoices, nil
+
+}
+
+func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, *APIError) {
+	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
+	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+
+	invoices := make(Invoices, 0)
+
+	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &invoices)
+
+	if apiErr != nil {
+		return nil, "", apiErr
+	}
+
+	for _, invoice := range invoices {
+		invoice.Connection = c.Connection
+
+	}
+
+	return invoices, nextEndPoint, nil
+
+}
+
+func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, *APIError) {
+
+	filter := invdendpoint.NewFilter()
+	filter.Set("number", invoiceNumber)
+
+	invoices, apiError := c.ListAll(filter, nil)
+
+	if apiError != nil {
+		return nil, apiError
+	}
+
+	if len(invoices) == 0 {
+		return nil, nil
+	}
+
+	return invoices[0], nil
 
 }

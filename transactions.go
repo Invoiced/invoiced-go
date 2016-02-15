@@ -4,10 +4,82 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-func (c *Connection) ListTransaction(id int64) (*invdendpoint.Transaction, *APIError) {
+type Transaction struct {
+	*Connection
+	*invdendpoint.Transaction
+}
+
+type Transactions []*Transaction
+
+func (c *Connection) NewTransaction() *Transaction {
+	transaction := new(invdendpoint.Transaction)
+	return &Transaction{c, transaction}
+
+}
+
+func (c *Transaction) Count() (int64, *APIError) {
+	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
+
+	count, apiErr := c.count(endPoint)
+
+	if apiErr != nil {
+		return -1, apiErr
+	}
+
+	return count, nil
+
+}
+
+func (c *Transaction) Create(transaction *Transaction) (*Transaction, *APIError) {
+	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
+	txnResp := new(Transaction)
+
+	apiErr := c.create(endPoint, transaction, txnResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	txnResp.Connection = c.Connection
+
+	return txnResp, nil
+
+}
+
+func (c *Transaction) Delete() *APIError {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
+
+	apiErr := c.delete(endPoint)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	return nil
+
+}
+
+func (c *Transaction) Save() *APIError {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
+	txnResp := new(Transaction)
+	apiErr := c.update(endPoint, c, txnResp)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	c.Transaction = txnResp.Transaction
+
+	return nil
+
+}
+
+func (c *Transaction) Retrieve(id int64) (*Transaction, *APIError) {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), id)
 
-	transaction := new(invdendpoint.Transaction)
+	custEndPoint := new(invdendpoint.Transaction)
+
+	transaction := &Transaction{c.Connection, custEndPoint}
 
 	_, apiErr := c.retrieveDataFromAPI(endPoint, transaction)
 
@@ -15,61 +87,76 @@ func (c *Connection) ListTransaction(id int64) (*invdendpoint.Transaction, *APIE
 		return nil, apiErr
 	}
 
-	return transaction, apiErr
+	return transaction, nil
 
 }
 
-func (c *Connection) ListAllTransactionsAuto(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (*invdendpoint.Transactions, *APIError) {
+func (c *Transaction) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, *APIError) {
 	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	transactions := new(invdendpoint.Transactions)
+	transactions := make(Transactions, 0)
 
 NEXT:
-	tmpTransactions := new(invdendpoint.Transactions)
+	tmpTransactions := make(Transactions, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, tmpTransactions)
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpTransactions)
 
 	if apiErr != nil {
 		return nil, apiErr
 	}
 
-	*transactions = append(*transactions, *tmpTransactions...)
+	transactions = append(transactions, tmpTransactions...)
 
 	if endPoint != "" {
 		goto NEXT
 	}
 
-	return transactions, apiErr
+	for _, transaction := range transactions {
+		transaction.Connection = c.Connection
+
+	}
+
+	return transactions, nil
 
 }
 
-func (c *Connection) DeleteTransaction(id int64) *APIError {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), id)
-
-	apiErr := c.delete(endPoint)
-
-	return apiErr
-
-}
-
-func (c *Connection) UpdateTransaction(id int64, transactionToUpdate *invdendpoint.Transaction) (*invdendpoint.Transaction, *APIError) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), id)
-	transactionCreated := new(invdendpoint.Transaction)
-
-	apiErr := c.update(endPoint, transactionToUpdate, transactionCreated)
-
-	return transactionCreated, apiErr
-
-}
-
-func (c *Connection) CreateTransaction(transactionToCreate *invdendpoint.Transaction) (*invdendpoint.Transaction, *APIError) {
+func (c *Transaction) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, string, *APIError) {
 	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
+	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	transactionCreated := new(invdendpoint.Transaction)
+	transactions := make(Transactions, 0)
 
-	apiErr := c.create(endPoint, transactionToCreate, transactionCreated)
+	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &transactions)
 
-	return transactionCreated, apiErr
+	if apiErr != nil {
+		return nil, "", apiErr
+	}
+
+	for _, transaction := range transactions {
+		transaction.Connection = c.Connection
+
+	}
+
+	return transactions, nextEndPoint, nil
+
+}
+
+func (c *Transaction) ListTransactionByNumber(transactionNumber string) (*Transaction, *APIError) {
+
+	filter := invdendpoint.NewFilter()
+	filter.Set("number", transactionNumber)
+
+	transactions, apiError := c.ListAll(filter, nil)
+
+	if apiError != nil {
+		return nil, apiError
+	}
+
+	if len(transactions) == 0 {
+		return nil, nil
+	}
+
+	return transactions[0], nil
 
 }
