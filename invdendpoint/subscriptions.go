@@ -3,10 +3,10 @@ package invdendpoint
 const SubscriptionsEndPoint = "/subscriptions/"
 
 type Subscription struct {
-	Id        int64 `json:"id,omitempty"`
-	Customer  int64 `json:"customer,omitempty"`
-	Plan      int64 `json:"plan,omitempty"`
-	StartDate int64 `json:"start_date,omitempty"`
+	Id        int64  `json:"id,omitempty"`
+	Customer  int64  `json:"customer,omitempty"`
+	Plan      string `json:"plan,omitempty"`
+	StartDate int64  `json:"start_date,omitempty"`
 
 	Quantity int64 `json:"quantity,omitempty"`
 	Cycles   int64 `json:"cycles,omitempty"`

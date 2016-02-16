@@ -6,6 +6,7 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -42,7 +43,6 @@ func NewConnection(key string, devMode bool) *Connection {
 	} else {
 		c.url = requestURL
 	}
-	c.url = requestURL
 
 	return c
 }
@@ -77,6 +77,8 @@ func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) {
 	if err != nil {
 		panic(err)
 	}
+
+	log.Println("body => ", string(body))
 
 	err = json.Unmarshal(body, endPointData)
 

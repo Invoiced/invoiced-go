@@ -1,97 +1,109 @@
 package invdapi
 
-// import (
-// 	"encoding/json"
-// 	"github.com/Invoiced/invoiced-go/invdendpoint"
-// 	"reflect"
-// 	"strconv"
-// 	"testing"
-// 	"time"
-// )
+import (
+	"encoding/json"
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"reflect"
+	"strconv"
+	"testing"
+	"time"
+)
 
-// type customerMetaData struct {
-// 	IntegrationName string `json:"integration_name,omitempty"`
-// }
+type customerMetaData struct {
+	IntegrationName string `json:"integration_name,omitempty"`
+}
 
-// func TestCustomerMetaData(t *testing.T) {
+func TestCustomerMetaData(t *testing.T) {
+	conn := NewConnection("", false)
+	m := new(customerMetaData)
+	m.IntegrationName = "QBO"
+	mockCustomer := conn.NewCustomer()
+	mockCustomer.Id = 34
+	mockCustomer.MetaData = m
 
-// 	m := new(customerMetaData)
-// 	m.IntegrationName = "QBO"
-// 	mockCustomer := new(Customer)
-// 	mockCustomer.Id = 34
-// 	mockCustomer.MetaData = m
+	b, err := json.Marshal(mockCustomer)
 
-// 	b, err := json.Marshal(mockCustomer)
+	if err != nil {
+		panic(err)
+	}
 
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	if string(b) != `{"id":34,"metadata":{"integration_name":"QBO"}}` {
+		t.Fatal("Json is wrong")
+	}
 
-// 	if string(b) != `{"id":34,"metadata":{"integration_name":"QBO"}}` {
-// 		t.Fatal("Json is wrong")
-// 	}
+}
 
-// }
+func TestCustomerCreate(t *testing.T) {
 
-// func TestCustomerCreate(t *testing.T) {
-// 	key := "test api key"
+	//Set up the mock customer response
+	mockCustomerResponseID := int64(1523)
+	mockCustomerResponse := new(Customer)
+	mockCustomerResponseData := new(invdendpoint.Customer)
+	mockCustomerResponse.Customer = mockCustomerResponseData
+	mockCustomerResponse.Id = mockCustomerResponseID
 
-// 	mockCustomerResponseID := int64(1523)
-// 	mockCustomerResponse := new(invdendpoint.Customer)
-// 	mockCustomerResponse.Id = mockCustomerResponseID
+	//Launch our mock server
+	server := mockServer(200, mockCustomerResponse)
+	defer server.Close()
 
-// 	customerToCreate := new(invdendpoint.Customer)
+	//Establish our mock connection
+	key := "test api key"
+	conn := mockConnection(key, server)
 
-// 	nowUnix := time.Now().UnixNano()
+	customer := conn.NewCustomer()
 
-// 	s := strconv.FormatInt(nowUnix, 10)
+	nowUnix := time.Now().UnixNano()
+	s := strconv.FormatInt(nowUnix, 10)
 
-// 	customerToCreate.Name = "Test Customer Original " + s
-// 	mockCustomerResponse.Name = customerToCreate.Name
+	customerToCreate := customer.NewCustomer()
+	customerToCreate.Name = "Test Customer Original " + s
+	customerToCreate.Id = mockCustomerResponse.Id
+	mockCustomerResponse.Name = customerToCreate.Name
+	//mockCustomerResponse.Connection = conn
 
-// 	server := mockServer(200, mockCustomerResponse)
-// 	defer server.Close()
+	//Make the call to create our customer
+	createdCustomer, apiErr := customer.Create(customerToCreate)
 
-// 	conn := mockConnection(key, server)
+	if apiErr != nil {
+		t.Fatal("Error Creating Customer", apiErr)
+	}
 
-// 	createdCustomer, apiErr := conn.CreateCustomer(customerToCreate)
+	//Customer that we wanted to create should equal the customer we created
+	if !reflect.DeepEqual(createdCustomer, customerToCreate) {
+		t.Fatal(createdCustomer.Customer, customerToCreate.Customer)
+	}
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Creating Customer", apiErr)
-// 	}
+}
 
-// 	if createdCustomer.Id != mockCustomerResponseID {
-// 		t.Fatal("Customer was not created succesfully")
-// 	}
+func TestCustomerCreateError(t *testing.T) {
+	// key := "test api key"
+	// mockErrorResponse := new(APIError)
+	// mockErrorResponse.Type = "invalid_request"
+	// mockErrorResponse.Message = "Name is invalid"
+	// mockErrorResponse.Param = "name"
 
-// }
+	// emptyCustomer := new(Customer)
 
-// func TestCustomerCreateError(t *testing.T) {
-// 	key := "test api key"
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "Name is invalid"
-// 	mockErrorResponse.Param = "name"
+	// server := mockServer(400, mockErrorResponse)
+	// defer server.Close()
 
-// 	server := mockServer(400, mockErrorResponse)
-// 	defer server.Close()
+	// conn := mockConnection(key, server)
+	// emptyCustomer.Connection = conn
 
-// 	conn := mockConnection(key, server)
+	// customerToCreate := new(invdendpoint.Customer)
+	// customerToCreate.Email = "example@example.com"
 
-// 	customerToCreate := new(invdendpoint.Customer)
-// 	customerToCreate.Email = "example@example.com"
+	// _, apiErr := conn.CreateCustomer(customerToCreate)
 
-// 	_, apiErr := conn.CreateCustomer(customerToCreate)
+	// if apiErr == nil {
+	// 	t.Fatal("Api should have errored out")
+	// }
 
-// 	if apiErr == nil {
-// 		t.Fatal("Api should have errored out")
-// 	}
+	// if !reflect.DeepEqual(mockErrorResponse, apiErr) {
+	// 	t.Fatal("Error messages do not match up")
+	// }
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error messages do not match up")
-// 	}
-
-// }
+}
 
 // func TestCustomerUpdate(t *testing.T) {
 // 	key := "test api key"
