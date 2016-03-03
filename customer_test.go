@@ -76,68 +76,68 @@ func TestCustomerCreate(t *testing.T) {
 }
 
 func TestCustomerCreateError(t *testing.T) {
-	// key := "test api key"
-	// mockErrorResponse := new(APIError)
-	// mockErrorResponse.Type = "invalid_request"
-	// mockErrorResponse.Message = "Name is invalid"
-	// mockErrorResponse.Param = "name"
+	key := "test api key"
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "Name is invalid"
+	mockErrorResponse.Param = "name"
 
-	// emptyCustomer := new(Customer)
+	emptyCustomer := new(Customer)
 
-	// server := mockServer(400, mockErrorResponse)
-	// defer server.Close()
+	server := mockServer(400, mockErrorResponse)
+	defer server.Close()
 
-	// conn := mockConnection(key, server)
-	// emptyCustomer.Connection = conn
+	conn := mockConnection(key, server)
+	emptyCustomer.Connection = conn
 
-	// customerToCreate := new(invdendpoint.Customer)
-	// customerToCreate.Email = "example@example.com"
+	customerToCreate := new(invdendpoint.Customer)
+	customerToCreate.Email = "example@example.com"
 
-	// _, apiErr := conn.CreateCustomer(customerToCreate)
+	_, apiErr := conn.CreateCustomer(customerToCreate)
 
-	// if apiErr == nil {
-	// 	t.Fatal("Api should have errored out")
-	// }
+	if apiErr == nil {
+		t.Fatal("Api should have errored out")
+	}
 
-	// if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-	// 	t.Fatal("Error messages do not match up")
-	// }
+	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
+		t.Fatal("Error messages do not match up")
+	}
 
 }
 
-// func TestCustomerUpdate(t *testing.T) {
-// 	key := "test api key"
+func TestCustomerUpdate(t *testing.T) {
+	key := "test api key"
 
-// 	mockCustomerResponseID := int64(1523)
-// 	mockUpdatedTime := time.Now().UnixNano()
-// 	mockCustomerResponse := new(invdendpoint.Customer)
-// 	mockCustomerResponse.Id = mockCustomerResponseID
-// 	mockCustomerResponse.UpdatedAt = mockUpdatedTime
-// 	mockCustomerResponse.Name = "MOCK CUSTOMER"
+	mockCustomerResponseID := int64(1523)
+	mockUpdatedTime := time.Now().UnixNano()
+	mockCustomerResponse := new(invdendpoint.Customer)
+	mockCustomerResponse.Id = mockCustomerResponseID
+	mockCustomerResponse.UpdatedAt = mockUpdatedTime
+	mockCustomerResponse.Name = "MOCK CUSTOMER"
 
-// 	customerToUpdate := new(invdendpoint.Customer)
+	customerToUpdate := new(invdendpoint.Customer)
 
-// 	addressToUpdate := "7500 Rialto BLVD"
+	addressToUpdate := "7500 Rialto BLVD"
 
-// 	mockCustomerResponse.Address1 = addressToUpdate
-// 	customerToUpdate.Address1 = addressToUpdate
+	mockCustomerResponse.Address1 = addressToUpdate
+	customerToUpdate.Address1 = addressToUpdate
 
-// 	server := mockServer(200, mockCustomerResponse)
-// 	defer server.Close()
+	server := mockServer(200, mockCustomerResponse)
+	defer server.Close()
 
-// 	conn := mockConnection(key, server)
+	conn := mockConnection(key, server)
 
-// 	updatedCustomer, apiErr := conn.UpdateCustomer(mockCustomerResponseID, customerToUpdate)
+	updatedCustomer, apiErr := conn.UpdateCustomer(mockCustomerResponseID, customerToUpdate)
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Updating Customer", apiErr)
-// 	}
+	if apiErr != nil {
+		t.Fatal("Error Updating Customer", apiErr)
+	}
 
-// 	if !reflect.DeepEqual(mockCustomerResponse, updatedCustomer) {
-// 		t.Fatal("Error messages do not match up")
-// 	}
+	if !reflect.DeepEqual(mockCustomerResponse, updatedCustomer) {
+		t.Fatal("Error messages do not match up")
+	}
 
-// }
+}
 
 // func TestCustomerUpdateError(t *testing.T) {
 // 	key := "wrong api key"
