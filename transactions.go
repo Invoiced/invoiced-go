@@ -185,3 +185,71 @@ func (c *Transaction) ListSuccessfulTransactionsByInvoiceID(invoiceID int64) (Tr
 	return transactions, nil
 
 }
+
+func (c *Transaction) ListSuccessfulTransactionChargesByInvoiceID(invoiceID int64) (Transactions, *APIError) {
+
+	invoiceIDString := strconv.FormatInt(invoiceID, 10)
+
+	log.Println("invoiceIDString", invoiceIDString)
+	filter := invdendpoint.NewFilter()
+	filter.Set("invoice", invoiceIDString)
+	filter.Set("status", "succeeded")
+	filter.Set("type", "charge")
+
+	transactions, apiError := c.ListAll(filter, nil)
+
+	if apiError != nil {
+		return nil, apiError
+	}
+
+	if len(transactions) == 0 {
+		return nil, nil
+	}
+
+	return transactions, nil
+
+}
+
+func (c *Transaction) ListSuccessfulTransactionPaymentsByInvoiceID(invoiceID int64) (Transactions, *APIError) {
+
+	invoiceIDString := strconv.FormatInt(invoiceID, 10)
+
+	log.Println("invoiceIDString", invoiceIDString)
+	filter := invdendpoint.NewFilter()
+	filter.Set("invoice", invoiceIDString)
+	filter.Set("status", "succeeded")
+	filter.Set("type", "payment")
+
+	transactions, apiError := c.ListAll(filter, nil)
+
+	if apiError != nil {
+		return nil, apiError
+	}
+
+	if len(transactions) == 0 {
+		return nil, nil
+	}
+
+	return transactions, nil
+
+}
+
+func (c *Transaction) ListSuccessfulTransactionChargesAndPaymentsByInvoiceID(invoiceID int64) (Transactions, *APIError) {
+
+	charges, err := c.ListSuccessfulTransactionChargesByInvoiceID(invoiceID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	payments, err := c.ListSuccessfulTransactionPaymentsByInvoiceID(invoiceID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	chargesPayments := append(charges, payments...)
+
+	return chargesPayments, nil
+
+}
