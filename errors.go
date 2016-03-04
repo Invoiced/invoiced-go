@@ -1,6 +1,8 @@
 package invdapi
 
-import "errors"
+import (
+	"encoding/json"
+)
 
 type APIError struct {
 	Type    string `json:"type"`
@@ -8,10 +10,18 @@ type APIError struct {
 	Param   string `json:"param"`
 }
 
-func (c *Connection) APIErrorToError(apiError *APIError) error {
-	e := apiError.Type + " " + apiError.Message + " " + apiError.Param
+func NewAPIError(typeE, message, param string) *APIError {
+	apiErr := &APIError{typeE, message, param}
+	return apiErr
+}
 
-	err := errors.New(e)
+func (apiErr *APIError) Error() string {
+	b, err := json.Marshal(apiErr)
 
-	return err
+	if err != nil {
+		panic(err)
+	}
+
+	return string(b)
+
 }

@@ -2,6 +2,8 @@ package invdapi
 
 import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"log"
+	"strconv"
 )
 
 type Transaction struct {
@@ -158,5 +160,28 @@ func (c *Transaction) ListTransactionByNumber(transactionNumber string) (*Transa
 	}
 
 	return transactions[0], nil
+
+}
+
+func (c *Transaction) ListSuccessfulTransactionsByInvoiceID(invoiceID int64) (Transactions, *APIError) {
+
+	invoiceIDString := strconv.FormatInt(invoiceID, 10)
+
+	log.Println("invoiceIDString", invoiceIDString)
+	filter := invdendpoint.NewFilter()
+	filter.Set("invoice", invoiceIDString)
+	filter.Set("status", "succeeded")
+
+	transactions, apiError := c.ListAll(filter, nil)
+
+	if apiError != nil {
+		return nil, apiError
+	}
+
+	if len(transactions) == 0 {
+		return nil, nil
+	}
+
+	return transactions, nil
 
 }

@@ -57,6 +57,8 @@ func checkStatusForError(status int, r io.Reader) *APIError {
 		panic(err)
 	}
 
+	log.Println("body => ", string(body))
+
 	apiError := new(APIError)
 
 	err = json.Unmarshal(body, apiError)
@@ -175,6 +177,7 @@ func (c *Connection) get(endPoint string) *http.Response {
 	req, err := http.NewRequest("GET", endPoint, nil)
 	req.SetBasicAuth(c.key, "")
 
+	log.Println("req", req.URL)
 	resp, err := c.client.Do(req)
 
 	if err != nil {

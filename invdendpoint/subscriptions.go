@@ -1,6 +1,6 @@
 package invdendpoint
 
-const SubscriptionsEndPoint = "/subscriptions/"
+const SubscriptionsEndPoint = "/subscriptions"
 
 type Subscription struct {
 	Id        int64  `json:"id,omitempty"`

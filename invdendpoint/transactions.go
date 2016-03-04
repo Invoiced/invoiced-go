@@ -1,6 +1,6 @@
 package invdendpoint
 
-const TransactionsEndPoint = "/transactions/"
+const TransactionsEndPoint = "/transactions"
 
 type Transactions []Transaction
 
