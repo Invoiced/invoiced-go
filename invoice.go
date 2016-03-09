@@ -17,7 +17,7 @@ func (c *Connection) NewInvoice() *Invoice {
 
 }
 
-func (c *Invoice) Count() (int64, *APIError) {
+func (c *Invoice) Count() (int64, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
 
 	count, apiErr := c.count(endPoint)
@@ -30,7 +30,7 @@ func (c *Invoice) Count() (int64, *APIError) {
 
 }
 
-func (c *Invoice) Create(invoice *Invoice) (*Invoice, *APIError) {
+func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
 	invResp := new(Invoice)
 
@@ -46,7 +46,7 @@ func (c *Invoice) Create(invoice *Invoice) (*Invoice, *APIError) {
 
 }
 
-func (c *Invoice) Delete() *APIError {
+func (c *Invoice) Delete() error {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
 
 	apiErr := c.delete(endPoint)
@@ -59,7 +59,7 @@ func (c *Invoice) Delete() *APIError {
 
 }
 
-func (c *Invoice) Save() *APIError {
+func (c *Invoice) Save() error {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
 	invResp := new(Invoice)
 	apiErr := c.update(endPoint, c, invResp)
@@ -74,7 +74,7 @@ func (c *Invoice) Save() *APIError {
 
 }
 
-func (c *Invoice) Retrieve(id int64) (*Invoice, *APIError) {
+func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), id)
 
 	custEndPoint := new(invdendpoint.Invoice)
@@ -91,7 +91,7 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, *APIError) {
 
 }
 
-func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, *APIError) {
+func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
@@ -121,7 +121,7 @@ NEXT:
 
 }
 
-func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, *APIError) {
+func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
@@ -142,7 +142,7 @@ func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (In
 
 }
 
-func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, *APIError) {
+func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 
 	filter := invdendpoint.NewFilter()
 	filter.Set("number", invoiceNumber)

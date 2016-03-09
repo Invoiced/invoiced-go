@@ -19,7 +19,7 @@ func (c *Connection) NewTransaction() *Transaction {
 
 }
 
-func (c *Transaction) Count() (int64, *APIError) {
+func (c *Transaction) Count() (int64, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
 
 	count, apiErr := c.count(endPoint)
@@ -32,7 +32,7 @@ func (c *Transaction) Count() (int64, *APIError) {
 
 }
 
-func (c *Transaction) Create(transaction *Transaction) (*Transaction, *APIError) {
+func (c *Transaction) Create(transaction *Transaction) (*Transaction, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
 	txnResp := new(Transaction)
 
@@ -48,7 +48,7 @@ func (c *Transaction) Create(transaction *Transaction) (*Transaction, *APIError)
 
 }
 
-func (c *Transaction) Delete() *APIError {
+func (c *Transaction) Delete() error {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
 
 	apiErr := c.delete(endPoint)
@@ -61,7 +61,7 @@ func (c *Transaction) Delete() *APIError {
 
 }
 
-func (c *Transaction) Save() *APIError {
+func (c *Transaction) Save() error {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
 	txnResp := new(Transaction)
 	apiErr := c.update(endPoint, c, txnResp)
@@ -76,7 +76,7 @@ func (c *Transaction) Save() *APIError {
 
 }
 
-func (c *Transaction) Retrieve(id int64) (*Transaction, *APIError) {
+func (c *Transaction) Retrieve(id int64) (*Transaction, error) {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), id)
 
 	custEndPoint := new(invdendpoint.Transaction)
@@ -93,7 +93,7 @@ func (c *Transaction) Retrieve(id int64) (*Transaction, *APIError) {
 
 }
 
-func (c *Transaction) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, *APIError) {
+func (c *Transaction) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
@@ -123,7 +123,7 @@ NEXT:
 
 }
 
-func (c *Transaction) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, string, *APIError) {
+func (c *Transaction) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, string, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
@@ -144,7 +144,7 @@ func (c *Transaction) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort)
 
 }
 
-func (c *Transaction) ListTransactionByNumber(transactionNumber string) (*Transaction, *APIError) {
+func (c *Transaction) ListByNumber(transactionNumber string) (*Transaction, error) {
 
 	filter := invdendpoint.NewFilter()
 	filter.Set("number", transactionNumber)
@@ -163,7 +163,7 @@ func (c *Transaction) ListTransactionByNumber(transactionNumber string) (*Transa
 
 }
 
-func (c *Transaction) ListSuccessfulTransactionsByInvoiceID(invoiceID int64) (Transactions, *APIError) {
+func (c *Transaction) ListSuccessfulByInvoiceID(invoiceID int64) (Transactions, error) {
 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
@@ -186,7 +186,7 @@ func (c *Transaction) ListSuccessfulTransactionsByInvoiceID(invoiceID int64) (Tr
 
 }
 
-func (c *Transaction) ListSuccessfulTransactionChargesByInvoiceID(invoiceID int64) (Transactions, *APIError) {
+func (c *Transaction) ListSuccessfulChargesByInvoiceID(invoiceID int64) (Transactions, error) {
 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
@@ -210,7 +210,7 @@ func (c *Transaction) ListSuccessfulTransactionChargesByInvoiceID(invoiceID int6
 
 }
 
-func (c *Transaction) ListSuccessfulTransactionPaymentsByInvoiceID(invoiceID int64) (Transactions, *APIError) {
+func (c *Transaction) ListSuccessfulPaymentsByInvoiceID(invoiceID int64) (Transactions, error) {
 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
@@ -234,15 +234,15 @@ func (c *Transaction) ListSuccessfulTransactionPaymentsByInvoiceID(invoiceID int
 
 }
 
-func (c *Transaction) ListSuccessfulTransactionChargesAndPaymentsByInvoiceID(invoiceID int64) (Transactions, *APIError) {
+func (c *Transaction) ListSuccessfulChargesAndPaymentsByInvoiceID(invoiceID int64) (Transactions, error) {
 
-	charges, err := c.ListSuccessfulTransactionChargesByInvoiceID(invoiceID)
+	charges, err := c.ListSuccessfulChargesByInvoiceID(invoiceID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	payments, err := c.ListSuccessfulTransactionPaymentsByInvoiceID(invoiceID)
+	payments, err := c.ListSuccessfulPaymentsByInvoiceID(invoiceID)
 
 	if err != nil {
 		return nil, err

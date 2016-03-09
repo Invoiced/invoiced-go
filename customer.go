@@ -18,7 +18,7 @@ func (c *Connection) NewCustomer() *Customer {
 
 }
 
-func (c *Customer) Count() (int64, *APIError) {
+func (c *Customer) Count() (int64, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.CustomersEndPoint)
 
 	count, apiErr := c.count(endPoint)
@@ -31,7 +31,7 @@ func (c *Customer) Count() (int64, *APIError) {
 
 }
 
-func (c *Customer) Create(customer *Customer) (*Customer, *APIError) {
+func (c *Customer) Create(customer *Customer) (*Customer, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.CustomersEndPoint)
 	custResp := new(Customer)
 
@@ -47,7 +47,7 @@ func (c *Customer) Create(customer *Customer) (*Customer, *APIError) {
 
 }
 
-func (c *Customer) Delete() *APIError {
+func (c *Customer) Delete() error {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
 
 	apiErr := c.delete(endPoint)
@@ -60,7 +60,7 @@ func (c *Customer) Delete() *APIError {
 
 }
 
-func (c *Customer) Save() *APIError {
+func (c *Customer) Save() error {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
 	custResp := new(Customer)
 	apiErr := c.update(endPoint, c, custResp)
@@ -75,7 +75,7 @@ func (c *Customer) Save() *APIError {
 
 }
 
-func (c *Customer) Retrieve(id int64) (*Customer, *APIError) {
+func (c *Customer) Retrieve(id int64) (*Customer, error) {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), id)
 
 	custEndPoint := new(invdendpoint.Customer)
@@ -92,7 +92,7 @@ func (c *Customer) Retrieve(id int64) (*Customer, *APIError) {
 
 }
 
-func (c *Customer) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Customers, *APIError) {
+func (c *Customer) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Customers, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.CustomersEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
@@ -124,7 +124,7 @@ NEXT:
 
 }
 
-func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Customers, string, *APIError) {
+func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Customers, string, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.CustomersEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
@@ -145,7 +145,7 @@ func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (C
 
 }
 
-func (c *Customer) ListCustomersByName(customerName string) (Customers, *APIError) {
+func (c *Customer) ListCustomersByName(customerName string) (Customers, error) {
 
 	filter := invdendpoint.NewFilter()
 	filter.Set("name", customerName)
@@ -160,7 +160,7 @@ func (c *Customer) ListCustomersByName(customerName string) (Customers, *APIErro
 
 }
 
-func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, *APIError) {
+func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error) {
 
 	filter := invdendpoint.NewFilter()
 	filter.Set("number", customerNumber)

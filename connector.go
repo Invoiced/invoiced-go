@@ -3,6 +3,7 @@ package invdapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"io"
 	"io/ioutil"
@@ -47,7 +48,7 @@ func NewConnection(key string, devMode bool) *Connection {
 	return c
 }
 
-func checkStatusForError(status int, r io.Reader) *APIError {
+func checkStatusForError(status int, r io.Reader) error {
 	if status < 400 {
 		return nil
 	}
@@ -68,7 +69,7 @@ func checkStatusForError(status int, r io.Reader) *APIError {
 
 	}
 
-	return apiError
+	return errors.New(apiError.Error())
 
 }
 
@@ -236,7 +237,7 @@ func (c *Connection) deleteRequest(endPoint string) *http.Response {
 
 }
 
-func (c *Connection) create(endPoint string, requestData interface{}, responseData interface{}) *APIError {
+func (c *Connection) create(endPoint string, requestData interface{}, responseData interface{}) error {
 
 	b, err := json.Marshal(requestData)
 
@@ -260,7 +261,7 @@ func (c *Connection) create(endPoint string, requestData interface{}, responseDa
 
 }
 
-func (c *Connection) delete(endPoint string) *APIError {
+func (c *Connection) delete(endPoint string) error {
 
 	resp := c.deleteRequest(endPoint)
 
@@ -274,7 +275,7 @@ func (c *Connection) delete(endPoint string) *APIError {
 
 }
 
-func (c *Connection) update(endPoint string, requestData interface{}, responseData interface{}) *APIError {
+func (c *Connection) update(endPoint string, requestData interface{}, responseData interface{}) error {
 
 	b, err := json.Marshal(requestData)
 
@@ -298,7 +299,7 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 
 }
 
-func (c *Connection) count(endPoint string) (int64, *APIError) {
+func (c *Connection) count(endPoint string) (int64, error) {
 	resp := c.get(endPoint)
 
 	defer resp.Body.Close()
@@ -321,7 +322,7 @@ func (c *Connection) count(endPoint string) (int64, *APIError) {
 
 }
 
-func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface{}) (string, *APIError) {
+func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface{}) (string, error) {
 
 	nextURL := ""
 
