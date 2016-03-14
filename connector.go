@@ -178,7 +178,7 @@ func (c *Connection) get(endPoint string) *http.Response {
 	req, err := http.NewRequest("GET", endPoint, nil)
 	req.SetBasicAuth(c.key, "")
 
-	log.Println("req", req.URL)
+	log.Println("req", req.URL, ",endpoint => ", endPoint)
 	resp, err := c.client.Do(req)
 
 	if err != nil {
