@@ -30,7 +30,7 @@ type Invoice struct {
 	Subscription                 *int64         `json:"subscription,omitempty"`
 	Number                       string         `json:"number,omitempty"`
 	Date                         int64          `json:"date,omitempty"`
-	DueDate                      int64          `json:"duedate,omitempty"`
+	DueDate                      int64          `json:"due_date,omitempty"`
 	PaymentTerms                 string         `json:"payment_terms,omitempty"`
 	PurchaseOrder                string         `json:"purchaseorder,omitempty"`
 	Items                        []LineItem     `json:"items,omitempty"`
