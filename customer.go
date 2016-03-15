@@ -2,7 +2,6 @@ package invdapi
 
 import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"log"
 )
 
 type Customer struct {
@@ -97,8 +96,6 @@ func (c *Customer) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
 	customers := make(Customers, 0)
-
-	log.Println("customer connection => ", c.Connection)
 
 NEXT:
 	tmpCustomers := make(Customers, 0)

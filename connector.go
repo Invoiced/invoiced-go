@@ -7,7 +7,6 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -58,8 +57,6 @@ func checkStatusForError(status int, r io.Reader) error {
 		panic(err)
 	}
 
-	log.Println("body => ", string(body))
-
 	apiError := new(APIError)
 
 	err = json.Unmarshal(body, apiError)
@@ -80,8 +77,6 @@ func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) {
 	if err != nil {
 		panic(err)
 	}
-
-	log.Println("body => ", string(body))
 
 	err = json.Unmarshal(body, endPointData)
 
@@ -178,7 +173,6 @@ func (c *Connection) get(endPoint string) *http.Response {
 	req, err := http.NewRequest("GET", endPoint, nil)
 	req.SetBasicAuth(c.key, "")
 
-	log.Println("req", req.URL, ",endpoint => ", endPoint)
 	resp, err := c.client.Do(req)
 
 	if err != nil {

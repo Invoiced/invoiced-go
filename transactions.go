@@ -2,7 +2,6 @@ package invdapi
 
 import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"log"
 	"strconv"
 )
 
@@ -167,7 +166,6 @@ func (c *Transaction) ListSuccessfulByInvoiceID(invoiceID int64) (Transactions, 
 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
-	log.Println("invoiceIDString", invoiceIDString)
 	filter := invdendpoint.NewFilter()
 	filter.Set("invoice", invoiceIDString)
 	filter.Set("status", "succeeded")
@@ -190,7 +188,6 @@ func (c *Transaction) ListSuccessfulChargesByInvoiceID(invoiceID int64) (Transac
 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
-	log.Println("invoiceIDString", invoiceIDString)
 	filter := invdendpoint.NewFilter()
 	filter.Set("invoice", invoiceIDString)
 	filter.Set("status", "succeeded")
@@ -214,7 +211,6 @@ func (c *Transaction) ListSuccessfulPaymentsByInvoiceID(invoiceID int64) (Transa
 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
-	log.Println("invoiceIDString", invoiceIDString)
 	filter := invdendpoint.NewFilter()
 	filter.Set("invoice", invoiceIDString)
 	filter.Set("status", "succeeded")
