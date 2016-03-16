@@ -9,22 +9,22 @@ const InvoicesEndPoint = "/invoices"
 type Invoices []Invoice
 
 type Invoice struct {
-	CreatedAt              int64          `json:"created_at,omitempty"`
-	UpdatedAt              int64          `json:"updated_at,omitempty"`
-	Id                     int64          `json:"id,omitempty"`
-	Customer               int64          `json:"customer,omitempty"`
-	Name                   string         `json:"name,omitempty"`
-	Currency               string         `json:"currency,omitempty"`
-	Draft                  bool           `json:"draft,omitempty"`
-	Sent                   bool           `json:"sent,omitempty"`
-	Closed                 bool           `json:"closed,omitempty"`
-	Paid                   bool           `json:"paid,omitempty"`
-	Status                 string         `json:"status,omitempty"`
-	Chase                  bool           `json:"chase,omitempty"`
-	NextChaseOn            *int64         `json:"next_chase_on,omitempty"`
-	AutoBilled             bool           `json:"auto_billed,omitempty"`
-	AttemptCount           int64          `json:"attempt_count,omitempty"`
-	NextPaymentAttempt     *int64         `json:"next_payment_attempt,omitempty"`
+	CreatedAt int64  `json:"created_at,omitempty"`
+	UpdatedAt int64  `json:"updated_at,omitempty"`
+	Id        int64  `json:"id,omitempty"`
+	Customer  int64  `json:"customer,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Currency  string `json:"currency,omitempty"`
+	Draft     bool   `json:"draft,omitempty"`
+	Sent      bool   `json:"sent,omitempty"`
+	Closed    bool   `json:"closed,omitempty"`
+	Paid      bool   `json:"paid,omitempty"`
+	Status    string `json:"status,omitempty"`
+	Chase     bool   `json:"chase,omitempty"`
+	// NextChaseOn            *int64         `json:"next_chase_on,omitempty"`
+	AutoBilled   bool  `json:"auto_billed,omitempty"`
+	AttemptCount int64 `json:"attempt_count,omitempty"`
+	// NextPaymentAttempt     *int64         `json:"next_payment_attempt,omitempty"`
 	Theme                  string         `json:"theme,omitempty"`
 	DisabledPaymentMethods *PaymentMethod `json:"disabled_payment_methods,omitempty"`
 	Subscription           *int64         `json:"subscription,omitempty"`
