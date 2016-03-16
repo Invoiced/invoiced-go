@@ -59,6 +59,7 @@ func checkStatusForError(status int, r io.Reader) error {
 
 	apiError := new(APIError)
 
+	log.Printlns("json body => ", string(body))
 	err = json.Unmarshal(body, apiError)
 
 	if err != nil {
