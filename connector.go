@@ -83,6 +83,7 @@ func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) {
 	err = json.Unmarshal(body, endPointData)
 
 	if err != nil {
+		log.Println("dump json => ", string(body))
 		panic(err)
 	}
 
