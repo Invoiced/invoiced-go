@@ -7,7 +7,6 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -60,7 +59,6 @@ func checkStatusForError(status int, r io.Reader) error {
 
 	apiError := new(APIError)
 
-	log.Println("json body => ", string(body))
 	err = json.Unmarshal(body, apiError)
 
 	if err != nil {
@@ -83,7 +81,6 @@ func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) {
 	err = json.Unmarshal(body, endPointData)
 
 	if err != nil {
-		log.Println("dump json => ", string(body))
 		panic(err)
 	}
 
