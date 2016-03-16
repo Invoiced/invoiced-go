@@ -22,7 +22,7 @@ type Transaction struct {
 	Notes             string  `json:"notes,omitempty"`
 	Sent              bool    `json:"sent,omitempty"`
 	FailureReason     string  `json:"failure_reason,omitempty"`
-	ParentTransaction string  `json:"parent_transaction,omitempty"`
+	ParentTransaction int64   `json:"parent_transaction,omitempty"`
 
 	CreatedAt int64       `json:"created_at,omitempty"`
 	UpdatedAt int64       `json:"updated_at,omitempty"`
