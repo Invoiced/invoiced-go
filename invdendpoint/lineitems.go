@@ -8,5 +8,5 @@ type LineItem struct {
 	Amount      float64    `json:"amount"`
 	Discounts   []Discount `json:"discounts,omitempty"`
 	Taxes       []Tax      `json:"taxes,omitempty"`
-	Shipping    []Rate     `json:"shipping,omitempty"`
+	//Shipping    []Rate     `json:"shipping,omitempty"`
 }
