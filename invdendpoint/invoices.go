@@ -21,16 +21,16 @@ type Invoice struct {
 	Paid                   bool           `json:"paid,omitempty"`
 	Status                 string         `json:"status,omitempty"`
 	Chase                  bool           `json:"chase,omitempty"`
-	NextChaseOn            *int64         `json:"next_chase_on,omitempty"`
+	NextChaseOn            int64          `json:"next_chase_on,omitempty"`
 	AutoBilled             bool           `json:"auto_billed,omitempty"`
 	AttemptCount           int64          `json:"attempt_count,omitempty"`
-	NextPaymentAttempt     *int64         `json:"next_payment_attempt,omitempty"`
+	NextPaymentAttempt     int64          `json:"next_payment_attempt,omitempty"`
 	Theme                  string         `json:"theme,omitempty"`
 	DisabledPaymentMethods *PaymentMethod `json:"disabled_payment_methods,omitempty"`
-	Subscription           *int64         `json:"subscription,omitempty"`
+	Subscription           int64          `json:"subscription,omitempty"`
 	Number                 string         `json:"number,omitempty"`
 	Date                   int64          `json:"date,omitempty"`
-	DueDate                *int64         `json:"due_date,omitempty"`
+	DueDate                int64          `json:"due_date,omitempty"`
 	PaymentTerms           string         `json:"payment_terms,omitempty"`
 	PurchaseOrder          string         `json:"purchaseorder,omitempty"`
 	Items                  []LineItem     `json:"items,omitempty"`
