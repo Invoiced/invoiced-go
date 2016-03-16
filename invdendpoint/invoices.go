@@ -21,7 +21,7 @@ type Invoice struct {
 	Paid                         bool           `json:"paid,omitempty"`
 	Status                       string         `json:"status,omitempty"`
 	Chase                        bool           `json:"chase,omitempty"`
-	NextChaseOn                  string         `json:"next_chase_on,omitempty"`
+	NextChaseOn                  int64          `json:"next_chase_on,omitempty"`
 	AutoBilled                   bool           `json:"auto_billed,omitempty"`
 	AttemptCount                 int64          `json:"attempt_count,omitempty"`
 	NextPaymentAttempt           int64          `json:"next_payment_attempt,omitempty"`
