@@ -34,7 +34,7 @@ type Customer struct {
 type PaymentSource struct {
 	Id       int64  `json:"id,omitempty"`
 	Brand    string `json:"brand,omitempty"`
-	Last4    string `json:"last4, omitempty"`
+	Last4    string `json:"last4,omitempty"`
 	ExpMonth int64  `json:"exp_month,omitempty"`
 	ExpYear  int64  `json:"exp_year,omitempty"`
 	Funding  string `json:"funding,omitempty"`
