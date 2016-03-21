@@ -23,7 +23,6 @@ type Customer struct {
 	TaxID           string         `json:"taxid,omitempty"`
 	Phone           string         `json:"phone,omitempty"`
 	OtherPhone      string         `json:"other_phone,omitempty"`
-	Website         string         `json:"website,omitempty"`
 	Notes           string         `json:"notes,omitempty"`
 	StatementPdfUrl string         `json:"statement_pdf_url,omitempty"`
 	CreatedAt       int64          `json:"created_at,omitempty"`
