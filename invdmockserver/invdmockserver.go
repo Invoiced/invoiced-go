@@ -11,12 +11,9 @@ import (
 
 func New(code int, body interface{}, dataType string, ssl bool) (*httptest.Server, error) {
 
-	var bodyMarshalled []byte
-	var err error
-
 	if dataType == "xml" {
 
-		bodyMarshalled, err = xml.Marshal(body)
+		_, err := xml.Marshal(body)
 
 		if err != nil {
 			return nil, err
@@ -24,7 +21,7 @@ func New(code int, body interface{}, dataType string, ssl bool) (*httptest.Serve
 
 	} else if dataType == "json" {
 
-		bodyMarshalled, err = json.Marshal(body)
+		_, err := json.Marshal(body)
 
 		if err != nil {
 			return nil, err
@@ -36,11 +33,15 @@ func New(code int, body interface{}, dataType string, ssl bool) (*httptest.Serve
 	}
 
 	f := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var bodyMarshalled []byte
 
 		if dataType == "xml" {
 			w.Header().Set("Content-Type", "application/xml")
+			bodyMarshalled, _ = xml.Marshal(body)
+
 		} else if dataType == "json" {
 			w.Header().Set("Content-Type", "application/json")
+			bodyMarshalled, _ = json.Marshal(body)
 		}
 
 		w.WriteHeader(code)

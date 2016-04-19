@@ -2,6 +2,8 @@ package invdendpoint
 
 const SubscriptionsEndPoint = "/subscriptions"
 
+type Subscriptions []Subscription
+
 type Subscription struct {
 	Id        int64  `json:"id,omitempty"`
 	Customer  int64  `json:"customer,omitempty"`

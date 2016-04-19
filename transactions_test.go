@@ -1,229 +1,268 @@
 package invdapi
 
-// import (
-// 	"github.com/Invoiced/invoiced-go/invdendpoint"
-// 	"reflect"
-// 	"testing"
-// 	"time"
-// )
+import (
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
+	"reflect"
+	"testing"
+	"time"
+)
 
-// func TestTransactionCreate(t *testing.T) {
-// 	key := "test api key"
+func TestTransactionCreate(t *testing.T) {
+	key := "test api key"
 
-// 	mockTransactionResponseID := int64(1523)
-// 	mockTransactionResponse := new(invdendpoint.Transaction)
-// 	mockTransactionResponse.Id = mockTransactionResponseID
-// 	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
-// 	mockTransactionResponse.Type = "payment"
-// 	mockTransactionResponse.Amount = 34.99
+	mockTransactionResponseID := int64(1523)
+	mockTransactionResponse := new(invdendpoint.Transaction)
+	mockTransactionResponse.Id = mockTransactionResponseID
+	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
+	mockTransactionResponse.Customer = 234112
+	mockTransactionResponse.GatewayId = "234"
 
-// 	transactionToCreate := new(invdendpoint.Transaction)
+	server, err := invdmockserver.New(200, mockTransactionResponse, "json", true)
 
-// 	transactionToCreate.Type = "payment"
-// 	transactionToCreate.Amount = 34.99
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	server := mockServer(200, mockTransactionResponse)
-// 	defer server.Close()
+	defer server.Close()
 
-// 	conn := mockConnection(key, server)
+	conn := mockConnection(key, server)
 
-// 	createdTransaction, apiErr := conn.CreateTransaction(transactionToCreate)
+	transaction := conn.NewTransaction()
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Creating transaction", apiErr)
-// 	}
+	transactionToCreate := transaction.NewTransaction()
 
-// 	if reflect.DeepEqual(createdTransaction, transactionToCreate) {
-// 		t.Fatal("Transaction Was Not Created Succesfully")
-// 	}
+	transactionToCreate.Customer = 234112
+	transactionToCreate.Gateway = "dell"
 
-// }
+	createdTransaction, err := transaction.Create(transactionToCreate)
 
-// func TestTransactionCreateError(t *testing.T) {
-// 	key := "test api key"
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "Name is invalid"
-// 	mockErrorResponse.Param = "name"
+	if err != nil {
+		t.Fatal("Error Creating transaction", err)
+	}
 
-// 	server := mockServer(400, mockErrorResponse)
-// 	defer server.Close()
+	if !reflect.DeepEqual(createdTransaction.Transaction, mockTransactionResponse) {
+		t.Fatal("Transaction Was Not Created Succesfully", createdTransaction.Transaction, mockTransactionResponse)
+	}
 
-// 	conn := mockConnection(key, server)
+}
 
-// 	transactionToCreate := new(invdendpoint.Transaction)
-// 	transactionToCreate.Type = "payment"
-// 	transactionToCreate.Amount = 342.234
+func TestTransactionCreateError(t *testing.T) {
+	key := "test api key"
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "Name is invalid"
+	mockErrorResponse.Param = "name"
 
-// 	_, apiErr := conn.CreateTransaction(transactionToCreate)
+	server, err := invdmockserver.New(400, mockErrorResponse, "json", true)
 
-// 	if apiErr == nil {
-// 		t.Fatal("Api Should Have Errored Out")
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	defer server.Close()
 
-// }
+	conn := mockConnection(key, server)
+	transaction := conn.NewTransaction()
+	transactionToCreate := transaction.NewTransaction()
+	transactionToCreate.Customer = 234112
+	transactionToCreate.GatewayId = "234"
 
-// func TestTransactionUpdate(t *testing.T) {
-// 	key := "test api key"
+	_, apiErr := transaction.Create(transactionToCreate)
 
-// 	mockTransactionResponseID := int64(1523)
-// 	mockTransactionResponse := new(invdendpoint.Transaction)
-// 	mockTransactionResponse.Id = mockTransactionResponseID
-// 	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
-// 	mockTransactionResponse.Type = "payment"
-// 	mockTransactionResponse.Amount = 34.99
+	if apiErr == nil {
+		t.Fatal("Api Should Have Errored Out")
+	}
 
-// 	transactionToUpdate := new(invdendpoint.Transaction)
+	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	mockTransactionResponse.Amount = 42.22
-// 	transactionToUpdate.Amount = 42.22
+}
 
-// 	server := mockServer(200, mockTransactionResponse)
-// 	defer server.Close()
+func TestTransactionUpdate(t *testing.T) {
+	key := "test api key"
 
-// 	conn := mockConnection(key, server)
+	mockTransactionResponseID := int64(1523)
+	mockTransactionResponse := new(invdendpoint.Transaction)
+	mockTransactionResponse.Id = mockTransactionResponseID
+	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
+	mockTransactionResponse.Customer = 234112
+	mockTransactionResponse.GatewayId = "234"
 
-// 	updatedTransaction, apiErr := conn.UpdateTransaction(mockTransactionResponseID, transactionToUpdate)
+	server, err := invdmockserver.New(200, mockTransactionResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Updating transaction", apiErr)
-// 	}
+	conn := mockConnection(key, server)
 
-// 	if !reflect.DeepEqual(mockTransactionResponse, updatedTransaction) {
-// 		t.Fatal("Error Messages Do Not Match Up", mockTransactionResponse, updatedTransaction.Id)
-// 	}
+	transactionToUpdate := conn.NewTransaction()
 
-// }
+	mockTransactionResponse.Amount = 42
+	transactionToUpdate.Amount = 42
 
-// func TestTransactionUpdateError(t *testing.T) {
-// 	key := "wrong api key"
+	err = transactionToUpdate.Save()
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
+	if err != nil {
+		t.Fatal("Error Updating Transaction", err)
+	}
 
-// 	transactionID := int64(324234)
-// 	transactionToUpdate := new(invdendpoint.Transaction)
-// 	transactionToUpdate.Amount = 400.12
+	if !reflect.DeepEqual(mockTransactionResponse, transactionToUpdate.Transaction) {
+		t.Fatal("Error Transaction Not Updated Properly")
+	}
 
-// 	server := mockServer(401, mockErrorResponse)
-// 	defer server.Close()
+}
 
-// 	conn := mockConnection(key, server)
+func TestTransactionUpdateError(t *testing.T) {
+	key := "wrong api key"
 
-// 	_, apiErr := conn.UpdateTransaction(transactionID, transactionToUpdate)
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error Updating transaction", apiErr)
-// 	}
+	server, err := invdmockserver.New(401, mockErrorResponse, "json", true)
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// }
+	defer server.Close()
 
-// func TestTransactionDelete(t *testing.T) {
+	conn := mockConnection(key, server)
+	subcriptionToUpdate := conn.NewTransaction()
 
-// 	key := "api key"
+	subcriptionToUpdate.Amount = 42
 
-// 	mocktransactionResponse := ""
-// 	mocktransactionID := int64(2341)
+	err = subcriptionToUpdate.Save()
 
-// 	server := mockServer(204, mocktransactionResponse)
-// 	defer server.Close()
+	if err == nil {
+		t.Fatal("Error Updating transaction", err)
+	}
 
-// 	conn := mockConnection(key, server)
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	apiErr := conn.DeleteTransaction(mocktransactionID)
+}
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error occured deleting transaction")
-// 	}
+func TestTransactionDelete(t *testing.T) {
 
-// }
+	key := "api key"
 
-// func TestTransactionDeleteError(t *testing.T) {
-// 	key := "api key"
+	mocktransactionResponse := ""
+	mocktransactionID := int64(2341)
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "You do not have permission to do that"
+	server, err := invdmockserver.New(204, mocktransactionResponse, "json", true)
 
-// 	mocktransactionID := int64(-999)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	server := mockServer(403, mockErrorResponse)
-// 	defer server.Close()
+	defer server.Close()
 
-// 	conn := mockConnection(key, server)
+	conn := mockConnection(key, server)
 
-// 	apiErr := conn.DeleteTransaction(mocktransactionID)
+	transaction := conn.NewTransaction()
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error occured deleting transaction")
-// 	}
+	transaction.Id = mocktransactionID
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	err = transaction.Delete()
 
-// }
+	if err != nil {
+		t.Fatal("Error Occured Deleting Transaction")
+	}
 
-// func TestTransactionList(t *testing.T) {
+}
 
-// 	key := "test api key"
+func TestTransactionDeleteError(t *testing.T) {
+	key := "api key"
 
-// 	mockTransactionResponseID := int64(1523)
-// 	mockTransactionResponse := new(invdendpoint.Transaction)
-// 	mockTransactionResponse.Id = mockTransactionResponseID
-// 	mockTransactionResponse.Amount = 23.22
-// 	mockTransactionResponse.Gateway = "Stripe"
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "You do not have permission to do that"
 
-// 	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
+	mockTransactionID := int64(-999)
 
-// 	server := mockServer(200, mockTransactionResponse)
-// 	defer server.Close()
+	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
 
-// 	conn := mockConnection(key, server)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	createdtransaction, apiErr := conn.ListTransaction(mockTransactionResponseID)
+	defer server.Close()
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Creating transaction", apiErr)
-// 	}
+	conn := mockConnection(key, server)
 
-// 	if createdtransaction.Id != mockTransactionResponseID {
-// 		t.Fatal("transaction was not created succesfully")
-// 	}
+	transaction := conn.NewTransaction()
 
-// }
+	transaction.Id = mockTransactionID
 
-// func TestTransactionListError(t *testing.T) {
-// 	key := "api key"
+	err = transaction.Delete()
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "You do not have permission to do that"
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	mocktransactionID := int64(-999)
+}
 
-// 	server := mockServer(403, mockErrorResponse)
-// 	defer server.Close()
+func TestTransactionRetrieve(t *testing.T) {
 
-// 	conn := mockConnection(key, server)
+	key := "test api key"
 
-// 	_, apiErr := conn.ListTransaction(mocktransactionID)
+	mockTransactionResponseID := int64(1523)
+	mockTransactionResponse := new(invdendpoint.Transaction)
+	mockTransactionResponse.Id = mockTransactionResponseID
+	mockTransactionResponse.Customer = 234112
+	mockTransactionResponse.GatewayId = "234"
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error occured deleting transaction")
-// 	}
+	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	server, err := invdmockserver.New(200, mockTransactionResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
 
-// }
+	conn := mockConnection(key, server)
+	transaction := conn.NewTransaction()
+
+	retrievedTransaction, err := transaction.Retrieve(mockTransactionResponseID)
+
+	if err != nil {
+		t.Fatal("Error Creating transaction", err)
+	}
+
+	if !reflect.DeepEqual(retrievedTransaction.Transaction, mockTransactionResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestTransactionRetrieveError(t *testing.T) {
+	key := "api key"
+
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "You do not have permission to do that"
+
+	mockTransactionID := int64(-999)
+
+	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := mockConnection(key, server)
+	transaction := conn.NewTransaction()
+
+	_, err = transaction.Retrieve(mockTransactionID)
+
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}

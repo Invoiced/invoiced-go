@@ -1,8 +1,8 @@
 invdapi
 ========
 
-[![Build Status](https://travis-ci.org/Invoiced/invdapi.svg?branch=master)](https://travis-ci.org/Invoiced/invdapi)
-[![Coverage Status](https://coveralls.io/repos/Invoiced/invdapi/badge.svg?branch=master&service=github)](https://coveralls.io/github/Invoiced/invdapi?branch=master)
+[![Build Status](https://travis-ci.org/Invoiced/invoiced-go.svg?branch=master)](https://travis-ci.org/Invoiced/invoiced-go)
+[![Coverage Status](https://coveralls.io/repos/github/Invoiced/invoiced-go/badge.svg?branch=master)](https://coveralls.io/github/Invoiced/invoiced-go?branch=master)
 
 This repository contains the Go client library for the [Invoiced](https://invoiced.com) API.
 
@@ -14,7 +14,7 @@ This repository contains the Go client library for the [Invoiced](https://invoic
 The Invoiced Go Client can be installed liked this:
 
 ```
-go get -u https://github.com/Invoiced/invdapi
+go get -u https://github.com/Invoiced/invoiced-go
 ```
 
 
@@ -23,7 +23,7 @@ go get -u https://github.com/Invoiced/invdapi
 - >= Go 1.4
 
 ## Version
-0.1
+0.8.1
 ```go
 //Will print out the version.
 invd.Version()
@@ -34,44 +34,45 @@ invd.Version()
 ```go
 package main
 
-import "github.com/Invoiced/invdapi"
-import "github.com/Invoiced/invdapi/invdendpoint"
+import "github.com/Invoiced/invoiced-go"
+import "github.com/Invoiced/invoiced-go/invdendpoint"
 import "fmt"
 
 func main() {
 
     key := "YOUR DEVELOPER KEY"
 
-    conn := invdapi.NewConnection(key)
+    conn := invdapi.NewConnection(key, true)
 
     //Get All The Invoices With Auto Pagination
-    invoices, apiErr := conn.GetAllInvoicesAuto(nil, nil)
+    invoiceConn := conn.NewInvoice()
+    invoices, err := invoiceConn.ListAll(nil, nil)
 
-    if apiErr != nil {
-        panic(apiErr)
+    if err != nil {
+        panic(err)
     }
 
     //Let's print all the invoices
-    for _, invoice := range *invoices {
+    for _, invoice := range invoices {
         fmt.Println(invoice)
     }
 
     //Let's create a new customer
+    customerConn := conn.NewCustomer()
 
-    customerToCreate := new(invdendpoint.Customer)
+    customerToCreate := conn.NewCustomer()
     customerToCreate.Name = "Test Customer"
 
-    customerResponse, apiErr := conn.CreateCustomer(customerToCreate)
+    customerResponse, err := customerConn.Create(customerToCreate)
 
-    if apiErr != nil {
-        panic(apiErr)
+    if err != nil {
+        panic(err)
     }
 
-    fmt.Println("Customer Response => ", customerResponse)
+    fmt.Println("Customer Response => ", customerResponse.Customer)
 
     //Let's create a new invoice
-
-    invoiceToCreate := new(invdendpoint.Invoice)
+    invoiceToCreate := conn.NewInvoice()
     invoiceToCreate.Customer = customerResponse.Id
 
     //Create a Line Item
@@ -87,28 +88,12 @@ func main() {
     //Add a Payment Term
     invoiceToCreate.PaymentTerms = "NET15"
 
-    invoiceResponse, apiErr := conn.CreateInvoice(invoiceToCreate)
+    invoiceResponse, err := invoiceConn.Create(invoiceToCreate)
 
-    fmt.Println("Invoice Response => ", invoiceResponse)
+    if err != nil {
+        panic(err)
+    }
 
+    fmt.Println("Invoice Response => ", invoiceResponse.Invoice)
 }
-```
-
-##Endpoints Implemented
-This Library has implemented all the endpoint objects. However only customer,invoice has CRUD methods implemented.  Transactions,Subscriptions,and Plans are TODO.
-
-## Testing
-
-
-For Testing you can set the api key in connector_test.go by changing the location of the api key yaml file.
-
-```go
-func init() {
-   apikey = invoicedutil.ReadAPIKeyFromYaml("/usr/local/keys/invoicedapikey.yaml")
-}
-```
-
-The format of the yaml file is
-```
-apikey: YOUR_DEVELOPER_KEY
 ```

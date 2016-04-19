@@ -141,22 +141,3 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 	return subscriptions, nextEndPoint, nil
 
 }
-
-func (c *Subscription) ListSubscriptionByNumber(subscriptionNumber string) (*Subscription, error) {
-
-	filter := invdendpoint.NewFilter()
-	filter.Set("number", subscriptionNumber)
-
-	subscriptions, apiError := c.ListAll(filter, nil)
-
-	if apiError != nil {
-		return nil, apiError
-	}
-
-	if len(subscriptions) == 0 {
-		return nil, nil
-	}
-
-	return subscriptions[0], nil
-
-}

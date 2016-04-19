@@ -1,229 +1,268 @@
 package invdapi
 
-// import (
-// 	"github.com/Invoiced/invoiced-go/invdendpoint"
-// 	"reflect"
-// 	"testing"
-// 	"time"
-// )
+import (
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
+	"reflect"
+	"testing"
+	"time"
+)
 
-// func TestSubscriptionCreate(t *testing.T) {
-// 	key := "test api key"
+func TestSubscriptionCreate(t *testing.T) {
+	key := "test api key"
 
-// 	mockSubscriptionResponseID := int64(1523)
-// 	mockSubscriptionResponse := new(invdendpoint.Subscription)
-// 	mockSubscriptionResponse.Id = mockSubscriptionResponseID
-// 	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
-// 	mockSubscriptionResponse.Customer = 234112
-// 	mockSubscriptionResponse.Plan = 234
+	mockSubscriptionResponseID := int64(1523)
+	mockSubscriptionResponse := new(invdendpoint.Subscription)
+	mockSubscriptionResponse.Id = mockSubscriptionResponseID
+	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
+	mockSubscriptionResponse.Customer = 234112
+	mockSubscriptionResponse.Plan = "234"
 
-// 	subscriptionToCreate := new(invdendpoint.Subscription)
+	server, err := invdmockserver.New(200, mockSubscriptionResponse, "json", true)
 
-// 	subscriptionToCreate.Customer = 234112
-// 	subscriptionToCreate.Plan = 234
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	server := mockServer(200, mockSubscriptionResponse)
-// 	defer server.Close()
+	defer server.Close()
 
-// 	conn := mockConnection(key, server)
+	conn := mockConnection(key, server)
 
-// 	createdSubscription, apiErr := conn.CreateSubscription(subscriptionToCreate)
+	subscription := conn.NewSubscription()
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Creating subscription", apiErr)
-// 	}
+	subscriptionToCreate := subscription.NewSubscription()
 
-// 	if reflect.DeepEqual(createdSubscription, subscriptionToCreate) {
-// 		t.Fatal("Subscription Was Not Created Succesfully")
-// 	}
+	subscriptionToCreate.Customer = 234112
+	subscriptionToCreate.Plan = "234"
 
-// }
+	createdSubscription, err := subscription.Create(subscriptionToCreate)
 
-// func TestSubscriptionCreateError(t *testing.T) {
-// 	key := "test api key"
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "Name is invalid"
-// 	mockErrorResponse.Param = "name"
+	if err != nil {
+		t.Fatal("Error Creating subscription", err)
+	}
 
-// 	server := mockServer(400, mockErrorResponse)
-// 	defer server.Close()
+	if !reflect.DeepEqual(createdSubscription.Subscription, mockSubscriptionResponse) {
+		t.Fatal("Subscription Was Not Created Succesfully", createdSubscription.Subscription, mockSubscriptionResponse)
+	}
 
-// 	conn := mockConnection(key, server)
+}
 
-// 	subscriptionToCreate := new(invdendpoint.Subscription)
-// 	subscriptionToCreate.Customer = 234112
-// 	subscriptionToCreate.Plan = 234
+func TestSubscriptionCreateError(t *testing.T) {
+	key := "test api key"
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "Name is invalid"
+	mockErrorResponse.Param = "name"
 
-// 	_, apiErr := conn.CreateSubscription(subscriptionToCreate)
+	server, err := invdmockserver.New(400, mockErrorResponse, "json", true)
 
-// 	if apiErr == nil {
-// 		t.Fatal("Api Should Have Errored Out")
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	defer server.Close()
 
-// }
+	conn := mockConnection(key, server)
+	subscription := conn.NewSubscription()
+	subscriptionToCreate := subscription.NewSubscription()
+	subscriptionToCreate.Customer = 234112
+	subscriptionToCreate.Plan = "234"
 
-// func TestSubscriptionUpdate(t *testing.T) {
-// 	key := "test api key"
+	_, apiErr := subscription.Create(subscriptionToCreate)
 
-// 	mockSubscriptionResponseID := int64(1523)
-// 	mockSubscriptionResponse := new(invdendpoint.Subscription)
-// 	mockSubscriptionResponse.Id = mockSubscriptionResponseID
-// 	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
-// 	mockSubscriptionResponse.Customer = 234112
-// 	mockSubscriptionResponse.Plan = 234
+	if apiErr == nil {
+		t.Fatal("Api Should Have Errored Out")
+	}
 
-// 	subscriptionToUpdate := new(invdendpoint.Subscription)
+	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	mockSubscriptionResponse.Cycles = 42
-// 	subscriptionToUpdate.Cycles = 42
+}
 
-// 	server := mockServer(200, mockSubscriptionResponse)
-// 	defer server.Close()
+func TestSubscriptionUpdate(t *testing.T) {
+	key := "test api key"
 
-// 	conn := mockConnection(key, server)
+	mockSubscriptionResponseID := int64(1523)
+	mockSubscriptionResponse := new(invdendpoint.Subscription)
+	mockSubscriptionResponse.Id = mockSubscriptionResponseID
+	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
+	mockSubscriptionResponse.Customer = 234112
+	mockSubscriptionResponse.Plan = "234"
 
-// 	updatedSubscription, apiErr := conn.UpdateSubscription(mockSubscriptionResponseID, subscriptionToUpdate)
+	server, err := invdmockserver.New(200, mockSubscriptionResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Updating subscription", apiErr)
-// 	}
+	conn := mockConnection(key, server)
 
-// 	if !reflect.DeepEqual(mockSubscriptionResponse, updatedSubscription) {
-// 		t.Fatal("Error Messages Do Not Match Up", mockSubscriptionResponse, updatedSubscription.Id)
-// 	}
+	subscriptionToUpdate := conn.NewSubscription()
 
-// }
+	mockSubscriptionResponse.Cycles = 42
+	subscriptionToUpdate.Cycles = 42
 
-// func TestSubscriptionUpdateError(t *testing.T) {
-// 	key := "wrong api key"
+	err = subscriptionToUpdate.Save()
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
+	if err != nil {
+		t.Fatal("Error Updating Subscription", err)
+	}
 
-// 	subscriptionID := int64(324234)
-// 	subscriptionToUpdate := new(invdendpoint.Subscription)
-// 	subscriptionToUpdate.Cycles = 42
+	if !reflect.DeepEqual(mockSubscriptionResponse, subscriptionToUpdate.Subscription) {
+		t.Fatal("Error Subscription Not Updated Properly")
+	}
 
-// 	server := mockServer(401, mockErrorResponse)
-// 	defer server.Close()
+}
 
-// 	conn := mockConnection(key, server)
+func TestSubscriptionUpdateError(t *testing.T) {
+	key := "wrong api key"
 
-// 	_, apiErr := conn.UpdateSubscription(subscriptionID, subscriptionToUpdate)
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error Updating subscription", apiErr)
-// 	}
+	server, err := invdmockserver.New(401, mockErrorResponse, "json", true)
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// }
+	defer server.Close()
 
-// func TestSubscriptionDelete(t *testing.T) {
+	conn := mockConnection(key, server)
+	subcriptionToUpdate := conn.NewSubscription()
 
-// 	key := "api key"
+	subcriptionToUpdate.Cycles = 42
 
-// 	mocksubscriptionResponse := ""
-// 	mocksubscriptionID := int64(2341)
+	err = subcriptionToUpdate.Save()
 
-// 	server := mockServer(204, mocksubscriptionResponse)
-// 	defer server.Close()
+	if err == nil {
+		t.Fatal("Error Updating subscription", err)
+	}
 
-// 	conn := mockConnection(key, server)
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	apiErr := conn.DeleteSubscription(mocksubscriptionID)
+}
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error occured deleting subscription")
-// 	}
+func TestSubscriptionDelete(t *testing.T) {
 
-// }
+	key := "api key"
 
-// func TestSubscriptionDeleteError(t *testing.T) {
-// 	key := "api key"
+	mocksubscriptionResponse := ""
+	mocksubscriptionID := int64(2341)
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "You do not have permission to do that"
+	server, err := invdmockserver.New(204, mocksubscriptionResponse, "json", true)
 
-// 	mocksubscriptionID := int64(-999)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	server := mockServer(403, mockErrorResponse)
-// 	defer server.Close()
+	defer server.Close()
 
-// 	conn := mockConnection(key, server)
+	conn := mockConnection(key, server)
 
-// 	apiErr := conn.DeleteSubscription(mocksubscriptionID)
+	subscription := conn.NewSubscription()
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error occured deleting subscription")
-// 	}
+	subscription.Id = mocksubscriptionID
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	err = subscription.Delete()
 
-// }
+	if err != nil {
+		t.Fatal("Error Occured Deleting Subscription")
+	}
 
-// func TestSubscriptionList(t *testing.T) {
+}
 
-// 	key := "test api key"
+func TestSubscriptionDeleteError(t *testing.T) {
+	key := "api key"
 
-// 	mockSubscriptionResponseID := int64(1523)
-// 	mockSubscriptionResponse := new(invdendpoint.Subscription)
-// 	mockSubscriptionResponse.Id = mockSubscriptionResponseID
-// 	mockSubscriptionResponse.Customer = 234112
-// 	mockSubscriptionResponse.Plan = 234
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "You do not have permission to do that"
 
-// 	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
+	mockSubscriptionID := int64(-999)
 
-// 	server := mockServer(200, mockSubscriptionResponse)
-// 	defer server.Close()
+	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
 
-// 	conn := mockConnection(key, server)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	createdsubscription, apiErr := conn.ListSubscription(mockSubscriptionResponseID)
+	defer server.Close()
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Creating subscription", apiErr)
-// 	}
+	conn := mockConnection(key, server)
 
-// 	if createdsubscription.Id != mockSubscriptionResponseID {
-// 		t.Fatal("subscription was not created succesfully")
-// 	}
+	subscription := conn.NewSubscription()
 
-// }
+	subscription.Id = mockSubscriptionID
 
-// func TestSubscriptionListError(t *testing.T) {
-// 	key := "api key"
+	err = subscription.Delete()
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "You do not have permission to do that"
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	mocksubscriptionID := int64(-999)
+}
 
-// 	server := mockServer(403, mockErrorResponse)
-// 	defer server.Close()
+func TestSubscriptionRetrieve(t *testing.T) {
 
-// 	conn := mockConnection(key, server)
+	key := "test api key"
 
-// 	_, apiErr := conn.ListSubscription(mocksubscriptionID)
+	mockSubscriptionResponseID := int64(1523)
+	mockSubscriptionResponse := new(invdendpoint.Subscription)
+	mockSubscriptionResponse.Id = mockSubscriptionResponseID
+	mockSubscriptionResponse.Customer = 234112
+	mockSubscriptionResponse.Plan = "234"
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error occured deleting subscription")
-// 	}
+	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	server, err := invdmockserver.New(200, mockSubscriptionResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
 
-// }
+	conn := mockConnection(key, server)
+	subscription := conn.NewSubscription()
+
+	retrievedSubscription, err := subscription.Retrieve(mockSubscriptionResponseID)
+
+	if err != nil {
+		t.Fatal("Error Creating subscription", err)
+	}
+
+	if !reflect.DeepEqual(retrievedSubscription.Subscription, mockSubscriptionResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestSubscriptionRetrieveError(t *testing.T) {
+	key := "api key"
+
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "You do not have permission to do that"
+
+	mockSubscriptionID := int64(-999)
+
+	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := mockConnection(key, server)
+	subscription := conn.NewSubscription()
+
+	_, err = subscription.Retrieve(mockSubscriptionID)
+
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}

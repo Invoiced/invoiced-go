@@ -1,545 +1,285 @@
 package invdapi
 
-// import (
-// 	"github.com/Invoiced/invoiced-go/invdendpoint"
-// 	"reflect"
-// 	"strconv"
-// 	"testing"
-// 	"time"
-// )
+import (
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
+	"reflect"
+	"strconv"
+	"testing"
+	"time"
+)
 
-// func TestInvoiceCreate(t *testing.T) {
-// 	key := "test api key"
+func TestInvoiceCreate(t *testing.T) {
+	key := "test api key"
 
-// 	mockInvoiceResponseID := int64(1523)
-// 	mockInvoiceResponse := new(invdendpoint.Invoice)
-// 	mockInvoiceResponse.Id = mockInvoiceResponseID
+	mockInvoiceResponseID := int64(1523)
+	mockInvoiceResponse := new(invdendpoint.Invoice)
+	mockInvoiceResponse.Id = mockInvoiceResponseID
 
-// 	invoiceToCreate := new(invdendpoint.Invoice)
+	nowUnix := time.Now().UnixNano()
 
-// 	nowUnix := time.Now().UnixNano()
+	s := strconv.FormatInt(nowUnix, 10)
 
-// 	s := strconv.FormatInt(nowUnix, 10)
+	server, err := invdmockserver.New(200, mockInvoiceResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
 
-// 	invoiceToCreate.Name = "Test invoice Original " + s
-// 	mockInvoiceResponse.Name = invoiceToCreate.Name
+	conn := mockConnection(key, server)
 
-// 	server := mockServer(200, mockInvoiceResponse)
-// 	defer server.Close()
+	invoice := conn.NewInvoice()
 
-// 	conn := mockConnection(key, server)
+	invoiceToCreate := invoice.NewInvoice()
 
-// 	createdInvoice, apiErr := conn.CreateInvoice(invoiceToCreate)
+	invoiceToCreate.Name = "Test invoice Original " + s
+	mockInvoiceResponse.Name = invoiceToCreate.Name
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Creating invoice", apiErr)
-// 	}
+	createdInvoice, err := invoice.Create(invoiceToCreate)
 
-// 	if createdInvoice.Id != mockInvoiceResponseID {
-// 		t.Fatal("invoice was not created succesfully")
-// 	}
+	if err != nil {
+		t.Fatal("Error Creating invoice", err)
+	}
 
-// }
+	if !reflect.DeepEqual(createdInvoice.Invoice, mockInvoiceResponse) {
+		t.Fatal("Invoice Not Created Succesfully")
+	}
 
-// func TestInvoiceCreateError(t *testing.T) {
-// 	key := "test api key"
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "Name is invalid"
-// 	mockErrorResponse.Param = "name"
+}
 
-// 	server := mockServer(400, mockErrorResponse)
-// 	defer server.Close()
+func TestInvoiceCreateError(t *testing.T) {
+	key := "test api key"
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "Name is invalid"
+	mockErrorResponse.Param = "name"
 
-// 	conn := mockConnection(key, server)
+	server, err := invdmockserver.New(400, mockErrorResponse, "json", true)
 
-// 	invoiceToCreate := new(invdendpoint.Invoice)
-// 	invoiceToCreate.AmountPaid = 342.234
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	_, apiErr := conn.CreateInvoice(invoiceToCreate)
+	defer server.Close()
 
-// 	if apiErr == nil {
-// 		t.Fatal("Api should have errored out")
-// 	}
+	conn := mockConnection(key, server)
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error messages do not match up")
-// 	}
+	invoice := conn.NewInvoice()
 
-// }
+	invoiceToCreate := invoice.NewInvoice()
+	invoiceToCreate.AmountPaid = 342.234
 
-// func TestInvoiceUpdate(t *testing.T) {
-// 	key := "test api key"
+	_, err = invoice.Create(invoiceToCreate)
 
-// 	mockInvoiceResponseID := int64(1523)
-// 	mockUpdatedTime := time.Now().UnixNano()
-// 	mockInvoiceResponse := new(invdendpoint.Invoice)
-// 	mockInvoiceResponse.Id = mockInvoiceResponseID
-// 	mockInvoiceResponse.UpdatedAt = mockUpdatedTime
-// 	mockInvoiceResponse.Name = "MOCK invoice"
+	if err == nil {
+		t.Fatal("Api Should Have Errored Out")
+	}
 
-// 	invoiceToUpdate := new(invdendpoint.Invoice)
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	mockInvoiceResponse.Balance = 42.22
-// 	invoiceToUpdate.Balance = 42.22
+}
 
-// 	server := mockServer(200, mockInvoiceResponse)
-// 	defer server.Close()
+func TestInvoiceUpdate(t *testing.T) {
+	key := "test api key"
 
-// 	conn := mockConnection(key, server)
+	mockInvoiceResponseID := int64(1523)
+	mockUpdatedTime := time.Now().UnixNano()
+	mockInvoiceResponse := new(invdendpoint.Invoice)
+	mockInvoiceResponse.Id = mockInvoiceResponseID
+	mockInvoiceResponse.UpdatedAt = mockUpdatedTime
+	mockInvoiceResponse.Name = "MOCK invoice"
 
-// 	updatedInvoice, apiErr := conn.UpdateInvoice(mockInvoiceResponseID, invoiceToUpdate)
+	mockInvoiceResponse.Balance = 42.22
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Updating invoice", apiErr)
-// 	}
+	server, err := invdmockserver.New(200, mockInvoiceResponse, "json", true)
 
-// 	if !reflect.DeepEqual(mockInvoiceResponse, updatedInvoice) {
-// 		t.Fatal("Error messages do not match up")
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// }
+	defer server.Close()
 
-// func TestInvoiceUpdateError(t *testing.T) {
-// 	key := "wrong api key"
+	conn := mockConnection(key, server)
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
+	invoiceToUpdate := conn.NewInvoice()
+	invoiceToUpdate.Balance = 42.22
 
-// 	invoiceID := int64(324234)
-// 	invoiceToUpdate := new(invdendpoint.Invoice)
-// 	invoiceToUpdate.Balance = 400.12
+	err = invoiceToUpdate.Save()
 
-// 	server := mockServer(401, mockErrorResponse)
-// 	defer server.Close()
+	if err != nil {
+		t.Fatal("Error Updating Invoice", err)
+	}
 
-// 	conn := mockConnection(key, server)
+	if !reflect.DeepEqual(mockInvoiceResponse, invoiceToUpdate.Invoice) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	_, apiErr := conn.UpdateInvoice(invoiceID, invoiceToUpdate)
+}
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error Updating invoice", apiErr)
-// 	}
+func TestInvoiceUpdateError(t *testing.T) {
+	key := "wrong api key"
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
-// }
+	server, err := invdmockserver.New(401, mockErrorResponse, "json", true)
 
-// func TestInvoiceDelete(t *testing.T) {
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	key := "api key"
+	defer server.Close()
 
-// 	mockinvoiceResponse := ""
-// 	mockinvoiceID := int64(2341)
+	conn := mockConnection(key, server)
 
-// 	server := mockServer(204, mockinvoiceResponse)
-// 	defer server.Close()
+	invoiceToUpdate := conn.NewInvoice()
 
-// 	conn := mockConnection(key, server)
+	invoiceToUpdate.Balance = 400.12
 
-// 	apiErr := conn.DeleteInvoice(mockinvoiceID)
+	err = invoiceToUpdate.Save()
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error occured deleting invoice")
-// 	}
+	if err == nil {
+		t.Fatal("Error Updating invoice", err)
+	}
 
-// }
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// func TesIinvoiceDeleteError(t *testing.T) {
-// 	key := "api key"
+}
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "You do not have permission to do that"
+func TestInvoiceDelete(t *testing.T) {
 
-// 	mockinvoiceID := int64(-999)
+	key := "api key"
 
-// 	server := mockServer(403, mockErrorResponse)
-// 	defer server.Close()
+	mockinvoiceResponse := ""
+	mockinvoiceID := int64(2341)
 
-// 	conn := mockConnection(key, server)
+	server, err := invdmockserver.New(204, mockinvoiceResponse, "json", true)
 
-// 	apiErr := conn.DeleteInvoice(mockinvoiceID)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error occured deleting invoice")
-// 	}
+	defer server.Close()
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	conn := mockConnection(key, server)
 
-// }
+	invoice := conn.NewInvoice()
 
-// func TestInvoiceList(t *testing.T) {
+	invoice.Id = mockinvoiceID
 
-// 	key := "test api key"
+	err = invoice.Delete()
 
-// 	mockInvoiceResponseID := int64(1523)
-// 	mockInvoiceResponse := new(invdendpoint.Invoice)
-// 	mockInvoiceResponse.Id = mockInvoiceResponseID
-// 	mockInvoiceResponse.PaymentTerms = "NET15"
+	if err != nil {
+		t.Fatal("Error Occured Deleting Invoice")
+	}
 
-// 	mockInvoiceResponse.UpdatedAt = time.Now().UnixNano()
+}
 
-// 	server := mockServer(200, mockInvoiceResponse)
-// 	defer server.Close()
+func TestInvoiceDeleteError(t *testing.T) {
+	key := "api key"
 
-// 	conn := mockConnection(key, server)
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "You Do Not Have Permission To Do That"
 
-// 	createdinvoice, apiErr := conn.ListInvoice(mockInvoiceResponseID)
+	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Creating invoice", apiErr)
-// 	}
+	if err != nil {
+		t.Fatal()
+	}
 
-// 	if createdinvoice.Id != mockInvoiceResponseID {
-// 		t.Fatal("invoice was not created succesfully")
-// 	}
+	defer server.Close()
 
-// }
+	conn := mockConnection(key, server)
 
-// func TestInvoiceListError(t *testing.T) {
-// 	key := "api key"
+	invoice := conn.NewInvoice()
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "You do not have permission to do that"
+	err = invoice.Delete()
 
-// 	mockinvoiceID := int64(-999)
+	if err == nil {
+		t.Fatal("Error Occured Deleting Invoice")
+	}
 
-// 	server := mockServer(403, mockErrorResponse)
-// 	defer server.Close()
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	conn := mockConnection(key, server)
+}
 
-// 	_, apiErr := conn.ListInvoice(mockinvoiceID)
+func TestInvoiceList(t *testing.T) {
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error occured deleting invoice")
-// 	}
+	key := "test api key"
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	var mockInvoicesResponse invdendpoint.Invoices
+	mockInvoiceResponseID := int64(1523)
+	mockInvoiceNumber := "INV-3421"
+	mockInvoiceResponse := new(invdendpoint.Invoice)
+	mockInvoiceResponse.Id = mockInvoiceResponseID
+	mockInvoiceResponse.Number = mockInvoiceNumber
+	mockInvoiceResponse.PaymentTerms = "NET15"
 
-// }
+	mockInvoiceResponse.UpdatedAt = time.Now().UnixNano()
 
-// // func createMockInvoice(t *testing.T, offset int64, customName string, customPaymentTerms string) *invdendpoint.Invoice {
-// // 	conn := NewConnection(apikey)
+	mockInvoicesResponse = append(mockInvoicesResponse, *mockInvoiceResponse)
 
-// // 	//Create invoice
-// // 	invoice := createMockinvoice(t, offset)
+	server, err := invdmockserver.New(200, mockInvoicesResponse, "json", true)
 
-// // 	invoiceToCreate := new(invdendpoint.Invoice)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// // 	nowUnix := time.Now().UnixNano() + offset
-// // 	s := strconv.FormatInt(nowUnix, 10)
+	defer server.Close()
 
-// // 	invoiceToCreate.invoice = invoice.Id
-// // 	if customName != "" {
-// // 		invoiceToCreate.Name = customName
-// // 	} else {
-// // 		invoiceToCreate.Name = "MOCK INVOICE " + s
-// // 	}
+	conn := mockConnection(key, server)
 
-// // 	if customPaymentTerms != "" {
-// // 		invoiceToCreate.PaymentTerms = customPaymentTerms
-// // 	} else {
-// // 		invoiceToCreate.PaymentTerms = "MOCK INVOICE"
-// // 	}
+	invoice := conn.NewInvoice()
 
-// // 	lineItem := invdendpoint.LineItem{}
-// // 	lineItem.Description = "Mock Macbook Pro " + s
-// // 	lineItem.Quantity = 5
-// // 	lineItem.UnitCost = 34.23
+	invoiceResp, err := invoice.ListInvoiceByNumber(mockInvoiceNumber)
 
-// // 	lineItems := append([]invdendpoint.LineItem{}, lineItem)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// // 	invoiceToCreate.Items = lineItems
+	if !reflect.DeepEqual(invoiceResp.Invoice, mockInvoiceResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// // 	invoice, apiErr := conn.CreateInvoice(invoiceToCreate)
+}
 
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Creating Mock invoice =>", apiErr)
-// // 	}
+func TestInvoiceListError(t *testing.T) {
+	key := "api key"
 
-// // 	return invoice
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "You do not have permission to do that"
 
-// // }
+	mockInvoiceNumber := "INV-32421"
 
-// // func deleteMockInvoice(t *testing.T, invoice invdendpoint.Invoice) {
+	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
 
-// // 	invoiceID := invoice.Id
-// // 	conn := NewConnection(apikey)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// // 	apiErr := conn.DeleteInvoice(invoiceID)
+	defer server.Close()
 
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Deleting Mock Invoice, ID => ", invoiceID, " =>", apiErr)
-// // 	}
+	conn := mockConnection(key, server)
 
-// // 	invoiceID := invoice.invoice
+	invoice := conn.NewInvoice()
 
-// // 	apiErr = conn.Deleteinvoice(invoiceID)
+	_, err = invoice.ListInvoiceByNumber(mockInvoiceNumber)
 
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Deleting Mock invoice, ID => ", invoiceID, " =>", apiErr)
-// // 	}
+	if err == nil {
+		t.Fatal("Error occured deleting invoice")
+	}
 
-// // }
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// // func updateMockInvoice(t *testing.T, invoice *invdendpoint.Invoice) {
-
-// // 	invoiceID := invoice.Id
-// // 	conn := NewConnection(apikey)
-
-// // 	invoice.Name = "UPDATED " + invoice.Name
-
-// // 	apiErr := conn.UpdateInvoice(invoiceID, invoice)
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Updating Mock Invoice, ID => ", invoiceID, " =>", apiErr)
-// // 	}
-
-// // }
-
-// // func retrieveMockInvoice(t *testing.T, invoiceID int64) *invdendpoint.Invoice {
-
-// // 	conn := NewConnection(apikey)
-
-// // 	invoice, apiErr := conn.ListInvoice(invoiceID)
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Retrieving Mock Invoice, ID => ", invoiceID, " =>", apiErr)
-// // 	}
-
-// // 	return invoice
-
-// // }
-
-// // func deleteAllInvoices(t *testing.T) {
-// // 	conn := NewConnection(apikey)
-
-// // 	var invoiceIDs []int64
-
-// // 	invoices, apiErr := conn.ListAllInvoicesAuto(nil, nil)
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error: Getting All Invoices Auto", apiErr)
-// // 	}
-
-// // 	for _, invoice := range *invoices {
-// // 		invoiceIDs = append(invoiceIDs, invoice.Id)
-// // 	}
-
-// // 	for _, invoiceID := range invoiceIDs {
-// // 		apiErr = conn.DeleteInvoice(invoiceID)
-
-// // 		if apiErr != nil {
-// // 			t.Fatal("Error Deleting A Invoice with ID => ", invoiceID, apiErr)
-// // 		}
-
-// // 	}
-
-// // }
-
-// // func TestDeleteAllInvoices(t *testing.T) {
-// // 	deleteAllInvoices(t)
-// // }
-
-// // func TestGetAllInvoicesAuto(t *testing.T) {
-
-// // 	conn := NewConnection(apikey)
-
-// // 	invoices, apiErr := conn.ListAllInvoicesAuto(nil, nil)
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error: Getting All Invoices Auto", apiErr)
-// // 	}
-
-// // 	invoiceCount, apiErr := conn.CountInvoice()
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error: Getting invoice Count", apiErr)
-// // 	}
-
-// // 	if int64(len(*invoices)) != invoiceCount {
-// // 		t.Fatal("Error: Number of invoices Returned Should Equal The invoice Count ")
-// // 	}
-
-// // }
-
-// // func TestGetAllinvoices(t *testing.T) {
-
-// // 	conn := NewConnection(apikey)
-
-// // 	invoices, nextEndPoint, apiErr := conn.ListAllInvoices(nil, nil)
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Getting All Invoices", apiErr)
-// // 	}
-
-// // 	invoiceCount, apiErr := conn.CountInvoice()
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Getting invoice Count", apiErr)
-// // 	}
-
-// // 	if invoiceCount > 100 && nextEndPoint == "" {
-// // 		t.Fatal("invoice Count Is Greater Than 100, So The Next EndPoint Should Not Be Empty")
-// // 	}
-
-// // 	if len(*invoices) > 100 {
-// // 		t.Fatal("invoice Returned Should Less Than OR Equal To 100")
-// // 	}
-
-// // }
-
-// // func TestListAllInvoicesFiltered(t *testing.T) {
-
-// // 	conn := NewConnection(apikey)
-
-// // 	invoiceCollection := new(invdendpoint.Invoices)
-
-// // 	numberOfTestInvoices := 56
-
-// // 	paymentTerm := "TGAIF"
-
-// // 	for i := 0; i < numberOfTestInvoices; i++ {
-// // 		invoice := createMockInvoice(t, int64(i), "", paymentTerm)
-
-// // 		*invoiceCollection = append(*invoiceCollection, *invoice)
-// // 	}
-
-// // 	filter := invdendpoint.NewFilter()
-
-// // 	filter.Set("payment_terms", paymentTerm)
-
-// // 	invoices, apiErr := conn.ListAllInvoicesAuto(filter, nil)
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Getting All Invoices Auto ", apiErr)
-// // 	}
-
-// // 	if len(*invoices) != numberOfTestInvoices {
-// // 		t.Fatal("The Correct Amount of Invoices Were Not Filtered", len(*invoices), "Not Equal To", numberOfTestInvoices)
-// // 	}
-
-// // 	//Delete invoices
-
-// // 	for _, invoice := range *invoiceCollection {
-// // 		deleteMockInvoice(t, invoice)
-
-// // 	}
-
-// // }
-
-// // func TestGetAllInvoicesFilteredSorted(t *testing.T) {
-
-// // 	conn := NewConnection(apikey)
-
-// // 	invoiceCollection := new(invdendpoint.Invoices)
-
-// // 	//Create invoice A
-
-// // 	invoicePaymentTerms := "TGAIF"
-
-// // 	invoiceName := "A" + strconv.FormatInt(time.Now().Unix()+int64(0), 10)
-
-// // 	invoice := createMockInvoice(t, 0, invoiceName, invoicePaymentTerms)
-
-// // 	*invoiceCollection = append(*invoiceCollection, *invoice)
-// // 	//Create invoice H
-// // 	invoiceName = "H" + strconv.FormatInt(time.Now().Unix()+int64(0), 10)
-
-// // 	invoice = createMockInvoice(t, 0, invoiceName, invoicePaymentTerms)
-
-// // 	*invoiceCollection = append(*invoiceCollection, *invoice)
-
-// // 	//Create invoice L
-// // 	invoiceName = "L" + strconv.FormatInt(time.Now().Unix()+int64(0), 10)
-
-// // 	invoice = createMockInvoice(t, 0, invoiceName, invoicePaymentTerms)
-
-// // 	*invoiceCollection = append(*invoiceCollection, *invoice)
-
-// // 	//Create invoice C
-// // 	invoiceName = "C" + strconv.FormatInt(time.Now().Unix()+int64(0), 10)
-
-// // 	invoice = createMockInvoice(t, 0, invoiceName, invoicePaymentTerms)
-
-// // 	*invoiceCollection = append(*invoiceCollection, *invoice)
-
-// // 	filter := invdendpoint.NewFilter()
-// // 	filter.Set("payment_terms", invoicePaymentTerms)
-
-// // 	sort := invdendpoint.NewSort()
-
-// // 	sort.Set("name", invdendpoint.DESC)
-
-// // 	invoices, _, apiErr := conn.ListAllInvoices(filter, sort)
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("Error Getting All invoices Auto ", apiErr)
-// // 	}
-
-// // 	if (*invoices)[0].Name[0:1] != "L" {
-// // 		t.Fatal("Sort DESC Failed With 'L'")
-// // 	}
-
-// // 	if (*invoices)[1].Name[0:1] != "H" {
-// // 		t.Fatal("Sort DESC Failed With 'H'")
-// // 	}
-// // 	if (*invoices)[2].Name[0:1] != "C" {
-// // 		t.Fatal("Sort DESC Failed With 'C'")
-// // 	}
-
-// // 	if (*invoices)[3].Name[0:1] != "A" {
-// // 		t.Fatal("Sort DESC Failed With 'A'")
-// // 	}
-
-// // 	//Delete invoices
-
-// // 	for _, invoice := range *invoiceCollection {
-// // 		deleteMockInvoice(t, invoice)
-// // 	}
-
-// // }
-
-// // func TestInvoiceCRUD(t *testing.T) {
-
-// // 	//Create invoice
-// // 	createdInvoice := createMockInvoice(t, 0, "", "")
-
-// // 	//Update invoice
-
-// // 	oldInvoiceName := createdInvoice.Name
-
-// // 	updateMockInvoice(t, createdInvoice)
-
-// // 	//Retrieve Invoice
-// // 	updatedInvoice := retrieveMockInvoice(t, createdInvoice.Id)
-
-// // 	if updatedInvoice.Name != "UPDATED "+oldInvoiceName {
-// // 		t.Fatal("Invoice Was Not Updated correctly")
-// // 	}
-
-// // 	deleteMockInvoice(t, *updatedInvoice)
-
-// // }
-
-// // func TestInvoiceCount(t *testing.T) {
-
-// // 	conn := NewConnection(apikey)
-
-// // 	_, apiErr := conn.CountInvoice()
-
-// // 	if apiErr != nil {
-// // 		t.Fatal("apiError Should Be Empty")
-// // 	}
-
-// // }
+}

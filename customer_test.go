@@ -3,6 +3,7 @@ package invdapi
 import (
 	"encoding/json"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"strconv"
 	"testing"
@@ -43,7 +44,12 @@ func TestCustomerCreate(t *testing.T) {
 	mockCustomerResponse.Id = mockCustomerResponseID
 
 	//Launch our mock server
-	server := mockServer(200, mockCustomerResponse)
+	server, err := invdmockserver.New(200, mockCustomerResponse, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	defer server.Close()
 
 	//Establish our mock connection
@@ -62,10 +68,10 @@ func TestCustomerCreate(t *testing.T) {
 	//mockCustomerResponse.Connection = conn
 
 	//Make the call to create our customer
-	createdCustomer, apiErr := customer.Create(customerToCreate)
+	createdCustomer, err := customer.Create(customerToCreate)
 
-	if apiErr != nil {
-		t.Fatal("Error Creating Customer", apiErr)
+	if err != nil {
+		t.Fatal("Error Creating Customer", err)
 	}
 
 	//Customer that we wanted to create should equal the customer we created
@@ -82,25 +88,29 @@ func TestCustomerCreateError(t *testing.T) {
 	mockErrorResponse.Message = "Name is invalid"
 	mockErrorResponse.Param = "name"
 
-	emptyCustomer := new(Customer)
+	server, err := invdmockserver.New(400, mockErrorResponse, "json", true)
 
-	server := mockServer(400, mockErrorResponse)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	defer server.Close()
 
 	conn := mockConnection(key, server)
-	emptyCustomer.Connection = conn
 
-	customerToCreate := new(invdendpoint.Customer)
+	custConn := conn.NewCustomer()
+
+	customerToCreate := custConn.NewCustomer()
 	customerToCreate.Email = "example@example.com"
 
-	_, apiErr := conn.CreateCustomer(customerToCreate)
+	_, apiErr := custConn.Create(customerToCreate)
 
 	if apiErr == nil {
 		t.Fatal("Api should have errored out")
 	}
 
-	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-		t.Fatal("Error messages do not match up")
+	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
+		t.Fatal("Error messages do not match up", mockErrorResponse, ",", apiErr)
 	}
 
 }
@@ -110,161 +120,211 @@ func TestCustomerUpdate(t *testing.T) {
 
 	mockCustomerResponseID := int64(1523)
 	mockUpdatedTime := time.Now().UnixNano()
+	mockName := "MOCK CUSTOMER"
 	mockCustomerResponse := new(invdendpoint.Customer)
 	mockCustomerResponse.Id = mockCustomerResponseID
 	mockCustomerResponse.UpdatedAt = mockUpdatedTime
-	mockCustomerResponse.Name = "MOCK CUSTOMER"
+	mockCustomerResponse.Name = mockName
 
-	customerToUpdate := new(invdendpoint.Customer)
+	server, err := invdmockserver.New(200, mockCustomerResponse, "json", true)
 
-	addressToUpdate := "7500 Rialto BLVD"
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	mockCustomerResponse.Address1 = addressToUpdate
-	customerToUpdate.Address1 = addressToUpdate
-
-	server := mockServer(200, mockCustomerResponse)
 	defer server.Close()
 
 	conn := mockConnection(key, server)
 
-	updatedCustomer, apiErr := conn.UpdateCustomer(mockCustomerResponseID, customerToUpdate)
+	customerToUpdate := conn.NewCustomer()
+
+	customerToUpdate.Id = mockCustomerResponseID
+	customerToUpdate.Name = "MOCK CUSTOMER"
+	addressToUpdate := "7500 Rialto BLVD"
+	customerToUpdate.Address1 = addressToUpdate
+	mockCustomerResponse.Address1 = addressToUpdate
+
+	apiErr := customerToUpdate.Save()
 
 	if apiErr != nil {
 		t.Fatal("Error Updating Customer", apiErr)
 	}
 
-	if !reflect.DeepEqual(mockCustomerResponse, updatedCustomer) {
-		t.Fatal("Error messages do not match up")
+	if !reflect.DeepEqual(mockCustomerResponse, customerToUpdate.Customer) {
+		t.Fatal("Updated Customers Do Not Match Up")
 	}
 
 }
 
-// func TestCustomerUpdateError(t *testing.T) {
-// 	key := "wrong api key"
+func TestCustomerUpdateError(t *testing.T) {
+	key := "wrong api key"
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
-// 	customerID := int64(324234)
-// 	customerToUpdate := new(invdendpoint.Customer)
-// 	customerToUpdate.Address1 = "7500 Rialto BLVD"
+	server, err := invdmockserver.New(401, mockErrorResponse, "json", true)
 
-// 	server := mockServer(401, mockErrorResponse)
-// 	defer server.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	conn := mockConnection(key, server)
+	defer server.Close()
 
-// 	_, apiErr := conn.UpdateCustomer(customerID, customerToUpdate)
+	conn := mockConnection(key, server)
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error Updating Customer", apiErr)
-// 	}
+	customer := conn.NewCustomer()
+	customer.Name = "Parag Patel"
+	customer.Id = 3411111
+	customer.City = "Austin"
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	err = customer.Save()
 
-// }
+	if err == nil {
+		t.Fatal("Error Updating Customer => ", err)
+	}
 
-// func TestCustomerDelete(t *testing.T) {
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// 	key := "api key"
+}
 
-// 	mockCustomerResponse := ""
-// 	mockCustomerID := int64(2341)
+func TestCustomerDelete(t *testing.T) {
 
-// 	server := mockServer(204, mockCustomerResponse)
-// 	defer server.Close()
+	key := "api key"
 
-// 	conn := mockConnection(key, server)
+	mockCustomerResponse := ""
+	mockCustomerID := int64(2341)
 
-// 	apiErr := conn.DeleteCustomer(mockCustomerID)
+	server, err := invdmockserver.New(204, mockCustomerResponse, "json", true)
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error occured deleting customer")
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// }
+	defer server.Close()
 
-// func TestCustomerDeleteError(t *testing.T) {
-// 	key := "api key"
+	conn := mockConnection(key, server)
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "You do not have permission to do that"
+	customer := conn.NewCustomer()
 
-// 	mockCustomerID := int64(-999)
+	customer.Id = mockCustomerID
 
-// 	server := mockServer(403, mockErrorResponse)
-// 	defer server.Close()
+	err = customer.Delete()
 
-// 	conn := mockConnection(key, server)
+	if err != nil {
+		t.Fatal("Error occured deleting customer")
+	}
 
-// 	apiErr := conn.DeleteCustomer(mockCustomerID)
+}
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error occured deleting customer")
-// 	}
+func TestCustomerDeleteError(t *testing.T) {
+	key := "api key"
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "You do not have permission to do that"
 
-// }
+	mockCustomerID := int64(-999)
 
-// func TestCustomerList(t *testing.T) {
+	server, err := invdmockserver.New(403, mockErrorResponse, "json", false)
 
-// 	key := "test api key"
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	mockCustomerResponseID := int64(1523)
-// 	mockCustomerResponse := new(invdendpoint.Customer)
-// 	mockCustomerResponse.Id = mockCustomerResponseID
-// 	mockCustomerResponse.Name = "Mock Customer"
-// 	mockCustomerResponse.Address1 = "23 Wayne street"
-// 	mockCustomerResponse.City = "Austin"
-// 	mockCustomerResponse.Country = "USA"
-// 	mockCustomerResponse.UpdatedAt = time.Now().UnixNano()
+	defer server.Close()
 
-// 	server := mockServer(200, mockCustomerResponse)
-// 	defer server.Close()
+	conn := mockConnection(key, server)
 
-// 	conn := mockConnection(key, server)
+	customer := conn.NewCustomer()
 
-// 	createdCustomer, apiErr := conn.ListCustomer(mockCustomerResponseID)
+	customer.Id = mockCustomerID
 
-// 	if apiErr != nil {
-// 		t.Fatal("Error Creating Customer", apiErr)
-// 	}
+	err = customer.Delete()
 
-// 	if createdCustomer.Id != mockCustomerResponseID {
-// 		t.Fatal("Customer was not created succesfully")
-// 	}
+	if err == nil {
+		t.Fatal("Error Should Have Been Raised")
+	}
 
-// }
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
 
-// func TestCustomerListError(t *testing.T) {
-// 	key := "api key"
+}
 
-// 	mockErrorResponse := new(APIError)
-// 	mockErrorResponse.Type = "invalid_request"
-// 	mockErrorResponse.Message = "You do not have permission to do that"
+func TestCustomerList(t *testing.T) {
 
-// 	mockCustomerID := int64(-999)
+	key := "test api key"
 
-// 	server := mockServer(403, mockErrorResponse)
-// 	defer server.Close()
+	var mockCustomersResponse invdendpoint.Customers
+	mockCustomerResponseID := int64(1523)
+	mockCustomerResponse := new(invdendpoint.Customer)
+	mockCustomerResponse.Id = mockCustomerResponseID
+	mockCustomerResponse.Name = "Mock Customer"
+	mockCustomerResponse.Address1 = "23 Wayne street"
+	mockCustomerResponse.City = "Austin"
+	mockCustomerResponse.Country = "USA"
+	mockCustomerResponse.UpdatedAt = time.Now().UnixNano()
+	mockCustomerResponse.Number = "CUST-21312"
 
-// 	conn := mockConnection(key, server)
+	mockCustomersResponse = append(mockCustomersResponse, *mockCustomerResponse)
 
-// 	_, apiErr := conn.ListCustomer(mockCustomerID)
+	server, err := invdmockserver.New(200, mockCustomersResponse, "json", true)
 
-// 	if apiErr == nil {
-// 		t.Fatal("Error occured deleting customer")
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	if !reflect.DeepEqual(mockErrorResponse, apiErr) {
-// 		t.Fatal("Error Messages Do Not Match Up")
-// 	}
+	defer server.Close()
 
-// }
+	conn := mockConnection(key, server)
+
+	customer := conn.NewCustomer()
+
+	retrievedCustomer, err := customer.ListCustomerByNumber("CUST-21312")
+
+	if err != nil {
+		t.Fatal("Error Creating Customer", err)
+	}
+
+	if !reflect.DeepEqual(retrievedCustomer.Customer, mockCustomerResponse) {
+		t.Fatal("Retrieved Customer does not match the mock customer retrievedCustomer => ", retrievedCustomer.Customer, ", mockCustomer => ", mockCustomerResponse)
+	}
+
+}
+
+func TestCustomerListError(t *testing.T) {
+	key := "api key"
+
+	mockErrorResponse := new(APIError)
+	mockErrorResponse.Type = "invalid_request"
+	mockErrorResponse.Message = "You do not have permission to do that"
+
+	mockCustomerNumber := "CUST-33442"
+
+	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
+
+	if err != nil {
+
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := mockConnection(key, server)
+
+	customer := conn.NewCustomer()
+
+	_, err = customer.ListCustomerByNumber(mockCustomerNumber)
+
+	if err == nil {
+		t.Fatal("Error occured deleting customer")
+	}
+
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
