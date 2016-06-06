@@ -160,3 +160,46 @@ func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 	return invoices[0], nil
 
 }
+
+func (c *Invoice) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
+
+	emailResp := new(invdendpoint.EmailResponses)
+
+	err := c.create(endPoint, emailReq, emailResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *emailResp, nil
+
+}
+
+func (c *Invoice) Pay() error {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/pay"
+	invoice := new(invdendpoint.Invoice)
+	err := c.create(endPoint, nil, invoice)
+
+	if err != nil {
+		return nil
+	}
+
+	c.Invoice = invoice
+
+	return nil
+
+}
+
+func (c *Invoice) ListAttachements() (Files, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/attachments"
+	files := make(Files, 0)
+	err := c.create(endPoint, nil, files)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return files, nil
+
+}

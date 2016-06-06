@@ -1,3 +1,15 @@
+//Transactions can represent a charge, payment, refund, or adjustment.
+// We record charge and refund transactions for you that happen through Invoiced. The payment transaction type is designated for recording offline payments like checks. Finally, an adjustment transaction represents any additional credit or debits to a customer’s balance.
+// Most transactions will be associated with an invoice, however, not all. For example, if you wanted to credit your customer for $20 you would create an adjustment transaction for -$20 using the customer ID only instead of the invoice ID.
+// We currently support the following payment methods on transactions:
+// credit_card
+// ach
+// bitcoin
+// paypal
+// wire_transfer
+// check
+// cash
+// other
 package invdapi
 
 import (
@@ -247,5 +259,35 @@ func (c *Transaction) ListSuccessfulChargesAndPaymentsByInvoiceID(invoiceID int6
 	chargesPayments := append(charges, payments...)
 
 	return chargesPayments, nil
+
+}
+
+func (c *Transaction) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
+
+	emailResp := new(invdendpoint.EmailResponses)
+
+	err := c.create(endPoint, emailReq, emailResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *emailResp, nil
+
+}
+
+func (c *Transaction) Refund(refund *invdendpoint.Refund) error {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id) + "/refunds"
+	transaction := new(invdendpoint.Transaction)
+	err := c.create(endPoint, nil, transaction)
+
+	if err != nil {
+		return nil
+	}
+
+	c.Transaction = transaction
+
+	return nil
 
 }

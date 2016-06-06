@@ -14,7 +14,7 @@ func TestSubscriptionCreate(t *testing.T) {
 	mockSubscriptionResponseID := int64(1523)
 	mockSubscriptionResponse := new(invdendpoint.Subscription)
 	mockSubscriptionResponse.Id = mockSubscriptionResponseID
-	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
+	mockSubscriptionResponse.CreatedAt = time.Now().UnixNano()
 	mockSubscriptionResponse.Customer = 234112
 	mockSubscriptionResponse.Plan = "234"
 
@@ -86,7 +86,7 @@ func TestSubscriptionUpdate(t *testing.T) {
 	mockSubscriptionResponseID := int64(1523)
 	mockSubscriptionResponse := new(invdendpoint.Subscription)
 	mockSubscriptionResponse.Id = mockSubscriptionResponseID
-	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
+	mockSubscriptionResponse.CreatedAt = time.Now().UnixNano()
 	mockSubscriptionResponse.Customer = 234112
 	mockSubscriptionResponse.Plan = "234"
 
@@ -168,10 +168,10 @@ func TestSubscriptionDelete(t *testing.T) {
 
 	subscription.Id = mocksubscriptionID
 
-	err = subscription.Delete()
+	err = subscription.Cancel()
 
 	if err != nil {
-		t.Fatal("Error Occured Deleting Subscription")
+		t.Fatal("Error Occured Canceling Subscription")
 	}
 
 }
@@ -199,7 +199,7 @@ func TestSubscriptionDeleteError(t *testing.T) {
 
 	subscription.Id = mockSubscriptionID
 
-	err = subscription.Delete()
+	err = subscription.Cancel()
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
@@ -217,7 +217,7 @@ func TestSubscriptionRetrieve(t *testing.T) {
 	mockSubscriptionResponse.Customer = 234112
 	mockSubscriptionResponse.Plan = "234"
 
-	mockSubscriptionResponse.UpdatedAt = time.Now().UnixNano()
+	mockSubscriptionResponse.CreatedAt = time.Now().UnixNano()
 
 	server, err := invdmockserver.New(200, mockSubscriptionResponse, "json", true)
 	if err != nil {

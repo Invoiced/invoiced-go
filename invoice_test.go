@@ -67,7 +67,7 @@ func TestInvoiceCreateError(t *testing.T) {
 	invoice := conn.NewInvoice()
 
 	invoiceToCreate := invoice.NewInvoice()
-	invoiceToCreate.AmountPaid = 342.234
+	invoiceToCreate.Total = 342.234
 
 	_, err = invoice.Create(invoiceToCreate)
 
@@ -88,7 +88,7 @@ func TestInvoiceUpdate(t *testing.T) {
 	mockUpdatedTime := time.Now().UnixNano()
 	mockInvoiceResponse := new(invdendpoint.Invoice)
 	mockInvoiceResponse.Id = mockInvoiceResponseID
-	mockInvoiceResponse.UpdatedAt = mockUpdatedTime
+	mockInvoiceResponse.CreatedAt = mockUpdatedTime
 	mockInvoiceResponse.Name = "MOCK invoice"
 
 	mockInvoiceResponse.Balance = 42.22
@@ -223,7 +223,7 @@ func TestInvoiceList(t *testing.T) {
 	mockInvoiceResponse.Number = mockInvoiceNumber
 	mockInvoiceResponse.PaymentTerms = "NET15"
 
-	mockInvoiceResponse.UpdatedAt = time.Now().UnixNano()
+	mockInvoiceResponse.CreatedAt = time.Now().UnixNano()
 
 	mockInvoicesResponse = append(mockInvoicesResponse, *mockInvoiceResponse)
 

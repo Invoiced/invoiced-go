@@ -46,7 +46,7 @@ func (c *Subscription) Create(subscription *Subscription) (*Subscription, error)
 
 }
 
-func (c *Subscription) Delete() error {
+func (c *Subscription) Cancel() error {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
 
 	apiErr := c.delete(endPoint)

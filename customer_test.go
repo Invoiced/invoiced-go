@@ -10,14 +10,12 @@ import (
 	"time"
 )
 
-type customerMetaData struct {
-	IntegrationName string `json:"integration_name,omitempty"`
-}
+type customerMetaData map[string]interface{}
 
 func TestCustomerMetaData(t *testing.T) {
 	conn := NewConnection("", false)
-	m := new(customerMetaData)
-	m.IntegrationName = "QBO"
+	m := make(customerMetaData)
+	m["integration_name"] = "QBO"
 	mockCustomer := conn.NewCustomer()
 	mockCustomer.Id = 34
 	mockCustomer.MetaData = m
@@ -29,7 +27,7 @@ func TestCustomerMetaData(t *testing.T) {
 	}
 
 	if string(b) != `{"id":34,"metadata":{"integration_name":"QBO"}}` {
-		t.Fatal("Json is wrong")
+		t.Fatal("Json is wrong", "right json =>", string(b))
 	}
 
 }
@@ -119,12 +117,12 @@ func TestCustomerUpdate(t *testing.T) {
 	key := "test api key"
 
 	mockCustomerResponseID := int64(1523)
-	mockUpdatedTime := time.Now().UnixNano()
+	mockCreatedTime := time.Now().UnixNano()
 	mockName := "MOCK CUSTOMER"
 	mockCustomerResponse := new(invdendpoint.Customer)
 	mockCustomerResponse.Id = mockCustomerResponseID
-	mockCustomerResponse.UpdatedAt = mockUpdatedTime
 	mockCustomerResponse.Name = mockName
+	mockCustomerResponse.CreatedAt = mockCreatedTime
 
 	server, err := invdmockserver.New(200, mockCustomerResponse, "json", true)
 
@@ -266,7 +264,7 @@ func TestCustomerList(t *testing.T) {
 	mockCustomerResponse.Address1 = "23 Wayne street"
 	mockCustomerResponse.City = "Austin"
 	mockCustomerResponse.Country = "USA"
-	mockCustomerResponse.UpdatedAt = time.Now().UnixNano()
+	mockCustomerResponse.CreatedAt = time.Now().UnixNano()
 	mockCustomerResponse.Number = "CUST-21312"
 
 	mockCustomersResponse = append(mockCustomersResponse, *mockCustomerResponse)

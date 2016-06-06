@@ -1,7 +1,9 @@
 package invdapi
 
 import (
+	"errors"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"strconv"
 )
 
 type Customer struct {
@@ -173,5 +175,200 @@ func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error
 	}
 
 	return customers[0], nil
+
+}
+
+func (c *Customer) GetBalance() (*invdendpoint.CustomerBalance, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/balance"
+
+	custBalance := new(invdendpoint.CustomerBalance)
+
+	_, apiErr := c.retrieveDataFromAPI(endPoint, custBalance)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	return custBalance, nil
+}
+
+func (c *Customer) SendStatement(custStmtReq *invdendpoint.EmailResponse) (*invdendpoint.EmailResponses, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/emails"
+
+	custStmtResp := new(invdendpoint.EmailResponses)
+	err := c.create(endPoint, custStmtReq, custStmtResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return custStmtResp, nil
+}
+
+func (c *Customer) CreateContact(contact *invdendpoint.Contact) (*invdendpoint.Contact, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts"
+
+	createdContact := new(invdendpoint.Contact)
+
+	err := c.create(endPoint, contact, createdContact)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return createdContact, nil
+
+}
+
+func (c *Customer) RetrieveContact(contactID int64) (*invdendpoint.Contact, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts" + strconv.FormatInt(contactID, 10)
+
+	retrievedContact := new(invdendpoint.Contact)
+
+	_, err := c.retrieveDataFromAPI(endPoint, retrievedContact)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return retrievedContact, nil
+
+}
+
+func (c *Customer) UpdateContact(contactToUpdate *invdendpoint.Contact) (*invdendpoint.Contact, error) {
+
+	if contactToUpdate.Id <= 0 {
+		return nil, errors.New("Need to supply a contact id in order to update a contact")
+	}
+
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts" + strconv.FormatInt(contactToUpdate.Id, 10)
+
+	contResp := new(invdendpoint.Contact)
+	err := c.update(endPoint, contactToUpdate, contResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return contResp, nil
+
+}
+
+func (c *Customer) ListAllContacts() (invdendpoint.Contacts, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts"
+
+	contacts := make(invdendpoint.Contacts, 0)
+
+NEXT:
+	tmpContacts := make(invdendpoint.Contacts, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpContacts)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	contacts = append(contacts, tmpContacts...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	return contacts, nil
+
+}
+
+func (c *Customer) DeleteContact(contactID int64) error {
+
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts" + strconv.FormatInt(contactID, 10)
+
+	err := c.delete(endPoint)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
+
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items "
+
+	pendingLineItemResp := new(invdendpoint.PendingLineItem)
+
+	err := c.create(endPoint, pendingLineItem, pendingLineItemResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pendingLineItemResp, nil
+
+}
+
+func (c *Customer) RetrievePendingLineItem(id int64) (*invdendpoint.PendingLineItem, error) {
+
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items" + strconv.FormatInt(id, 10)
+
+	retrievedPendingLineItem := new(invdendpoint.PendingLineItem)
+
+	_, err := c.retrieveDataFromAPI(endPoint, retrievedPendingLineItem)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return retrievedPendingLineItem, nil
+
+}
+
+func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
+
+	if pendingLineItem.Id <= 0 {
+		return nil, errors.New("Need to supply a pending line item id in order to update a pending line item")
+	}
+
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items" + strconv.FormatInt(pendingLineItem.Id, 10)
+
+	pendingLineItemResp := new(invdendpoint.PendingLineItem)
+	err := c.update(endPoint, pendingLineItem, pendingLineItemResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pendingLineItemResp, nil
+
+}
+
+func (c *Customer) TriggerInvoice() (*Invoice, error) {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/invoices"
+
+	invoice := new(Invoice)
+
+	err := c.create(endPoint, nil, invoice)
+
+	if err != nil {
+		return nil, err
+	}
+
+	invoice.Connection = c.Connection
+
+	return invoice, nil
+
+}
+
+func (c *Customer) DeletePendingLineItem(id int64) error {
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
+
+	err := c.delete(endPoint)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }

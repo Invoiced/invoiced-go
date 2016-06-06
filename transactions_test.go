@@ -14,7 +14,7 @@ func TestTransactionCreate(t *testing.T) {
 	mockTransactionResponseID := int64(1523)
 	mockTransactionResponse := new(invdendpoint.Transaction)
 	mockTransactionResponse.Id = mockTransactionResponseID
-	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
+	mockTransactionResponse.CreatedAt = time.Now().UnixNano()
 	mockTransactionResponse.Customer = 234112
 	mockTransactionResponse.GatewayId = "234"
 
@@ -86,7 +86,7 @@ func TestTransactionUpdate(t *testing.T) {
 	mockTransactionResponseID := int64(1523)
 	mockTransactionResponse := new(invdendpoint.Transaction)
 	mockTransactionResponse.Id = mockTransactionResponseID
-	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
+	mockTransactionResponse.CreatedAt = time.Now().UnixNano()
 	mockTransactionResponse.Customer = 234112
 	mockTransactionResponse.GatewayId = "234"
 
@@ -217,7 +217,7 @@ func TestTransactionRetrieve(t *testing.T) {
 	mockTransactionResponse.Customer = 234112
 	mockTransactionResponse.GatewayId = "234"
 
-	mockTransactionResponse.UpdatedAt = time.Now().UnixNano()
+	mockTransactionResponse.CreatedAt = time.Now().UnixNano()
 
 	server, err := invdmockserver.New(200, mockTransactionResponse, "json", true)
 	if err != nil {
