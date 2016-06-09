@@ -3,6 +3,8 @@ package invdendpoint
 import (
 	"encoding/json"
 	"testing"
+
+	"log"
 )
 
 func TestUnMarshalLineItemObject(t *testing.T) {
@@ -22,6 +24,7 @@ func TestUnMarshalLineItemObject(t *testing.T) {
   "metadata": {}
 }`
 
+	log.Println(s)
 	so := new(LineItem)
 
 	err := json.Unmarshal([]byte(s), so)
@@ -29,5 +32,11 @@ func TestUnMarshalLineItemObject(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	log.Println(so)
+
+	b, err := json.Marshal(so)
+
+	log.Println(string(b))
 
 }

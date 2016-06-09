@@ -5,10 +5,10 @@ type PendingLineItem struct {
 	Id           int64                  `json:"id,omitempty`
 	CatalogItem  string                 `json:"catalog_item,omitempty`  //Optional Catalog Item ID. Fills the line item with the name and pricing of the Catalog Item.
 	Type         string                 `json:"type,omitempty`          //Optional line item type. Used to group line items by type in reporting
-	Name         string                 `json:"name"`                   //Title
-	Description  string                 `json:"description"`            //Optional description
-	Quantity     float64                `json:"quantity"`               //Quantity
-	UnitCost     float64                `json:"unit_cost"`              //Unit cost or rate
+	Name         string                 `json:"name,omitempty"`         //Title
+	Description  string                 `json:"description,omitempty"`  //Optional description
+	Quantity     float64                `json:"quantity,omitempty"`     //Quantity
+	UnitCost     float64                `json:"unit_cost,omitempty"`    //Unit cost or rate
 	Discountable bool                   `json:"discountable,omitempty"` //Excludes amount from invoice discounts when false, defaults to `true
 	Discounts    []Discount             `json:"discounts,omitempty"`    //Line item Discounts
 	Taxable      bool                   `json:"taxable,omitempty"`      //Excludes amount from invoice taxes when false, defaults to `true

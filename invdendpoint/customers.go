@@ -57,7 +57,7 @@ type CardObject struct {
 type BankAccountObject struct {
 	Id            int64  `json:"id,omitempty"`             //The bank account’s unique ID
 	Object        string `json:"object,omitempty"`         //bank_account
-	BankName      string `json:"bran_name x,omitempty"`    //Bank name
+	BankName      string `json:"bank_name,omitempty"`      //Bank name
 	Last4         int    `json:"last4,omitempty"`          //Last 4 digits of bank account
 	RoutingNumber int64  `json:"routing_number,omitempty"` //Bank routing number
 	Verified      bool   `json:"verified,omitempty"`       //Whether the bank account has been verified with instant verification or micro-deposits
