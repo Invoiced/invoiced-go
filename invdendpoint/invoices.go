@@ -45,6 +45,7 @@ type Invoice struct {
 	PaymentUrl string                 `json:"payment_url,omitempty"` //URL for the invoice payment page
 	PdfUrl     string                 `json:"pdf_url,omitempty"`     //URL to download the invoice as a PDF
 	CreatedAt  int64                  `json:"created_at,omitempty"`  //Timestamp when created
+	UpdatedAt  int64                  `json:"updated_at,omitempty"`  //Timestamp when created
 	MetaData   map[string]interface{} `json:"metadata,omitempty"`    //A hash of key/value pairs that can store additional information about this object.
 
 	// add disabled payment methods
