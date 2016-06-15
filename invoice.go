@@ -7,13 +7,14 @@ import (
 type Invoice struct {
 	*Connection
 	*invdendpoint.Invoice
+	IncludeUpdatedAt bool
 }
 
 type Invoices []*Invoice
 
 func (c *Connection) NewInvoice() *Invoice {
 	invoice := new(invdendpoint.Invoice)
-	return &Invoice{c, invoice}
+	return &Invoice{c, invoice, false}
 
 }
 
@@ -77,9 +78,13 @@ func (c *Invoice) Save() error {
 func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), id)
 
+	if c.IncludeUpdatedAt {
+		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
+	}
+
 	custEndPoint := new(invdendpoint.Invoice)
 
-	invoice := &Invoice{c.Connection, custEndPoint}
+	invoice := &Invoice{c.Connection, custEndPoint, c.IncludeUpdatedAt}
 
 	_, apiErr := c.retrieveDataFromAPI(endPoint, invoice)
 
@@ -94,6 +99,10 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+
+	if c.IncludeUpdatedAt {
+		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
+	}
 
 	invoices := make(Invoices, 0)
 
@@ -124,6 +133,9 @@ NEXT:
 func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
 	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	if c.IncludeUpdatedAt {
+		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
+	}
 
 	invoices := make(Invoices, 0)
 

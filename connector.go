@@ -17,7 +17,7 @@ const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
 const InvoicedTokenString = "invoicedToken"
 
-const version = "1.0.4"
+const version = "1.1.0"
 
 func Version() string {
 	return version
@@ -152,6 +152,19 @@ func addFilterSortToEndPoint(endpoint string, filter *invdendpoint.Filter, sort 
 	}
 
 	return endpoint
+
+}
+
+func addIncludeToEndPoint(endpoint string, includeValue string) string {
+
+	finalEndpoint := ""
+	if strings.Contains(endpoint, "?") {
+		finalEndpoint = endpoint + "&" + "include=" + includeValue
+	} else {
+		finalEndpoint = endpoint + "?" + "include=" + includeValue
+	}
+
+	return finalEndpoint
 
 }
 
