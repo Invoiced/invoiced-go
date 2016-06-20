@@ -219,6 +219,29 @@ func (c *Transaction) ListSuccessfulChargesByInvoiceID(invoiceID int64) (Transac
 
 }
 
+func (c *Transaction) ListSuccessfulRefundsByInvoiceID(invoiceID int64) (Transactions, error) {
+
+	invoiceIDString := strconv.FormatInt(invoiceID, 10)
+
+	filter := invdendpoint.NewFilter()
+	filter.Set("invoice", invoiceIDString)
+	filter.Set("status", "succeeded")
+	filter.Set("type", "refund")
+
+	transactions, apiError := c.ListAll(filter, nil)
+
+	if apiError != nil {
+		return nil, apiError
+	}
+
+	if len(transactions) == 0 {
+		return nil, nil
+	}
+
+	return transactions, nil
+
+}
+
 func (c *Transaction) ListSuccessfulPaymentsByInvoiceID(invoiceID int64) (Transactions, error) {
 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
