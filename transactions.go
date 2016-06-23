@@ -155,25 +155,6 @@ func (c *Transaction) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort)
 
 }
 
-func (c *Transaction) ListByNumber(transactionNumber string) (*Transaction, error) {
-
-	filter := invdendpoint.NewFilter()
-	filter.Set("number", transactionNumber)
-
-	transactions, apiError := c.ListAll(filter, nil)
-
-	if apiError != nil {
-		return nil, apiError
-	}
-
-	if len(transactions) == 0 {
-		return nil, nil
-	}
-
-	return transactions[0], nil
-
-}
-
 func (c *Transaction) ListSuccessfulByInvoiceID(invoiceID int64) (Transactions, error) {
 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
