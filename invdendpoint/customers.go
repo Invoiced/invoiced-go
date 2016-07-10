@@ -21,7 +21,7 @@ type Customer struct {
 	PaymentSourceRAW   json.RawMessage        `json:"payment_source,omitempty"`    //Holds the raw payment json information for later parsing
 	PaymentSource      *PaymentSource         `json:"-"`                           //Customer’s payment source, if attached
 	PaymentSourceReady bool                   `json:"-"`                           //If true than run UnbundlePaymentSource()
-	Taxes              []Tax                  `json:"taxes,omitempty"`             //Collection of Tax Rate IDs
+	Taxes              []Rate                 `json:"taxes,omitempty"`             //Collection of Tax Rate IDs
 	Type               string                 `json:"type,omitempty"`              //Organization type, company or person
 	AttentionTo        string                 `json:"attention_to,omitempty"`      //Used for ATTN: address line if company
 	Address1           string                 `json:"address1,omitempty"`          //First address line
