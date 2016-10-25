@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "PATCH",
+    "url": "/customers/10"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"id\":10,\"name\":\"Customer testSave\",\"email\":\"testcreate@testing.org\",\"city\":\"Austin\"}"
+  }
+}

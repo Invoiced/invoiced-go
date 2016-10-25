@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "PATCH",
+    "url": "/invoices/46225",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"id\":46225,\"customer\":15444,\"name\":\"July Paper Delivery\",\"number\":\"INV-0016\",\"collection_mode\":\"manual\",\"currency\":\"usd\",\"draft\":false,\"closed\":false,\"paid\":false,\"status\":\"not_sent\",\"sent\":true,\"chase\":false,\"date\":1416290400,\"due_date\":1417500000,\"payment_terms\":\"NET 14\",\"items\":[{\"id\":7,\"type\":\"product\",\"name\":\"Copy Paper, Case\",\"quantity\":1.0,\"unit_cost\":45.0,\"amount\":45.0,\"discountable\":true,\"taxable\":true},{\"id\":8,\"catalog_item\":\"delivery\",\"type\":\"service\",\"name\":\"Delivery\",\"quantity\":1.0,\"unit_cost\":10.0,\"amount\":10.0,\"discountable\":true,\"taxable\":true}],\"notes\":\"The order was delivered on Jul 20, 2015\",\"subtotal\":55.0,\"taxes\":[{\"id\":20554,\"amount\":3.85}],\"total\":51.15,\"balance\":51.15,\"url\":\"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY\",\"payment_url\":\"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY/payment\",\"pdf_url\":\"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY/pdf\",\"created_at\":1415229884}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n  \"id\": 46225,\n  \"customer\": 15444,\n  \"name\": \"July Paper Delivery\",\n  \"currency\": \"usd\",\n  \"draft\": false,\n  \"closed\": false,\n  \"paid\": false,\n  \"status\": \"sent\",\n  \"chase\": false,\n  \"next_chase_on\": null,\n  \"collection_mode\": \"manual\",\n  \"attempt_count\": 0,\n  \"next_payment_attempt\": null,\n  \"subscription\": null,\n  \"number\": \"INV-0016\",\n  \"date\": 1416290400,\n  \"due_date\": 1417500000,\n  \"payment_terms\": \"NET 14\",\n  \"items\": [\n    {\n      \"id\": 7,\n      \"catalog_item\": null,\n      \"type\": \"product\",\n      \"name\": \"Copy Paper, Case\",\n      \"description\": null,\n      \"quantity\": 1,\n      \"unit_cost\": 45,\n      \"amount\": 45,\n      \"discountable\": true,\n      \"discounts\": [],\n      \"taxable\": true,\n      \"taxes\": [],\n      \"metadata\": {}\n    },\n    {\n      \"id\": 8,\n      \"catalog_item\": \"delivery\",\n      \"type\": \"service\",\n      \"name\": \"Delivery\",\n      \"description\": \"\",\n      \"quantity\": 1,\n      \"unit_cost\": 10,\n      \"amount\": 10,\n      \"discountable\": true,\n      \"discounts\": [],\n      \"taxable\": true,\n      \"taxes\": [],\n      \"metadata\": {}\n    }\n  ],\n  \"notes\": \"The order was delivered on Jul 20, 2015\",\n  \"subtotal\": 55,\n  \"discounts\": [],\n  \"taxes\": [\n    {\n      \"id\": 20554,\n      \"amount\": 3.85,\n      \"tax_rate\": null\n    }\n  ],\n  \"total\": 51.15,\n  \"balance\": 51.15,\n  \"tags\": [],\n  \"url\": \"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY\",\n  \"payment_url\": \"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY/payment\",\n  \"pdf_url\": \"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY/pdf\",\n  \"created_at\": 1415229884,\n  \"metadata\": {}\n}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

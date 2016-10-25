@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/subscriptions"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "Link": "<http://localhost:8080/subscriptions?page=1&per_page=100>; rel=\"self\",\n<http://localhost:8080/subscriptions?page=1&per_page=100>; rel=\"first\",\n <http://localhost:8080/subscriptions?page=1&per_page=100>; rel=\"previous\",\n<http://localhost:8080/subscriptions?page=1&per_page=100>; rel=\"next\",\n <http://localhost:8080/subscriptions?page=1&per_page=100>; rel=\"last\"",
+      "X-Total-Count": "2"
+
+    },
+    "body": "[{\n    \"id\": 595,\n    \"customer\": 15444,\n    \"plan\": \"starter\",\n    \"cycles\": null,\n    \"quantity\": 1,\n    \"start_date\": 1420391704,\n    \"period_start\": 1446657304,\n    \"period_end\": 1449249304,\n    \"cancel_at_period_end\": false,\n    \"canceled_at\": null,\n    \"status\": \"active\",\n    \"addons\": [\n        {\n            \"id\": 3,\n            \"catalog_item\": \"ipad-license\",\n            \"quantity\": 11,\n            \"created_at\": 1420391704\n        }\n    ],\n    \"discounts\": [],\n    \"taxes\": [],\n    \"url\": \"https://dundermifflin.invoiced.com/subscriptions/o2mAd2wWVfYy16XZto7xHwXX\",\n    \"created_at\": 1420391704,\n    \"metadata\": {}\n},{\n    \"id\": 596,\n    \"customer\": 15444,\n    \"plan\": \"starter\",\n    \"cycles\": null,\n    \"quantity\": 1,\n    \"start_date\": 1420391704,\n    \"period_start\": 1446657304,\n    \"period_end\": 1449249304,\n    \"cancel_at_period_end\": false,\n    \"canceled_at\": null,\n    \"status\": \"active\",\n    \"addons\": [\n        {\n            \"id\": 3,\n            \"catalog_item\": \"ipad-license\",\n            \"quantity\": 11,\n            \"created_at\": 1420391704\n        }\n    ],\n    \"discounts\": [],\n    \"taxes\": [],\n    \"url\": \"https://dundermifflin.invoiced.com/subscriptions/o2mAd2wWVfYy16XZto7xHwXX\",\n    \"created_at\": 1420391704,\n    \"metadata\": {}\n}]"
+  }
+}

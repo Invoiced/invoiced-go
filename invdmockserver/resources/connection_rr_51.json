@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/events"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "Link": "<http://localhost:8080/events?page=1&per_page=100>; rel=\"self\",\n<http://localhost:8080//events?page=1&per_page=100>; rel=\"first\",\n <http://localhost:8080/events?page=1&per_page=100>; rel=\"previous\",\n<http://localhost:8080/events?page=1&per_page=100>; rel=\"next\",\n <http://localhost:8080/events?page=1&per_page=100>; rel=\"last\"",
+      "X-Total-Count": "2"
+
+    },
+    "body":  "[{\n    \"id\": 1228003,\n    \"type\": \"transaction.created\",\n    \"timestamp\": 1451500772,\n    \"data\": {\n        \"object\": {\n            \"amount\": 55,\n            \"created_at\": 1451500772,\n            \"currency\": \"usd\",\n            \"customer\": 15455,\n            \"date\": 1451500771,\n            \"gateway\": null,\n            \"gateway_id\": null,\n            \"payment_source\": null,\n            \"id\": 212047,\n            \"invoice\": 196539,\n            \"method\": \"other\",\n            \"notes\": null,\n            \"parent_transaction\": null,\n            \"status\": \"succeeded\",\n            \"theme\": null,\n            \"type\": \"payment\",\n            \"pdf_url\": \"https://dundermifflin.invoiced.com/payments/59FHO96idoXFeiBDu1y5Zggg/pdf\",\n            \"metadata\": {}\n        }}\n    },{\n    \"id\": 1228004,\n    \"type\": \"transaction.created\",\n    \"timestamp\": 1451500772,\n    \"data\": {\n        \"object\": {\n            \"amount\": 55,\n            \"created_at\": 1451500772,\n            \"currency\": \"usd\",\n            \"customer\": 15455,\n            \"date\": 1451500771,\n            \"gateway\": null,\n            \"gateway_id\": null,\n            \"payment_source\": null,\n            \"id\": 212047,\n            \"invoice\": 196539,\n            \"method\": \"other\",\n            \"notes\": null,\n            \"parent_transaction\": null,\n            \"status\": \"succeeded\",\n            \"theme\": null,\n            \"type\": \"payment\",\n            \"pdf_url\": \"https://dundermifflin.invoiced.com/payments/59FHO96idoXFeiBDu1y5Zggg/pdf\",\n            \"metadata\": {}\n        }}\n    }]"
+  }
+}

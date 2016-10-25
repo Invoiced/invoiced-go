@@ -5,9 +5,101 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"strings"
 )
+
+const dir = "./resources/"
+
+var rrActionMap *RRActionMap = nil
+
+func GetRRActionMap() *RRActionMap {
+	return rrActionMap
+}
+
+func LoadJsonMappings() {
+
+	rrActionMap = NewRRActionMap()
+
+	files, _ := ioutil.ReadDir(dir)
+
+	jsonFiles := []os.FileInfo{}
+	for _, f := range files {
+		if strings.Contains(f.Name(), ".json") {
+			jsonFiles = append(jsonFiles, f)
+		}
+	}
+
+	for _, jsonFile := range jsonFiles {
+
+		b, err := ioutil.ReadFile(dir + jsonFile.Name())
+
+		if err != nil {
+			panic(err)
+		}
+
+		rrActionObject := new(RRActionObject)
+
+		err = json.Unmarshal(b, rrActionObject)
+
+		if err != nil {
+			fmt.Println(jsonFile.Name())
+			fmt.Println(string(b))
+			panic(err)
+		}
+
+		rrActionMap.Put(rrActionObject)
+
+	}
+
+}
+
+func NewJsonFileServer(ssl bool) (*httptest.Server, error) {
+
+	var server *httptest.Server
+
+	f := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// var bodyMarshalled []byte
+
+		url := r.RequestURI
+		method := r.Method
+
+		body, err := ioutil.ReadAll(r.Body)
+
+		if err != nil {
+			panic(err)
+		}
+
+		rrActionObject, found := rrActionMap.Get(method, url, string(body))
+
+		w.Header().Set("Content-Type", "application/json")
+
+		if found {
+
+			w.WriteHeader(rrActionObject.Response.Status)
+			fmt.Fprintln(w, rrActionObject.Response.Body)
+
+		} else {
+			w.WriteHeader(504)
+			fmt.Fprintln(w, `{"errorMessage":"Resource Invalid"}`)
+
+		}
+
+		// fmt.Fprintln(w, string(bodyMarshalled))
+	})
+
+	if ssl {
+		server = httptest.NewTLSServer(f)
+	} else {
+		server = httptest.NewServer(f)
+	}
+
+	return server, nil
+
+}
 
 func New(code int, body interface{}, dataType string, ssl bool) (*httptest.Server, error) {
 

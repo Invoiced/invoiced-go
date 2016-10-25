@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "PATCH",
+    "url": "/customers/11/line_items/8",
+    "bodyPatterns": [
+      {
+        "equalToJson":"{\"id\":8,\"catalog_item\":\"delivery\",\"type\":\"service\",\"name\":\"Delivery\",\"quantity\":2.0,\"amount\":10.0,\"unit_cost\":10.0,\"discountable\":true,\"taxable\":true}"     
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n  \"id\": 8,\n  \"catalog_item\": \"delivery\",\n  \"type\": \"service\",\n  \"name\": \"Delivery\",\n  \"description\": \"\",\n  \"quantity\": 2,\n  \"unit_cost\": 10,\n  \"amount\": 20,\n  \"discountable\": true,\n  \"discounts\": [],\n  \"taxable\": true,\n  \"taxes\": [],\n  \"metadata\": {}\n}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

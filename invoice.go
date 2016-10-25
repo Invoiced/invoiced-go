@@ -1,6 +1,7 @@
 package invdapi
 
 import (
+	"fmt"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
@@ -214,4 +215,10 @@ func (c *Invoice) ListAttachements() (Files, error) {
 
 	return files, nil
 
+}
+
+func (c *Invoice) String() string {
+	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
+
+	return header + " " + "JSON: " + c.Invoice.String()
 }

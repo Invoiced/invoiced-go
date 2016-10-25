@@ -1,0 +1,13 @@
+ {
+    "request": {
+        "method": "GET",
+        "url": "/customers/198979"
+    },
+    "response": {
+        "status": 401,
+        "body": "{\n    \"type\": \"Unauthorized\",\n    \"message\": \"Incorrect or missing API key\"\n}",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

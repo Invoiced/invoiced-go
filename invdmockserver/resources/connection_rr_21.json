@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/transactions",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"invoice\":44648,\"method\":\"check\",\"gateway_id\":\"1450\",\"amount\":800.0}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n    \"id\": 20939,\n    \"customer\": 15460,\n    \"invoice\": 44648,\n    \"date\": 1410843600,\n    \"type\": \"payment\",\n    \"method\": \"check\",\n    \"status\": \"succeeded\",\n    \"gateway\": null,\n    \"gateway_id\": \"1450\",\n    \"payment_source\": null,\n    \"currency\": \"usd\",\n    \"amount\": 800,\n    \"notes\": null,\n    \"parent_transaction\": null,\n    \"pdf_url\": \"https://dundermifflin.invoiced.com/payments/IZmXbVOPyvfD3GPBmyd6FwXY/pdf\",\n    \"created_at\": 1415228628,\n    \"metadata\": {}\n}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

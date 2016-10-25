@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/transactions"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "Link": "<http://localhost:8080/transactions?page=1&per_page=100>; rel=\"self\",\n<http://localhost:8080/transactions?page=1&per_page=100>; rel=\"first\",\n <http://localhost:8080/transactions?page=1&per_page=100>; rel=\"previous\",\n<http://localhost:8080/transactions?page=1&per_page=100>; rel=\"next\",\n <http://localhost:8080/transactions?page=1&per_page=100>; rel=\"last\"",
+      "X-Total-Count": "2"
+
+    },
+    "body": "[{\n    \"id\": 20939,\n    \"customer\": 15460,\n    \"invoice\": 44648,\n    \"date\": 1410843600,\n    \"type\": \"payment\",\n    \"method\": \"check\",\n    \"status\": \"succeeded\",\n    \"gateway\": null,\n    \"gateway_id\": null,\n    \"payment_source\": null,\n    \"currency\": \"usd\",\n    \"amount\": 800,\n    \"fee\": 0,\n    \"notes\": null,\n    \"parent_transaction\": null,\n    \"pdf_url\": \"https://dundermifflin.invoiced.com/payments/IZmXbVOPyvfD3GPBmyd6FwXY/pdf\",\n    \"created_at\": 1415228628,\n    \"metadata\": {}\n},{\n    \"id\": 20940,\n    \"customer\": 15460,\n    \"invoice\": 44648,\n    \"date\": 1410843600,\n    \"type\": \"payment\",\n    \"method\": \"check\",\n    \"status\": \"succeeded\",\n    \"gateway\": null,\n    \"gateway_id\": null,\n    \"payment_source\": null,\n    \"currency\": \"usd\",\n    \"amount\": 800,\n    \"fee\": 0,\n    \"notes\": null,\n    \"parent_transaction\": null,\n    \"pdf_url\": \"https://dundermifflin.invoiced.com/payments/IZmXbVOPyvfD3GPBmyd6FwXY/pdf\",\n    \"created_at\": 1415228628,\n    \"metadata\": {}\n}]"
+  }
+}

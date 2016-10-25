@@ -151,3 +151,10 @@ func (c *Customer) BundlePaymentSource() error {
 	return nil
 
 }
+
+func (c *Customer) String() string {
+
+	b, _ := json.MarshalIndent(c, "", "    ")
+
+	return string(b)
+}

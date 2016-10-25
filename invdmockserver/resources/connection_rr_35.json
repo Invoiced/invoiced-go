@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "PATCH",
+    "url": "/customers/11/contacts/10403",
+    "bodyPatterns": [
+      {
+        "equalToJson":"{\"id\":10403,\"name\":\"Nancy Talty\",\"email\":\"nancy.talty@example.com\",\"primary\":true,\"address1\":\"507 Grove Avenue\",\"city\":\"Oklahoma City\",\"state\":\"OK\",\"postal_code\":\"73102\",\"created_at\":1463510889}"      
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n  \"id\": 10403,\n  \"name\": \"Nancy Talty\",\n  \"email\": \"nancy.talty@example.com\",\n  \"primary\": true,\n  \"address1\": \"507 Grove Avenue\",\n  \"address2\": null,\n  \"city\": \"Oklahoma City\",\n  \"state\": \"OK\",\n  \"postal_code\": \"73102\",\n  \"country\": null,\n  \"created_at\": 1463510889\n}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

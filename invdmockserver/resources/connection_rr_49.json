@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/customers/11/contacts"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "Link": "<http://localhost:8080//customers/11/contacts?page=1&per_page=100>; rel=\"self\",\n<http://localhost:8080//customers/11/contacts?page=1&per_page=100>; rel=\"first\",\n <http://localhost:8080//customers/11/contacts?page=1&per_page=100>; rel=\"previous\",\n<http://localhost:8080//customers/11/contacts?page=1&per_page=100>; rel=\"next\",\n <http://localhost:8080//customers/11/contacts?page=1&per_page=100>; rel=\"last\"",
+      "X-Total-Count": "2"
+
+    },
+    "body": "[ {\n  \"id\": 10403,\n  \"name\": \"Nancy Talty\",\n  \"email\": \"nancy.talty@example.com\",\n  \"primary\": true,\n  \"address1\": \"507 Grove Avenue\",\n  \"address2\": null,\n  \"city\": \"Oklahoma City\",\n  \"state\": \"OK\",\n  \"postal_code\": \"73102\",\n  \"country\": null,\n  \"created_at\": 1463510889\n},{\n  \"id\": 10404,\n  \"name\": \"Nancy Talty\",\n  \"email\": \"nancy.talty@example.com\",\n  \"primary\": true,\n  \"address1\": \"507 Grove Avenue\",\n  \"address2\": null,\n  \"city\": \"Oklahoma City\",\n  \"state\": \"OK\",\n  \"postal_code\": \"73102\",\n  \"country\": null,\n  \"created_at\": 1463510889\n}]"
+  }
+}

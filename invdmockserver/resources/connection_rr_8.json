@@ -1,0 +1,19 @@
+ {
+    "request": {
+        "method": "POST",
+        "url": "/customers",
+        "bodyPatterns": [
+      {
+        "equalToJson": "{ \"email\":\"billing@acmecorp.com\",\n  \"collection_mode\":\"manual\",\n  \"payment_terms\":\"NET 30\",\n  \"type\":\"company\" \n }"
+      }
+    ]
+
+    },
+    "response": {
+        "status": 400,
+        "body": "{\n    \"type\": \"invalid_request\",\n    \"message\": \"Name missing\",\n    \"param\": \"name\"\n}",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

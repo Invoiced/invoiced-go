@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/customers"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "Link": "<http://localhost:8080/customers?page=1&per_page=100>; rel=\"self\",\n<http://localhost:8080/customers?page=1&per_page=100>; rel=\"first\",\n <http://localhost:8080/customers?page=1&per_page=100>; rel=\"previous\",\n<http://localhost:8080/customers?page=1&per_page=100>; rel=\"next\",\n <http://localhost:8080/customers?page=1&per_page=100>; rel=\"last\"",
+      "X-Total-Count": "2"
+
+    },
+    "body": "[{\n  \"id\": 15444,\n  \"name\": \"Acme\",\n  \"number\": \"CUST-0001\",\n  \"email\": \"billing@acmecorp.com\",\n  \"collection_mode\": \"auto\",\n  \"payment_terms\": null,\n  \"payment_source\": {\n    \"id\": 850,\n    \"object\": \"card\",\n    \"brand\": \"Visa\",\n    \"last4\": \"4242\",\n    \"exp_month\": 2,\n    \"exp_year\": 20,\n    \"funding\": \"credit\"\n  },\n  \"taxes\": [],\n  \"type\": \"company\",\n  \"attention_to\": null,\n  \"address1\": null,\n  \"address2\": null,\n  \"city\": null,\n  \"state\": null,\n  \"postal_code\": null,\n  \"country\": \"US\",\n  \"tax_id\": null,\n  \"phone\": null,\n  \"notes\": null,\n  \"statement_pdf_url\": \"https://dundermifflin.invoiced.com/statements/t3NmhUomra3g3ueSNnbtUgrr/pdf\",\n  \"created_at\": 1415222128,\n  \"metadata\": {}\n},{\n  \"id\": 15445,\n  \"name\": \"Acme\",\n  \"number\": \"CUST-0001\",\n  \"email\": \"billing@acmecorp.com\",\n  \"collection_mode\": \"auto\",\n  \"payment_terms\": null,\n  \"payment_source\": {\n    \"id\": 850,\n    \"object\": \"card\",\n    \"brand\": \"Visa\",\n    \"last4\": \"4242\",\n    \"exp_month\": 2,\n    \"exp_year\": 20,\n    \"funding\": \"credit\"\n  },\n  \"taxes\": [],\n  \"type\": \"company\",\n  \"attention_to\": null,\n  \"address1\": null,\n  \"address2\": null,\n  \"city\": null,\n  \"state\": null,\n  \"postal_code\": null,\n  \"country\": \"US\",\n  \"tax_id\": null,\n  \"phone\": null,\n  \"notes\": null,\n  \"statement_pdf_url\": \"https://dundermifflin.invoiced.com/statements/t3NmhUomra3g3ueSNnbtUgrr/pdf\",\n  \"created_at\": 1415222128,\n  \"metadata\": {}\n}]"
+  }
+}

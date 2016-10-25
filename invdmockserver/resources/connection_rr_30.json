@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/invoices/46225/attachments"
+  },
+  "response": {
+    "status": 200,
+    "body": "[\n  {\n    \"id\": 13,\n    \"file\": {\n      \"id\": 13,\n      \"object\": \"file\",\n      \"name\": \"logo-invoice.png\",\n      \"size\": 6936,\n      \"type\": \"image/png\",\n      \"url\": \"https://invoiced.com/img/logo-invoice.png\",\n      \"created_at\": 1464625855\n    },\n    \"created_at\": 1464625855\n  }\n]",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

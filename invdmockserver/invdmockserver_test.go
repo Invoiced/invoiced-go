@@ -1,6 +1,7 @@
 package invdmockserver
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -13,6 +14,38 @@ type JsonTest struct {
 
 type XmlTest struct {
 	Msg string `xml:"Msg"`
+}
+
+func TestLoadJsonMappings(t *testing.T) {
+
+	LoadJsonMappings()
+
+	if GetRRActionMap() == nil {
+		t.Fatal("GetRRActionMap should not be nil")
+	}
+
+}
+
+func TestJsonFileServer(t *testing.T) {
+	//references connection_rr_52.json
+	LoadJsonMappings()
+
+	server, err := NewJsonFileServer(false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	resp, err := http.Get(server.URL + "/customers/198971")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.StatusCode != 404 {
+		t.Fatal("Status code is incorrect ", resp.StatusCode)
+	}
+
 }
 
 func TestJsonMockServer(t *testing.T) {

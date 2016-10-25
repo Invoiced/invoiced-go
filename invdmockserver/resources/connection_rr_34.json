@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/customers/11/contacts/10403"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n  \"id\": 10403,\n  \"name\": \"Nancy Talty\",\n  \"email\": \"nancy.talty@example.com\",\n  \"primary\": true,\n  \"address1\": null,\n  \"address2\": null,\n  \"city\": null,\n  \"state\": null,\n  \"postal_code\": null,\n  \"country\": null,\n  \"created_at\": 1463510889\n}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

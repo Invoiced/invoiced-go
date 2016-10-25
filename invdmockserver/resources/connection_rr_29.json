@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/invoices/46226"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n  \"id\": 46226,\n  \"customer\": 15446,\n  \"name\": null,\n  \"currency\": \"usd\",\n  \"draft\": false,\n  \"closed\": false,\n  \"paid\": false,\n  \"status\": \"sent\",\n  \"chase\": false,\n  \"next_chase_on\": null,\n  \"collection_mode\": \"auto\",\n  \"attempt_count\": 1,\n  \"next_payment_attempt\": null,\n  \"subscription\": null,\n  \"number\": \"INV-0017\",\n  \"date\": 1416290402,\n  \"due_date\": null,\n  \"payment_terms\": \"Auto-Charged\",\n  \"items\": [\n    {\n      \"id\": 9,\n      \"catalog_item\": null,\n      \"type\": \"product\",\n      \"name\": \"Copy Paper, Case\",\n      \"description\": null,\n      \"quantity\": 5,\n      \"unit_cost\": 45,\n      \"amount\": 225,\n      \"discountable\": true,\n      \"discounts\": [],\n      \"taxable\": true,\n      \"taxes\": [],\n      \"metadata\": {}\n    }\n  ],\n  \"notes\": null,\n  \"subtotal\": 225,\n  \"discounts\": [],\n  \"taxes\": [\n    {\n      \"id\": 20554,\n      \"amount\": 3.85,\n      \"tax_rate\": null\n    }\n  ],\n  \"total\": 228.85,\n  \"balance\": 228.85,\n  \"tags\": [],\n  \"url\": \"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfDasdfGPBmyd6FwXZ\",\n  \"payment_url\": \"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfDasdfGPBmyd6FwXZ/payment\",\n  \"pdf_url\": \"https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfDasdfGPBmyd6FwXZ/pdf\",\n  \"created_at\": 1415229885,\n  \"metadata\": {}\n}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

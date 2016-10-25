@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/customers",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"name\":\"Customer testCreate\",\"email\":\"testcreate@testing.org\"}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n    \"address1\": null,\n    \"address2\": null,\n    \"attention_to\": null,\n    \"city\": null,\n    \"collection_mode\": \"manual\",\n    \"country\": \"US\",\n    \"created_at\": 1475181703,\n    \"email\": \"billing@acmecorp.com\",\n    \"id\": 131211,\n    \"metadata\": {},\n    \"name\": \"Customer testCreate\",\n    \"notes\": null,\n    \"number\": \"0068\",\n    \"payment_source\": null,\n    \"payment_terms\": \"NET 30\",\n    \"phone\": null,\n    \"postal_code\": null,\n    \"state\": null,\n    \"statement_pdf_url\": \"https:\\/\\/testing.invoiced.com\\/statements\\/0tZT3xx8TqLbcNxKl0PcvUQ8\\/pdf\",\n    \"tax_id\": null,\n    \"taxes\": [],\n    \"type\": \"company\"\n}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

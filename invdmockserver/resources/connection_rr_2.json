@@ -1,0 +1,13 @@
+ {
+    "request": {
+        "method": "GET",
+        "url": "/customers/51123223"
+    },
+    "response": {
+        "status": 404,
+        "body": "{\n    \"type\": \"invalid_request\",\n    \"message\": \"Customer was not found: 51123223\"\n}",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

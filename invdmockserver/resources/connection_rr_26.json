@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/customers/11/emails",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"to\":[{\"name\":\"Client\",\"email\":\"client@example.com\"}],\"subject\":\"Statement from Dunder Mifflin, Inc.\",\"message\":\"Dear Client, we have attached your latest account statement. Thank you!\"}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "[\n  {\n    \"id\": \"f45382c6fbc44d44aa7f9a55eb2ce731\",\n    \"state\": \"sent\",\n    \"reject_reason\": null,\n    \"email\": \"client@example.com\",\n    \"template\": \"statement_email\",\n    \"subject\": \"Statement from Dunder Mifflin, Inc.\",\n    \"message\": \"Dear Client, we have attached your latest account statement. Thank you!\",\n    \"opens\": 0,\n    \"opens_detail\": [],\n    \"clicks\": 0,\n    \"clicks_detail\": [],\n    \"created_at\": 1436890047\n  }\n]",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

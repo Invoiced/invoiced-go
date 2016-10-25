@@ -1,0 +1,13 @@
+ {
+    "request": {
+        "method": "PATCH",
+        "url": "/customers/77777"
+    },
+    "response": {
+        "status": 404,
+        "body": "{\n    \"type\": \"invalid_request\",\n    \"message\": \"Customer was not found: 77777\"\n}",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

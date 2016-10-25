@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/invoices/46225/emails",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"to\":[{\"name\":\"Client\",\"email\":\"client@example.com\"}],\"subject\":\"New Invoice from Dunder Mifflin, Inc.: INV-0016\",\"message\":\"Dear Client, a new invoice for $51.15 has been created on your account. [View and Pay Invoice button] Thank you!\"}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "[\n  {\n    \"id\": \"f45382c6fbc44d44aa7f9a55eb2ce731\",\n    \"state\": \"sent\",\n    \"reject_reason\": null,\n    \"email\": \"client@example.com\",\n    \"template\": \"new_invoice_email\",\n    \"subject\": \"New Invoice from Dunder Mifflin, Inc.: INV-0016\",\n    \"message\": \"Dear Client, a new invoice for $51.15 has been created on your account. [View and Pay Invoice button] Thank you!\",\n    \"opens\": 0,\n    \"opens_detail\": [],\n    \"clicks\": 0,\n    \"clicks_detail\": [],\n    \"created_at\": 1436890047\n  }\n]",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

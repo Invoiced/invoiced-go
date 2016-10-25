@@ -1,5 +1,7 @@
 package invdendpoint
 
+import "encoding/json"
+
 // type Invoices struct {
 // 	Invoices []Invoice `json:"invoices"`
 // }
@@ -48,4 +50,11 @@ type Invoice struct {
 	MetaData   map[string]interface{} `json:"metadata,omitempty"`    //A hash of key/value pairs that can store additional information about this object.
 
 	// add disabled payment methods
+}
+
+func (i *Invoice) String() string {
+
+	b, _ := json.MarshalIndent(i, "", "    ")
+
+	return string(b)
 }

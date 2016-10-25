@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "PATCH",
+    "url": "/subscriptions/595",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"id\":595,\"customer\":15444,\"plan\":\"pro\",\"start_date\":1420391704,\"quantity\":1,\"period_start\":1446657304,\"period_end\":1449249304,\"status\":\"active\",\"addons\":[{\"id\":3,\"catalog_item\":\"ipad-license\",\"quantity\":11,\"created_at\":1420391704}],\"url\":\"https:\/\/dundermifflin.invoiced.com\/subscriptions\/o2mAd2wWVfYy16XZto7xHwXX\",\"created_at\":1420391704}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{\r\n    \"id\": 595,\r\n    \"customer\": 15444,\r\n    \"plan\": \"pro\",\r\n    \"cycles\": null,\r\n    \"quantity\": 1,\r\n    \"start_date\": 1420391704,\r\n    \"period_start\": 1446657304,\r\n    \"period_end\": 1449249304,\r\n    \"cancel_at_period_end\": false,\r\n    \"canceled_at\": null,\r\n    \"status\": \"active\",\r\n    \"addons\": [\r\n        {\r\n            \"id\": 3,\r\n            \"catalog_item\": \"ipad-license\",\r\n            \"quantity\": 11,\r\n            \"created_at\": 1420391704\r\n        }\r\n    ],\r\n    \"discounts\": [],\r\n    \"taxes\": [],\r\n    \"url\": \"https:\/\/dundermifflin.invoiced.com\/subscriptions\/o2mAd2wWVfYy16XZto7xHwXX\",\r\n    \"created_at\": 1420391704,\r\n    \"metadata\": {}\r\n}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

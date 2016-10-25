@@ -1,0 +1,12 @@
+ {
+    "request": {
+        "method": "DELETE",
+        "urlPattern": "/customers/21121"
+    },
+    "response": {
+        "status": 404,
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

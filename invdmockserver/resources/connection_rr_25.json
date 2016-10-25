@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/customers/11/balance"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n  \"available_credits\": 50,\n  \"history\": [\n    {\n      \"timestamp\": 1464041624,\n      \"balance\": 50\n    },\n    {\n      \"timestamp\": 1464040550,\n      \"balance\": 100\n    }\n  ],\n  \"past_due\": false,\n  \"total_outstanding\": 470\n}"
+  }
+}

@@ -1,0 +1,13 @@
+ {
+    "request": {
+        "method": "GET",
+        "url": "/customers/198980"
+    },
+    "response": {
+        "status": 500,
+        "body": "{\n    \"type\": \"Internal Server Error\",\n    \"message\": \"There was a problem on our end\"\n}",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}
