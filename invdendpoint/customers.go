@@ -48,7 +48,7 @@ type CardObject struct {
 	Id       int64  `json:"id,omitempty"`        //The card’s unique ID
 	Object   string `json:"object,omitempty"`    //card
 	Brand    string `json:"brand,omitempty"`     //Card brand
-	Last4    int    `json:"last4,omitempty"`     //Last 4 digits of card
+	Last4    string `json:"last4,omitempty"`     //Last 4 digits of card
 	ExpMonth int    `json:"exp_month,omitempty"` //Expiry month
 	ExpYear  int    `json:"exp_year,omitempty"`  //Expiry year
 	Funding  string `json:"funding,omitempty"`   //Funding instrument, can be credit, debit, prepaid, or unknown
@@ -58,8 +58,8 @@ type BankAccountObject struct {
 	Id            int64  `json:"id,omitempty"`             //The bank account’s unique ID
 	Object        string `json:"object,omitempty"`         //bank_account
 	BankName      string `json:"bank_name,omitempty"`      //Bank name
-	Last4         int    `json:"last4,omitempty"`          //Last 4 digits of bank account
-	RoutingNumber int64  `json:"routing_number,omitempty"` //Bank routing number
+	Last4         string `json:"last4,omitempty"`          //Last 4 digits of bank account
+	RoutingNumber string `json:"routing_number,omitempty"` //Bank routing number
 	Verified      bool   `json:"verified,omitempty"`       //Whether the bank account has been verified with instant verification or micro-deposits
 	Currency      string `json:"currency,omitempty"`       //3-letter ISO code
 }

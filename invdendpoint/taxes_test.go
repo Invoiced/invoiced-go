@@ -20,4 +20,12 @@ func TestUnMarshalTaxObject(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if so.Id != 20554 {
+		t.Fatal("Item 1 has incorrect id")
+	}
+
+	if so.Amount != 3.85 {
+		t.Fatal("Item 1 has incorrect type")
+	}
+
 }

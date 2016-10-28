@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestUnMarshalCustomerContactObject(t *testing.T) {
+func TestUnMarshalContactObject(t *testing.T) {
 	s := `{
   "id": 10403,
   "name": "Nancy Talty",
@@ -26,6 +26,26 @@ func TestUnMarshalCustomerContactObject(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if so.Id != 10403 {
+		t.Fatal("Id is incorrect")
+	}
+
+	if so.Name != "Nancy Talty" {
+		t.Fatal("Name is incorrect")
+	}
+
+	if !so.Primary {
+		t.Fatal("Primary should be true")
+	}
+
+	if so.Email != "nancy.talty@example.com" {
+		t.Fatal("Primary should be true")
+	}
+
+	if so.CreatedAt != 1463510889 {
+		t.Fatal("Created At is incorrect")
 	}
 
 }

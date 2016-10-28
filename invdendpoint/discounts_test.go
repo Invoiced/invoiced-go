@@ -21,4 +21,12 @@ func TestUnMarshalDiscountObject(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if so.Id != 20553 {
+		t.Fatal("Discount id has incorrect id")
+	}
+
+	if so.Amount != 5 {
+		t.Fatal("Amount is incorrect")
+	}
+
 }

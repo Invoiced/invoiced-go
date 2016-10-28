@@ -34,4 +34,40 @@ func TestUnMarshalTransactionObject(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if so.Id != 20939 {
+		t.Fatal("Transaction has incorrect periodstart")
+	}
+
+	if so.Customer != 15460 {
+		t.Fatal("Transaction has incorrect periodstart")
+	}
+
+	if so.Invoice != 44648 {
+		t.Fatal("Transaction has incorrect invoice")
+	}
+
+	if so.Date != 1410843600 {
+		t.Fatal("Transaction has incorrect invoice")
+	}
+
+	if so.Type != "payment" {
+		t.Fatal("Transaction has incorrect type")
+	}
+
+	if so.Currency != "usd" {
+		t.Fatal("Transaction has incorrect currency")
+	}
+
+	if so.Amount != 800 {
+		t.Fatal("Transaction has incorrect amount")
+	}
+
+	if so.PdfUrl != "https://dundermifflin.invoiced.com/payments/IZmXbVOPyvfD3GPBmyd6FwXY/pdf" {
+		t.Fatal("Transaction has incorrect pdf")
+	}
+
+	if so.CreatedAt != 1415228628 {
+		t.Fatal("Transaction has incorrect createdAt")
+	}
+
 }

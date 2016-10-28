@@ -39,4 +39,62 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if so.Id != 595 {
+		t.Fatal("Subscription has incorrect id")
+	}
+
+	if so.Customer != 15444 {
+		t.Fatal("Subscription has incorrect type")
+	}
+
+	if so.Plan != "starter" {
+		t.Fatal("Subscription has incorrect plan")
+	}
+
+	if so.Quantity != 1 {
+		t.Fatal("Subscription has incorrect quantity")
+	}
+
+	if so.StartDate != 1420391704 {
+		t.Fatal("Subscription has incorrect quantity")
+	}
+
+	if so.PeriodStart != 1446657304 {
+		t.Fatal("Subscription has incorrect periodstart")
+	}
+
+	if so.PeriodEnd != 1449249304 {
+		t.Fatal("Subscription has incorrect periodstart")
+	}
+
+	if so.Status != "active" {
+		t.Fatal("Subscription has incorrect status")
+	}
+
+	if so.Addons[0].Id != 3 {
+		t.Fatal("Subscription Addon 0 has incorrect status")
+	}
+
+	if so.Addons[0].CatalogItem != "ipad-license" {
+		t.Fatal("Subscription Addon CatalogItem 0  has incorrect status")
+	}
+
+	if so.Addons[0].Quantity != 11 {
+		t.Fatal("Subscription Addon Quantity 0  has incorrect status")
+	}
+
+	if so.Addons[0].CreatedAt != 1420391704 {
+		t.Fatal("Quantity Addon CreatedAT has incorrect status")
+	}
+
+	if so.Url != "https://dundermifflin.invoiced.com/subscriptions/o2mAd2wWVfYy16XZto7xHwXX" {
+		t.Fatal("Url is incorrect")
+
+	}
+
+	if so.CreatedAt != 1420391704 {
+		t.Fatal("Subscription CreatedAt is incorrect")
+
+	}
+
 }

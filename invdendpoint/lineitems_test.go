@@ -3,8 +3,6 @@ package invdendpoint
 import (
 	"encoding/json"
 	"testing"
-
-	"log"
 )
 
 func TestUnMarshalLineItemObject(t *testing.T) {
@@ -24,7 +22,6 @@ func TestUnMarshalLineItemObject(t *testing.T) {
   "metadata": {}
 }`
 
-	log.Println(s)
 	so := new(LineItem)
 
 	err := json.Unmarshal([]byte(s), so)
@@ -33,10 +30,32 @@ func TestUnMarshalLineItemObject(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	log.Println(so)
+	if so.Id != 8 {
+		t.Fatal("Item 1 has incorrect id")
+	}
 
-	b, err := json.Marshal(so)
+	if so.Type != "service" {
+		t.Fatal("Item 1 has incorrect type")
+	}
 
-	log.Println(string(b))
+	if so.Name != "Delivery" {
+		t.Fatal("Item 0 has incorrect name")
+	}
+
+	if so.Quantity != 1.0 {
+		t.Fatal("Item 1 has incorrect quantity")
+	}
+
+	if so.UnitCost != 10 {
+		t.Fatal("Item 1 has incorrect unit cost")
+	}
+
+	if so.Amount != 10 {
+		t.Fatal("Item 1 has incorrect amount")
+	}
+
+	if !so.Taxable {
+		t.Fatal("Item 1 has incorrect taxable")
+	}
 
 }
