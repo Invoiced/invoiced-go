@@ -39,7 +39,7 @@ func NewRRActionMap() *RRActionMap {
 
 }
 
-func (r *RRActionMap) Put(rrActionObject *RRActionObject) {
+func (r *RRActionMap) Put(rrActionObject *RRActionObject) error {
 
 	method := rrActionObject.Request.Method
 	url := rrActionObject.Request.Url
@@ -72,11 +72,11 @@ func (r *RRActionMap) Put(rrActionObject *RRActionObject) {
 			equal, err := invdutil.JsonEqual(jsonBody1, jsonBody2)
 
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			if equal {
-				return
+				return nil
 			}
 
 		}
@@ -85,11 +85,11 @@ func (r *RRActionMap) Put(rrActionObject *RRActionObject) {
 
 	}
 
-	return
+	return nil
 
 }
 
-func (r *RRActionMap) Get(method, url, body string) (*RRActionObject, bool) {
+func (r *RRActionMap) Get(method, url, body string) (*RRActionObject, bool, error) {
 
 	if len(body) == 0 {
 		body = "{}"
@@ -98,13 +98,13 @@ func (r *RRActionMap) Get(method, url, body string) (*RRActionObject, bool) {
 	_, found0 := r.store[url]
 
 	if !found0 {
-		return nil, false
+		return nil, false, nil
 	}
 
 	rrActionObjects, found := r.store[url][method]
 
 	if !found {
-		return nil, false
+		return nil, false, nil
 	}
 
 	for _, rrActionObject := range rrActionObjects {
@@ -118,15 +118,15 @@ func (r *RRActionMap) Get(method, url, body string) (*RRActionObject, bool) {
 		equal, err := invdutil.JsonEqual(jsonBody1, jsonBody2)
 
 		if err != nil {
-			panic(err)
+			return nil, false, err
 		}
 
 		if equal {
-			return rrActionObject, true
+			return rrActionObject, true, nil
 		}
 
 	}
 
-	return nil, false
+	return nil, false, nil
 
 }

@@ -8,16 +8,16 @@ type YamlConfigFile struct {
 	Apikey string
 }
 
-func ReadAPIKeyFromYaml(path string) string {
+func ReadAPIKeyFromYaml(path string) (string, error) {
 	filename, err := filepath.Abs(path)
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	yamlFile, err := ioutil.ReadFile(filename)
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	var yamlConfig YamlConfigFile
@@ -25,9 +25,9 @@ func ReadAPIKeyFromYaml(path string) string {
 	err = yaml.Unmarshal(yamlFile, &yamlConfig)
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return yamlConfig.Apikey
+	return yamlConfig.Apikey, nil
 
 }

@@ -68,7 +68,11 @@ func TestRRActionMap(t *testing.T) {
 
 	rrActionMap.Put(rrActionObject1)
 
-	rrActionObject2, found := rrActionMap.Get("POST", "/customers", "{ \n  \"collection_mode\":\"manual\",\n  \"payment_terms\":\"NET 30\",\n  \"type\":\"company\" \n,\"email\":\"billing@acmecorp.com\" }")
+	rrActionObject2, found, err := rrActionMap.Get("POST", "/customers", "{ \n  \"collection_mode\":\"manual\",\n  \"payment_terms\":\"NET 30\",\n  \"type\":\"company\" \n,\"email\":\"billing@acmecorp.com\" }")
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if !found {
 		t.Fatal("rrActionObject should have been found")
@@ -102,7 +106,11 @@ func TestRRActionMap(t *testing.T) {
 
 	rrActionMap.Put(rrActionObject3)
 
-	rrActionObject4, found := rrActionMap.Get("POST", "/customers", "")
+	rrActionObject4, found, err := rrActionMap.Get("POST", "/customers", "")
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if !found {
 		t.Fatal("rrActionObject should have been found")

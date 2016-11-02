@@ -23,7 +23,7 @@ func TestCustomerMetaData(t *testing.T) {
 	b, err := json.Marshal(mockCustomer)
 
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	if string(b) != `{"id":34,"metadata":{"integration_name":"QBO"}}` {

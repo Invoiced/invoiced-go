@@ -20,7 +20,7 @@ func GetRRActionMap() *RRActionMap {
 	return rrActionMap
 }
 
-func LoadJsonMappings() {
+func LoadJsonMappings() error {
 
 	rrActionMap = NewRRActionMap()
 
@@ -38,7 +38,7 @@ func LoadJsonMappings() {
 		b, err := ioutil.ReadFile(dir + jsonFile.Name())
 
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		rrActionObject := new(RRActionObject)
@@ -48,12 +48,14 @@ func LoadJsonMappings() {
 		if err != nil {
 			fmt.Println(jsonFile.Name())
 			fmt.Println(string(b))
-			panic(err)
+			return err
 		}
 
 		rrActionMap.Put(rrActionObject)
 
 	}
+
+	return nil
 
 }
 
@@ -67,15 +69,23 @@ func NewJsonFileServer(ssl bool) (*httptest.Server, error) {
 		url := r.RequestURI
 		method := r.Method
 
+		w.Header().Set("Content-Type", "application/json")
+
 		body, err := ioutil.ReadAll(r.Body)
 
 		if err != nil {
-			panic(err)
+			w.WriteHeader(500)
+			fmt.Fprintln(w, err.Error())
+			return
 		}
 
-		rrActionObject, found := rrActionMap.Get(method, url, string(body))
+		rrActionObject, found, err := rrActionMap.Get(method, url, string(body))
 
-		w.Header().Set("Content-Type", "application/json")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintln(w, err.Error())
+			return
+		}
 
 		if found {
 

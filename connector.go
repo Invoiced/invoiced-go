@@ -17,7 +17,7 @@ const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
 const InvoicedTokenString = "invoicedToken"
 
-const version = "1.4.0"
+const version = "2.0.0"
 
 func Version() string {
 	return version
@@ -53,8 +53,9 @@ func checkStatusForError(status int, r io.Reader) error {
 	}
 
 	body, err := ioutil.ReadAll(r)
+
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	apiError := new(APIError)
@@ -70,19 +71,21 @@ func checkStatusForError(status int, r io.Reader) error {
 
 }
 
-func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) {
+func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) error {
 
 	body, err := ioutil.ReadAll(respBody)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	err = json.Unmarshal(body, endPointData)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 
 }
 
@@ -181,22 +184,23 @@ func (c *Connection) setItemsPerRequest(items int) {
 	c.itemsPerRequest = items
 }
 
-func (c *Connection) get(endPoint string) *http.Response {
+func (c *Connection) get(endPoint string) (*http.Response, error) {
 
 	req, err := http.NewRequest("GET", endPoint, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
 	req.SetBasicAuth(c.key, "")
 
 	resp, err := c.client.Do(req)
 
-	if err != nil {
-		panic(err)
-	}
-
-	return resp
+	return resp, err
 
 }
 
-func (c *Connection) post(endPoint string, body io.Reader) *http.Response {
+func (c *Connection) post(endPoint string, body io.Reader) (*http.Response, error) {
 
 	req, err := http.NewRequest("POST", endPoint, body)
 	req.SetBasicAuth(c.key, "")
@@ -204,15 +208,11 @@ func (c *Connection) post(endPoint string, body io.Reader) *http.Response {
 
 	resp, err := c.client.Do(req)
 
-	if err != nil {
-		panic(err)
-	}
-
-	return resp
+	return resp, err
 
 }
 
-func (c *Connection) patch(endPoint string, body io.Reader) *http.Response {
+func (c *Connection) patch(endPoint string, body io.Reader) (*http.Response, error) {
 
 	req, err := http.NewRequest("PATCH", endPoint, body)
 	req.SetBasicAuth(c.key, "")
@@ -220,27 +220,24 @@ func (c *Connection) patch(endPoint string, body io.Reader) *http.Response {
 
 	resp, err := c.client.Do(req)
 
-	if err != nil {
-		panic(err)
-	}
-
-	return resp
+	return resp, err
 
 }
 
-func (c *Connection) deleteRequest(endPoint string) *http.Response {
+func (c *Connection) deleteRequest(endPoint string) (*http.Response, error) {
 
 	req, err := http.NewRequest("DELETE", endPoint, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
 	req.SetBasicAuth(c.key, "")
 	req.Header.Set("Content-Type", requestType)
 
 	resp, err := c.client.Do(req)
 
-	if err != nil {
-		panic(err)
-	}
-
-	return resp
+	return resp, err
 
 }
 
@@ -249,12 +246,16 @@ func (c *Connection) create(endPoint string, requestData interface{}, responseDa
 	b, err := json.Marshal(requestData)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	body := bytes.NewBuffer(b)
 
-	resp := c.post(endPoint, body)
+	resp, err := c.post(endPoint, body)
+
+	if err != nil {
+		return err
+	}
 
 	apiError := checkStatusForError(resp.StatusCode, resp.Body)
 
@@ -262,7 +263,11 @@ func (c *Connection) create(endPoint string, requestData interface{}, responseDa
 		return apiError
 	}
 
-	pushDataIntoStruct(responseData, resp.Body)
+	err = pushDataIntoStruct(responseData, resp.Body)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 
@@ -270,7 +275,11 @@ func (c *Connection) create(endPoint string, requestData interface{}, responseDa
 
 func (c *Connection) delete(endPoint string) error {
 
-	resp := c.deleteRequest(endPoint)
+	resp, err := c.deleteRequest(endPoint)
+
+	if err != nil {
+		return err
+	}
 
 	apiError := checkStatusForError(resp.StatusCode, resp.Body)
 
@@ -287,12 +296,16 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 	b, err := json.Marshal(requestData)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	body := bytes.NewBuffer(b)
 
-	resp := c.patch(endPoint, body)
+	resp, err := c.patch(endPoint, body)
+
+	if err != nil {
+		return err
+	}
 
 	apiError := checkStatusForError(resp.StatusCode, resp.Body)
 
@@ -307,7 +320,11 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 }
 
 func (c *Connection) count(endPoint string) (int64, error) {
-	resp := c.get(endPoint)
+	resp, err := c.get(endPoint)
+
+	if err != nil {
+		return -1, err
+	}
 
 	defer resp.Body.Close()
 
@@ -322,7 +339,7 @@ func (c *Connection) count(endPoint string) (int64, error) {
 	i, err := strconv.ParseInt(s, 10, 64)
 
 	if err != nil {
-		panic(err)
+		return -1, err
 	}
 
 	return i, nil
@@ -333,7 +350,11 @@ func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface
 
 	nextURL := ""
 
-	resp := c.get(endPoint)
+	resp, err := c.get(endPoint)
+
+	if err != nil {
+		return "", err
+	}
 
 	defer resp.Body.Close()
 

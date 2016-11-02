@@ -1,7 +1,6 @@
 package invdmockserver
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"

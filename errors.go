@@ -19,7 +19,7 @@ func (apiErr *APIError) Error() string {
 	b, err := json.Marshal(apiErr)
 
 	if err != nil {
-		panic(err)
+		return ""
 	}
 
 	return string(b)
