@@ -5,6 +5,8 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
+const defaultExpandInvoice = "items.catalog_item"
+
 type Invoice struct {
 	*Connection
 	*invdendpoint.Invoice
@@ -83,6 +85,12 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
 	}
 
+	expandedValues := invdendpoint.NewExpand()
+
+	expandedValues.Set(defaultExpandInvoice)
+
+	endPoint = addExpandToEndPoint(endPoint, expandedValues)
+
 	custEndPoint := new(invdendpoint.Invoice)
 
 	invoice := &Invoice{c.Connection, custEndPoint, c.IncludeUpdatedAt}
@@ -104,6 +112,12 @@ func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) 
 	if c.IncludeUpdatedAt {
 		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
 	}
+
+	expandedValues := invdendpoint.NewExpand()
+
+	expandedValues.Set(defaultExpandInvoice)
+
+	endPoint = addExpandToEndPoint(endPoint, expandedValues)
 
 	invoices := make(Invoices, 0)
 
@@ -137,6 +151,12 @@ func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (In
 	if c.IncludeUpdatedAt {
 		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
 	}
+
+	expandedValues := invdendpoint.NewExpand()
+
+	expandedValues.Set(defaultExpandInvoice)
+
+	endPoint = addExpandToEndPoint(endPoint, expandedValues)
 
 	invoices := make(Invoices, 0)
 

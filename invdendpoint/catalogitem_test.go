@@ -5,10 +5,8 @@ import (
 	"testing"
 )
 
-func TestUnMarshalSubscriptionAddonObject(t *testing.T) {
+func TestUnMarshalCatalogItemObject(t *testing.T) {
 	s := `{
-    "id": 3,
-    "catalog_item": {
   "id": "delivery",
   "object": "catalog_item",
   "name": "Delivery",
@@ -22,12 +20,9 @@ func TestUnMarshalSubscriptionAddonObject(t *testing.T) {
   "unit_cost": 10,
   "created_at": 1477327516,
   "metadata": {}
-},
-    "quantity": 11,
-    "created_at": 1420391704
 }`
 
-	so := new(SubscriptionAddon)
+	so := new(CatalogItem)
 
 	err := json.Unmarshal([]byte(s), so)
 

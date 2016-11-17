@@ -2,7 +2,7 @@ package invdendpoint
 
 type LineItem struct {
 	Id           int64                  `json:"id,omitempty"`           //The line item’s unique ID
-	CatalogItem  string                 `json:"catalog_item,omitempty"` //Optional Catalog Item ID. Fills the line item with the name and pricing of the Catalog Item.
+	CatalogItem  CatalogItem            `json:"catalog_item,omitempty"` //Optional Catalog Item ID. Fills the line item with the name and pricing of the Catalog Item.
 	Type         string                 `json:"type,omitempty"`         //Optional line item type. Used to group line items by type in reporting
 	Name         string                 `json:"name,omitempty"`         //Title
 	Description  string                 `json:"description,omitempty"`  //Optional description

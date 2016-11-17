@@ -1,5 +1,9 @@
 package invdendpoint
 
+import (
+	"encoding/json"
+)
+
 const SubscriptionsEndPoint = "/subscriptions"
 
 type Subscriptions []Subscription
@@ -20,4 +24,11 @@ type Subscription struct {
 	Url         string                 `json:"url,omitempty"`          //URL to manage the subscription in the billing portal
 	CreatedAt   int64                  `json:"created_at,omitempty"`   //Timestamp when created
 	MetaData    map[string]interface{} `json:"metadata,omitempty"`     //A hash of key/value pairs that can store additional information about this object.
+}
+
+func (s *Subscription) String() string {
+
+	b, _ := json.MarshalIndent(s, "", "    ")
+
+	return string(b)
 }

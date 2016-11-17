@@ -17,7 +17,7 @@ const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
 const InvoicedTokenString = "invoicedToken"
 
-const version = "2.0.0"
+const version = "3.0.0"
 
 func Version() string {
 	return version
@@ -165,6 +165,18 @@ func addIncludeToEndPoint(endpoint string, includeValue string) string {
 		finalEndpoint = endpoint + "&" + "include=" + includeValue
 	} else {
 		finalEndpoint = endpoint + "?" + "include=" + includeValue
+	}
+
+	return finalEndpoint
+
+}
+
+func addExpandToEndPoint(endpoint string, expandedValues *invdendpoint.Expand) string {
+	finalEndpoint := ""
+	if strings.Contains(endpoint, "?") {
+		finalEndpoint = endpoint + "&" + "expand=" + expandedValues.String()
+	} else {
+		finalEndpoint = endpoint + "?" + "expand=" + expandedValues.String()
 	}
 
 	return finalEndpoint
