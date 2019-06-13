@@ -54,7 +54,7 @@ func (f *Filter) String() string {
 	uValues := url.Values{}
 	orderedKeys := []string{}
 
-	for key, _ := range f.params {
+	for key := range f.params {
 		orderedKeys = append(orderedKeys, key)
 	}
 

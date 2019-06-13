@@ -43,7 +43,7 @@ func (s *Sort) String() string {
 	orderString := ""
 	orderedKeys := []string{}
 
-	for column, _ := range s.orders {
+	for column := range s.orders {
 		orderedKeys = append(orderedKeys, column)
 	}
 

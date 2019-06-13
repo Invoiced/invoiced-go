@@ -66,7 +66,11 @@ func TestRRActionMap(t *testing.T) {
 
 	rrActionMap := NewRRActionMap()
 
-	rrActionMap.Put(rrActionObject1)
+	err = rrActionMap.Put(rrActionObject1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	rrActionObject2, found, err := rrActionMap.Get("POST", "/customers", "{ \n  \"collection_mode\":\"manual\",\n  \"payment_terms\":\"NET 30\",\n  \"type\":\"company\" \n,\"email\":\"billing@acmecorp.com\" }")
 
@@ -104,7 +108,11 @@ func TestRRActionMap(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	rrActionMap.Put(rrActionObject3)
+	err = rrActionMap.Put(rrActionObject3)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	rrActionObject4, found, err := rrActionMap.Get("POST", "/customers", "")
 

@@ -160,8 +160,17 @@ func (c *Transaction) ListSuccessfulByInvoiceID(invoiceID int64) (Transactions, 
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
 	filter := invdendpoint.NewFilter()
-	filter.Set("invoice", invoiceIDString)
-	filter.Set("status", "succeeded")
+	err := filter.Set("invoice", invoiceIDString)
+
+	if err != nil {
+		return nil,err
+	}
+
+	err = filter.Set("status", "succeeded")
+
+	if err != nil {
+		return nil,err
+	}
 
 	transactions, apiError := c.ListAll(filter, nil)
 
@@ -182,9 +191,18 @@ func (c *Transaction) ListSuccessfulChargesByInvoiceID(invoiceID int64) (Transac
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
 	filter := invdendpoint.NewFilter()
-	filter.Set("invoice", invoiceIDString)
-	filter.Set("status", "succeeded")
-	filter.Set("type", "charge")
+	err := filter.Set("invoice", invoiceIDString)
+	if err != nil {
+		return nil, err
+	}
+	err = filter.Set("status", "succeeded")
+	if err != nil {
+		return nil, err
+	}
+	err = filter.Set("type", "charge")
+	if err != nil {
+		return nil, err
+	}
 
 	transactions, apiError := c.ListAll(filter, nil)
 
@@ -205,9 +223,23 @@ func (c *Transaction) ListSuccessfulRefundsByInvoiceID(invoiceID int64) (Transac
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
 	filter := invdendpoint.NewFilter()
-	filter.Set("invoice", invoiceIDString)
-	filter.Set("status", "succeeded")
-	filter.Set("type", "refund")
+	err  := filter.Set("invoice", invoiceIDString)
+
+	if err != nil {
+		return nil, err
+	}
+	
+	err = filter.Set("status", "succeeded")
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = filter.Set("type", "refund")
+
+	if err != nil {
+		return nil, err
+	}
 
 	transactions, apiError := c.ListAll(filter, nil)
 
@@ -228,9 +260,22 @@ func (c *Transaction) ListSuccessfulPaymentsByInvoiceID(invoiceID int64) (Transa
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
 	filter := invdendpoint.NewFilter()
-	filter.Set("invoice", invoiceIDString)
-	filter.Set("status", "succeeded")
-	filter.Set("type", "payment")
+	err := filter.Set("invoice", invoiceIDString)
+
+	if err != nil {
+		return nil, err
+	}
+	err = filter.Set("status", "succeeded")
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = filter.Set("type", "payment")
+
+	if err != nil {
+		return nil, err
+	}
 
 	transactions, apiError := c.ListAll(filter, nil)
 

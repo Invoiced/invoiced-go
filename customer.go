@@ -147,7 +147,12 @@ func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (C
 func (c *Customer) ListCustomersByName(customerName string) (Customers, error) {
 
 	filter := invdendpoint.NewFilter()
-	filter.Set("name", customerName)
+
+	err := filter.Set("name", customerName)
+
+	if err != nil {
+		return nil, err
+	}
 
 	customers, apiError := c.ListAll(filter, nil)
 
@@ -162,7 +167,11 @@ func (c *Customer) ListCustomersByName(customerName string) (Customers, error) {
 func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error) {
 
 	filter := invdendpoint.NewFilter()
-	filter.Set("number", customerNumber)
+	err := filter.Set("number", customerNumber)
+
+	if err != nil {
+		return nil, err
+	}
 
 	customers, apiError := c.ListAll(filter, nil)
 

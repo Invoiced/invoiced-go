@@ -1,15 +1,11 @@
 package invdapi
 
-import "testing"
+import (
+	"testing"
+)
 
 import "github.com/Invoiced/invoiced-go/invdendpoint"
 
-var apikey string
-
-// func init() {
-
-// 	apikey = invdutil.ReadAPIKeyFromYaml("invdapikey.yaml")
-// }
 
 func TestParseRawRelation(t *testing.T) {
 	s := "          rel=\"       self     \"                           "
@@ -31,8 +27,17 @@ func TestParseRawURL(t *testing.T) {
 
 func TestAddFilterSortToEndPointWithBothValues(t *testing.T) {
 	f := invdendpoint.NewFilter()
-	f.Set("id", 121123)
-	f.Set("address", 121123)
+	err := f.Set("id", 121123)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = f.Set("address", 121123)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	s := invdendpoint.NewSort()
 	s.Set("name", invdendpoint.ASC)
@@ -72,8 +77,18 @@ func TestAddFilterSortToEndPointWithOnlySort(t *testing.T) {
 
 func TestAddFilterSortToEndPointWithOnlyFilter(t *testing.T) {
 	f := invdendpoint.NewFilter()
-	f.Set("id", 121123)
-	f.Set("address", 121123)
+
+	err := f.Set("id", 121123)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = f.Set("address", 121123)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	endPoint := "https://www.do.com"
 

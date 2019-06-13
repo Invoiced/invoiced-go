@@ -51,7 +51,11 @@ func LoadJsonMappings() error {
 			return err
 		}
 
-		rrActionMap.Put(rrActionObject)
+		err = rrActionMap.Put(rrActionObject)
+
+		if err != nil {
+			return nil
+		}
 
 	}
 

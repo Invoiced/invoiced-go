@@ -178,7 +178,11 @@ func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (In
 func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 
 	filter := invdendpoint.NewFilter()
-	filter.Set("number", invoiceNumber)
+	err := filter.Set("number", invoiceNumber)
+
+	if err != nil {
+		return nil, err
+	}
 
 	invoices, apiError := c.ListAll(filter, nil)
 

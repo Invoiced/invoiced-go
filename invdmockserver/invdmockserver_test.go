@@ -17,7 +17,11 @@ type XmlTest struct {
 
 func TestLoadJsonMappings(t *testing.T) {
 
-	LoadJsonMappings()
+	err := LoadJsonMappings()
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if GetRRActionMap() == nil {
 		t.Fatal("GetRRActionMap should not be nil")
@@ -27,7 +31,11 @@ func TestLoadJsonMappings(t *testing.T) {
 
 func TestJsonFileServer(t *testing.T) {
 	//references connection_rr_52.json
-	LoadJsonMappings()
+	err := LoadJsonMappings()
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	server, err := NewJsonFileServer(false)
 	if err != nil {

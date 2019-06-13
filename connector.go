@@ -17,7 +17,7 @@ const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
 const InvoicedTokenString = "invoicedToken"
 
-const version = "3.0.0"
+const version = "3.2.1"
 
 func Version() string {
 	return version
@@ -25,7 +25,6 @@ func Version() string {
 
 type Connection struct {
 	key             string
-	itemsPerRequest int
 	client          *http.Client
 	url             string
 }
@@ -122,10 +121,11 @@ func parseRawRelation(s string) string {
 
 func parseRawURL(s string) string {
 	//<https://api.invoiced.com/invoices?page=1>
+	trimmed := strings.TrimSpace(s)
 
-	trimmed := strings.Trim(s, " < ")
+	trimmed = strings.Trim(trimmed, "<")
 
-	trimmed = strings.Trim(trimmed, " > ")
+	trimmed = strings.Trim(trimmed, ">")
 
 	trimmed = strings.TrimSpace(trimmed)
 
@@ -192,9 +192,6 @@ func (c *Connection) makeEndPointURL(endPoint string) string {
 	return c.url + endPoint
 }
 
-func (c *Connection) setItemsPerRequest(items int) {
-	c.itemsPerRequest = items
-}
 
 func (c *Connection) get(endPoint string) (*http.Response, error) {
 
@@ -215,6 +212,11 @@ func (c *Connection) get(endPoint string) (*http.Response, error) {
 func (c *Connection) post(endPoint string, body io.Reader) (*http.Response, error) {
 
 	req, err := http.NewRequest("POST", endPoint, body)
+
+	if err != nil {
+		return nil, err
+	}
+
 	req.SetBasicAuth(c.key, "")
 	req.Header.Set("Content-Type", requestType)
 
@@ -227,6 +229,11 @@ func (c *Connection) post(endPoint string, body io.Reader) (*http.Response, erro
 func (c *Connection) patch(endPoint string, body io.Reader) (*http.Response, error) {
 
 	req, err := http.NewRequest("PATCH", endPoint, body)
+
+	if err != nil {
+		return nil, err
+	}
+
 	req.SetBasicAuth(c.key, "")
 	req.Header.Set("Content-Type", requestType)
 
@@ -325,7 +332,11 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 		return apiError
 	}
 
-	pushDataIntoStruct(responseData, resp.Body)
+	err = pushDataIntoStruct(responseData, resp.Body)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 
@@ -386,7 +397,11 @@ func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface
 		return "", apiError
 	}
 
-	pushDataIntoStruct(endPointData, resp.Body)
+	err = pushDataIntoStruct(endPointData, resp.Body)
+
+	if err != nil {
+		return "", err
+	}
 
 	return nextURL, nil
 

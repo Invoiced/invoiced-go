@@ -5,9 +5,18 @@ import "testing"
 func TestFilter(t *testing.T) {
 
 	f := NewFilter()
-	f.Set("customer", 1)
-	f.Set("amount", "32311.23")
-	f.Set("day", "tuesday")
+	err := f.Set("customer", 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = f.Set("amount", "32311.23")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = f.Set("day", "tuesday")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	correctValue := "filter%5Bamount%5D=32311.23&filter%5Bcustomer%5D=1&filter%5Bday%5D=tuesday"
 
