@@ -1,7 +1,16 @@
-language: go
+
 go:
-- 1.11
-- 1.12
+    - "1.11.x"
+    - "1.12.x"
+    - tip
+
+
+language: go
+
+matrix:
+    allow_failures:
+      - go: tip
+    fast_finish: true
 
 before_install:
 - go get golang.org/x/tools/cmd/cover
