@@ -303,7 +303,7 @@ func (c *Customer) DeleteContact(contactID int64) error {
 
 func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
 
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items "
+	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items"
 
 	pendingLineItemResp := new(invdendpoint.PendingLineItem)
 
