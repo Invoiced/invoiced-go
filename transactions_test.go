@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestTransactionCreate(t *testing.T) {
@@ -26,7 +27,7 @@ func TestTransactionCreate(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	transaction := conn.NewTransaction()
 
@@ -62,7 +63,7 @@ func TestTransactionCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 	transaction := conn.NewTransaction()
 	transactionToCreate := transaction.NewTransaction()
 	transactionToCreate.Customer = 234112
@@ -96,7 +97,7 @@ func TestTransactionUpdate(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	transactionToUpdate := conn.NewTransaction()
 
@@ -130,7 +131,7 @@ func TestTransactionUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 	subcriptionToUpdate := conn.NewTransaction()
 
 	subcriptionToUpdate.Amount = 42
@@ -162,7 +163,7 @@ func TestTransactionDelete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	transaction := conn.NewTransaction()
 
@@ -193,7 +194,7 @@ func TestTransactionDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	transaction := conn.NewTransaction()
 
@@ -225,7 +226,7 @@ func TestTransactionRetrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 	transaction := conn.NewTransaction()
 
 	retrievedTransaction, err := transaction.Retrieve(mockTransactionResponseID)
@@ -256,7 +257,7 @@ func TestTransactionRetrieveError(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 	transaction := conn.NewTransaction()
 
 	_, err = transaction.Retrieve(mockTransactionID)

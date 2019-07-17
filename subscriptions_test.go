@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestSubscriptionCreate(t *testing.T) {
@@ -26,7 +27,7 @@ func TestSubscriptionCreate(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	subscription := conn.NewSubscription()
 
@@ -62,7 +63,7 @@ func TestSubscriptionCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 	subscription := conn.NewSubscription()
 	subscriptionToCreate := subscription.NewSubscription()
 	subscriptionToCreate.Customer = 234112
@@ -96,7 +97,7 @@ func TestSubscriptionUpdate(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	subscriptionToUpdate := conn.NewSubscription()
 
@@ -130,7 +131,7 @@ func TestSubscriptionUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 	subcriptionToUpdate := conn.NewSubscription()
 
 	subcriptionToUpdate.Cycles = 42
@@ -162,7 +163,7 @@ func TestSubscriptionDelete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	subscription := conn.NewSubscription()
 
@@ -193,7 +194,7 @@ func TestSubscriptionDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	subscription := conn.NewSubscription()
 
@@ -225,7 +226,7 @@ func TestSubscriptionRetrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 	subscription := conn.NewSubscription()
 
 	retrievedSubscription, err := subscription.Retrieve(mockSubscriptionResponseID)
@@ -256,7 +257,7 @@ func TestSubscriptionRetrieveError(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 	subscription := conn.NewSubscription()
 
 	_, err = subscription.Retrieve(mockSubscriptionID)
