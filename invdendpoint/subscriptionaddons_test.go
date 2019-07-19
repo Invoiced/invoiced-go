@@ -23,6 +23,7 @@ func TestUnMarshalSubscriptionAddonObject(t *testing.T) {
   "created_at": 1477327516,
   "metadata": {}
 },
+    "plan" : "test-plan",
     "quantity": 11,
     "created_at": 1420391704
 }`
