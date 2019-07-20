@@ -1,13 +1,12 @@
 package invdapi
 
 import (
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"strconv"
 	"testing"
 	"time"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestInvoiceCreate(t *testing.T) {
