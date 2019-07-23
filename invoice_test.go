@@ -1,8 +1,8 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
+	"github.com/ActiveState/invoiced-go/invdendpoint"
+	"github.com/ActiveState/invoiced-go/invdmockserver"
 	"reflect"
 	"strconv"
 	"testing"

@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-import "github.com/Invoiced/invoiced-go/invdendpoint"
+import "github.com/ActiveState/invoiced-go/invdendpoint"
 
 
 func TestParseRawRelation(t *testing.T) {

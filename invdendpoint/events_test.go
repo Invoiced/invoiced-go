@@ -2,7 +2,7 @@ package invdendpoint
 
 import (
 	"encoding/json"
-	"github.com/Invoiced/invoiced-go/invdutil"
+	"github.com/ActiveState/invoiced-go/invdutil"
 	"testing"
 )
 

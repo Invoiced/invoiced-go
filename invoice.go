@@ -2,7 +2,7 @@ package invdapi
 
 import (
 	"fmt"
-	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/ActiveState/invoiced-go/invdendpoint"
 )
 
 const defaultExpandInvoice = "items.catalog_item"

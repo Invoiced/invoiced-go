@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/ActiveState/invoiced-go/invdendpoint"
 	"io"
 	"io/ioutil"
 	"net/http"
