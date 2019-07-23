@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 )
 
-func mockConnection(key string, server *httptest.Server) *Connection {
+func MockConnection(key string, server *httptest.Server) *Connection {
 	c := new(Connection)
 	c.key = key
 
