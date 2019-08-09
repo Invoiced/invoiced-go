@@ -52,7 +52,7 @@ func TestCustomerCreate(t *testing.T) {
 
 	//Establish our mock connection
 	key := "test api key"
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -94,7 +94,7 @@ func TestCustomerCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	custConn := conn.NewCustomer()
 
@@ -132,7 +132,7 @@ func TestCustomerUpdate(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	customerToUpdate := conn.NewCustomer()
 
@@ -169,7 +169,7 @@ func TestCustomerUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	customer := conn.NewCustomer()
 	customer.Name = "Parag Patel"
@@ -203,7 +203,7 @@ func TestCustomerDelete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -234,7 +234,7 @@ func TestCustomerDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -277,7 +277,7 @@ func TestCustomerList(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -311,7 +311,7 @@ func TestCustomerListError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
