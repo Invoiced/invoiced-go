@@ -18,7 +18,7 @@ func (c *Connection) NewFile() *File {
 }
 
 func (c *File) Create(file *File) (*File, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.FilesEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.FilesEndPoint)
 	fileResp := new(File)
 
 	apiErr := c.create(endPoint, file, fileResp)
@@ -34,7 +34,7 @@ func (c *File) Create(file *File) (*File, error) {
 }
 
 func (c *File) Delete() error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.FilesEndPoint), c.Id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.FilesEndPoint), c.Id)
 
 	err := c.delete(endPoint)
 
@@ -47,7 +47,7 @@ func (c *File) Delete() error {
 }
 
 func (c *File) Retrieve(id int64) (*File, error) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.FilesEndPoint), id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.FilesEndPoint), id)
 
 	custEndPoint := new(invdendpoint.File)
 

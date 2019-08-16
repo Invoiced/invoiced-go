@@ -31,7 +31,7 @@ func (c *Connection) NewTransaction() *Transaction {
 }
 
 func (c *Transaction) Count() (int64, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.TransactionsEndPoint)
 
 	count, apiErr := c.count(endPoint)
 
@@ -44,7 +44,7 @@ func (c *Transaction) Count() (int64, error) {
 }
 
 func (c *Transaction) Create(transaction *Transaction) (*Transaction, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.TransactionsEndPoint)
 	txnResp := new(Transaction)
 
 	apiErr := c.create(endPoint, transaction, txnResp)
@@ -60,7 +60,7 @@ func (c *Transaction) Create(transaction *Transaction) (*Transaction, error) {
 }
 
 func (c *Transaction) Delete() error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
 
 	apiErr := c.delete(endPoint)
 
@@ -73,7 +73,7 @@ func (c *Transaction) Delete() error {
 }
 
 func (c *Transaction) Save() error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
 	txnResp := new(Transaction)
 	apiErr := c.update(endPoint, c, txnResp)
 
@@ -88,7 +88,7 @@ func (c *Transaction) Save() error {
 }
 
 func (c *Transaction) Retrieve(id int64) (*Transaction, error) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TransactionsEndPoint), id)
 
 	custEndPoint := new(invdendpoint.Transaction)
 
@@ -105,7 +105,7 @@ func (c *Transaction) Retrieve(id int64) (*Transaction, error) {
 }
 
 func (c *Transaction) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.TransactionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
 	transactions := make(Transactions, 0)
@@ -135,7 +135,7 @@ NEXT:
 }
 
 func (c *Transaction) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, string, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.TransactionsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.TransactionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
 	transactions := make(Transactions, 0)
@@ -312,7 +312,7 @@ func (c *Transaction) ListSuccessfulChargesAndPaymentsByInvoiceID(invoiceID int6
 }
 
 func (c *Transaction) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
 
@@ -327,7 +327,7 @@ func (c *Transaction) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendp
 }
 
 func (c *Transaction) Refund(refund *invdendpoint.Refund) error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id) + "/refunds"
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id) + "/refunds"
 	transaction := new(invdendpoint.Transaction)
 	err := c.create(endPoint, nil, transaction)
 
