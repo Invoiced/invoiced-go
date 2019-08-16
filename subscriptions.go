@@ -20,7 +20,7 @@ func (c *Connection) NewSubscription() *Subscription {
 }
 
 func (c *Subscription) Count() (int64, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
 
 	count, apiErr := c.count(endPoint)
 
@@ -33,7 +33,7 @@ func (c *Subscription) Count() (int64, error) {
 }
 
 func (c *Subscription) Create(subscription *Subscription) (*Subscription, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
 	subResp := new(Subscription)
 
 	apiErr := c.create(endPoint, subscription, subResp)
@@ -49,7 +49,7 @@ func (c *Subscription) Create(subscription *Subscription) (*Subscription, error)
 }
 
 func (c *Subscription) Cancel() error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
 
 	apiErr := c.delete(endPoint)
 
@@ -62,7 +62,7 @@ func (c *Subscription) Cancel() error {
 }
 
 func (c *Subscription) Save() error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
 	subResp := new(Subscription)
 	apiErr := c.update(endPoint, c, subResp)
 
@@ -77,7 +77,7 @@ func (c *Subscription) Save() error {
 }
 
 func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint), id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), id)
 
 	expandedValues := invdendpoint.NewExpand()
 
@@ -100,7 +100,7 @@ func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 }
 
 func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
 	expandedValues := invdendpoint.NewExpand()
@@ -136,7 +136,7 @@ NEXT:
 }
 
 func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, string, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
 	expandedValues := invdendpoint.NewExpand()
