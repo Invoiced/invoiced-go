@@ -42,7 +42,17 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
     "taxes": [],
     "url": "https://dundermifflin.invoiced.com/subscriptions/o2mAd2wWVfYy16XZto7xHwXX",
     "created_at": 1420391704,
-    "metadata": {}
+    "metadata": {},
+    "ship_to": {
+        "address1": "123 Main St",
+        "address2": "Ste 100",
+        "attention_to": "Regina Smith",
+        "city": "Austin",
+        "country": "US",
+        "name": "Company Name",
+        "postal_code": "78730",
+        "state": "TX"
+    }
 }`
 
 	so := new(Subscription)
@@ -108,7 +118,37 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 
 	if so.CreatedAt != 1420391704 {
 		t.Fatal("Subscription CreatedAt is incorrect")
-
 	}
 
+	if so.ShipTo.Address1 != "123 Main St" {
+		t.Fatal("Subscription ShipTo.Address1 is incorrect")
+	}
+
+	if so.ShipTo.Address2 != "Ste 100" {
+		t.Fatal("Subscription ShipTo.Address2 is incorrect")
+	}
+
+	if so.ShipTo.AttentionTo != "Regina Smith" {
+		t.Fatal("Subscription ShipTo.AttentionTo is incorrect")
+	}
+
+	if so.ShipTo.City != "Austin" {
+		t.Fatal("Subscription ShipTo.City is incorrect")
+	}
+
+	if so.ShipTo.Country != "US" {
+		t.Fatal("Subscription ShipTo.Country is incorrect")
+	}
+
+	if so.ShipTo.Name != "Company Name" {
+		t.Fatal("Subscription ShipTo.Name is incorrect")
+	}
+
+	if so.ShipTo.PostalCode != "78730" {
+		t.Fatal("Subscription ShipTo.PostalCode is incorrect")
+	}
+
+	if so.ShipTo.State !=  "TX" {
+		t.Fatal("Subscription ShipTo.State is incorrect")
+	}
 }
