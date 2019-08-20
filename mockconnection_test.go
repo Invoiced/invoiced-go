@@ -19,7 +19,7 @@ func TestMockConnection(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection("whatever", server)
+	conn := MockConnection("whatever", server)
 	customerToCreate.Connection = conn
 
 	customer := conn.NewCustomer()

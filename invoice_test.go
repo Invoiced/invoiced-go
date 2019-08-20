@@ -26,7 +26,7 @@ func TestInvoiceCreate(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -62,7 +62,7 @@ func TestInvoiceCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -101,7 +101,7 @@ func TestInvoiceUpdate(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	invoiceToUpdate := conn.NewInvoice()
 	invoiceToUpdate.Balance = 42.22
@@ -133,7 +133,7 @@ func TestInvoiceUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	invoiceToUpdate := conn.NewInvoice()
 
@@ -166,7 +166,7 @@ func TestInvoiceDelete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -195,7 +195,7 @@ func TestInvoiceDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -235,7 +235,7 @@ func TestInvoiceList(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -268,7 +268,7 @@ func TestInvoiceListError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	conn := MockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
