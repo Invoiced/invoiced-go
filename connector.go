@@ -187,7 +187,7 @@ func makeEndPointSingular(endpoint string, id int64) string {
 	return endpoint + "/" + strconv.FormatInt(id, 10)
 }
 
-func (c *Connection) makeEndPointURL(endPoint string) string {
+func (c *Connection) MakeEndPointURL(endPoint string) string {
 
 	return c.url + endPoint
 }

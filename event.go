@@ -18,7 +18,7 @@ func (c *Connection) NewEvent() *Event {
 }
 
 func (c *Event) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Events, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.EventsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.EventsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
 	events := make(Events, 0)
@@ -48,7 +48,7 @@ NEXT:
 }
 
 func (c *Event) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Events, string, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.EventsEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.EventsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
 	events := make(Events, 0)

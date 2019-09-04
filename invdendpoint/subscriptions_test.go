@@ -43,6 +43,8 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
     "url": "https://dundermifflin.invoiced.com/subscriptions/o2mAd2wWVfYy16XZto7xHwXX",
     "created_at": 1420391704,
     "metadata": {},
+    "prorate": true,
+    "contract_renewal_mode": "manual",
     "ship_to": {
         "address1": "123 Main St",
         "address2": "Ste 100",
@@ -115,6 +117,15 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 		t.Fatal("Url is incorrect")
 
 	}
+
+	if so.Prorate != true {
+		t.Fatal("Subscription has incorrect Prorate status")
+	}
+
+	if so.ContractRenewalMode != "manual" {
+		t.Fatal("Subscription Ahas incorrect ContractRenewalMode status")
+	}
+
 
 	if so.CreatedAt != 1420391704 {
 		t.Fatal("Subscription CreatedAt is incorrect")

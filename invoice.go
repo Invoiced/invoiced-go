@@ -22,7 +22,7 @@ func (c *Connection) NewInvoice() *Invoice {
 }
 
 func (c *Invoice) Count() (int64, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 
 	count, apiErr := c.count(endPoint)
 
@@ -35,7 +35,7 @@ func (c *Invoice) Count() (int64, error) {
 }
 
 func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 	invResp := new(Invoice)
 
 	apiErr := c.create(endPoint, invoice, invResp)
@@ -51,7 +51,7 @@ func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
 }
 
 func (c *Invoice) Delete() error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
 
 	apiErr := c.delete(endPoint)
 
@@ -64,7 +64,7 @@ func (c *Invoice) Delete() error {
 }
 
 func (c *Invoice) Save() error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
 	invResp := new(Invoice)
 	apiErr := c.update(endPoint, c, invResp)
 
@@ -79,7 +79,7 @@ func (c *Invoice) Save() error {
 }
 
 func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), id)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), id)
 
 	if c.IncludeUpdatedAt {
 		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
@@ -106,7 +106,7 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 }
 
 func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
 	if c.IncludeUpdatedAt {
@@ -146,7 +146,7 @@ NEXT:
 }
 
 func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
-	endPoint := c.makeEndPointURL(invdendpoint.InvoicesEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 	if c.IncludeUpdatedAt {
 		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
@@ -199,7 +199,7 @@ func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 }
 
 func (c *Invoice) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
 
@@ -214,7 +214,7 @@ func (c *Invoice) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailR
 }
 
 func (c *Invoice) Pay() error {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/pay"
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/pay"
 	invoice := new(invdendpoint.Invoice)
 	err := c.create(endPoint, nil, invoice)
 
@@ -229,7 +229,7 @@ func (c *Invoice) Pay() error {
 }
 
 func (c *Invoice) ListAttachements() (Files, error) {
-	endPoint := makeEndPointSingular(c.makeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/attachments"
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/attachments"
 	files := make(Files, 0)
 	err := c.create(endPoint, nil, files)
 
