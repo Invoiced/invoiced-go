@@ -6,35 +6,38 @@ import (
 )
 
 func TestUnMarshalLineItemObject(t *testing.T) {
+
+	catalogItem := `{
+		"id": "delivery",
+		"object": "catalog_item",
+		"name": "Delivery",
+		"currency": "usd",
+		"unit_cost": 100,
+		"description": null,
+		"type": "service",
+		"taxes": [],
+		"discountable": true,
+		"taxable": true,
+		"unit_cost": 10,
+		"created_at": 1477327516,
+		"metadata": {}
+	  }`
+
 	s := `{
-  "id": 8,
-  "catalog_item": {
-  "id": "delivery",
-  "object": "catalog_item",
-  "name": "Delivery",
-  "currency": "usd",
-  "unit_cost": 100,
-  "description": null,
-  "type": "service",
-  "taxes": [],
-  "discountable": true,
-  "taxable": true,
-  "unit_cost": 10,
-  "created_at": 1477327516,
-  "metadata": {}
-},
-  "type": "service",
-  "name": "Delivery",
-  "description": "",
-  "quantity": 1,
-  "unit_cost": 10,
-  "amount": 10,
-  "discountable": true,
-  "discounts": [],
-  "taxable": true,
-  "taxes": [],
-  "metadata": {}
-}`
+		"id": 8,
+		"catalog_item": `+ catalogItem + `,
+		"type": "service",
+		"name": "Delivery",
+		"description": "",
+		"quantity": 1,
+		"unit_cost": 10,
+		"amount": 10,
+		"discountable": true,
+		"discounts": [],
+		"taxable": true,
+		"taxes": [],
+		"metadata": {}
+	}`
 
 	so := new(LineItem)
 
@@ -72,7 +75,7 @@ func TestUnMarshalLineItemObject(t *testing.T) {
 		t.Fatal("Item 1 has incorrect taxable")
 	}
 
-	if so.CatalogItem.Id != "delivery" {
+	if so.CatalogItem != catalogItem {
 		t.Fatal("Item 1 has incorrect catalogitem id")
 	}
 

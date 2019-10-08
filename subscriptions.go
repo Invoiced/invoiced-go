@@ -4,8 +4,6 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-const defaultExpandSubscription = "addons.catalog_item"
-
 type Subscription struct {
 	*Connection
 	*invdendpoint.Subscription
@@ -79,12 +77,6 @@ func (c *Subscription) Save() error {
 func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), id)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandSubscription)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	custEndPoint := new(invdendpoint.Subscription)
 
 	subscription := &Subscription{c.Connection, custEndPoint}
@@ -102,12 +94,6 @@ func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
-
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandSubscription)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
 
 	subscriptions := make(Subscriptions, 0)
 
@@ -138,12 +124,6 @@ NEXT:
 func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, string, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
-
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandSubscription)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
 
 	subscriptions := make(Subscriptions, 0)
 
