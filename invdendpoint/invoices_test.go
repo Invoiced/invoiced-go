@@ -88,7 +88,8 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
   "payment_url": "https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY/payment",
   "pdf_url": "https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY/pdf",
   "created_at": 1415229884,
-  "metadata": {}
+  "metadata": {},
+  "calculate_taxes": true
 }`
 
 	so := new(Invoice)
@@ -237,6 +238,10 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 
 	if so.CreatedAt != 1415229884 {
 		t.Fatal("CreatedAt is incorrect")
+	}
+
+	if so.CalculateTaxes != true {
+		t.Fatal("CalculateTaxes flag is incorrect")
 	}
 
 }
