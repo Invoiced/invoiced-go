@@ -127,3 +127,14 @@ func TestMakeEndPointSingular(t *testing.T) {
 		t.Fatal("Expect =>", singularEndPoint, " Got =>", correctSingularEndPoint)
 	}
 }
+
+func TestAddIncludeToEndPoint(t *testing.T) {
+	endPoint := "https://www.do.com"
+	includeValue := "value"
+	expected := endPoint + "?" + "include=" + includeValue
+	result := addIncludeToEndPoint(endPoint, includeValue)
+
+	if expected != result {
+		t.Fatal("Expect =>", expected, " Got =>", result)
+	}
+}
