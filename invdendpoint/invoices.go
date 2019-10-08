@@ -49,6 +49,8 @@ type Invoice struct {
 	CreatedAt  int64                  `json:"created_at,omitempty"`  //Timestamp when created
 	MetaData   map[string]interface{} `json:"metadata,omitempty"`    //A hash of key/value pairs that can store additional information about this object.
 
+	CalculateTaxes bool `json:"calculate_taxes,omitempty"` // Flag to indicate whether taxes should be calculated on the invoice
+
 	// add disabled payment methods
 }
 
