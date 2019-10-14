@@ -20,7 +20,7 @@ type Subscription struct {
 	Status      string                 `json:"status,omitempty"`       //Subscription status, one of not_started, active, past_due, finished
 	Addons      []SubscriptionAddon    `json:"addons,omitempty"`       //Collection of Subscription Addons
 	Discounts   []Discount             `json:"discount,omitempty"`     //Collection of Coupon IDs
-	Taxes       []Tax                  `json:"taxes,omitempty"`        //Collection of Tax Rate IDs
+	Taxes       []Rate                 `json:"taxes,omitempty"`        //Collection of Tax Rate IDs
 	Url         string                 `json:"url,omitempty"`          //URL to manage the subscription in the billing portal
 	CreatedAt   int64                  `json:"created_at,omitempty"`   //Timestamp when created
 	MetaData    map[string]interface{} `json:"metadata,omitempty"`     //A hash of key/value pairs that can store additional information about this object.

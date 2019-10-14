@@ -10,7 +10,7 @@ type CatalogItem struct {
 	UnitCost     float64                `json:"unit_cost,omitempty"`    //First address line
 	Description  string                 `json:"description,omitempty"`  //Optional description
 	Type         string                 `json:"service,omitempty"`      //Optional line item type. Used to group line items by type in reporting
-	Taxes        []Tax                  `json:"taxes,omitempty"`        //Collection of Tax Rate Objects
+	Taxes        []Rate                 `json:"taxes,omitempty"`        //Collection of Tax Rate Objects
 	Discountable bool                   `json:"discountable,omitempty"` //Excludes amount from discounts when false
 	Taxable      bool                   `json:"taxable,omitempty"`      //Excludes amount from taxes when false
 	CreatedAt    int64                  `json:"created_at,omitempty"`   //Timestamp when created
