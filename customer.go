@@ -36,7 +36,17 @@ func (c *Customer) Create(customer *Customer) (*Customer, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.CustomersEndPoint)
 	custResp := new(Customer)
 
-	apiErr := c.create(endPoint, customer, custResp)
+	if customer == nil {
+		return nil, errors.New("Customer is nil")
+	}
+
+	custDataToCreate, err := SafeCustomerForCreation(customer.Customer)
+
+	if err != nil {
+		return nil, err
+	}
+
+	apiErr := c.create(endPoint, custDataToCreate, custResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -63,8 +73,16 @@ func (c *Customer) Delete() error {
 
 func (c *Customer) Save() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
+
+	custDataToUpdate, err := SafeCustomerForUpdate(c.Customer)
+
+	if err != nil {
+		return nil
+	}
+
 	custResp := new(Customer)
-	apiErr := c.update(endPoint, c, custResp)
+
+	apiErr := c.update(endPoint, custDataToUpdate, custResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -217,15 +235,21 @@ func (c *Customer) SendStatement(custStmtReq *invdendpoint.EmailResponse) (*invd
 func (c *Customer) CreateContact(contact *invdendpoint.Contact) (*invdendpoint.Contact, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts"
 
-	createdContact := new(invdendpoint.Contact)
+	contactDataToCreate, err := SafeContactForCreation(contact)
 
-	err := c.create(endPoint, contact, createdContact)
+	if err != nil {
+		return nil,err
+	}
+
+	contResp := new(invdendpoint.Contact)
+
+	err = c.create(endPoint, contactDataToCreate, contResp)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return createdContact, nil
+	return contResp, nil
 
 }
 
@@ -250,10 +274,17 @@ func (c *Customer) UpdateContact(contactToUpdate *invdendpoint.Contact) (*invden
 		return nil, errors.New("Need to supply a contact id in order to update a contact")
 	}
 
+	contactDataToUpdate, err := SafeContactForUpdate(contactToUpdate)
+
+	if err != nil {
+		return nil,err
+	}
+
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts" + strconv.FormatInt(contactToUpdate.Id, 10)
 
 	contResp := new(invdendpoint.Contact)
-	err := c.update(endPoint, contactToUpdate, contResp)
+
+	err = c.update(endPoint, contactDataToUpdate, contResp)
 
 	if err != nil {
 		return nil, err
@@ -305,9 +336,15 @@ func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items"
 
+	pliDataToUpdate, err := SafePendingLineItemForCreation(pendingLineItem)
+
+	if err != nil {
+		return nil, err
+	}
+
 	pendingLineItemResp := new(invdendpoint.PendingLineItem)
 
-	err := c.create(endPoint, pendingLineItem, pendingLineItemResp)
+	err = c.create(endPoint, pliDataToUpdate, pendingLineItemResp)
 
 	if err != nil {
 		return nil, err
@@ -341,8 +378,15 @@ func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items" + strconv.FormatInt(pendingLineItem.Id, 10)
 
+	pliDataToUpdate, err := SafePendingLineItemForUpdate(pendingLineItem)
+
+	if err != nil {
+		return nil, err
+	}
+
 	pendingLineItemResp := new(invdendpoint.PendingLineItem)
-	err := c.update(endPoint, pendingLineItem, pendingLineItemResp)
+
+	err = c.update(endPoint, pliDataToUpdate, pendingLineItemResp)
 
 	if err != nil {
 		return nil, err
@@ -380,4 +424,187 @@ func (c *Customer) DeletePendingLineItem(id int64) error {
 
 	return nil
 
+}
+
+//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+func SafeCustomerForCreation(cust *invdendpoint.Customer) (*invdendpoint.Customer, error) {
+
+	if cust == nil  {
+		return nil, errors.New("Customer is nil")
+	}
+
+	custData :=new(invdendpoint.Customer)
+	custData.Name = cust.Name
+	custData.Number = cust.Number
+	custData.Email = cust.Email
+	custData.AutoPay = cust.AutoPay
+	custData.AutoPayDelays = cust.AutoPayDelays
+	custData.PaymentTerms = cust.PaymentTerms
+	custData.StripeToken = cust.StripeToken
+	custData.AttentionTo = cust.AttentionTo
+	custData.Address1 = cust.Address1
+	custData.Address2 = cust.Address2
+	custData.City = cust.City
+	custData.State = cust.State
+	custData.PostalCode = cust.PostalCode
+	custData.Language = cust.Language
+	custData.Chase = cust.Chase
+	custData.Phone = cust.Phone
+	custData.CreditHold = cust.CreditHold
+	custData.CreditLimit = cust.CreditLimit
+	custData.Owner = cust.Owner
+	custData.Taxable = cust.Taxable
+	custData.Taxes = cust.Taxes
+	custData.TaxId = cust.TaxId
+	custData.AvalaraEntityUseCode = cust.AvalaraEntityUseCode
+	custData.AvalaraExemptionNumber = cust.AvalaraExemptionNumber
+	custData.Type = cust.Type
+	custData.ParentCustomer = cust.ParentCustomer
+	custData.Notes = cust.Notes
+	custData.SignUpPage = cust.SignUpPage
+	custData.MetaData = cust.MetaData
+	custData.DisabledPaymentMethods = cust.DisabledPaymentMethods
+
+
+	return custData,nil
+}
+
+//SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
+func SafeCustomerForUpdate(cust *invdendpoint.Customer) (*invdendpoint.Customer, error) {
+	if cust == nil  {
+		return nil, errors.New("Customer is nil")
+	}
+
+	custData :=new(invdendpoint.Customer)
+	custData.Name = cust.Name
+	custData.Number = cust.Number
+	custData.Email = cust.Email
+	custData.AutoPay = cust.AutoPay
+	custData.PaymentTerms = cust.PaymentTerms
+	custData.StripeToken = cust.StripeToken
+	custData.AttentionTo = cust.AttentionTo
+	custData.Address1 = cust.Address1
+	custData.Address2 = cust.Address2
+	custData.City = cust.City
+	custData.State = cust.State
+	custData.PostalCode = cust.PostalCode
+	custData.Country = cust.Country
+	custData.Language = cust.Language
+	custData.Chase = cust.Chase
+	custData.ChasingCadence = cust.ChasingCadence
+	custData.Phone = cust.Phone
+	custData.CreditHold = cust.CreditHold
+	custData.CreditLimit = cust.CreditLimit
+	custData.Owner = cust.Owner
+	custData.Taxable = cust.Taxable
+	custData.Taxes = cust.Taxes
+	custData.TaxId = cust.TaxId
+	custData.AvalaraEntityUseCode = cust.AvalaraEntityUseCode
+	custData.AvalaraExemptionNumber = cust.AvalaraExemptionNumber
+	custData.Type = cust.Type
+	custData.ParentCustomer = cust.ParentCustomer
+	custData.Notes = cust.Notes
+	custData.SignUpPage = cust.SignUpPage
+	custData.MetaData = cust.MetaData
+	custData.DisabledPaymentMethods = cust.DisabledPaymentMethods
+
+
+
+	return custData,nil
+}
+
+//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+func SafeContactForCreation(contact *invdendpoint.Contact) (*invdendpoint.Contact, error) {
+
+	if contact == nil {
+		return nil, errors.New("Contact is nil")
+	}
+
+	contData := new(invdendpoint.Contact)
+	contData.Name = contact.Name
+	contData.Title = contact.Title
+	contData.Email = contact.Email
+	contData.Phone = contact.Phone
+	contData.Primary = contact.Primary
+	contData.SmsEnabled = contact.SmsEnabled
+	contData.Department = contact.Department
+	contData.Address1 = contact.Address1
+	contData.Address2 = contact.Address2
+	contData.City = contact.City
+	contData.State = contact.State
+	contData.PostalCode = contact.PostalCode
+	contData.Country = contact.Country
+
+	return contData, nil
+}
+
+//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+func SafeContactForUpdate(contact *invdendpoint.Contact) (*invdendpoint.Contact, error)  {
+
+	if contact == nil {
+		return nil, errors.New("Contact is nil")
+	}
+
+	contData := new(invdendpoint.Contact)
+	contData.Name = contact.Name
+	contData.Title = contact.Title
+	contData.Email = contact.Email
+	contData.Phone = contact.Phone
+	contData.Primary = contact.Primary
+	contData.SmsEnabled = contact.SmsEnabled
+	contData.Department = contact.Department
+	contData.Address1 = contact.Address1
+	contData.Address2 = contact.Address2
+	contData.City = contact.City
+	contData.State = contact.State
+	contData.PostalCode = contact.PostalCode
+	contData.Country = contact.Country
+
+	return contData, nil
+}
+
+//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+func SafePendingLineItemForCreation(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
+
+	if pendingLineItem == nil {
+		return nil, errors.New("PendingLineItem is nil")
+	}
+
+	pliData := new(invdendpoint.PendingLineItem)
+	pliData.CatalogItem = pendingLineItem.CatalogItem
+	pliData.Type = pendingLineItem.Type
+	pliData.Name = pendingLineItem.Name
+	pliData.Description = pendingLineItem.Description
+	pliData.Quantity = pendingLineItem.Quantity
+	pliData.UnitCost = pendingLineItem.UnitCost
+	pliData.Discountable = pendingLineItem.Discountable
+	pliData.Discounts = pendingLineItem.Discounts
+	pliData.Taxes = pendingLineItem.Taxes
+	pliData.Metadata = pendingLineItem.Metadata
+
+
+	return pliData, nil
+}
+
+//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+func SafePendingLineItemForUpdate(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
+
+	if pendingLineItem == nil {
+		return nil, errors.New("PendingLineItem is nil")
+	}
+
+	pliData := new(invdendpoint.PendingLineItem)
+	pliData.CatalogItem = pendingLineItem.CatalogItem
+	pliData.Type = pendingLineItem.Type
+	pliData.Name = pendingLineItem.Name
+	pliData.Description = pendingLineItem.Description
+	pliData.Quantity = pendingLineItem.Quantity
+	pliData.UnitCost = pendingLineItem.UnitCost
+	pliData.Discountable = pendingLineItem.Discountable
+	pliData.Discounts = pendingLineItem.Discounts
+	pliData.Taxes = pendingLineItem.Taxes
+	pliData.Metadata = pendingLineItem.Metadata
+
+
+	return pliData, nil
 }

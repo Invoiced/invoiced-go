@@ -15,6 +15,7 @@ package invdapi
 import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"strconv"
+	"errors"
 )
 
 type Transaction struct {
@@ -47,7 +48,18 @@ func (c *Transaction) Create(transaction *Transaction) (*Transaction, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.TransactionsEndPoint)
 	txnResp := new(Transaction)
 
-	apiErr := c.create(endPoint, transaction, txnResp)
+	if transaction == nil {
+		return nil, errors.New("transaction cannot be nil")
+	}
+
+	//safe prune invoice data for creation
+	invdTransDataToCreate,err := SafeTransactionForCreation(transaction.Transaction)
+
+	if err != nil {
+		return nil, err
+	}
+
+	apiErr := c.create(endPoint, invdTransDataToCreate, txnResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -75,7 +87,15 @@ func (c *Transaction) Delete() error {
 func (c *Transaction) Save() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
 	txnResp := new(Transaction)
-	apiErr := c.update(endPoint, c, txnResp)
+
+	//safe prune invoice data for updating
+	invdTransDataToUpdate,err := SafeTransactionForUpdate(c.Transaction)
+
+	if err != nil {
+		return err
+	}
+
+	apiErr := c.update(endPoint, invdTransDataToUpdate, txnResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -338,5 +358,55 @@ func (c *Transaction) Refund(refund *invdendpoint.Refund) error {
 	c.Transaction = transaction
 
 	return nil
+
+}
+
+
+//SafeTransactionForCreation prunes transaction data for just fields that can be used for creation of a transaction
+func SafeTransactionForCreation(transaction *invdendpoint.Transaction) (*invdendpoint.Transaction, error) {
+
+	if transaction == nil  {
+		return nil, errors.New("Transaction is nil")
+	}
+
+	transData :=new(invdendpoint.Transaction)
+	transData.Customer = transaction.Customer
+	transData.Invoice = transaction.Invoice
+	transData.CreditNote = transaction.CreditNote
+	transData.Type = transaction.Type
+	transData.Method = transaction.Method
+	transData.Status = transaction.Status
+	transData.Gateway = transaction.Gateway
+	transData.GatewayId = transaction.GatewayId
+	transData.Currency = transaction.Currency
+	transData.Amount = transaction.Amount
+	transData.Notes = transaction.Notes
+	transData.MetaData = transaction.MetaData
+
+
+	return transData,nil
+}
+
+//SafeTransactionForUpdate prunes transaction data for just fields that can be used for creation of a transactiobn
+func SafeTransactionForUpdate(transaction *invdendpoint.Transaction) (*invdendpoint.Transaction, error) {
+
+	if transaction == nil {
+		return nil, errors.New("Transaction is nil")
+	}
+
+	transData :=new(invdendpoint.Transaction)
+
+	transData.Date = transaction.Date
+	transData.Method = transaction.Method
+	transData.Status = transaction.Status
+	transData.Gateway = transaction.Gateway
+	transData.GatewayId = transaction.GatewayId
+	transData.Currency = transaction.Currency
+	transData.Amount = transaction.Amount
+	transData.Notes = transaction.Notes
+	transData.MetaData = transaction.MetaData
+
+
+	return transData, nil
 
 }

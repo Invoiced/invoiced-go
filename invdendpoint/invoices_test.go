@@ -128,10 +128,6 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 		t.Fatal("Chase is incorrect")
 	}
 
-	if so.CollectionMode != "manual" {
-		t.Fatal("Collection Mode is incorrect")
-	}
-
 	if so.Date != 1416290400 {
 		t.Fatal("Date is incorrect")
 	}

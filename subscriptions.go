@@ -2,6 +2,7 @@ package invdapi
 
 import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"errors"
 )
 
 const defaultExpandSubscription = "addons.catalog_item"
@@ -34,9 +35,20 @@ func (c *Subscription) Count() (int64, error) {
 
 func (c *Subscription) Create(subscription *Subscription) (*Subscription, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+
+	if subscription == nil {
+		return nil, errors.New("Subscription is nil")
+	}
+
+	subDataToCreate, err := SafeSubscriptionForCreation(subscription.Subscription)
+
+	if err != nil {
+		return nil, err
+	}
+
 	subResp := new(Subscription)
 
-	apiErr := c.create(endPoint, subscription, subResp)
+	apiErr := c.create(endPoint, subDataToCreate, subResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -64,7 +76,14 @@ func (c *Subscription) Cancel() error {
 func (c *Subscription) Save() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
 	subResp := new(Subscription)
-	apiErr := c.update(endPoint, c, subResp)
+
+	subDataToUpdate, err := SafeSubscriptionsForUpdate(c.Subscription)
+
+	if err != nil {
+		return err
+	}
+
+	apiErr := c.update(endPoint, subDataToUpdate, subResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -160,4 +179,57 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 
 	return subscriptions, nextEndPoint, nil
 
+}
+
+//SafeSubscriptionForCreation prunes subscription data for just fields that can be used for creation of a subscription
+func SafeSubscriptionForCreation(sub *invdendpoint.Subscription) (*invdendpoint.Subscription, error) {
+	if sub == nil  {
+		return nil, errors.New("Subscription is nil")
+	}
+
+	subData :=new(invdendpoint.Subscription)
+	subData.Customer = sub.Customer
+	subData.Plan = sub.Plan
+	subData.StartDate = sub.StartDate
+	subData.BillIn = sub.BillIn
+	subData.Quantity = sub.Quantity
+	subData.Addons = sub.Addons
+	subData.Discounts = sub.Discounts
+	subData.Cycles = sub.Cycles
+	subData.SnapToNthDay = sub.SnapToNthDay
+	subData.Paused = sub.Paused
+	subData.ContractRenewalCycles = sub.ContractRenewalCycles
+	subData.ContractRenewalMode = sub.ContractRenewalMode
+	subData.Taxes = sub.Taxes
+	subData.CancelAtPeriodEnd = sub.CancelAtPeriodEnd
+	subData.MetaData = sub.MetaData
+
+
+
+	return subData,nil
+}
+
+//SafeSubscriptionsForUpdate prunes subscription data for just fields that can be used for updating of a subscription
+func SafeSubscriptionsForUpdate(sub *invdendpoint.Subscription) (*invdendpoint.Subscription, error) {
+	if sub == nil  {
+		return nil, errors.New("Subscription is nil")
+	}
+
+	subData :=new(invdendpoint.Subscription)
+
+	subData.Plan = sub.Plan
+	subData.StartDate = sub.StartDate
+	subData.BillIn = sub.BillIn
+	subData.Quantity = sub.Quantity
+	subData.Addons = sub.Addons
+	subData.Paused = sub.Paused
+	subData.Discounts = sub.Discounts
+	subData.ContractRenewalCycles = sub.ContractRenewalCycles
+	subData.ContractRenewalMode = sub.ContractRenewalMode
+	subData.CancelAtPeriodEnd = sub.CancelAtPeriodEnd
+	subData.Prorate = sub.Prorate
+	subData.ProrationDate = sub.ProrationDate
+
+
+	return subData,nil
 }

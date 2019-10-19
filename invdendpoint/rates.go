@@ -7,6 +7,7 @@ type Rate struct {
 	UpdatedAt int64       `json:"updated_at,omitempty"`
 	Id        string      `json:"id,omitempty"`
 	IsPercent bool        `json:"is_percent,omitempty"`
+	Inclusive bool        `json:"inclusive,omitempty"`
 	MetaData  interface{} `json:"metadata,omitempty"`
 	Name      string      `json:"name,omitempty"`
 	Value     float64     `json:"value,omitempty"`

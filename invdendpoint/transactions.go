@@ -5,15 +5,18 @@ const TransactionsEndPoint = "/transactions"
 type Transactions []Transaction
 
 type Transaction struct {
-	Id                int64                  `json:"id,omitempty"`
+	Id                int64                  `json:"id,omitempty"`				   //The transaction’s unique ID
+	Object 			  string 				 `json:"object,omitempty"`			  	//Object type, transaction
 	Customer          int64                  `json:"customer,omitempty"`           //Customer ID, required if invoice ID is not supplied
 	Invoice           int64                  `json:"invoice,omitempty"`            //Invoice ID, if any
+	CreditNote        string                 `json:"credit_note,omitempty"`        //Associated Credit Note, if any
 	Type              string                 `json:"type,omitempty"`               //Transaction type, charge, payment, refund, or adjustment - required
 	Date              int64                  `json:"date,omitempty"`               //Transaction date, defaults to current timestamp
 	Method            string                 `json:"method,omitempty"`             //Payment instrument used to facilitate transaction, defaults to other
 	Status            string                 `json:"status,omitempty"`             //Transaction status, one of succeeded, pending, or failed, defaults to succeeded
 	Gateway           string                 `json:"gateway,omitempty"`            //Payment gateway that processed the transaction, if any
 	GatewayId         string                 `json:"gateway_id,omitempty"`         //Transaction ID from the payment gateway, or check # if method is check
+	PaymentSource     *PaymentSource         `json:"payment_source,omitempty"`     //Payment source used for transaction, if any
 	Currency          string                 `json:"currency,omitempty"`           //3-letter ISO code
 	Amount            float64                `json:"amount,omitempty"`             //Transaction amount
 	Fee               float64                `json:"fee,omitempty"`                //Processing fees

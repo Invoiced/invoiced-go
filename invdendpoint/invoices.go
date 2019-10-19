@@ -12,14 +12,14 @@ type Invoices []Invoice
 
 //Todo Add Tags Object and Attachements Objects
 type Invoice struct {
-	Id             int64  `json:"id,omitempty"`              //The invoice’s unique ID
-	Customer       int64  `json:"customer,omitempty"`        //Customer ID
-	Name           string `json:"name,omitempty"`            //Invoice name for internal use, defaults to “Invoice”
-	Number         string `json:"number,omitempty"`          //The reference number assigned to the invoice for use in the dashboard
-	CollectionMode string `json:"collection_mode,omitempty"` //Invoice collection mode, auto or manual
-	Currency       string `json:"currency,omitempty"`        //3-letter ISO code
-	Draft          bool   `json:"draft,omitempty"`           //When false, the invoice is considered outstanding, or when true, the invoice is a draft
-	Closed         bool   `json:"closed,omitempty"`          //When true, an invoice is closed and considered bad debt. No further payments are allowed.
+	Id       int64  `json:"id,omitempty"`       //The invoice’s unique ID
+	Customer int64  `json:"customer,omitempty"` //Customer ID
+	Name     string `json:"name,omitempty"`     //Invoice name for internal use, defaults to “Invoice”
+	Number   string `json:"number,omitempty"`   //The reference number assigned to the invoice for use in the dashboard
+	AutoPay  bool   `json:"autopay,omitempty"`  //Invoice collection mode, auto or manual
+	Currency string `json:"currency,omitempty"` //3-letter ISO code
+	Draft    bool   `json:"draft,omitempty"`    //When false, the invoice is considered outstanding, or when true, the invoice is a draft
+	Closed   bool   `json:"closed,omitempty"`   //When true, an invoice is closed and considered bad debt. No further payments are allowed.
 
 	Paid               bool   `json:"paid,omitempty"`                 //Indicates whether an invoice has been paid in full
 	Status             string `json:"status,omitempty"`               //Invoice state, one of draft, not_sent, sent, viewed, past_due, pending, paid
@@ -50,6 +50,12 @@ type Invoice struct {
 	MetaData   map[string]interface{} `json:"metadata,omitempty"`    //A hash of key/value pairs that can store additional information about this object.
 
 	CalculateTaxes bool `json:"calculate_taxes,omitempty"` // Flag to indicate whether taxes should be calculated on the invoice
+
+	Attachments []int64      	`json:"attachments,omitempty"`
+	DisabledPaymentMethods []string `json:"disabled_payment_methods,omitempty"`
+
+	Sent     bool `json:"sent,omitempty"`
+
 
 	// add disabled payment methods
 }
