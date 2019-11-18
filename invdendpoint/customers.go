@@ -36,6 +36,7 @@ type Customer struct {
 	StatementPdfUrl    string                 `json:"statement_pdf_url,omitempty"` //URL to download the latest account statement
 	CreatedAt          int64                  `json:"created_at,omitempty"`        //Timestamp when created
 	MetaData           map[string]interface{} `json:"metadata,omitempty"`          //A hash of key/value pairs that can store additional information about this object.
+	StripeToken        string                 `json:"stripe_token",omitempty"`     //A Stripe credit card token to set as the customer's default payment source
 }
 
 type PaymentSource struct {
