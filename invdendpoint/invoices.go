@@ -2,15 +2,10 @@ package invdendpoint
 
 import "encoding/json"
 
-// type Invoices struct {
-// 	Invoices []Invoice `json:"invoices"`
-// }
-
 const InvoicesEndPoint = "/invoices"
 
 type Invoices []Invoice
 
-//Todo Add Tags Object and Attachements Objects
 type Invoice struct {
 	Id       int64  `json:"id,omitempty"`       //The invoice’s unique ID
 	Customer int64  `json:"customer,omitempty"` //Customer ID

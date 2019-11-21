@@ -342,6 +342,30 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 
 }
 
+func (c *Connection) postWithoutData(endPoint string, responseData interface{}) error {
+
+	resp, err := c.post(endPoint, nil)
+
+	if err != nil {
+		return err
+	}
+
+	apiError := checkStatusForError(resp.StatusCode, resp.Body)
+
+	if apiError != nil {
+		return apiError
+	}
+
+	err = pushDataIntoStruct(responseData, resp.Body)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 func (c *Connection) count(endPoint string) (int64, error) {
 	resp, err := c.get(endPoint)
 
