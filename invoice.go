@@ -261,6 +261,56 @@ func (c *Invoice) ListAttachements() (Files, error) {
 
 }
 
+
+func (c *Invoice) CreatePaymentPlan(paymentPlanRequest *invdendpoint.PaymentPlanRequest) (*invdendpoint.PaymentPlan, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/payment_plan"
+
+	if paymentPlanRequest == nil {
+		return nil, errors.New("paymentPlanRequest cannot be nil")
+	}
+
+	paymentPlanResp := new(invdendpoint.PaymentPlan)
+
+	apiErr := c.create(endPoint, paymentPlanRequest, paymentPlanResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+
+	return paymentPlanResp, nil
+
+}
+
+
+func (c *Invoice) RetrievePaymentPlan() (*invdendpoint.PaymentPlan, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/payment_plan"
+
+	paymentPlanResp := new(invdendpoint.PaymentPlan)
+
+	_, apiErr := c.retrieveDataFromAPI(endPoint, paymentPlanResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	return paymentPlanResp, nil
+
+}
+
+func (c *Invoice) CancelPaymentPlan() error {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
+
+	apiErr := c.delete(endPoint)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	return nil
+
+}
+
 func (c *Invoice) String() string {
 	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
 
