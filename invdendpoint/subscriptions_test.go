@@ -131,3 +131,93 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	}
 
 }
+
+func TestUnMarshalSubscriptionsPreview(t *testing.T)  {
+
+	data := `{
+  "first_invoice": {
+    "attempt_count": null,
+    "autopay": null,
+    "balance": 0,
+    "chase": false,
+    "closed": false,
+    "created_at": null,
+    "csv_url": null,
+    "currency": "usd",
+    "customer": -1,
+    "date": 1571410119,
+    "discounts": [],
+    "draft": true,
+    "due_date": null,
+    "id": false,
+    "items": [
+      {
+        "amount": 49,
+        "catalog_item": null,
+        "created_at": null,
+        "description": "",
+        "discountable": true,
+        "discounts": [],
+        "id": false,
+        "metadata": {},
+        "name": "Starter",
+        "object": "line_item",
+        "plan": "starter",
+        "quantity": 1,
+        "taxable": true,
+        "taxes": [],
+        "type": "plan",
+        "unit_cost": 49
+      }
+    ],
+    "metadata": {},
+    "name": "Starter",
+    "needs_attention": null,
+    "next_chase_on": null,
+    "next_payment_attempt": null,
+    "notes": null,
+    "number": null,
+    "object": "invoice",
+    "paid": false,
+    "payment_plan": null,
+    "payment_source": null,
+    "payment_terms": null,
+    "payment_url": null,
+    "pdf_url": null,
+    "purchase_order": null,
+    "ship_to": null,
+    "shipping": [],
+    "status": "draft",
+    "subscription": false,
+    "subtotal": 49,
+    "taxes": [],
+    "total": 49,
+    "url": null
+  },
+  "mrr": 49,
+  "recurring_total": 50
+}`
+
+	so := new(SubscriptionPreview)
+
+	err := json.Unmarshal([]byte(data), so)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if so.MRR != 49 {
+		t.Fatal("MRR does not match")
+	}
+
+	if so.FirstInvoice == nil {
+		t.Fatal("First Invoice should not be fatal")
+	}
+
+	if so.RecurringTotal != 50 {
+		t.Fatal("Recurring total should not ")
+	}
+
+
+
+}

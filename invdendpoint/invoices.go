@@ -8,6 +8,7 @@ type Invoices []Invoice
 
 type Invoice struct {
 	Id                     int64                  `json:"id,omitempty"`                   //The invoice’s unique ID
+	Object                 string                 `json:"object,omitempty"`               //Object type, invoice
 	Customer               int64                  `json:"customer,omitempty"`             //Customer ID
 	Name                   string                 `json:"name,omitempty"`                 //Invoice name for internal use, defaults to “Invoice”
 	Number                 string                 `json:"number,omitempty"`               //The reference number assigned to the invoice for use in the dashboard

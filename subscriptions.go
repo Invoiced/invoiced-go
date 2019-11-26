@@ -181,6 +181,27 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 
 }
 
+
+func (c *Subscription) Preview(subPreviewRequest *invdendpoint.SubscriptionPreviewRequest) (*invdendpoint.SubscriptionPreview, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id) + "/preview"
+
+	if subPreviewRequest == nil {
+		return nil, errors.New("Subscription is nil")
+	}
+
+	subPreviewResp := new(invdendpoint.SubscriptionPreview)
+
+	apiErr := c.create(endPoint, subPreviewRequest, subPreviewResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+
+	return subPreviewResp, nil
+
+}
+
 //SafeSubscriptionForCreation prunes subscription data for just fields that can be used for creation of a subscription
 func SafeSubscriptionForCreation(sub *invdendpoint.Subscription) (*invdendpoint.Subscription, error) {
 	if sub == nil  {
