@@ -361,6 +361,26 @@ func (c *Transaction) Refund(refund *invdendpoint.Refund) error {
 
 }
 
+func (c *Transaction) InitiateCharge(chargeRequest *invdendpoint.ChargeRequest) (*Transaction, error) {
+	endPoint := c.MakeEndPointURL(invdendpoint.ChargesEndPoint)
+	txnResp := new(Transaction)
+
+	if chargeRequest == nil {
+		return nil, errors.New("chargeRequest cannot be nil")
+	}
+
+	apiErr := c.create(endPoint, chargeRequest, txnResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	txnResp.Connection = c.Connection
+
+	return txnResp, nil
+
+}
+
 
 //SafeTransactionForCreation prunes transaction data for just fields that can be used for creation of a transaction
 func SafeTransactionForCreation(transaction *invdendpoint.Transaction) (*invdendpoint.Transaction, error) {
