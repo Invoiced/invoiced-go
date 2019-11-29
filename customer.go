@@ -2,8 +2,9 @@ package invdapi
 
 import (
 	"errors"
-	"github.com/ActiveState/invoiced-go/invdendpoint"
 	"strconv"
+
+	"github.com/ActiveState/invoiced-go/invdendpoint"
 )
 
 type Customer struct {
@@ -36,7 +37,7 @@ func (c *Customer) Create(customer *Customer) (*Customer, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.CustomersEndPoint)
 	custResp := new(Customer)
 
-	apiErr := c.create(endPoint, customer, custResp)
+	apiErr := c.create(endPoint, customer.SaveableCustomer, custResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -64,7 +65,7 @@ func (c *Customer) Delete() error {
 func (c *Customer) Save() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
 	custResp := new(Customer)
-	apiErr := c.update(endPoint, c, custResp)
+	apiErr := c.update(endPoint, c.SaveableCustomer, custResp)
 
 	if apiErr != nil {
 		return apiErr
