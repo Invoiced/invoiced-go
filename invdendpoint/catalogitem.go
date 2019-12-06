@@ -10,9 +10,11 @@ type CatalogItem struct {
 	UnitCost     float64                `json:"unit_cost,omitempty"`    //First address line
 	Description  string                 `json:"description,omitempty"`  //Optional description
 	Type         string                 `json:"service,omitempty"`      //Optional line item type. Used to group line items by type in reporting
-	Taxes        []Tax                  `json:"taxes,omitempty"`        //Collection of Tax Rate Objects
-	Discountable bool                   `json:"discountable,omitempty"` //Excludes amount from discounts when false
 	Taxable      bool                   `json:"taxable,omitempty"`      //Excludes amount from taxes when false
+	Taxes        []Tax                  `json:"taxes,omitempty"`        //Collection of Tax Rate Objects
+	AvalaraTaxCode string               `json:"avalara_tax_code,omitempty"`  //Avalara-specific tax code
+	GlAccount      string				`json:"gl_account,omitempty"`     //General ledger account code
+	Discountable bool                   `json:"discountable,omitempty"` //Excludes amount from discounts when false
 	CreatedAt    int64                  `json:"created_at,omitempty"`   //Timestamp when created
 	MetaData     map[string]interface{} `json:"metadata,omitempty"`     //A hash of key/value pairs that can store additional information about this object.
 }
