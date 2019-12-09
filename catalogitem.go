@@ -19,7 +19,7 @@ func (c *Connection) NewCatalogItem() *CatalogItem {
 }
 
 func (c *CatalogItem) Create(catalogItem *CatalogItem) (*CatalogItem, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.TaskEndPoint)
+	endPoint := c.MakeEndPointURL(invdendpoint.CatalogItemEndPoint)
 
 	catalogItemResp := new(CatalogItem)
 

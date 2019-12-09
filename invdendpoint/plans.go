@@ -3,27 +3,25 @@ package invdendpoint
 const PlansEndPoint = "/plans/"
 
 type Plan struct {
-	Plan PlanData `json:"plan,omitempty"`
+	Id            string                 `json:"id,omitempty"`
+	Object        string                 `json:"object,omitempty"`
+	CatalogItem   int64                  `json:"catalog_item,omitempty"`
+	Name          string                 `json:"name,omitempty"`
+	Currency      string                 `json:"currency,omitempty"`
+	Amount        float64                `json:"amount,omitempty"`
+	PricingMode   string                 `json:"pricing_mode,omitempty"`
+	QuantityType  string                 `json:"quantity_type,omitempty"`
+	Interval      string                 `json:"interval,omitempty"`
+	IntervalCount float64                `json:"interval_count,omitempty"`
+	Tiers         []Tier                 `json:"tier,omitempty"`
+	CreatedAt     int64                  `json:"created_at,omitempty"`
+	Metadata      map[string]interface{} `json:"updated_at,omitempty"`
 }
 
-type Plans struct {
-	Plans []PlanData `json:"plans,omitempty"`
+type Tier struct {
+	MaxQty   float64 `json:"max_qty,omitempty"`
+	UnitCost float64 `json:"unit_cost,omitempty"`
+	MinQty   float64 `json:"min_qty,omitempty"`
 }
 
-type PlanData struct {
-	CreatedAt               int64  `json:"created_at,omitempty"`
-	UpdatedAt               int64  `json:"updated_at,omitempty"`
-	Id                      int64  `json:"id,omitempty"`
-	Name                    string `json:"name,omitempty"`
-	Theme                   int64  `json:"theme,omitempty"`
-	Chase                   bool   `json:"chase,omitempty"`
-	Amount                  bool   `json:"amount,omitempty"`
-	Interval                string `json:"interval,omitempty"`
-	IntervalCount           int64  `json:"interval_count,omitempty"`
-	Description             string `json:"description,omitempty"`
-	Type                    string `json:"type,omitempty"`
-	Note                    string `json:"note,omitempty"`
-	Terms                   string `json:"terms,omitempty"`
-	SendInvoiceAfterRenewal string `json:"send_invoice_after_renewal,omitempty"`
-	DisabledPaymentMethods  string `json:"disabled_payment_methods,omitempty"`
-}
+
