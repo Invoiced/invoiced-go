@@ -138,7 +138,7 @@ NEXT:
 
 }
 
-//SafeCouponForCreation prunes tax rate data for just fields that can be used for creation of a coupon
+//SafeCouponForCreation prunes coupon data for just fields that can be used for creation of a coupon
 func SafeCouponForCreation(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, error) {
 
 	if coupon == nil {
@@ -160,7 +160,7 @@ func SafeCouponForCreation(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, e
 	return couponData, nil
 }
 
-//SafeTaxRateForUpdating prunes plan data for just fields that can be used for updating of a plan
+//SafeTaxRateForUpdating prunes coupon data for just fields that can be used for updating of a plan
 func SafeCouponForUpdating(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, error) {
 
 	if coupon == nil {
