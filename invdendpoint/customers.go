@@ -33,8 +33,8 @@ type Customer struct {
 	Chase              bool                   `json:"boolean,omitempty"`   		   //Chasing enabled? - defaults to true
 	ChasingCadence     int64				  `json:"chasing_cadence,omitempty"`   //Cadence ID
 	Phone              string                 `json:"phone,omitempty"`             //Phone #
-	CreditHold         bool                   `json:"credithold,omitempty"`        //When true, customer is on credit hold
-	CreditLimit        float64                `json:"credit_hold,omitempty"`       //Customer credit limit
+	CreditHold         bool                   `json:"credit_hold,omitempty"`        //When true, customer is on credit hold
+	CreditLimit        float64                `json:"credit_limit,omitempty"`       //Customer credit limit
 	Owner              int64                  `json:"owner,omitempty"`             //Customer credit limit
 	Taxable            bool                   `json:"taxable,omitempty"`           //Customer taxable?
 	Taxes              []Rate                 `json:"taxes,omitempty"`             //Collection of Tax Rate IDs
