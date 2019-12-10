@@ -94,6 +94,25 @@ func (c *Customer) Save() error {
 
 }
 
+
+func (c *Customer) FreeUpdate(customerData interface{}) error {
+
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
+
+	custResp := new(Customer)
+
+	apiErr := c.update(endPoint, customerData, custResp)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	c.Customer = custResp.Customer
+
+	return nil
+
+}
+
 func (c *Customer) Retrieve(id int64) (*Customer, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), id)
 
