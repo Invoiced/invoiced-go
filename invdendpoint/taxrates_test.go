@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func testUnmarshalTaxRateObject(t *testing.T) {
+func TestUnmarshalTaxRateObject(t *testing.T) {
 	s := `{
   "created_at": 1477418268,
   "currency": null,
