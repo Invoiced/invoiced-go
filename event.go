@@ -67,3 +67,21 @@ func (c *Event) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Even
 	return events, nextEndPoint, nil
 
 }
+
+
+func (c *Event) Retrieve(id string) (*Event, error) {
+	endPoint := c.MakeEndPointURL(invdendpoint.EventsEndPoint) + "/" + id
+
+	eventEndPoint := new(invdendpoint.Event)
+
+	event := &Event{c.Connection, eventEndPoint}
+
+	_, err := c.retrieveDataFromAPI(endPoint, event)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
+
+}

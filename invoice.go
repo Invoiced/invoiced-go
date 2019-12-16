@@ -1,6 +1,7 @@
 package invdapi
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
@@ -38,7 +39,18 @@ func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 	invResp := new(Invoice)
 
-	apiErr := c.create(endPoint, invoice, invResp)
+	if invoice == nil {
+		return nil, errors.New("invoice cannot be nil")
+	}
+
+	//safe prune invoice data for creation
+	invdInvToCreate,err := SafeInvoiceForCreation(invoice.Invoice)
+
+	if err != nil {
+		return nil, err
+	}
+
+	apiErr := c.create(endPoint, invdInvToCreate, invResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -65,8 +77,16 @@ func (c *Invoice) Delete() error {
 
 func (c *Invoice) Save() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
+
 	invResp := new(Invoice)
-	apiErr := c.update(endPoint, c, invResp)
+
+	invDataToUpdate, err := SafeInvoiceForUpdate(c.Invoice)
+
+	if err != nil {
+		return err
+	}
+
+	apiErr := c.update(endPoint, invDataToUpdate, invResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -241,8 +261,112 @@ func (c *Invoice) ListAttachements() (Files, error) {
 
 }
 
+
+func (c *Invoice) CreatePaymentPlan(paymentPlanRequest *invdendpoint.PaymentPlanRequest) (*invdendpoint.PaymentPlan, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/payment_plan"
+
+	if paymentPlanRequest == nil {
+		return nil, errors.New("paymentPlanRequest cannot be nil")
+	}
+
+	paymentPlanResp := new(invdendpoint.PaymentPlan)
+
+	apiErr := c.create(endPoint, paymentPlanRequest, paymentPlanResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+
+	return paymentPlanResp, nil
+
+}
+
+
+func (c *Invoice) RetrievePaymentPlan() (*invdendpoint.PaymentPlan, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/payment_plan"
+
+	paymentPlanResp := new(invdendpoint.PaymentPlan)
+
+	_, apiErr := c.retrieveDataFromAPI(endPoint, paymentPlanResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	return paymentPlanResp, nil
+
+}
+
+func (c *Invoice) CancelPaymentPlan() error {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
+
+	apiErr := c.delete(endPoint)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	return nil
+
+}
+
 func (c *Invoice) String() string {
 	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
 
 	return header + " " + "JSON: " + c.Invoice.String()
+}
+
+//SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
+func SafeInvoiceForCreation(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, error) {
+	if inv == nil  {
+		return nil, errors.New("Invoice is nil or Invoice.Invoice is nil")
+	}
+
+	invData :=new(invdendpoint.Invoice)
+	invData.Customer = inv.Customer
+	invData.Name = inv.Name
+	invData.Number = inv.Number
+	invData.Currency = inv.Currency
+	invData.PaymentTerms = inv.PaymentTerms
+	invData.Date = inv.Date
+	invData.DueDate = inv.DueDate
+	invData.Draft = inv.Draft
+	invData.Closed = inv.Closed
+	invData.Items = inv.Items
+	invData.Notes = inv.Notes
+	invData.Discounts = inv.Discounts
+	invData.MetaData = inv.MetaData
+	invData.Attachments = inv.Attachments
+	invData.DisabledPaymentMethods = inv.DisabledPaymentMethods
+
+
+	return invData,nil
+}
+
+//SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
+func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, error) {
+	if inv == nil  {
+		return nil, errors.New("Invoice is nil or Invoice.Invoice is nil")
+	}
+
+	invData :=new(invdendpoint.Invoice)
+	invData.Name = inv.Name
+	invData.Number = inv.Number
+	invData.Currency = inv.Currency
+	invData.PaymentTerms = inv.PaymentTerms
+	invData.Date = inv.Date
+	invData.DueDate = inv.DueDate
+	invData.Draft = inv.Draft
+	invData.Sent = inv.Sent
+	invData.Closed = inv.Closed
+	invData.Items = inv.Items
+	invData.Notes = inv.Notes
+	invData.Discounts = inv.Discounts
+	invData.MetaData = inv.MetaData
+	invData.Attachments = inv.Attachments
+	invData.DisabledPaymentMethods = inv.DisabledPaymentMethods
+
+
+	return invData,nil
 }

@@ -17,7 +17,7 @@ const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
 const InvoicedTokenString = "invoicedToken"
 
-const version = "3.2.1"
+const version = "4.0.0"
 
 func Version() string {
 	return version
@@ -321,6 +321,30 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 	body := bytes.NewBuffer(b)
 
 	resp, err := c.patch(endPoint, body)
+
+	if err != nil {
+		return err
+	}
+
+	apiError := checkStatusForError(resp.StatusCode, resp.Body)
+
+	if apiError != nil {
+		return apiError
+	}
+
+	err = pushDataIntoStruct(responseData, resp.Body)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (c *Connection) postWithoutData(endPoint string, responseData interface{}) error {
+
+	resp, err := c.post(endPoint, nil)
 
 	if err != nil {
 		return err

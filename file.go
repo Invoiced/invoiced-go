@@ -2,6 +2,7 @@ package invdapi
 
 import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"errors"
 )
 
 type File struct {
@@ -21,7 +22,14 @@ func (c *File) Create(file *File) (*File, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.FilesEndPoint)
 	fileResp := new(File)
 
-	apiErr := c.create(endPoint, file, fileResp)
+	//safe prune file data for creation
+	invdFileDataToCreate,err := SafeFileForCreation(file.File)
+
+	if err != nil {
+		return nil, err
+	}
+
+	apiErr := c.create(endPoint, invdFileDataToCreate, fileResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -61,4 +69,20 @@ func (c *File) Retrieve(id int64) (*File, error) {
 
 	return file, nil
 
+}
+
+//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+func SafeFileForCreation(file *invdendpoint.File) (*invdendpoint.File, error)  {
+
+	if file == nil {
+		return nil, errors.New("file is nil")
+	}
+
+	fileData := new(invdendpoint.File)
+	fileData.Name = file.Name
+	fileData.Size = file.Size
+	fileData.Type = file.Type
+	fileData.Url = file.Url
+
+	return fileData, nil
 }
