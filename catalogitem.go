@@ -138,7 +138,7 @@ NEXT:
 
 }
 
-//SafeCustomerForCreation prunes catalog item data for just fields that can be used for creation of a catalog item
+//SafeForCreation prunes catalog item data for just fields that can be used for creation of a catalog item
 func SafeCatalogItemForCreation(catalogItem *invdendpoint.CatalogItem) (*invdendpoint.CatalogItem, error) {
 
 	if catalogItem == nil {
@@ -161,7 +161,7 @@ func SafeCatalogItemForCreation(catalogItem *invdendpoint.CatalogItem) (*invdend
 	return catalogItemData, nil
 }
 
-//SafeTaskForUpdating prunes catalog item data for just fields that can be used for updating of a catalog item
+//SafeForUpdating prunes catalog item data for just fields that can be used for updating of a catalog item
 func SafeCatalogItemForUpdating(catalogItem *invdendpoint.CatalogItem) (*invdendpoint.CatalogItem, error) {
 
 	if catalogItem == nil {
