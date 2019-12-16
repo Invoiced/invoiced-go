@@ -18,7 +18,7 @@ func (c *Connection) NewNote() *Note {
 
 }
 
-func (c *Note) Create(createNoteRequest *invdendpoint.CreateNoteRequest) (*Note, error) {
+func (c *Note) Create(createNoteRequest invdendpoint.CreateNoteRequest) (*Note, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.NotesEndPoint)
 
 	noteResp := new(Note)

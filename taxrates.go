@@ -7,14 +7,14 @@ import (
 
 type TaxRate struct {
 	*Connection
-	*invdendpoint.Rate
+	*invdendpoint.TaxRate
 
 }
 
 type TaxRates []*TaxRate
 
 func (c *Connection) NewTaxRate() *TaxRate {
-	taxRate := new(invdendpoint.Rate)
+	taxRate := new(invdendpoint.TaxRate)
 	return &TaxRate{c, taxRate}
 
 }
@@ -30,7 +30,7 @@ func (c *TaxRate) Create(taxRate *TaxRate) (*TaxRate, error) {
 	}
 
 	//safe prune file data for creation
-	invdTaxRateDataToCreate, err := SafeTaxRateForCreation(taxRate.Rate)
+	invdTaxRateDataToCreate, err := SafeTaxRateForCreation(taxRate.TaxRate)
 
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *TaxRate) Save() error {
 
 	taxRateResp := new(TaxRate)
 
-	invdTaxRatDataToUpdate, err := SafeTaxRateForUpdating(c.Rate)
+	invdTaxRatDataToUpdate, err := SafeTaxRateForUpdating(c.TaxRate)
 
 	if err != nil {
 		return err
@@ -65,7 +65,7 @@ func (c *TaxRate) Save() error {
 		return apiErr
 	}
 
-	c.Rate = taxRateResp.Rate
+	c.TaxRate = taxRateResp.TaxRate
 
 	return nil
 
@@ -87,7 +87,7 @@ func (c *TaxRate) Delete() error {
 func (c *TaxRate) Retrieve(id string) (*TaxRate, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.RatesEndPoint) + "/" + id
 
-	taxRateEndPoint := new(invdendpoint.Rate)
+	taxRateEndPoint := new(invdendpoint.TaxRate)
 
 	taxRate := &TaxRate{c.Connection, taxRateEndPoint}
 
@@ -138,15 +138,15 @@ NEXT:
 
 }
 
-//SafetaxRateForCreation prunes tax rate data for just fields that can be used for creation of a tax rate
-func SafeTaxRateForCreation(taxRate *invdendpoint.Rate) (*invdendpoint.Rate, error) {
+//SafetaxRateForCreation prunes tax TaxRate data for just fields that can be used for creation of a tax TaxRate
+func SafeTaxRateForCreation(taxRate *invdendpoint.TaxRate) (*invdendpoint.TaxRate, error) {
 
 	if taxRate == nil {
 		return nil, errors.New("taxRate is nil")
 	}
 
 
-	taxRateData := new(invdendpoint.Rate)
+	taxRateData := new(invdendpoint.TaxRate)
 	taxRateData.Id = taxRate.Id
 	taxRateData.Name = taxRate.Name
 	taxRateData.Currency = taxRate.Currency
@@ -159,14 +159,14 @@ func SafeTaxRateForCreation(taxRate *invdendpoint.Rate) (*invdendpoint.Rate, err
 }
 
 //SafeTaxRateForUpdating prunes plan data for just fields that can be used for updating of a plan
-func SafeTaxRateForUpdating(taxRate *invdendpoint.Rate) (*invdendpoint.Rate, error) {
+func SafeTaxRateForUpdating(taxRate *invdendpoint.TaxRate) (*invdendpoint.TaxRate, error) {
 
 	if taxRate == nil {
 		return nil, errors.New("taxRate is nil")
 	}
 
 
-	taxRateData := new(invdendpoint.Rate)
+	taxRateData := new(invdendpoint.TaxRate)
 	taxRateData.Name = taxRate.Name
 	taxRateData.MetaData = taxRate.MetaData
 
