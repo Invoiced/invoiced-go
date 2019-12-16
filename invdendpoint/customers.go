@@ -32,7 +32,7 @@ type Customer struct {
 	Language           string                 `json:"language,omitempty"`          //Two-letter ISO code
 	Chase              bool                   `json:"boolean,omitempty"`   		   //Chasing enabled? - defaults to true
 	ChasingCadence     int64				  `json:"chasing_cadence,omitempty"`   //Cadence ID
-	NextChaseStep		int64                 `json:"next_chase_step,ommitempty"`
+	NextChaseStep	   int64                  `json:"next_chase_step,omitempty"`
 	Phone              string                 `json:"phone,omitempty"`             //Phone #
 	CreditHold         bool                   `json:"credit_hold,omitempty"`        //When true, customer is on credit hold
 	CreditLimit        float64                `json:"credit_limit,omitempty"`       //Customer credit limit
