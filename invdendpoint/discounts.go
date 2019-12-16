@@ -4,6 +4,6 @@ package invdendpoint
 type Discount struct {
 	Id      int64   `json:"id,omitempty"`      //The discount’s unique ID
 	Amount  float64 `json:"amount,omitempty"`  //Discount amount
-	Coupon  Rate    `json:"coupon,omitempty"`  //Coupon the discount was computed from, if any
+	Coupon  TaxRate `json:"coupon,omitempty"`  //Coupon the discount was computed from, if any
 	Expires int64   `json:"expires,omitempty"` //Time until discount expires, if any
 }

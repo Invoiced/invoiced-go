@@ -60,10 +60,6 @@ func TestUnMarshalCustomerObject(t *testing.T) {
 		t.Fatal("Number is incorrects")
 	}
 
-	if so.CollectionMode != "auto" {
-		t.Fatal("Collection Mode is incorrect")
-	}
-
 	if so.PaymentSourceRAW == nil {
 		t.Fatal("Payment Source RAW is nil")
 	}

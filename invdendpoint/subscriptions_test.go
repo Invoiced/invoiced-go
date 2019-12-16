@@ -126,40 +126,98 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 		t.Fatal("Subscription Ahas incorrect ContractRenewalMode status")
 	}
 
-
 	if so.CreatedAt != 1420391704 {
 		t.Fatal("Subscription CreatedAt is incorrect")
 	}
 
-	if so.ShipTo.Address1 != "123 Main St" {
-		t.Fatal("Subscription ShipTo.Address1 is incorrect")
+}
+
+func TestUnMarshalSubscriptionsPreview(t *testing.T)  {
+
+	data := `{
+  "first_invoice": {
+    "attempt_count": null,
+    "autopay": null,
+    "balance": 0,
+    "chase": false,
+    "closed": false,
+    "created_at": null,
+    "csv_url": null,
+    "currency": "usd",
+    "customer": -1,
+    "date": 1571410119,
+    "discounts": [],
+    "draft": true,
+    "due_date": null,
+    "id": false,
+    "items": [
+      {
+        "amount": 49,
+        "catalog_item": null,
+        "created_at": null,
+        "description": "",
+        "discountable": true,
+        "discounts": [],
+        "id": false,
+        "metadata": {},
+        "name": "Starter",
+        "object": "line_item",
+        "plan": "starter",
+        "quantity": 1,
+        "taxable": true,
+        "taxes": [],
+        "type": "plan",
+        "unit_cost": 49
+      }
+    ],
+    "metadata": {},
+    "name": "Starter",
+    "needs_attention": null,
+    "next_chase_on": null,
+    "next_payment_attempt": null,
+    "notes": null,
+    "number": null,
+    "object": "invoice",
+    "paid": false,
+    "payment_plan": null,
+    "payment_source": null,
+    "payment_terms": null,
+    "payment_url": null,
+    "pdf_url": null,
+    "purchase_order": null,
+    "ship_to": null,
+    "shipping": [],
+    "status": "draft",
+    "subscription": false,
+    "subtotal": 49,
+    "taxes": [],
+    "total": 49,
+    "url": null
+  },
+  "mrr": 49,
+  "recurring_total": 50
+}`
+
+	so := new(SubscriptionPreview)
+
+	err := json.Unmarshal([]byte(data), so)
+
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	if so.ShipTo.Address2 != "Ste 100" {
-		t.Fatal("Subscription ShipTo.Address2 is incorrect")
+	if so.MRR != 49 {
+		t.Fatal("MRR does not match")
 	}
 
-	if so.ShipTo.AttentionTo != "Regina Smith" {
-		t.Fatal("Subscription ShipTo.AttentionTo is incorrect")
+	if so.FirstInvoice == nil {
+		t.Fatal("First Invoice should not be fatal")
 	}
 
-	if so.ShipTo.City != "Austin" {
-		t.Fatal("Subscription ShipTo.City is incorrect")
+	if so.RecurringTotal != 50 {
+		t.Fatal("Recurring total should not ")
 	}
 
-	if so.ShipTo.Country != "US" {
-		t.Fatal("Subscription ShipTo.Country is incorrect")
-	}
 
-	if so.ShipTo.Name != "Company Name" {
-		t.Fatal("Subscription ShipTo.Name is incorrect")
-	}
 
-	if so.ShipTo.PostalCode != "78730" {
-		t.Fatal("Subscription ShipTo.PostalCode is incorrect")
-	}
-
-	if so.ShipTo.State !=  "TX" {
-		t.Fatal("Subscription ShipTo.State is incorrect")
-	}
 }
