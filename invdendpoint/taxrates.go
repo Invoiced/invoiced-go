@@ -2,7 +2,7 @@ package invdendpoint
 
 const RatesEndPoint = "/tax_rates"
 
-type Rate struct {
+type TaxRate struct {
 	Id        string                 `json:"id,omitempty"`
 	Object    string                 `json:"object,omitempty"`
 	Name      string                 `json:"name,omitempty"`

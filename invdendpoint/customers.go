@@ -28,27 +28,27 @@ type Customer struct {
 	City               string                 `json:"city,omitempty"`              //City
 	State              string                 `json:"state,omitempty"`             //State or province
 	PostalCode         string                 `json:"postal_code,omitempty"`       //Zip or postal code
-	Country            string                 `json:"country,omitempty"`           //Two-letter ISO code
-	Language           string                 `json:"language,omitempty"`          //Two-letter ISO code
-	Chase              bool                   `json:"boolean,omitempty"`   		   //Chasing enabled? - defaults to true
-	ChasingCadence     int64				  `json:"chasing_cadence,omitempty"`   //Cadence ID
-	NextChaseStep	   int64                  `json:"next_chase_step,omitempty"`
-	Phone              string                 `json:"phone,omitempty"`             //Phone #
-	CreditHold         bool                   `json:"credit_hold,omitempty"`        //When true, customer is on credit hold
-	CreditLimit        float64                `json:"credit_limit,omitempty"`       //Customer credit limit
-	Owner              int64                  `json:"owner,omitempty"`             //Customer credit limit
-	Taxable            bool                   `json:"taxable,omitempty"`           //Customer taxable?
-	Taxes              []Rate                 `json:"taxes,omitempty"`             //Collection of Tax Rate IDs
-	TaxId			   string                 `json:"taxid,omitempty"`             //Tax ID to be displayed on documents
-	AvalaraEntityUseCode string               `json:"avalara_entity_use_code,omitempty"` //Avalara-specific entity use code
-	AvalaraExemptionNumber string             `json:"avalara_exemption_number,omitempty"`// Tax-exempt number to pass to Avalara
-	Type               string                 `json:"type,omitempty"`              //Organization type, company or person
-	ParentCustomer      int64                 `json:"parent_customer,omitempty"`   //Parent customer ID
-	Notes              string                 `json:"notes,omitempty"`             //Private customer notes
-	SignUpPage         string                 `json:"sign_up_page,omitempty"`
-	SignUpUrl          string                 `json:"sign_up_url,omitempty"` //URL to download the latest account statement
-	StatementPdfUrl    string                 `json:"statement_pdf_url,omitempty"` //URL to download the latest account statement
-	CreatedAt          int64                  `json:"created_at,omitempty"`        //Timestamp when created
+	Country            string     `json:"country,omitempty"`           //Two-letter ISO code
+	Language           string     `json:"language,omitempty"`          //Two-letter ISO code
+	Chase              bool       `json:"boolean,omitempty"`   		   //Chasing enabled? - defaults to true
+	ChasingCadence     int64      `json:"chasing_cadence,omitempty"`   //Cadence ID
+	NextChaseStep	   int64     `json:"next_chase_step,omitempty"`
+	Phone              string     `json:"phone,omitempty"`                    //Phone #
+	CreditHold         bool       `json:"credit_hold,omitempty"`              //When true, customer is on credit hold
+	CreditLimit        float64    `json:"credit_limit,omitempty"`             //Customer credit limit
+	Owner              int64      `json:"owner,omitempty"`                    //Customer credit limit
+	Taxable            bool       `json:"taxable,omitempty"`                  //Customer taxable?
+	Taxes              []TaxRate  `json:"taxes,omitempty"`                    //Collection of Tax Rate IDs
+	TaxId			   string    `json:"taxid,omitempty"`                    //Tax ID to be displayed on documents
+	AvalaraEntityUseCode string   `json:"avalara_entity_use_code,omitempty"`  //Avalara-specific entity use code
+	AvalaraExemptionNumber string `json:"avalara_exemption_number,omitempty"` // Tax-exempt number to pass to Avalara
+	Type               string     `json:"type,omitempty"`                     //Organization type, company or person
+	ParentCustomer      int64     `json:"parent_customer,omitempty"`          //Parent customer ID
+	Notes              string     `json:"notes,omitempty"`                    //Private customer notes
+	SignUpPage         string     `json:"sign_up_page,omitempty"`
+	SignUpUrl          string     `json:"sign_up_url,omitempty"` //URL to download the latest account statement
+	StatementPdfUrl    string     `json:"statement_pdf_url,omitempty"` //URL to download the latest account statement
+	CreatedAt          int64      `json:"created_at,omitempty"`        //Timestamp when created
 	MetaData           map[string]interface{} `json:"metadata,omitempty"`          //A hash of key/value pairs that can store additional information about this object.
 	DisabledPaymentMethods []string           `json:"disabled_payment_methods,omitempty"`
 }

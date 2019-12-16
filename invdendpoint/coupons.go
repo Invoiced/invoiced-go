@@ -7,7 +7,7 @@ type Coupon struct {
 	Object         string                 `json:"object,omitempty"`          //Object type, coupon
 	Name           string                 `json:"name,omitempty"`            //Coupon name
 	Currency       string                 `json:"currency,omitempty"`        //3-letter ISO code
-	Value          string                 `json:"value,omitempty"`           //Amount
+	Value          int64                 `json:"value,omitempty"`           //Amount
 	IsPercent      bool                   `json:"is_percent,omitempty"`      //When true the value is a %
 	Exclusive      bool                   `json:"exclusive,omitempty"`       //exclusive
 	ExpirationDate int64                  `json:"expiration_date,omitempty"` //Date coupon expires
