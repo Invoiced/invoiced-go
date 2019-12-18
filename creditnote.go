@@ -228,7 +228,7 @@ func (c *CreditNote) ListCreditNoteByNumber(creditNoteNumber string) (*CreditNot
 
 
 
-func (c *CreditNote) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)

@@ -236,7 +236,7 @@ func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 
 }
 
-func (c *Invoice) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+func (c *Invoice) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
