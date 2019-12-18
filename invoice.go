@@ -125,6 +125,24 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 
 }
 
+func (c *Invoice) Void() (*Invoice, error) {
+
+	invResp := new(Invoice)
+
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/void"
+
+	apiErr := c.postWithoutData(endPoint,invResp)
+
+	if apiErr != nil {
+		return nil,apiErr
+	}
+
+	invResp.Connection = c.Connection
+
+	return invResp,nil
+
+}
+
 func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
