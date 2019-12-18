@@ -259,6 +259,36 @@ func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.
 
 }
 
+func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/text_messages"
+
+	resp := new(invdendpoint.TextResponses)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *resp, nil
+
+}
+
+func (c *Estimate) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/letters"
+
+	resp := new(invdendpoint.LetterResponse)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+
+}
+
 func (c *Estimate) ListAttachments() (Files, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/attachments"
 	files := make(Files, 0)

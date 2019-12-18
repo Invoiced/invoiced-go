@@ -243,6 +243,35 @@ func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoin
 
 }
 
+func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/text_messages"
+
+	resp := new(invdendpoint.TextResponses)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *resp, nil
+
+}
+
+func (c *CreditNote) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/letters"
+
+	resp := new(invdendpoint.LetterResponse)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+
+}
 
 
 

@@ -251,6 +251,36 @@ func (c *Invoice) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.E
 
 }
 
+func (c *Invoice) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/text_messages"
+
+	resp := new(invdendpoint.TextResponses)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *resp, nil
+
+}
+
+func (c *Invoice) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/letters"
+
+	resp := new(invdendpoint.LetterResponse)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+
+}
+
 func (c *Invoice) Pay() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/pay"
 	invoice := new(invdendpoint.Invoice)
