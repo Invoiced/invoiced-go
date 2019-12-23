@@ -351,6 +351,68 @@ func (c *Customer) DeleteContact(contactID int64) error {
 
 }
 
+func (c *Customer) CreatePaymentSource(source *invdendpoint.PaymentSource) (*invdendpoint.PaymentSource, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/payment_sources"
+
+	sourceDataToCreate, err := SafeSourceForCreation(source)
+
+	if err != nil {
+		return nil,err
+	}
+
+	resp := new(invdendpoint.PaymentSource)
+
+	err = c.create(endPoint, sourceDataToCreate, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+//SafeSourceForCreation prunes source object for just fields that can be used for creation
+func SafeSourceForCreation(source *invdendpoint.PaymentSource) (*invdendpoint.PaymentSource, error) {
+
+	if source == nil  {
+		return nil, errors.New("Source is nil")
+	}
+
+	sourceData :=new(invdendpoint.PaymentSource)
+	sourceData.Method = source.Method
+	sourceData.MakeDefault = source.MakeDefault
+	sourceData.InvoicedToken = source.InvoicedToken
+	sourceData.GatewayToken = source.GatewayToken
+
+	return sourceData,nil
+}
+
+func (c *Customer) DeleteCard(cardID int64) error {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/cards/" + strconv.FormatInt(cardID, 10)
+
+	apiErr := c.delete(endPoint)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	return nil
+
+}
+
+func (c *Customer) DeleteBankAccount(acctID int64) error {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/bank_accounts/" + strconv.FormatInt(acctID, 10)
+
+	apiErr := c.delete(endPoint)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	return nil
+
+}
+
 func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items"
