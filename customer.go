@@ -238,10 +238,36 @@ func (c *Customer) GetBalance() (*invdendpoint.CustomerBalance, error) {
 	return custBalance, nil
 }
 
-func (c *Customer) SendStatement(custStmtReq *invdendpoint.EmailResponse) (*invdendpoint.EmailResponses, error) {
+func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (*invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/emails"
 
 	custStmtResp := new(invdendpoint.EmailResponses)
+	err := c.create(endPoint, custStmtReq, custStmtResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return custStmtResp, nil
+}
+
+func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (*invdendpoint.TextResponses, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/text_messages"
+
+	custStmtResp := new(invdendpoint.TextResponses)
+	err := c.create(endPoint, custStmtReq, custStmtResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return custStmtResp, nil
+}
+
+func (c *Customer) SendStatementLetter(custStmtReq *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/letters"
+
+	custStmtResp := new(invdendpoint.LetterResponse)
 	err := c.create(endPoint, custStmtReq, custStmtResp)
 
 	if err != nil {

@@ -296,7 +296,7 @@ func (c *Invoice) Pay() error {
 
 }
 
-func (c *Invoice) ListAttachements() (Files, error) {
+func (c *Invoice) ListAttachments() (Files, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/attachments"
 	files := make(Files, 0)
 	err := c.create(endPoint, nil, files)
