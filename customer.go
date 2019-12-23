@@ -387,6 +387,30 @@ func SafeSourceForCreation(source *invdendpoint.PaymentSource) (*invdendpoint.Pa
 	return sourceData,nil
 }
 
+func (c *Customer) ListAllPaymentSources() (invdendpoint.PaymentSources, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/payment_sources"
+
+	sources := make(invdendpoint.PaymentSources, 0)
+
+NEXT:
+	tmpSources := make(invdendpoint.PaymentSources, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpSources)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	sources = append(sources, tmpSources...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	return sources, nil
+
+}
+
 func (c *Customer) DeleteCard(cardID int64) error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/cards/" + strconv.FormatInt(cardID, 10)
 

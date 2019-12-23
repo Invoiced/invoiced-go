@@ -17,7 +17,7 @@ func TestUnMarshalCustomerObject(t *testing.T) {
     "id": 850,
     "object": "card",
     "brand": "Visa",
-    "last4": 4242,
+    "last4": "4242",
     "exp_month": 2,
     "exp_year": 20,
     "funding": "credit"
@@ -86,7 +86,7 @@ func TestCustomerUnmarshalCardObject(t *testing.T) {
   "funding": "credit"
 }`
 
-	so := new(CardObject)
+	so := new(Card)
 
 	err := json.Unmarshal([]byte(s), so)
 
@@ -136,7 +136,7 @@ func TestCustomerUnmarshalBankObject(t *testing.T) {
   "currency": "usd"
 }`
 
-	so := new(BankAccountObject)
+	so := new(BankAccount)
 
 	err := json.Unmarshal([]byte(s), so)
 

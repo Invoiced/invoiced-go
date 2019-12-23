@@ -18,7 +18,7 @@ type Customer struct {
 	AutoPayDelays	   int  				  `json:"autopay_delay_days,omitempty"`//Number of days to delay AutoPay
 	PaymentTerms       string                 `json:"payment_terms,omitempty"`     //Payment terms used for manual collection mode, i.e. “NET 30”
 	StripeToken        string    			  `json:"stripe_token,omitempty"`      //When provided sets the customer’s payment source to the tokenized Stripe card
-	PaymentSource      *PaymentSource         `json:"payment_source"`              //Customer’s payment source, if attached
+	PaymentSource      *PaymentSource         `json:"payment_source,omitempty"`    //Customer’s payment source, if attached
 	AttentionTo        string                 `json:"attention_to,omitempty"`      //Used for ATTN: address line if company
 	Address1           string                 `json:"address1,omitempty"`          //First address line
 	Address2           string                 `json:"address2,omitempty"`          //Optional second address line
