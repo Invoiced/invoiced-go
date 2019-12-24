@@ -20,6 +20,10 @@ func (c *Connection) NewSubscription() *Subscription {
 
 }
 
+func (c *Connection) NewPreviewRequest() *invdendpoint.SubscriptionPreviewRequest {
+	return &invdendpoint.SubscriptionPreviewRequest{}
+}
+
 func (c *Subscription) Count() (int64, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
 

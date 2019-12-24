@@ -22,6 +22,10 @@ func (c *Connection) NewInvoice() *Invoice {
 
 }
 
+func (c *Connection) NewPaymentPlanRequest() *invdendpoint.PaymentPlanRequest {
+	return &invdendpoint.PaymentPlanRequest{nil}
+}
+
 func (c *Invoice) Count() (int64, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 
@@ -297,12 +301,27 @@ func (c *Invoice) Pay() error {
 }
 
 func (c *Invoice) ListAttachments() (Files, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/attachments"
-	files := make(Files, 0)
-	err := c.create(endPoint, nil, files)
+	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/attachments"
 
-	if err != nil {
-		return nil, err
+	files := make(Files, 0)
+
+NEXT:
+	tempFiles := make(Files, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tempFiles)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	files = append(files, tempFiles...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, estimate := range files {
+		estimate.Connection = c.Connection
 	}
 
 	return files, nil
