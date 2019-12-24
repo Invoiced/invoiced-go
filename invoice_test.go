@@ -353,7 +353,9 @@ func TestInvoice_Count_Error(t *testing.T) {
 
 	result, err := entity.Count()
 
-	println(result)
+	if err == nil {
+		t.Fatal("Error: ", err)
+	}
 
 	if result != int64(-1) {
 		t.Fatal("Unexpectedly successful")
