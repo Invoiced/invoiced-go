@@ -23,7 +23,7 @@ func (c *Connection) NewInvoice() *Invoice {
 }
 
 func (c *Connection) NewPaymentPlanRequest() *invdendpoint.PaymentPlanRequest {
-	return &invdendpoint.PaymentPlanRequest{nil}
+	return &invdendpoint.PaymentPlanRequest{}
 }
 
 func (c *Invoice) Count() (int64, error) {
