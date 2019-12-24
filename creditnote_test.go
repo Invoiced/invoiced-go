@@ -170,36 +170,36 @@ func TestCreditNote_Retrieve(t *testing.T) {
 
 func TestCreditNote_CountErr(t *testing.T) {
 
-		key := "test api key"
+	key := "test api key"
 
-		var mockListResponse [1] invdendpoint.CreditNote
+	var mockListResponse [1] invdendpoint.CreditNote
 
-		mockResponse := new(invdendpoint.CreditNote)
-		mockResponse.Id = int64(1234)
-		mockResponse.Name = "nomenclature"
+	mockResponse := new(invdendpoint.CreditNote)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "nomenclature"
 
-		mockResponse.CreatedAt = time.Now().UnixNano()
+	mockResponse.CreatedAt = time.Now().UnixNano()
 
-		mockListResponse[0] = *mockResponse
+	mockListResponse[0] = *mockResponse
 
-		server, err := invdmockserver.New(200, mockListResponse, "json", true)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer server.Close()
-
-		conn := MockConnection(key, server)
-		entity := conn.NewCreditNote()
-
-		result, err := entity.Count()
-
-		println(result)
-
-		if result != int64(-1) {
-			t.Fatal("Unexpectedly successful")
-		}
-
+	server, err := invdmockserver.New(200, mockListResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
 	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+	entity := conn.NewCreditNote()
+
+	result, err := entity.Count()
+
+	println(result)
+
+	if result != int64(-1) {
+		t.Fatal("Unexpectedly successful")
+	}
+
+}
 
 func TestCreditNote_ListAll(t *testing.T) {
 

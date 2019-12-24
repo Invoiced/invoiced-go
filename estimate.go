@@ -203,30 +203,6 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 
 }
 
-func (c *Estimate) ListEstimateByNumber(invoiceNumber string) (*Estimate, error) {
-
-	filter := invdendpoint.NewFilter()
-	err := filter.Set("number", invoiceNumber)
-
-	if err != nil {
-		return nil, err
-	}
-
-	estimates, apiError := c.ListAll(filter, nil)
-
-	if apiError != nil {
-		return nil, apiError
-	}
-
-	if len(estimates) == 0 {
-		return nil, nil
-	}
-
-	return estimates[0], nil
-
-}
-
-
 func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/invoice"
 
@@ -290,12 +266,27 @@ func (c *Estimate) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.Le
 }
 
 func (c *Estimate) ListAttachments() (Files, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/attachments"
-	files := make(Files, 0)
-	err := c.create(endPoint, nil, files)
+	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/attachments"
 
-	if err != nil {
-		return nil, err
+	files := make(Files, 0)
+
+NEXT:
+	tempFiles := make(Files, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tempFiles)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	files = append(files, tempFiles...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, estimate := range files {
+		estimate.Connection = c.Connection
 	}
 
 	return files, nil
