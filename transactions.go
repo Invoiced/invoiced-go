@@ -27,7 +27,6 @@ type Transactions []*Transaction
 func (c *Connection) NewTransaction() *Transaction {
 	transaction := new(invdendpoint.Transaction)
 	return &Transaction{c, transaction}
-
 }
 
 func (c *Transaction) Count() (int64, error) {

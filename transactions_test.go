@@ -411,3 +411,253 @@ func TestTransaction_SendReceipt(t *testing.T) {
 	}
 
 }
+
+func TestTransaction_Refund(t *testing.T) {
+
+	key := "test api key"
+
+	mockTransactionResponseID := int64(1523)
+	mockTransactionResponse := new(invdendpoint.Transaction)
+	mockTransactionResponse.Id = mockTransactionResponseID
+	mockTransactionResponse.Customer = 234112
+	mockTransactionResponse.GatewayId = "234"
+
+	mockTransactionResponse.CreatedAt = time.Now().UnixNano()
+
+	server, err := invdmockserver.New(200, mockTransactionResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+	transaction := conn.NewTransaction()
+	transaction.Refund(nil)
+
+	if err != nil {
+		t.Fatal("Error Creating transaction", err)
+	}
+
+	if transaction.Id != int64(1523) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestTransaction_InitiateCharge(t *testing.T) {
+
+	key := "test api key"
+
+	mockTransactionResponseID := int64(1523)
+	mockTransactionResponse := new(invdendpoint.Transaction)
+	mockTransactionResponse.Id = mockTransactionResponseID
+	mockTransactionResponse.Customer = 234112
+	mockTransactionResponse.GatewayId = "234"
+
+	mockTransactionResponse.CreatedAt = time.Now().UnixNano()
+
+	server, err := invdmockserver.New(200, mockTransactionResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+	conn := MockConnection(key, server)
+
+	chargeRequest := new(invdendpoint.ChargeRequest)
+
+	transaction, err := conn.NewTransaction().InitiateCharge(chargeRequest)
+
+	if err != nil {
+		t.Fatal("Error Creating transaction", err)
+	}
+
+	if transaction.Id != int64(1523) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestTransaction_ListSuccessfulChargesByInvoiceID(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Transactions
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Transaction)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subscription := conn.NewTransaction()
+
+	invoiceResp, err := subscription.ListSuccessfulChargesByInvoiceID(int64(1234))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestTransaction_ListSuccessfulRefundsByInvoiceID(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Transactions
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Transaction)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subscription := conn.NewTransaction()
+
+	invoiceResp, err := subscription.ListSuccessfulRefundsByInvoiceID(int64(1234))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestTransaction_ListSuccessfulPaymentsByInvoiceID(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Transactions
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Transaction)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subscription := conn.NewTransaction()
+
+	invoiceResp, err := subscription.ListSuccessfulPaymentsByInvoiceID(int64(1234))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestTransaction_ListSuccessfulChargesAndPaymentsByInvoiceID(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Transactions
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Transaction)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subscription := conn.NewTransaction()
+
+	invoiceResp, err := subscription.ListSuccessfulChargesAndPaymentsByInvoiceID(int64(1234))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestTransaction_ListSuccessfulByInvoiceID(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Transactions
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Transaction)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subscription := conn.NewTransaction()
+
+	invoiceResp, err := subscription.ListSuccessfulByInvoiceID(int64(1234))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
