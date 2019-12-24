@@ -211,7 +211,7 @@ func TestInvoiceDeleteError(t *testing.T) {
 
 }
 
-func TestInvoiceList(t *testing.T) {
+func TestInvoiceListAllByNumber(t *testing.T) {
 
 	key := "test api key"
 
@@ -246,6 +246,50 @@ func TestInvoiceList(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(invoiceResp.Invoice, mockInvoiceResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestInvoiceList(t *testing.T) {
+
+	key := "test api key"
+
+	var mockInvoicesResponse invdendpoint.Invoices
+	mockInvoiceResponseID := int64(1523)
+	mockInvoiceNumber := "INV-3421"
+	mockInvoiceResponse := new(invdendpoint.Invoice)
+	mockInvoiceResponse.Id = mockInvoiceResponseID
+	mockInvoiceResponse.Number = mockInvoiceNumber
+	mockInvoiceResponse.PaymentTerms = "NET15"
+
+	mockInvoiceResponse.CreatedAt = time.Now().UnixNano()
+
+	mockInvoicesResponse = append(mockInvoicesResponse, *mockInvoiceResponse)
+
+	server, err := invdmockserver.New(200, mockInvoicesResponse, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	invoice := conn.NewInvoice()
+
+	invoiceResp, nextEndpoint, err := invoice.List(nil, nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if nextEndpoint != "" {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(invoiceResp[0].Invoice, mockInvoiceResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 

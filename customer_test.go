@@ -326,3 +326,691 @@ func TestCustomerListError(t *testing.T) {
 	}
 
 }
+
+func TestCustomer_List(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Customers
+	mockResponseId := int64(1523)
+	mockNumber := "INV-3421"
+	mockResponse := new(invdendpoint.Customer)
+	mockResponse.Id = mockResponseId
+	mockResponse.Number = mockNumber
+	mockResponse.PaymentTerms = "NET15"
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	entity := conn.NewCustomer()
+
+	entityResp, nextEndpoint, err := entity.List(nil, nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if nextEndpoint != "" {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(entityResp[0].Customer, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestCustomer_Retrieve(t *testing.T) {
+
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.Customer)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "nomenclature"
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+	entity := conn.NewCustomer()
+
+	retrievedTransaction, err := entity.Retrieve(int64(1234))
+
+	if err != nil {
+		t.Fatal("Error retrieving entity", err)
+	}
+
+	if !reflect.DeepEqual(retrievedTransaction.Customer, mockResponse) {
+		t.Fatal("Error messages do not match up")
+	}
+
+}
+
+func TestCustomer_GetBalance(t *testing.T) {
+
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.CustomerBalance)
+	mockResponse.TotalOutstanding = 1
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+	entity := conn.NewCustomer()
+
+	retrievedItem, err := entity.GetBalance()
+
+	if err != nil {
+		t.Fatal("Error retrieving entity", err)
+	}
+
+	if retrievedItem.TotalOutstanding != 1 {
+		t.Fatal("Error messages do not match up")
+	}
+
+}
+
+func TestCustomer_SendStatementEmail(t *testing.T) {
+	key := "test api key"
+
+	var mockEmailResponse [1] invdendpoint.EmailResponse
+
+	mockResponse := new(invdendpoint.EmailResponse)
+	mockResponse.Id = "abcdef"
+	mockResponse.Message = "hello test"
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockEmailResponse[0] = *mockResponse
+
+	server, err := invdmockserver.New(200, mockEmailResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subjectEntity := conn.NewCustomer()
+
+	sendResponse, err := subjectEntity.SendStatementEmail(nil)
+
+	if err != nil {
+		t.Fatal("Error with send", err)
+	}
+
+	if sendResponse[0].Message != "hello test" {
+		t.Fatal("Error: send not completed correctly")
+	}
+
+}
+
+func TestCustomer_SendStatementText(t *testing.T) {
+	key := "test api key"
+
+	var mockTextResponse [1] invdendpoint.TextResponse
+
+	mockResponse := new(invdendpoint.TextResponse)
+	mockResponse.Id = "abcdef"
+	mockResponse.Message = "hello text"
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockTextResponse[0] = *mockResponse
+
+	server, err := invdmockserver.New(200, mockTextResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subjectEntity := conn.NewCustomer()
+
+	sendResponse, err := subjectEntity.SendStatementText(nil)
+
+	if err != nil {
+		t.Fatal("Error with send", err)
+	}
+
+	if sendResponse[0].Message != "hello text" {
+		t.Fatal("Error: send not completed correctly")
+	}
+
+}
+
+func TestCustomer_SendStatementLetter(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.LetterResponse)
+	mockResponse.Id = "abcdef"
+	mockResponse.State = "queued"
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subjectEntity := conn.NewCustomer()
+
+	sendResponse, err := subjectEntity.SendStatementLetter(nil)
+
+	if err != nil {
+		t.Fatal("Error with send", err)
+	}
+
+	if sendResponse.State != "queued" {
+		t.Fatal("Error: send not completed correctly")
+	}
+
+}
+
+func TestCustomer_CreateContact(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.Contact)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "entity example"
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.CreateContact(conn.NewContact())
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity.Name != "entity example" {
+		t.Fatal("Error: operation not completed correctly")
+	}
+
+}
+
+func TestCustomer_RetrieveContact(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.Contact)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "entity example"
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.RetrieveContact(1234)
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity.Name != "entity example" {
+		t.Fatal("Error: operation not completed correctly")
+	}
+
+}
+
+func TestCustomer_UpdateContact(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.Contact)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "entity example 2"
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity := defaultEntity.NewContact()
+	subjectEntity.Id = int64(1234)
+	subjectEntity, err = defaultEntity.UpdateContact(subjectEntity)
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity.Name != "entity example 2" {
+		t.Fatal("Error: operation not completed correctly")
+	}
+
+}
+
+func TestCustomer_ListAllContacts(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Contacts
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Contact)
+	mockResponse.Id = mockResponseId
+	mockResponse.Name = "Mock Contact"
+	mockResponse.Address1 = "23 Wayne street"
+	mockResponse.City = "Austin"
+	mockResponse.Country = "USA"
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.ListAllContacts()
+
+	if err != nil {
+		t.Fatal("Error with contact", err)
+	}
+
+	if subjectEntity[0].Name != "Mock Contact" {
+		t.Fatal("Retrieval not correct")
+	}
+
+}
+
+func TestCustomer_DeleteContact(t *testing.T) {
+
+	key := "api key"
+
+	server, err := invdmockserver.New(204, nil, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	customer := conn.NewCustomer()
+	contact := customer.NewContact()
+	contact.Id = int64(1234)
+
+	err = customer.DeleteContact(int64(1234))
+
+	if err != nil {
+		t.Fatal("Error occurred during deletion")
+	}
+
+}
+
+func TestCustomer_CreatePaymentSource_Card(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.Card)
+	mockResponse.Id = int64(1234)
+	mockResponse.Last4 = "4242"
+	mockResponse.Object = "card"
+	mockResponse.Brand = "Visa"
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	intermediate := conn.NewPaymentSource()
+	subjectEntity, err := defaultEntity.CreatePaymentSource(intermediate)
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity == nil {
+		t.Fatal("subjectEntity does not exist", err)
+	}
+
+	if subjectEntity.Brand != "Visa" {
+		t.Fatal("Did not instantiate correctly", err)
+	}
+
+}
+
+func TestCustomer_CreatePaymentSource_Acct(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.BankAccount)
+	mockResponse.Id = int64(1234)
+	mockResponse.Last4 = "4242"
+	mockResponse.Object = "bank_account"
+	mockResponse.Verified = true
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	intermediate := conn.NewPaymentSource()
+	subjectEntity, err := defaultEntity.CreatePaymentSource(intermediate)
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity == nil {
+		t.Fatal("subjectEntity does not exist", err)
+	}
+
+	if !subjectEntity.Verified {
+		t.Fatal("Did not instantiate correctly", err)
+	}
+
+}
+
+func TestCustomer_ListAllPaymentSources(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.PaymentSources
+
+	mockResponseCard := new(invdendpoint.PaymentSource)
+	mockResponseCard.Object = "card"
+
+	mockResponseAcct := new(invdendpoint.PaymentSource)
+	mockResponseAcct.Object = "bank_account"
+
+	mockResponses = append(mockResponses, *mockResponseCard)
+	mockResponses = append(mockResponses, *mockResponseAcct)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.ListAllPaymentSources()
+
+	if err != nil {
+		t.Fatal("Error with source: ", err)
+	}
+
+	if subjectEntity[0].Card.Object != "card" {
+		t.Fatal("Error with operation")
+	}
+
+	if subjectEntity[1].BankAccount.Object != "bank_account" {
+		t.Fatal("Error with operation")
+	}
+
+}
+
+func TestCustomer_DeleteCard(t *testing.T) {
+
+	key := "api key"
+
+	server, err := invdmockserver.New(204, nil, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	customer := conn.NewCustomer()
+
+	err = customer.DeleteCard(int64(1234))
+
+	if err != nil {
+		t.Fatal("Error occurred during deletion")
+	}
+
+}
+
+func TestCustomer_DeleteBankAccount(t *testing.T) {
+
+	key := "api key"
+
+	server, err := invdmockserver.New(204, nil, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	customer := conn.NewCustomer()
+	err = customer.DeleteBankAccount(int64(1234))
+
+	if err != nil {
+		t.Fatal("Error occurred during deletion")
+	}
+
+}
+
+func TestCustomer_CreatePendingLineItem(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.PendingLineItem)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "entity example"
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.CreatePendingLineItem(conn.NewPendingLineItem())
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity.Name != "entity example" {
+		t.Fatal("Error: operation not completed correctly")
+	}
+
+}
+
+func TestCustomer_RetrievePendingLineItem(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.PendingLineItem)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "entity example"
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.RetrievePendingLineItem(1234)
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity.Name != "entity example" {
+		t.Fatal("Error: operation not completed correctly")
+	}
+
+}
+
+func TestCustomer_UpdatePendingLineItem(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.PendingLineItem)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "entity example 2"
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity := defaultEntity.NewPendingLineItem()
+	subjectEntity.Id = int64(1234)
+	subjectEntity, err = defaultEntity.UpdatePendingLineItem(subjectEntity)
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity.Name != "entity example 2" {
+		t.Fatal("Error: operation not completed correctly")
+	}
+
+}
+
+func TestCustomer_DeletePendingLineItem(t *testing.T) {
+
+	key := "api key"
+
+	server, err := invdmockserver.New(204, nil, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	customer := conn.NewCustomer()
+	contact := customer.NewPendingLineItem()
+	contact.Id = int64(1234)
+
+	err = customer.DeletePendingLineItem(int64(1234))
+
+	if err != nil {
+		t.Fatal("Error occurred during deletion")
+	}
+
+}
+
+func TestCustomer_TriggerInvoice(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.Invoice)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "entity example"
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.TriggerInvoice()
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity.Name != "entity example" {
+		t.Fatal("Error: operation not completed correctly")
+	}
+
+}
+
+func TestCustomer_ConsolidateInvoices(t *testing.T) {
+	key := "test api key"
+
+	mockResponse := new(invdendpoint.Invoice)
+	mockResponse.Id = int64(1234)
+	mockResponse.Name = "entity example"
+
+	server, err := invdmockserver.New(200, mockResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.ConsolidateInvoices()
+
+	if err != nil {
+		t.Fatal("Error:", err)
+	}
+
+	if subjectEntity.Name != "entity example" {
+		t.Fatal("Error: operation not completed correctly")
+	}
+
+}

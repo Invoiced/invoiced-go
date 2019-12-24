@@ -19,6 +19,18 @@ func (c *Connection) NewCustomer() *Customer {
 
 }
 
+func (c *Connection) NewContact() *invdendpoint.Contact {
+	return &invdendpoint.Contact{}
+}
+
+func (c *Connection) NewPaymentSource() *invdendpoint.PaymentSource {
+	return &invdendpoint.PaymentSource{}
+}
+
+func (c *Connection) NewPendingLineItem() *invdendpoint.PendingLineItem {
+	return &invdendpoint.PendingLineItem{}
+}
+
 func (c *Customer) Count() (int64, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.CustomersEndPoint)
 
@@ -181,26 +193,6 @@ func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (C
 
 }
 
-func (c *Customer) ListCustomersByName(customerName string) (Customers, error) {
-
-	filter := invdendpoint.NewFilter()
-
-	err := filter.Set("name", customerName)
-
-	if err != nil {
-		return nil, err
-	}
-
-	customers, apiError := c.ListAll(filter, nil)
-
-	if apiError != nil {
-		return nil, apiError
-	}
-
-	return customers, nil
-
-}
-
 func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error) {
 
 	filter := invdendpoint.NewFilter()
@@ -238,7 +230,7 @@ func (c *Customer) GetBalance() (*invdendpoint.CustomerBalance, error) {
 	return custBalance, nil
 }
 
-func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (*invdendpoint.EmailResponses, error) {
+func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/emails"
 
 	custStmtResp := new(invdendpoint.EmailResponses)
@@ -248,10 +240,10 @@ func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (*
 		return nil, err
 	}
 
-	return custStmtResp, nil
+	return *custStmtResp, nil
 }
 
-func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (*invdendpoint.TextResponses, error) {
+func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/text_messages"
 
 	custStmtResp := new(invdendpoint.TextResponses)
@@ -261,7 +253,7 @@ func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (*in
 		return nil, err
 	}
 
-	return custStmtResp, nil
+	return *custStmtResp, nil
 }
 
 func (c *Customer) SendStatementLetter(custStmtReq *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
