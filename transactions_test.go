@@ -430,7 +430,7 @@ func TestTransaction_Refund(t *testing.T) {
 
 	conn := MockConnection(key, server)
 	transaction := conn.NewTransaction()
-	transaction.Refund(123.00)
+	err = transaction.Refund(123.00)
 
 	if err != nil {
 		t.Fatal("Error Creating transaction", err)
