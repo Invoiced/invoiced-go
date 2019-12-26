@@ -291,9 +291,7 @@ func TestTransaction_Count_Error(t *testing.T) {
 
 	result, err := entity.Count()
 
-	println(result)
-
-	if result != int64(-1) {
+	if result != int64(-1) || err == nil {
 		t.Fatal("Unexpectedly successful")
 	}
 
@@ -432,7 +430,7 @@ func TestTransaction_Refund(t *testing.T) {
 
 	conn := MockConnection(key, server)
 	transaction := conn.NewTransaction()
-	transaction.Refund(nil)
+	transaction.Refund(123.00)
 
 	if err != nil {
 		t.Fatal("Error Creating transaction", err)

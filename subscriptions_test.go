@@ -231,9 +231,7 @@ func TestSubscription_Count_Error(t *testing.T) {
 
 	result, err := entity.Count()
 
-	println(result)
-
-	if result != int64(-1) {
+	if result != int64(-1) || err == nil {
 		t.Fatal("Unexpectedly successful")
 	}
 

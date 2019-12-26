@@ -344,7 +344,7 @@ func (c *Transaction) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendp
 
 }
 
-func (c *Transaction) Refund(refund *invdendpoint.Refund) error {
+func (c *Transaction) Refund(refund float64) error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id) + "/refunds"
 	transaction := new(invdendpoint.Transaction)
 	err := c.create(endPoint, nil, transaction)

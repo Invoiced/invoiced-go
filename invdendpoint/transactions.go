@@ -29,10 +29,6 @@ type Transaction struct {
 	MetaData          map[string]interface{} `json:"metadata,omitempty"`           //A hash of key/value pairs that can store additional information about this object.
 }
 
-type Refund struct {
-	Amount float64 `json:"amount,omitempty"` //Amount to refund - required
-}
-
 type ChargeRequest struct {
 	Customer          int64         `json:"customer,omitempty"`     	   //Customer ID, required if invoice ID is not supplied
 	Method            int64         `json:"method,omitempty"`              //Payment method ID, required
