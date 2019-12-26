@@ -6,6 +6,8 @@ import (
 
 const EventsEndPoint = "/events"
 
+type Events []Event
+
 type Event struct {
 	Id        int64           `json:"id,omitempty"`   //The event’s unique ID
 	Type      string          `json:"type,omitempty"` //Event type

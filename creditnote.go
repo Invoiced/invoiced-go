@@ -174,61 +174,7 @@ NEXT:
 
 }
 
-func (c *CreditNote) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (CreditNotes, string, error) {
-
-	endPoint := c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
-
-
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
-	creditNotes := make(CreditNotes, 0)
-
-	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &creditNotes)
-
-	if apiErr != nil {
-		return nil, "", apiErr
-	}
-
-	for _, creditNote := range creditNotes {
-		creditNote.Connection = c.Connection
-
-	}
-
-	return creditNotes, nextEndPoint, nil
-
-}
-
-func (c *CreditNote) ListCreditNoteByNumber(creditNoteNumber string) (*CreditNote, error) {
-
-	filter := invdendpoint.NewFilter()
-	err := filter.Set("number", creditNoteNumber)
-
-	if err != nil {
-		return nil, err
-	}
-
-	creditNotes, apiError := c.ListAll(filter, nil)
-
-	if apiError != nil {
-		return nil, apiError
-	}
-
-	if len(creditNotes) == 0 {
-		return nil, nil
-	}
-
-	return creditNotes[0], nil
-
-}
-
-
-
-func (c *CreditNote) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
@@ -243,6 +189,35 @@ func (c *CreditNote) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.Ema
 
 }
 
+func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/text_messages"
+
+	resp := new(invdendpoint.TextResponses)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *resp, nil
+
+}
+
+func (c *CreditNote) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/letters"
+
+	resp := new(invdendpoint.LetterResponse)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+
+}
 
 
 

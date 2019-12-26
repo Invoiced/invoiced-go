@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 )
 
-const CreditNotesEndPoint = "/creditnotes"
+const CreditNotesEndPoint = "/credit_notes"
 
-type CreditNotes []CreditNotes
+type CreditNotes []CreditNote
 
 type CreditNote struct {
 	Id                     int64                  `json:"id,omitempty"`                       //The invoice’s unique ID

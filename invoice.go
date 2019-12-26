@@ -22,6 +22,10 @@ func (c *Connection) NewInvoice() *Invoice {
 
 }
 
+func (c *Connection) NewPaymentPlanRequest() *invdendpoint.PaymentPlanRequest {
+	return &invdendpoint.PaymentPlanRequest{}
+}
+
 func (c *Invoice) Count() (int64, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 
@@ -125,6 +129,24 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 
 }
 
+func (c *Invoice) Void() (*Invoice, error) {
+
+	invResp := new(Invoice)
+
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/void"
+
+	apiErr := c.postWithoutData(endPoint,invResp)
+
+	if apiErr != nil {
+		return nil,apiErr
+	}
+
+	invResp.Connection = c.Connection
+
+	return invResp,nil
+
+}
+
 func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
@@ -218,7 +240,7 @@ func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 
 }
 
-func (c *Invoice) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+func (c *Invoice) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
@@ -230,6 +252,36 @@ func (c *Invoice) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailR
 	}
 
 	return *emailResp, nil
+
+}
+
+func (c *Invoice) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/text_messages"
+
+	resp := new(invdendpoint.TextResponses)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *resp, nil
+
+}
+
+func (c *Invoice) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/letters"
+
+	resp := new(invdendpoint.LetterResponse)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 
 }
 
@@ -248,13 +300,28 @@ func (c *Invoice) Pay() error {
 
 }
 
-func (c *Invoice) ListAttachements() (Files, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/attachments"
-	files := make(Files, 0)
-	err := c.create(endPoint, nil, files)
+func (c *Invoice) ListAttachments() (Files, error) {
+	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/attachments"
 
-	if err != nil {
-		return nil, err
+	files := make(Files, 0)
+
+NEXT:
+	tempFiles := make(Files, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tempFiles)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	files = append(files, tempFiles...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, estimate := range files {
+		estimate.Connection = c.Connection
 	}
 
 	return files, nil

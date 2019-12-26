@@ -203,30 +203,6 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 
 }
 
-func (c *Estimate) ListEstimateByNumber(invoiceNumber string) (*Estimate, error) {
-
-	filter := invdendpoint.NewFilter()
-	err := filter.Set("number", invoiceNumber)
-
-	if err != nil {
-		return nil, err
-	}
-
-	estimates, apiError := c.ListAll(filter, nil)
-
-	if apiError != nil {
-		return nil, apiError
-	}
-
-	if len(estimates) == 0 {
-		return nil, nil
-	}
-
-	return estimates[0], nil
-
-}
-
-
 func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/invoice"
 
@@ -244,7 +220,7 @@ func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 
 }
 
-func (c *Estimate) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
@@ -259,13 +235,58 @@ func (c *Estimate) Send(emailReq *invdendpoint.EmailRequest) (invdendpoint.Email
 
 }
 
-func (c *Estimate) ListAttachments() (Files, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/attachments"
-	files := make(Files, 0)
-	err := c.create(endPoint, nil, files)
+func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/text_messages"
+
+	resp := new(invdendpoint.TextResponses)
+
+	err := c.create(endPoint, req, resp)
 
 	if err != nil {
 		return nil, err
+	}
+
+	return *resp, nil
+
+}
+
+func (c *Estimate) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/letters"
+
+	resp := new(invdendpoint.LetterResponse)
+
+	err := c.create(endPoint, req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+
+}
+
+func (c *Estimate) ListAttachments() (Files, error) {
+	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/attachments"
+
+	files := make(Files, 0)
+
+NEXT:
+	tempFiles := make(Files, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tempFiles)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	files = append(files, tempFiles...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, estimate := range files {
+		estimate.Connection = c.Connection
 	}
 
 	return files, nil
