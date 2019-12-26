@@ -37,7 +37,7 @@ type Subscription struct {
 	CreatedAt             int64                  `json:"created_at,omitempty"`              //Timestamp when created
 	MetaData              map[string]interface{} `json:"metadata,omitempty"`                //A hash of key/value pairs that can store additional information about this object.
 	Prorate               bool                   `json:"prorate,omitempty"`					//Prorate changes to plan, quantities, or addons, defaults to true
-	ProrationDate        int64                    `json:"prorartiondate,omitempty"`			//Timestamp when the proration happened, defaults to now
+	ProrationDate        int64                   `json:"proration_date,omitempty"`			//Timestamp when the proration happened, defaults to now
 
 }
 

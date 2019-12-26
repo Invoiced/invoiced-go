@@ -69,8 +69,8 @@ func (c *Event) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Even
 }
 
 
-func (c *Event) Retrieve(id string) (*Event, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.EventsEndPoint) + "/" + id
+func (c *Event) Retrieve(id int64) (*Event, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EventsEndPoint), id)
 
 	eventEndPoint := new(invdendpoint.Event)
 

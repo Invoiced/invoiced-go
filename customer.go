@@ -19,6 +19,18 @@ func (c *Connection) NewCustomer() *Customer {
 
 }
 
+func (c *Connection) NewContact() *invdendpoint.Contact {
+	return &invdendpoint.Contact{}
+}
+
+func (c *Connection) NewPaymentSource() *invdendpoint.PaymentSource {
+	return &invdendpoint.PaymentSource{}
+}
+
+func (c *Connection) NewPendingLineItem() *invdendpoint.PendingLineItem {
+	return &invdendpoint.PendingLineItem{}
+}
+
 func (c *Customer) Count() (int64, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.CustomersEndPoint)
 
@@ -181,26 +193,6 @@ func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (C
 
 }
 
-func (c *Customer) ListCustomersByName(customerName string) (Customers, error) {
-
-	filter := invdendpoint.NewFilter()
-
-	err := filter.Set("name", customerName)
-
-	if err != nil {
-		return nil, err
-	}
-
-	customers, apiError := c.ListAll(filter, nil)
-
-	if apiError != nil {
-		return nil, apiError
-	}
-
-	return customers, nil
-
-}
-
 func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error) {
 
 	filter := invdendpoint.NewFilter()
@@ -238,10 +230,36 @@ func (c *Customer) GetBalance() (*invdendpoint.CustomerBalance, error) {
 	return custBalance, nil
 }
 
-func (c *Customer) SendStatement(custStmtReq *invdendpoint.EmailResponse) (*invdendpoint.EmailResponses, error) {
+func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/emails"
 
 	custStmtResp := new(invdendpoint.EmailResponses)
+	err := c.create(endPoint, custStmtReq, custStmtResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *custStmtResp, nil
+}
+
+func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/text_messages"
+
+	custStmtResp := new(invdendpoint.TextResponses)
+	err := c.create(endPoint, custStmtReq, custStmtResp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return *custStmtResp, nil
+}
+
+func (c *Customer) SendStatementLetter(custStmtReq *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/letters"
+
+	custStmtResp := new(invdendpoint.LetterResponse)
 	err := c.create(endPoint, custStmtReq, custStmtResp)
 
 	if err != nil {
@@ -351,6 +369,92 @@ func (c *Customer) DeleteContact(contactID int64) error {
 
 }
 
+func (c *Customer) CreatePaymentSource(source *invdendpoint.PaymentSource) (*invdendpoint.PaymentSource, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/payment_sources"
+
+	sourceDataToCreate, err := SafeSourceForCreation(source)
+
+	if err != nil {
+		return nil,err
+	}
+
+	resp := new(invdendpoint.PaymentSource)
+
+	err = c.create(endPoint, sourceDataToCreate, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+//SafeSourceForCreation prunes source object for just fields that can be used for creation
+func SafeSourceForCreation(source *invdendpoint.PaymentSource) (*invdendpoint.PaymentSource, error) {
+
+	if source == nil  {
+		return nil, errors.New("Source is nil")
+	}
+
+	sourceData :=new(invdendpoint.PaymentSource)
+	sourceData.Method = source.Method
+	sourceData.MakeDefault = source.MakeDefault
+	sourceData.InvoicedToken = source.InvoicedToken
+	sourceData.GatewayToken = source.GatewayToken
+
+	return sourceData,nil
+}
+
+func (c *Customer) ListAllPaymentSources() (invdendpoint.PaymentSources, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/payment_sources"
+
+	sources := make(invdendpoint.PaymentSources, 0)
+
+NEXT:
+	tmpSources := make(invdendpoint.PaymentSources, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpSources)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	sources = append(sources, tmpSources...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	return sources, nil
+
+}
+
+func (c *Customer) DeleteCard(cardID int64) error {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/cards/" + strconv.FormatInt(cardID, 10)
+
+	apiErr := c.delete(endPoint)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	return nil
+
+}
+
+func (c *Customer) DeleteBankAccount(acctID int64) error {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/bank_accounts/" + strconv.FormatInt(acctID, 10)
+
+	apiErr := c.delete(endPoint)
+
+	if apiErr != nil {
+		return apiErr
+	}
+
+	return nil
+
+}
+
 func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items"
@@ -430,6 +534,22 @@ func (c *Customer) TriggerInvoice() (*Invoice, error) {
 
 	return invoice, nil
 
+}
+
+func (c *Customer) ConsolidateInvoices() (*Invoice, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/consolidate_invoices"
+
+	invoice := new(Invoice)
+
+	err := c.create(endPoint, nil, invoice)
+
+	if err != nil {
+		return nil, err
+	}
+
+	invoice.Connection = c.Connection
+
+	return invoice, nil
 }
 
 func (c *Customer) DeletePendingLineItem(id int64) error {

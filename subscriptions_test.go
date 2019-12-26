@@ -207,6 +207,36 @@ func TestSubscriptionDeleteError(t *testing.T) {
 
 }
 
+func TestSubscription_Count_Error(t *testing.T) {
+
+	key := "test api key"
+
+	var mockListResponse [1] invdendpoint.Subscription
+
+	mockResponse := new(invdendpoint.Subscription)
+	mockResponse.Id = int64(1234)
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockListResponse[0] = *mockResponse
+
+	server, err := invdmockserver.New(200, mockListResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+	entity := conn.NewSubscription()
+
+	result, err := entity.Count()
+
+	if result != int64(-1) || err == nil {
+		t.Fatal("Unexpectedly successful")
+	}
+
+}
+
 func TestSubscriptionRetrieve(t *testing.T) {
 
 	key := "test api key"
@@ -262,6 +292,113 @@ func TestSubscriptionRetrieveError(t *testing.T) {
 	_, err = subscription.Retrieve(mockSubscriptionID)
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestSubscription_List(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Subscriptions
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Subscription)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subscription := conn.NewSubscription()
+
+	invoiceResp, nextEndpoint, err := subscription.List(nil, nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if nextEndpoint != "" {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestSubscription_ListAll(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Subscriptions
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Subscription)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	subscription := conn.NewSubscription()
+
+	invoiceResp, err := subscription.ListAll(nil, nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
+func TestSubscription_Preview(t *testing.T) {
+
+	key := "test api key"
+
+	mockSubscriptionResponse := new(invdendpoint.SubscriptionPreview)
+	mockSubscriptionResponse.FirstInvoice = nil
+	mockSubscriptionResponse.MRR = float64(123.34)
+
+	server, err := invdmockserver.New(200, mockSubscriptionResponse, "json", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+	subscription := conn.NewSubscription()
+
+	retrievedSubscription, err := subscription.Preview(conn.NewPreviewRequest())
+
+	if err != nil {
+		t.Fatal("Error Creating subscription", err)
+	}
+
+	if !reflect.DeepEqual(retrievedSubscription, mockSubscriptionResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 
