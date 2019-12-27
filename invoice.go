@@ -301,7 +301,7 @@ func (c *Invoice) Pay() error {
 }
 
 func (c *Invoice) ListAttachments() (Files, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/attachments"
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/attachments"
 
 	files := make(Files, 0)
 
@@ -320,8 +320,8 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, estimate := range files {
-		estimate.Connection = c.Connection
+	for _, invoice := range files {
+		invoice.Connection = c.Connection
 	}
 
 	return files, nil

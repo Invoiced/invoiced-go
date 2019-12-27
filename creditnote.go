@@ -174,6 +174,34 @@ NEXT:
 
 }
 
+func (c *CreditNote) ListAttachments() (Files, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/attachments"
+
+	files := make(Files, 0)
+
+NEXT:
+	tempFiles := make(Files, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tempFiles)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	files = append(files, tempFiles...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, creditNote := range files {
+		creditNote.Connection = c.Connection
+	}
+
+	return files, nil
+
+}
+
 func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/emails"
 

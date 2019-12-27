@@ -580,13 +580,15 @@ func TestInvoice_ListAttachments(t *testing.T) {
 
 	conn := MockConnection(key, server)
 
-	entity, err := conn.NewInvoice().ListAttachments()
+	entity := conn.NewInvoice()
+	entity.Id = 2
+	attachments, err := entity.ListAttachments()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(entity[0].File, mockResponse) {
+	if !reflect.DeepEqual(attachments[0].File, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 

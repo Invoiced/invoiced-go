@@ -28,22 +28,20 @@ func TestCatalogItem_Create(t *testing.T) {
 
 	conn := MockConnection(key, server)
 
-	entity := conn.NewCatalogItem()
-
-	requestEntity := entity.NewCatalogItem()
+	requestEntity := conn.NewCatalogItem()
 
 	requestEntity.Id = "example"
 	requestEntity.Name = "delivery"
 	requestEntity.Type = "service"
 
-	createdEntity, err := entity.Create(requestEntity)
+	requestEntity, err = requestEntity.Create(requestEntity)
 
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(createdEntity.CatalogItem, mockResponse) {
-		t.Fatal("entity was not created", createdEntity.CatalogItem, mockResponse)
+	if !reflect.DeepEqual(requestEntity.CatalogItem, mockResponse) {
+		t.Fatal("entity was not created", requestEntity.CatalogItem, mockResponse)
 	}
 
 }
