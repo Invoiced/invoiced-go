@@ -243,6 +243,41 @@ func TestCreditNote_ListAll(t *testing.T) {
 
 }
 
+func TestCreditNote_ListAttachments(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Files
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.File)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	entity, err := conn.NewCreditNote().ListAttachments()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(entity[0].File, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
 func TestCreditNote_SendEmail(t *testing.T) {
 	key := "test api key"
 

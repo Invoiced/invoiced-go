@@ -266,7 +266,7 @@ func (c *Estimate) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.Le
 }
 
 func (c *Estimate) ListAttachments() (Files, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/attachments"
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/attachments"
 
 	files := make(Files, 0)
 
