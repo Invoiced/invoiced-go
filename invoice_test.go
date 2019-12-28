@@ -594,6 +594,43 @@ func TestInvoice_ListAttachments(t *testing.T) {
 
 }
 
+func TestInvoice_RetrieveNotes(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Notes
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Note)
+	mockResponse.Id = mockResponseId
+
+	mockResponse.CreatedAt = time.Now().UnixNano()
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	entity := conn.NewInvoice()
+	entity.Id = 2
+	notes, err := entity.RetrieveNotes()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(notes[0].Note, mockResponse) {
+		t.Fatal("Error Messages Do Not Match Up")
+	}
+
+}
+
 func TestInvoice_CreatePaymentPlan(t *testing.T) {
 	key := "test api key"
 

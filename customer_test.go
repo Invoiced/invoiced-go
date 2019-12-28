@@ -994,6 +994,41 @@ func TestCustomer_ListAllPendingLineItems(t *testing.T) {
 
 }
 
+func TestCustomer_RetrieveNotes(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.Notes
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.Note)
+	mockResponse.Id = mockResponseId
+	mockResponse.Notes = "Mock Note"
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.RetrieveNotes()
+
+	if err != nil {
+		t.Fatal("Error with note", err)
+	}
+
+	if subjectEntity[0].Notes != "Mock Note" {
+		t.Fatal("Retrieval not correct")
+	}
+
+}
+
 func TestCustomer_TriggerInvoice(t *testing.T) {
 	key := "test api key"
 
