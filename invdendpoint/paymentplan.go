@@ -23,6 +23,8 @@ type PaymentPlanInstallment struct {
 	Id      int64   `json:"id,omitempty"`
 }
 
+type PaymentPlanInstallments []PaymentPlanInstallment
+
 type PaymentPlanRequest struct {
 	Installments []PaymentPlanInstallment `json:"installments,omitempty"`
 }
