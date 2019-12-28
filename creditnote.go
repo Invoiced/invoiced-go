@@ -232,12 +232,12 @@ func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextR
 
 }
 
-func (c *CreditNote) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+func (c *CreditNote) SendLetter() (*invdendpoint.LetterResponse, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/letters"
 
 	resp := new(invdendpoint.LetterResponse)
 
-	err := c.create(endPoint, req, resp)
+	err := c.create(endPoint, nil, resp)
 
 	if err != nil {
 		return nil, err

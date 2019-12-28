@@ -514,7 +514,7 @@ func TestInvoice_SendLetter(t *testing.T) {
 
 	subjectEntity := conn.NewInvoice()
 
-	sendResponse, err := subjectEntity.SendLetter(nil)
+	sendResponse, err := subjectEntity.SendLetter()
 
 	if err != nil {
 		t.Fatal("Error with send", err)
