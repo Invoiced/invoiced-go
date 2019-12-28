@@ -519,6 +519,30 @@ func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 
 }
 
+func (c *Customer) ListAllPendingLineItems() (invdendpoint.PendingLineItems, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items"
+
+	plis := make(invdendpoint.PendingLineItems, 0)
+
+NEXT:
+	tmpPlis := make(invdendpoint.PendingLineItems, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpPlis)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	plis = append(plis, tmpPlis...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	return plis, nil
+
+}
+
 func (c *Customer) TriggerInvoice() (*Invoice, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/invoices"
 

@@ -959,6 +959,41 @@ func TestCustomer_DeletePendingLineItem(t *testing.T) {
 
 }
 
+func TestCustomer_ListAllPendingLineItems(t *testing.T) {
+
+	key := "test api key"
+
+	var mockResponses invdendpoint.PendingLineItems
+	mockResponseId := int64(1523)
+	mockResponse := new(invdendpoint.PendingLineItem)
+	mockResponse.Id = mockResponseId
+	mockResponse.Name = "Mock Pli"
+
+	mockResponses = append(mockResponses, *mockResponse)
+
+	server, err := invdmockserver.New(200, mockResponses, "json", true)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer server.Close()
+
+	conn := MockConnection(key, server)
+
+	defaultEntity := conn.NewCustomer()
+	subjectEntity, err := defaultEntity.ListAllPendingLineItems()
+
+	if err != nil {
+		t.Fatal("Error with pli", err)
+	}
+
+	if subjectEntity[0].Name != "Mock Pli" {
+		t.Fatal("Retrieval not correct")
+	}
+
+}
+
 func TestCustomer_TriggerInvoice(t *testing.T) {
 	key := "test api key"
 

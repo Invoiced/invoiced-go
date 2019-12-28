@@ -1,6 +1,8 @@
 package invdendpoint
 
 //Metered billing on Invoiced allows you to bill customers for charges that occur during a billing cycle outside of their ordinary subscription. These charges are called pending line items. A pending line item is a Line Item that has been attached to a customer, but not billed yet. Pending line items will be swept up by the next invoice that is triggered for the customer. This happens automatically with subscription invoices or when triggering an invoice manually.
+type PendingLineItems []PendingLineItem
+
 type PendingLineItem struct {
 	Id           int64                  `json:"id,omitempty"`
 	CatalogItem  string                 `json:"catalog_item,omitempty"`  //Optional Catalog Item ID. Fills the line item with the name and pricing of the Catalog Item.

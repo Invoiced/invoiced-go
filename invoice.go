@@ -270,12 +270,12 @@ func (c *Invoice) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResp
 
 }
 
-func (c *Invoice) SendLetter(req *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
+func (c *Invoice) SendLetter() (*invdendpoint.LetterResponse, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/letters"
 
 	resp := new(invdendpoint.LetterResponse)
 
-	err := c.create(endPoint, req, resp)
+	err := c.create(endPoint, nil, resp)
 
 	if err != nil {
 		return nil, err

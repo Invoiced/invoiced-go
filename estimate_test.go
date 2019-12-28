@@ -330,7 +330,7 @@ func TestEstimate_SendLetter(t *testing.T) {
 
 	subjectEntity := conn.NewEstimate()
 
-	sendResponse, err := subjectEntity.SendLetter(nil)
+	sendResponse, err := subjectEntity.SendLetter()
 
 	if err != nil {
 		t.Fatal("Error with send", err)
