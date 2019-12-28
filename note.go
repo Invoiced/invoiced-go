@@ -71,23 +71,6 @@ func (c *Note) Delete() error {
 
 }
 
-func (c *Note) Retrieve(id int64) (*Note, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.NotesEndPoint), id)
-
-	noteEndPoint := new(invdendpoint.Note)
-
-	task := &Note{c.Connection, noteEndPoint}
-
-	_, err := c.retrieveDataFromAPI(endPoint, task)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return task, nil
-
-}
-
 func (c *Note) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Notes, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.NotesEndPoint)
 

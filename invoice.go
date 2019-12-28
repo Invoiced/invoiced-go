@@ -328,6 +328,34 @@ NEXT:
 
 }
 
+func (c *Invoice) RetrieveNotes() (Notes, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/notes"
+
+	notes := make(Notes, 0)
+
+NEXT:
+	tmpNotes := make(Notes, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpNotes)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	notes = append(notes, tmpNotes...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, invoice := range notes {
+		invoice.Connection = c.Connection
+	}
+
+	return notes, nil
+
+}
+
 
 func (c *Invoice) CreatePaymentPlan(paymentPlanRequest *invdendpoint.PaymentPlanRequest) (*invdendpoint.PaymentPlan, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/payment_plan"

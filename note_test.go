@@ -103,37 +103,6 @@ func TestNote_Delete(t *testing.T) {
 
 }
 
-func TestNote_Retrieve(t *testing.T) {
-
-	key := "test api key"
-
-	mockResponse := new(invdendpoint.Note)
-	mockResponse.Id = int64(1234)
-	mockResponse.Notes = "nomenclature"
-
-	mockResponse.CreatedAt = time.Now().UnixNano()
-
-	server, err := invdmockserver.New(200, mockResponse, "json", true)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer server.Close()
-
-	conn := MockConnection(key, server)
-	entity := conn.NewNote()
-
-	retrievedTransaction, err := entity.Retrieve(int64(1234))
-
-	if err != nil {
-		t.Fatal("Error retrieving entity", err)
-	}
-
-	if !reflect.DeepEqual(retrievedTransaction.Note, mockResponse) {
-		t.Fatal("Error messages do not match up")
-	}
-
-}
-
 func TestNote_ListAll(t *testing.T) {
 
 	key := "test api key"

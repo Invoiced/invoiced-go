@@ -369,6 +369,30 @@ func (c *Customer) DeleteContact(contactID int64) error {
 
 }
 
+func (c *Customer) RetrieveNotes() (invdendpoint.Notes, error) {
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/notes"
+
+	notes := make(invdendpoint.Notes, 0)
+
+NEXT:
+	tmpNotes := make(invdendpoint.Notes, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpNotes)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	notes = append(notes, tmpNotes...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	return notes, nil
+
+}
+
 func (c *Customer) CreatePaymentSource(source *invdendpoint.PaymentSource) (*invdendpoint.PaymentSource, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/payment_sources"
 
