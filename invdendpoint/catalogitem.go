@@ -18,7 +18,7 @@ type CatalogItem struct {
 	GlAccount      string                 `json:"gl_account,omitempty"`       //General ledger account code
 	Discountable   bool                   `json:"discountable,omitempty"`     //Excludes amount from discounts when false
 	CreatedAt      int64                  `json:"created_at,omitempty"`       //Timestamp when created
-	MetaData       map[string]interface{} `json:"metadata,omitempty"`         //A hash of key/value pairs that can store additional information about this object.
+	Metadata       map[string]interface{} `json:"metadata,omitempty"`         //A hash of key/value pairs that can store additional information about this object.
 }
 
 type CatalogItems []CatalogItem

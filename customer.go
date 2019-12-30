@@ -649,7 +649,7 @@ func SafeCustomerForCreation(cust *invdendpoint.Customer) (*invdendpoint.Custome
 	custData.ParentCustomer = cust.ParentCustomer
 	custData.Notes = cust.Notes
 	custData.SignUpPage = cust.SignUpPage
-	custData.MetaData = cust.MetaData
+	custData.Metadata = cust.Metadata
 	custData.DisabledPaymentMethods = cust.DisabledPaymentMethods
 
 
@@ -692,7 +692,7 @@ func SafeCustomerForUpdate(cust *invdendpoint.Customer) (*invdendpoint.Customer,
 	custData.ParentCustomer = cust.ParentCustomer
 	custData.Notes = cust.Notes
 	custData.SignUpPage = cust.SignUpPage
-	custData.MetaData = cust.MetaData
+	custData.Metadata = cust.Metadata
 	custData.DisabledPaymentMethods = cust.DisabledPaymentMethods
 
 

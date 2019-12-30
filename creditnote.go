@@ -275,7 +275,7 @@ func SafeCreditNoteForCreation(creditNote *invdendpoint.CreditNote) (*invdendpoi
 	cnData.Notes = creditNote.Notes
 	cnData.Discounts = creditNote.Discounts
 	cnData.Taxes = creditNote.Taxes
-	cnData.MetaData = creditNote.MetaData
+	cnData.Metadata = creditNote.Metadata
 	cnData.Attachments = creditNote.Attachments
 	cnData.CalculateTax = creditNote.CalculateTax
 
@@ -300,7 +300,7 @@ func SafeCreditNoteForUpdate(creditNote *invdendpoint.CreditNote) (*invdendpoint
 	cnData.Notes = creditNote.Notes
 	cnData.Discounts = creditNote.Discounts
 	cnData.Taxes = creditNote.Taxes
-	cnData.MetaData = creditNote.MetaData
+	cnData.Metadata = creditNote.Metadata
 	cnData.Attachments = creditNote.Attachments
 	cnData.CalculateTax = creditNote.CalculateTax
 
