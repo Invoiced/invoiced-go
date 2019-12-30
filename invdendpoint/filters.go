@@ -7,16 +7,24 @@ import "sort"
 
 type Filter struct {
 	params map[string]string
+	metadata bool
 }
 
 func NewFilter() *Filter {
 	f := new(Filter)
 	f.params = make(map[string]string)
-
+	f.metadata = false
 	return f
 }
 
-//Can only set Numberic Types and Strings
+func NewMetadataFilter() *Filter {
+	f := new(Filter)
+	f.params = make(map[string]string)
+	f.metadata = true
+	return f
+}
+
+//Can only set Numeric Types and Strings
 func (f *Filter) Set(key string, value interface{}) error {
 	switch v := value.(type) {
 	case string:
@@ -60,9 +68,16 @@ func (f *Filter) String() string {
 
 	sort.Strings(orderedKeys)
 
-	for _, key := range orderedKeys {
-		mapkey := "filter[" + key + "]"
-		uValues.Set(mapkey, f.params[key])
+	if f.metadata == true {
+		for _, key := range orderedKeys {
+			mapkey := "metadata[" + key + "]"
+			uValues.Set(mapkey, f.params[key])
+		}
+	} else {
+		for _, key := range orderedKeys {
+			mapkey := "filter[" + key + "]"
+			uValues.Set(mapkey, f.params[key])
+		}
 	}
 
 	return uValues.Encode()
