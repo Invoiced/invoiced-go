@@ -24,7 +24,7 @@ go get -u https://github.com/Invoiced/invoiced-go
 - >= Go 1.11
 
 ## Version
-4.0.0
+5.0.2
 ```go
 //Will print out the version.
 invd.Version()
