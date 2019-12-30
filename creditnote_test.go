@@ -229,6 +229,7 @@ func TestCreditNote_ListAll(t *testing.T) {
 	entity := conn.NewCreditNote()
 
 	filter := invdendpoint.NewFilter()
+	filter.Set("example", false)
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
