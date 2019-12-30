@@ -118,12 +118,6 @@ func (c *Estimate) Save() error {
 func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), id)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	custEndPoint := new(invdendpoint.Estimate)
 
 	estimate := &Estimate{c.Connection, custEndPoint}
@@ -142,12 +136,6 @@ func (c *Estimate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort)
 	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint)
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
-
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
 
 	estimates := make(Estimates, 0)
 
@@ -178,13 +166,6 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 
 	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
-
-
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
 
 	estimates := make(Estimates, 0)
 

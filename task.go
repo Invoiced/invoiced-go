@@ -100,12 +100,6 @@ func (c *Task) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Ta
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	tasks := make(Tasks, 0)
 
 NEXT:

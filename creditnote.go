@@ -118,12 +118,6 @@ func (c *CreditNote) Save() error {
 func (c *CreditNote) Retrieve(id int64) (*CreditNote, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), id)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	custEndPoint := new(invdendpoint.CreditNote)
 
 	creditNote := &CreditNote{c.Connection, custEndPoint}
@@ -142,12 +136,6 @@ func (c *CreditNote) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sor
 	endPoint := c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint)
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
-
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
 
 	creditNotes := make(CreditNotes, 0)
 

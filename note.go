@@ -76,12 +76,6 @@ func (c *Note) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (No
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	notes := make(Notes, 0)
 
 NEXT:

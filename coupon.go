@@ -106,12 +106,6 @@ func (c *Coupon) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	coupons := make(Coupons, 0)
 
 NEXT:
