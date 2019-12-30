@@ -10,15 +10,13 @@ import (
 	"time"
 )
 
-type customerMetaData map[string]interface{}
-
-func TestCustomerMetaData(t *testing.T) {
+func TestCustomerMetadata(t *testing.T) {
 	conn := NewConnection("", false)
-	m := make(customerMetaData)
+	m := make(map[string]interface{})
 	m["integration_name"] = "QBO"
 	mockCustomer := conn.NewCustomer()
 	mockCustomer.Id = 34
-	mockCustomer.MetaData = m
+	mockCustomer.Metadata = m
 
 	b, err := json.Marshal(mockCustomer)
 

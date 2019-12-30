@@ -155,7 +155,7 @@ func SafeCouponForCreation(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, e
 	couponData.Exclusive = coupon.Exclusive
 	couponData.ExpirationDate = coupon.ExpirationDate
 	couponData.MaxRedemptions = coupon.MaxRedemptions
-	couponData.MetaData = coupon.MetaData
+	couponData.Metadata = coupon.Metadata
 
 	return couponData, nil
 }
@@ -170,7 +170,7 @@ func SafeCouponForUpdating(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, e
 
 	couponData := new(invdendpoint.Coupon)
 	couponData.Name = coupon.Name
-	couponData.MetaData = coupon.MetaData
+	couponData.Metadata = coupon.Metadata
 
 	return couponData, nil
 }

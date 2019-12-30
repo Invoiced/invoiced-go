@@ -325,7 +325,7 @@ func SafeEstimateForCreation(estimate *invdendpoint.Estimate) (*invdendpoint.Est
 	estData.ShipTo = estimate.ShipTo
 	estData.Deposit = estimate.Deposit
 	estData.DepositPaid = estimate.DepositPaid
-	estData.MetaData = estimate.MetaData
+	estData.Metadata = estimate.Metadata
 	estData.Attachments = estimate.Attachments
 	estData.DisabledPaymentMethods = estimate.DisabledPaymentMethods
 	estData.CalculateTax = estimate.CalculateTax
@@ -356,7 +356,7 @@ func SafeEstimateForUpdate(estimate *invdendpoint.Estimate) (*invdendpoint.Estim
 	estData.ShipTo = estimate.ShipTo
 	estData.Deposit = estimate.Deposit
 	estData.DepositPaid = estimate.DepositPaid
-	estData.MetaData = estimate.MetaData
+	estData.Metadata = estimate.Metadata
 	estData.Attachments = estimate.Attachments
 	estData.DisabledPaymentMethods = estimate.DisabledPaymentMethods
 	estData.CalculateTax = estimate.CalculateTax

@@ -227,7 +227,7 @@ func SafeSubscriptionForCreation(sub *invdendpoint.Subscription) (*invdendpoint.
 	subData.ContractRenewalMode = sub.ContractRenewalMode
 	subData.Taxes = sub.Taxes
 	subData.CancelAtPeriodEnd = sub.CancelAtPeriodEnd
-	subData.MetaData = sub.MetaData
+	subData.Metadata = sub.Metadata
 
 
 

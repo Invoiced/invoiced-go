@@ -399,7 +399,7 @@ func SafeTransactionForCreation(transaction *invdendpoint.Transaction) (*invdend
 	transData.Currency = transaction.Currency
 	transData.Amount = transaction.Amount
 	transData.Notes = transaction.Notes
-	transData.MetaData = transaction.MetaData
+	transData.Metadata = transaction.Metadata
 
 
 	return transData,nil
@@ -422,7 +422,7 @@ func SafeTransactionForUpdate(transaction *invdendpoint.Transaction) (*invdendpo
 	transData.Currency = transaction.Currency
 	transData.Amount = transaction.Amount
 	transData.Notes = transaction.Notes
-	transData.MetaData = transaction.MetaData
+	transData.Metadata = transaction.Metadata
 
 
 	return transData, nil

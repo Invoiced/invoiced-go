@@ -35,7 +35,7 @@ type Subscription struct {
 	Mrr                   float64                `json:"MRR,omitempty"`                     //Monthly Recurring Revenue (MRR)`
 	Url                   string                 `json:"url,omitempty"`                     //URL to manage the subscription in the billing portal
 	CreatedAt             int64                  `json:"created_at,omitempty"`              //Timestamp when created
-	MetaData              map[string]interface{} `json:"metadata,omitempty"`                //A hash of key/value pairs that can store additional information about this object.
+	Metadata              map[string]interface{} `json:"metadata,omitempty"`                //A hash of key/value pairs that can store additional information about this object.
 	Prorate               bool                   `json:"prorate,omitempty"`					//Prorate changes to plan, quantities, or addons, defaults to true
 	ProrationDate        int64                   `json:"proration_date,omitempty"`			//Timestamp when the proration happened, defaults to now
 
@@ -92,7 +92,7 @@ type SubscriptionPreviewInvoice struct {
 	PaymentUrl             string                 `json:"payment_url,omitempty"`          //URL for the invoice payment page
 	PdfUrl                 string                 `json:"pdf_url,omitempty"`              //URL to download the invoice as a PDF
 	CreatedAt              int64                  `json:"created_at,omitempty"`           //Timestamp when created
-	MetaData               map[string]interface{} `json:"metadata,omitempty"`             //A hash of key/value pairs that can store additional information about this object.
+	Metadata               map[string]interface{} `json:"metadata,omitempty"`             //A hash of key/value pairs that can store additional information about this object.
 	CalculateTaxes         bool                   `json:"calculate_taxes,omitempty"`      // Flag to indicate whether taxes should be calculated on the invoice
 	Attachments            []int64                `json:"attachments,omitempty"`          //
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"` //

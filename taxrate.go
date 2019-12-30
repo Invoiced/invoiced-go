@@ -153,7 +153,7 @@ func SafeTaxRateForCreation(taxRate *invdendpoint.TaxRate) (*invdendpoint.TaxRat
 	taxRateData.Value = taxRate.Value
 	taxRateData.Inclusive = taxRate.Inclusive
 	taxRateData.IsPercent = taxRate.IsPercent
-	taxRateData.MetaData = taxRate.MetaData
+	taxRateData.Metadata = taxRate.Metadata
 
 	return taxRateData, nil
 }
@@ -168,7 +168,7 @@ func SafeTaxRateForUpdating(taxRate *invdendpoint.TaxRate) (*invdendpoint.TaxRat
 
 	taxRateData := new(invdendpoint.TaxRate)
 	taxRateData.Name = taxRate.Name
-	taxRateData.MetaData = taxRate.MetaData
+	taxRateData.Metadata = taxRate.Metadata
 
 	return taxRateData, nil
 }

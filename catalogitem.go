@@ -156,7 +156,7 @@ func SafeCatalogItemForCreation(catalogItem *invdendpoint.CatalogItem) (*invdend
 	catalogItemData.AvalaraTaxCode = catalogItem.AvalaraTaxCode
 	catalogItemData.GlAccount = catalogItem.GlAccount
 	catalogItemData.Discountable = catalogItem.Discountable
-	catalogItemData.MetaData = catalogItem.MetaData
+	catalogItemData.Metadata = catalogItem.Metadata
 
 	return catalogItemData, nil
 }
@@ -173,7 +173,7 @@ func SafeCatalogItemForUpdating(catalogItem *invdendpoint.CatalogItem) (*invdend
 	catalogItemData.Name = catalogItem.Name
 	catalogItemData.Description = catalogItem.Description
 	catalogItemData.Type = catalogItem.Type
-	catalogItemData.MetaData = catalogItem.MetaData
+	catalogItemData.Metadata = catalogItem.Metadata
 
 	return catalogItemData, nil
 }

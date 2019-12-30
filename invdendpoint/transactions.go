@@ -26,7 +26,7 @@ type Transaction struct {
 	ParentTransaction int64                  `json:"parent_transaction,omitempty"` //ID of the original transaction for refunds
 	PdfUrl            string                 `json:"pdf_url,omitempty"`            //URL to download the invoice as a PDF
 	CreatedAt         int64                  `json:"created_at,omitempty"`         //Timestamp when created
-	MetaData          map[string]interface{} `json:"metadata,omitempty"`           //A hash of key/value pairs that can store additional information about this object.
+	Metadata          map[string]interface{} `json:"metadata,omitempty"`           //A hash of key/value pairs that can store additional information about this object.
 }
 
 type ChargeRequest struct {
