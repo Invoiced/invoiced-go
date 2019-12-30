@@ -68,7 +68,7 @@ func (f *Filter) String() string {
 
 	sort.Strings(orderedKeys)
 
-	if f.metadata == true {
+	if f.metadata {
 		for _, key := range orderedKeys {
 			mapkey := "metadata[" + key + "]"
 			uValues.Set(mapkey, f.params[key])

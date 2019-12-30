@@ -6,8 +6,6 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-const defaultExpandInvoice = "items.catalog_item"
-
 type Invoice struct {
 	*Connection
 	*invdendpoint.Invoice
