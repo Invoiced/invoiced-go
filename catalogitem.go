@@ -106,12 +106,6 @@ func (c *CatalogItem) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.So
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	catalogItems := make(CatalogItems, 0)
 
 NEXT:

@@ -106,12 +106,6 @@ func (c *TaxRate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) 
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	taxRates := make(TaxRates, 0)
 
 NEXT:

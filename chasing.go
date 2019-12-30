@@ -24,12 +24,6 @@ func (c *ChasingCadence) ListAll(filter *invdendpoint.Filter, sort *invdendpoint
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	chasing := make(ChasingCadences, 0)
 
 NEXT:

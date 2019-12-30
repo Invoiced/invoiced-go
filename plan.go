@@ -107,12 +107,6 @@ func (c *Plan) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Pl
 
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
-	expandedValues := invdendpoint.NewExpand()
-
-	expandedValues.Set(defaultExpandInvoice)
-
-	endPoint = addExpandToEndPoint(endPoint, expandedValues)
-
 	plans := make(Plans, 0)
 
 NEXT:
