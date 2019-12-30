@@ -5,8 +5,6 @@ import (
 	"errors"
 )
 
-const defaultExpandSubscription = "addons.catalog_item"
-
 type Subscription struct {
 	*Connection
 	*invdendpoint.Subscription

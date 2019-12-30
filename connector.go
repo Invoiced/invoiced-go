@@ -171,17 +171,17 @@ func addIncludeToEndPoint(endpoint string, includeValue string) string {
 
 }
 
-func addExpandToEndPoint(endpoint string, expandedValues *invdendpoint.Expand) string {
-	finalEndpoint := ""
-	if strings.Contains(endpoint, "?") {
-		finalEndpoint = endpoint + "&" + "expand=" + expandedValues.String()
-	} else {
-		finalEndpoint = endpoint + "?" + "expand=" + expandedValues.String()
-	}
-
-	return finalEndpoint
-
-}
+//func addExpandToEndPoint(endpoint string, expandedValues *invdendpoint.Expand) string {
+//	finalEndpoint := ""
+//	if strings.Contains(endpoint, "?") {
+//		finalEndpoint = endpoint + "&" + "expand=" + expandedValues.String()
+//	} else {
+//		finalEndpoint = endpoint + "?" + "expand=" + expandedValues.String()
+//	}
+//
+//	return finalEndpoint
+//
+//}
 
 func makeEndPointSingular(endpoint string, id int64) string {
 	return endpoint + "/" + strconv.FormatInt(id, 10)
