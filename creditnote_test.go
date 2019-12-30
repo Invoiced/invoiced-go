@@ -193,8 +193,6 @@ func TestCreditNote_CountErr(t *testing.T) {
 
 	result, err := entity.Count()
 
-	println(result)
-
 	if err == nil {
 		t.Fatal("Error: ", err)
 	}
