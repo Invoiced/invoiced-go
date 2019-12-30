@@ -18,7 +18,7 @@ type LineItem struct {
 }
 
 type LineItemPreview struct {
-	CatalogItem  CatalogItem            `json:"catalog_item,omitempty"` //Optional Catalog Item ID. Fills the line item with the name and pricing of the Catalog Item.
+	CatalogItem  string                 `json:"catalog_item,omitempty"` //Optional Catalog Item ID. Fills the line item with the name and pricing of the Catalog Item.
 	Type         string                 `json:"type,omitempty"`         //Optional line item type. Used to group line items by type in reporting
 	Name         string                 `json:"name,omitempty"`         //Title
 	Description  string                 `json:"description,omitempty"`  //Optional description
