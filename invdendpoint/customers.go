@@ -12,30 +12,36 @@ type Customers []Customer
 //Customers represent the entity you are billing, whether this is an organization or a individual. Each customer has a collection mode, automatic or manual. In automatic collection mode any invoices will be charged to your customer’s payment source. Currently we only support debit and credit cards as payment sources.
 //Conversely, manual collection mode will let your customers pay each invoice issued with one of the payment methods you accept.
 type Customer struct {
-	Id                 int64                  `json:"id,omitempty"`                //The customer’s unique ID
-	Name               string                 `json:"name,omitempty"`              //Customer name
-	Number             string                 `json:"number,omitempty"`            //A unique ID to help tie your customer to your external systems
-	Email              string                 `json:"email,omitempty"`             //Email address
-	CollectionMode     string                 `json:"collection_mode,omitempty"`   //Invoice collection mode, auto or manual
-	PaymentTerms       string                 `json:"payment_terms,omitempty"`     //Payment terms used for manual collection mode, i.e. “NET 30”
-	PaymentSourceRAW   json.RawMessage        `json:"payment_source,omitempty"`    //Holds the raw payment json information for later parsing
-	PaymentSource      *PaymentSource         `json:"-"`                           //Customer’s payment source, if attached
-	PaymentSourceReady bool                   `json:"-"`                           //If true than run UnbundlePaymentSource()
-	Taxes              []Rate                 `json:"taxes,omitempty"`             //Collection of Tax Rate IDs
-	Type               string                 `json:"type,omitempty"`              //Organization type, company or person
-	AttentionTo        string                 `json:"attention_to,omitempty"`      //Used for ATTN: address line if company
-	Address1           string                 `json:"address1,omitempty"`          //First address line
-	Address2           string                 `json:"address2,omitempty"`          //Optional second address line
-	City               string                 `json:"city,omitempty"`              //City
-	State              string                 `json:"state,omitempty"`             //State or province
-	PostalCode         string                 `json:"postal_code,omitempty"`       //Zip or postal code
-	Country            string                 `json:"country,omitempty"`           //Two-letter ISO code
-	TaxID              string                 `json:"taxid,omitempty"`             //Tax ID to be displayed on documents
-	Phone              string                 `json:"phone,omitempty"`             //Phone #
-	Notes              string                 `json:"notes,omitempty"`             //Private customer notes
-	StatementPdfUrl    string                 `json:"statement_pdf_url,omitempty"` //URL to download the latest account statement
-	CreatedAt          int64                  `json:"created_at,omitempty"`        //Timestamp when created
-	MetaData           map[string]interface{} `json:"metadata,omitempty"`          //A hash of key/value pairs that can store additional information about this object.
+	SaveableCustomer
+	Id                 int64           `json:"id,omitempty"`                //The customer’s unique ID
+	CollectionMode     string          `json:"collection_mode,omitempty"`   //Invoice collection mode, auto or manual
+	PaymentSourceRAW   json.RawMessage `json:"payment_source,omitempty"`    //Holds the raw payment json information for later parsing
+	PaymentSource      *PaymentSource  `json:"-"`                           //Customer’s payment source, if attached
+	PaymentSourceReady bool            `json:"-"`                           //If true than run UnbundlePaymentSource()
+	StatementPdfUrl    string          `json:"statement_pdf_url,omitempty"` //URL to download the latest account statement
+	CreatedAt          int64           `json:"created_at,omitempty"`        //Timestamp when created
+}
+
+//SaveableCustomer includes the subset of Customer fields which are valid for customer creation/update requests
+type SaveableCustomer struct {
+	Name         string                 `json:"name,omitempty"`          //Customer name
+	Number       string                 `json:"number,omitempty"`        //A unique ID to help tie your customer to your external systems
+	Email        string                 `json:"email,omitempty"`         //Email address
+	PaymentTerms string                 `json:"payment_terms,omitempty"` //Payment terms used for manual collection mode, i.e. “NET 30”
+	Taxes        []Rate                 `json:"taxes,omitempty"`         //Collection of Tax Rate IDs
+	Type         string                 `json:"type,omitempty"`          //Organization type, company or person
+	AttentionTo  string                 `json:"attention_to,omitempty"`  //Used for ATTN: address line if company
+	Address1     string                 `json:"address1,omitempty"`      //First address line
+	Address2     string                 `json:"address2,omitempty"`      //Optional second address line
+	City         string                 `json:"city,omitempty"`          //City
+	State        string                 `json:"state,omitempty"`         //State or province
+	PostalCode   string                 `json:"postal_code,omitempty"`   //Zip or postal code
+	Country      string                 `json:"country,omitempty"`       //Two-letter ISO code
+	TaxID        string                 `json:"taxid,omitempty"`         //Tax ID to be displayed on documents
+	Phone        string                 `json:"phone,omitempty"`         //Phone #
+	Notes        string                 `json:"notes,omitempty"`         //Private customer notes
+	MetaData     map[string]interface{} `json:"metadata,omitempty"`      //A hash of key/value pairs that can store additional information about this object.
+	StripeToken  string                 `json:"stripe_token,omitempty"`  //A Stripe credit card token to set as the customer's default payment source
 }
 
 type PaymentSource struct {
