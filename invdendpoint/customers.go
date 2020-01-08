@@ -41,7 +41,7 @@ type SaveableCustomer struct {
 	Phone        string                 `json:"phone,omitempty"`         //Phone #
 	Notes        string                 `json:"notes,omitempty"`         //Private customer notes
 	MetaData     map[string]interface{} `json:"metadata,omitempty"`      //A hash of key/value pairs that can store additional information about this object.
-	StripeToken  string                 `json:"stripe_token",omitempty"` //A Stripe credit card token to set as the customer's default payment source
+	StripeToken  string                 `json:"stripe_token,omitempty"`  //A Stripe credit card token to set as the customer's default payment source
 }
 
 type PaymentSource struct {
