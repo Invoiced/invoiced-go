@@ -2,12 +2,13 @@ package invdapi
 
 import (
 	"encoding/json"
-	"github.com/ActiveState/invoiced-go/invdendpoint"
-	"github.com/ActiveState/invoiced-go/invdmockserver"
 	"reflect"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/ActiveState/invoiced-go/invdendpoint"
+	"github.com/ActiveState/invoiced-go/invdmockserver"
 )
 
 type customerMetaData map[string]interface{}
@@ -26,7 +27,7 @@ func TestCustomerMetaData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if string(b) != `{"id":34,"metadata":{"integration_name":"QBO"}}` {
+	if string(b) != `{"metadata":{"integration_name":"QBO"},"id":34}` {
 		t.Fatal("Json is wrong", "right json =>", string(b))
 	}
 
