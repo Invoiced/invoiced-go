@@ -5,6 +5,88 @@ import (
 	"testing"
 )
 
+func TestUnMarshalObject2(t *testing.T) {
+	s := `{
+    "attempt_count": 0,
+    "autopay": false,
+    "balance": 351.81,
+    "chase": false,
+    "closed": false,
+    "created_at": 1565892968,
+    "csv_url": "https://paragtestcorp.sandbox.invoiced.com/invoices/Do6BicUQ6iPIv3O1waf7IFti/csv",
+    "currency": "usd",
+    "customer": 470508,
+    "date": 1532674800,
+    "discounts": [],
+    "draft": false,
+    "due_date": 1535266800,
+    "id": 2194174,
+    "items": [
+        {
+            "amount": 325,
+            "catalog_item": null,
+            "created_at": 1565892968,
+            "description": "Merlin 4412D: The most powerful features avail in a 12 button display phone",
+            "discountable": true,
+            "discounts": [],
+            "id": 21954084,
+            "metadata": {
+                "netsuite_quantity": "1",
+                "netsuite_rate": "325.00"
+            },
+            "name": "ACC00004",
+            "object": "line_item",
+            "quantity": 1,
+            "taxable": true,
+            "taxes": [],
+            "type": null,
+            "unit_cost": 325
+        }
+    ],
+    "metadata": {
+        "netsuite_invoice_id": "8840",
+        "subsidiary": "Honeycomb Holdings Inc."
+    },
+    "name": "Invoice",
+    "needs_attention": false,
+    "next_chase_on": null,
+    "next_payment_attempt": null,
+    "notes": null,
+    "number": "SOINV10000010",
+    "object": "invoice",
+    "paid": false,
+    "payment_plan": null,
+    "payment_source": null,
+    "payment_terms": "Net 30",
+    "payment_url": "https://paragtestcorp.sandbox.invoiced.com/invoices/Do6BicUQ6iPIv3O1waf7IFti/payment",
+    "pdf_url": "https://paragtestcorp.sandbox.invoiced.com/invoices/Do6BicUQ6iPIv3O1waf7IFti/pdf",
+    "purchase_order": null,
+    "ship_to": null,
+    "shipping": [],
+    "status": "past_due",
+    "subscription": null,
+    "subtotal": 325,
+    "taxes": [
+        {
+            "amount": 26.81,
+            "id": 2020973,
+            "object": "tax",
+            "tax_rate": null
+        }
+    ],
+    "total": 351.81,
+    "url": "https://paragtestcorp.sandbox.invoiced.com/invoices/Do6BicUQ6iPIv3O1waf7IFti"
+}`
+
+	so := new(Invoice)
+
+	err := json.Unmarshal([]byte(s), so)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUnMarshalInvoiceObject(t *testing.T) {
 	s := `{
   "id": 46225,
