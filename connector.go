@@ -15,9 +15,9 @@ import (
 const requestURL = "https://api.invoiced.com"
 const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
-const InvoicedTokenString = "invoi
+const InvoicedTokenString = "invoicedToken"
 
-const version = "5.0.1"
+const version = "5.0.4"
 
 func Version() string {
 	return version
