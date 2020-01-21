@@ -15,9 +15,9 @@ import (
 const requestURL = "https://api.invoiced.com"
 const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
-const InvoicedTokenString = "invoicedToken"
+const InvoicedTokenString = "invoi
 
-const version = "5.0.0"
+const version = "5.0.1"
 
 func Version() string {
 	return version
@@ -171,17 +171,51 @@ func addIncludeToEndPoint(endpoint string, includeValue string) string {
 
 }
 
-//func addExpandToEndPoint(endpoint string, expandedValues *invdendpoint.Expand) string {
-//	finalEndpoint := ""
-//	if strings.Contains(endpoint, "?") {
-//		finalEndpoint = endpoint + "&" + "expand=" + expandedValues.String()
-//	} else {
-//		finalEndpoint = endpoint + "?" + "expand=" + expandedValues.String()
-//	}
-//
-//	return finalEndpoint
-//
-//}
+
+func addStartDateToEndPoint(endpoint string, invoiceDate int64) string {
+
+	invoiceDateString := strconv.FormatInt(invoiceDate, 10)
+	finalEndpoint := ""
+	if strings.Contains(endpoint, "?") {
+		finalEndpoint = endpoint + "&" + "start_date=" + invoiceDateString
+	} else {
+		finalEndpoint = endpoint + "?" + "start_date=" + invoiceDateString
+	}
+
+	return finalEndpoint
+
+}
+
+func addEndDateToEndPoint(endpoint string, invoiceDate int64) string {
+
+	invoiceDateString := strconv.FormatInt(invoiceDate, 10)
+	finalEndpoint := ""
+	if strings.Contains(endpoint, "?") {
+		finalEndpoint = endpoint + "&" + "end_date=" + invoiceDateString
+	} else {
+		finalEndpoint = endpoint + "?" + "end_date=" + invoiceDateString
+	}
+
+	return finalEndpoint
+
+}
+
+
+func addUpdatedAfterToEndPoint(endpoint string, updatedAfter int64) string {
+
+	updatedAfterString := strconv.FormatInt(updatedAfter, 10)
+	finalEndpoint := ""
+	if strings.Contains(endpoint, "?") {
+		finalEndpoint = endpoint + "&" + "updated_after=" + updatedAfterString
+	} else {
+		finalEndpoint = endpoint + "?" + "updated_after=" + updatedAfterString
+	}
+
+	return finalEndpoint
+
+}
+
+
 
 func makeEndPointSingular(endpoint string, id int64) string {
 	return endpoint + "/" + strconv.FormatInt(id, 10)
