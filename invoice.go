@@ -173,6 +173,88 @@ NEXT:
 
 }
 
+func (c *Invoice) ListAllInvoicesStartDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
+	return c.ListAllInvoicesStartEndDate(filter,sort,invoiceDate,0)
+
+}
+
+func (c *Invoice) ListAllInvoicesEndDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
+	return c.ListAllInvoicesStartEndDate(filter,sort,0,invoiceDate)
+
+}
+
+func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, startDate,endDate int64) (Invoices, error) {
+	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
+	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+
+	if startDate > 0 {
+		endPoint = addStartDateToEndPoint(endPoint, startDate)
+	}
+
+	if endDate > 0 {
+		endPoint = addEndDateToEndPoint(endPoint, endDate)
+	}
+
+	invoices := make(Invoices, 0)
+
+NEXT:
+	tmpInvoices := make(Invoices, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpInvoices)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	invoices = append(invoices, tmpInvoices...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, invoice := range invoices {
+		invoice.Connection = c.Connection
+
+	}
+
+	return invoices, nil
+
+}
+
+func (c *Invoice) ListAllInvoicesUpdatedDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
+	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
+	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+
+	if invoiceDate > 0 {
+		endPoint = addUpdatedAfterToEndPoint(endPoint, invoiceDate)
+	}
+
+	invoices := make(Invoices, 0)
+
+NEXT:
+	tmpInvoices := make(Invoices, 0)
+
+	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpInvoices)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	invoices = append(invoices, tmpInvoices...)
+
+	if endPoint != "" {
+		goto NEXT
+	}
+
+	for _, invoice := range invoices {
+		invoice.Connection = c.Connection
+
+	}
+
+	return invoices, nil
+
+}
+
 func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
