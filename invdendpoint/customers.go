@@ -27,6 +27,7 @@ type SaveableCustomer struct {
 	Name         string                 `json:"name,omitempty"`          //Customer name
 	Number       string                 `json:"number,omitempty"`        //A unique ID to help tie your customer to your external systems
 	Email        string                 `json:"email,omitempty"`         //Email address
+	AutoPay      bool                   `json:"autopay,omitempty"`       //AutoPay enabled?
 	PaymentTerms string                 `json:"payment_terms,omitempty"` //Payment terms used for manual collection mode, i.e. “NET 30”
 	Taxes        []Rate                 `json:"taxes,omitempty"`         //Collection of Tax Rate IDs
 	Type         string                 `json:"type,omitempty"`          //Organization type, company or person
