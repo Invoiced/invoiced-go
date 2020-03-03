@@ -8,8 +8,8 @@ type Contact struct {
 	Title      string `json:"title,omitempty"`        //Job title
 	Email      string `json:"email,omitempty"`       //Email address
 	Phone      string `json:"phone,omitempty"`       //Phone number
-	Primary    bool   `json:"primary,omitempty"`     //When true the contact will be copied on any account communications
-	SmsEnabled bool   `json:"sms_enabled,omitempty"` //When true the contact can be contacted via text message
+	Primary    bool   `json:"primary"`     			//When true the contact will be copied on any account communications
+	SmsEnabled bool   `json:"sms_enabled"` 			//When true the contact can be contacted via text message
 	Department string `json:"department,omitempty"`  //Department
 	Address1   string `json:"address1,omitempty"`    //First address line
 	Address2   string `json:"address2,omitempty"`    //Optional second address line

@@ -171,7 +171,7 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 	if so.Id != 46225 {
 		t.Fatal("Id is incorrect")
 	}
-	
+
 	if so.Customer != 15444 {
 		t.Fatal("Customer is incorrect")
 	}
