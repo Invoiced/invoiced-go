@@ -8,6 +8,7 @@ const CustomersEndPoint = "/customers"
 
 type Customers []Customer
 
+
 type Customer struct {
 	Id                 int64                  `json:"id,omitempty"`                //The customer’s unique ID
 	Object 			   string                 `json:"object,omitempty"`

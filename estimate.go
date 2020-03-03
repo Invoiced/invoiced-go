@@ -187,15 +187,13 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/invoice"
 
-	invResp := new(Invoice)
+	invResp := c.NewInvoice()
 
 	apiErr := c.postWithoutData(endPoint, invResp)
 
 	if apiErr != nil {
 		return nil, apiErr
 	}
-
-	invResp.Connection = c.Connection
 
 	return invResp, nil
 

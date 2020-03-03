@@ -1,6 +1,9 @@
 package invdendpoint
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strconv"
+)
 
 const InvoicesEndPoint = "/invoices"
 
@@ -9,7 +12,9 @@ type Invoices []Invoice
 type Invoice struct {
 	Id                     int64                  `json:"id,omitempty"`                   //The invoice’s unique ID
 	Object                 string                 `json:"object,omitempty"`               //Object type, invoice
-	Customer               int64                  `json:"customer,omitempty"`             //Customer ID
+	Customer               int64                  `json:"-"`
+	CustomerFull	       *Customer              `json:"-"`
+	CustomerRaw  		   json.RawMessage		  `json:"customer,omitempty"`
 	Name                   string                 `json:"name,omitempty"`                 //Invoice name for internal use, defaults to “Invoice”
 	Number                 string                 `json:"number,omitempty"`               //The reference number assigned to the invoice for use in the dashboard
 	AutoPay                bool                   `json:"autopay,omitempty"`              //Invoice collection mode, auto or manual
@@ -43,6 +48,44 @@ type Invoice struct {
 	Attachments            []int64                `json:"attachments,omitempty"`
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"`
 	Sent                   bool                   `json:"sent,omitempty"`
+}
+
+
+func (i *Invoice) UnmarshalJSON(data []byte) error {
+	type invoice2 Invoice
+
+
+	if err := json.Unmarshal(data, (*invoice2)(i)); err != nil {
+		return err
+	}
+
+	rj := i.CustomerRaw
+
+	i.Customer, _ = strconv.ParseInt(string(rj),10,64)
+	customer := new(Customer)
+
+	err := json.Unmarshal(rj,customer)
+
+	if err == nil {
+		i.CustomerFull = customer
+		i.Customer = customer.Id
+	}
+
+
+	return nil
+}
+
+func (i *Invoice) MarshalJSON() ([]byte,error) {
+
+	type invoice2 Invoice
+	i2 := (*invoice2)(i)
+
+	if i2.Customer > 0 {
+		i2.CustomerRaw = []byte(strconv.FormatInt(i2.Customer, 10))
+	}
+
+	return json.Marshal(i2)
+
 }
 
 func (i *Invoice) String() string {

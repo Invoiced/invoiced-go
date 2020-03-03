@@ -39,7 +39,7 @@ func (c *Invoice) Count() (int64, error) {
 
 func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
-	invResp := new(Invoice)
+	invResp := c.NewInvoice()
 
 	if invoice == nil {
 		return nil, errors.New("invoice cannot be nil")
@@ -57,8 +57,6 @@ func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
 	if apiErr != nil {
 		return nil, apiErr
 	}
-
-	invResp.Connection = c.Connection
 
 	return invResp, nil
 
@@ -80,7 +78,7 @@ func (c *Invoice) Delete() error {
 func (c *Invoice) Save() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id)
 
-	invResp := new(Invoice)
+	invResp := new(invdendpoint.Invoice)
 
 	invDataToUpdate, err := SafeInvoiceForUpdate(c.Invoice)
 
@@ -94,7 +92,7 @@ func (c *Invoice) Save() error {
 		return apiErr
 	}
 
-	c.Invoice = invResp.Invoice
+	c.Invoice = invResp
 
 	return nil
 
@@ -123,7 +121,7 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 
 func (c *Invoice) Void() (*Invoice, error) {
 
-	invResp := new(Invoice)
+	invResp := c.NewInvoice()
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/void"
 
@@ -133,7 +131,6 @@ func (c *Invoice) Void() (*Invoice, error) {
 		return nil,apiErr
 	}
 
-	invResp.Connection = c.Connection
 
 	return invResp,nil
 
@@ -147,12 +144,16 @@ func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) 
 		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
 	}
 
+	return c.ListAllHelper(endPoint,filter,sort)
+
+}
+
+func (c *Invoice) ListAllHelper(endPoint string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
+
 	invoices := make(Invoices, 0)
-
 NEXT:
-	tmpInvoices := make(Invoices, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpInvoices)
+	tmpInvoices,endPoint,apiErr := c.ListHelper(endPoint,filter,sort)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -164,12 +165,37 @@ NEXT:
 		goto NEXT
 	}
 
+	return invoices, nil
+
+}
+
+func (c *Invoice) ListHelper(endPoint string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
+	if len(endPoint)  == 0 {
+		endPoint = c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
+		endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+		if c.IncludeUpdatedAt {
+			endPoint = addIncludeToEndPoint(endPoint, "updated_at")
+		}
+	}
+
+	invoicesToReturn := make(Invoices, 0)
+	invoices := make(invdendpoint.Invoices,0)
+
+	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &invoices)
+
+	if apiErr != nil {
+		return nil, "", apiErr
+	}
+
 	for _, invoice := range invoices {
-		invoice.Connection = c.Connection
+		inv := c.Connection.NewInvoice()
+		invData := invoice
+		inv.Invoice = &invData
+		invoicesToReturn = append(invoicesToReturn,inv)
 
 	}
 
-	return invoices, nil
+	return invoicesToReturn, nextEndPoint, nil
 
 }
 
@@ -195,29 +221,7 @@ func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort 
 		endPoint = addEndDateToEndPoint(endPoint, endDate)
 	}
 
-	invoices := make(Invoices, 0)
-
-NEXT:
-	tmpInvoices := make(Invoices, 0)
-
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpInvoices)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	invoices = append(invoices, tmpInvoices...)
-
-	if endPoint != "" {
-		goto NEXT
-	}
-
-	for _, invoice := range invoices {
-		invoice.Connection = c.Connection
-
-	}
-
-	return invoices, nil
+	return c.ListAllHelper(endPoint,filter,sort)
 
 }
 
@@ -229,53 +233,12 @@ func (c *Invoice) ListAllInvoicesUpdatedDate(filter *invdendpoint.Filter, sort *
 		endPoint = addUpdatedAfterToEndPoint(endPoint, invoiceDate)
 	}
 
-	invoices := make(Invoices, 0)
-
-NEXT:
-	tmpInvoices := make(Invoices, 0)
-
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpInvoices)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	invoices = append(invoices, tmpInvoices...)
-
-	if endPoint != "" {
-		goto NEXT
-	}
-
-	for _, invoice := range invoices {
-		invoice.Connection = c.Connection
-
-	}
-
-	return invoices, nil
+	return c.ListAllHelper(endPoint,filter,sort)
 
 }
 
 func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
-	if c.IncludeUpdatedAt {
-		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
-	}
-
-	invoices := make(Invoices, 0)
-
-	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &invoices)
-
-	if apiErr != nil {
-		return nil, "", apiErr
-	}
-
-	for _, invoice := range invoices {
-		invoice.Connection = c.Connection
-
-	}
-
-	return invoices, nextEndPoint, nil
+	return c.ListHelper("",filter,sort)
 
 }
 
@@ -527,3 +490,4 @@ func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, err
 
 	return invData,nil
 }
+
