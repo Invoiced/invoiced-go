@@ -17,7 +17,7 @@ const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
 const InvoicedTokenString = "invoicedToken"
 
-const version = "5.0.5"
+const version = "5.2.0"
 
 func Version() string {
 	return version
@@ -77,7 +77,6 @@ func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) error {
 	if err != nil {
 		return err
 	}
-
 	err = json.Unmarshal(body, endPointData)
 
 	if err != nil {

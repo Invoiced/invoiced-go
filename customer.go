@@ -570,15 +570,13 @@ NEXT:
 func (c *Customer) TriggerInvoice() (*Invoice, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/invoices"
 
-	invoice := new(Invoice)
+	invoice := c.NewInvoice()
 
 	err := c.create(endPoint, nil, invoice)
 
 	if err != nil {
 		return nil, err
 	}
-
-	invoice.Connection = c.Connection
 
 	return invoice, nil
 
@@ -587,15 +585,13 @@ func (c *Customer) TriggerInvoice() (*Invoice, error) {
 func (c *Customer) ConsolidateInvoices() (*Invoice, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/consolidate_invoices"
 
-	invoice := new(Invoice)
+	invoice := c.NewInvoice()
 
 	err := c.create(endPoint, nil, invoice)
 
 	if err != nil {
 		return nil, err
 	}
-
-	invoice.Connection = c.Connection
 
 	return invoice, nil
 }
