@@ -2,6 +2,7 @@ package invdendpoint
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/Invoiced/invoiced-go/invdutil"
 	"strings"
 	"testing"
@@ -232,8 +233,251 @@ func TestUnMarshalEventObject2(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(string(b),"725981") {
+	if !strings.Contains(string(b), "725981") {
 		t.Fatal("Customer id was not set")
+	}
+
+}
+
+func TestUnMarshalEventPreviousObject(t *testing.T) {
+	s := `{
+	"data": {
+		"object": {
+			"attempt_count": 0,
+			"autopay": false,
+			"balance": 435.22,
+			"chase": false,
+			"closed": false,
+			"created_at": 1583684877,
+			"currency": "usd",
+			"customer": {
+				"address1": null,
+				"address2": null,
+				"attention_to": null,
+				"autopay": true,
+				"autopay_delay_days": -1,
+				"avalara_entity_use_code": null,
+				"avalara_exemption_number": null,
+				"bill_to_parent": false,
+				"chase": true,
+				"chasing_cadence": null,
+				"city": null,
+				"consolidated": false,
+				"country": "US",
+				"created_at": 1583684822,
+				"credit_hold": false,
+				"credit_limit": null,
+				"email": null,
+				"id": 757661,
+				"language": null,
+				"name": "Wyle Coyote",
+				"next_chase_step": null,
+				"notes": null,
+				"number": "CUST-00006",
+				"owner": 831,
+				"parent_customer": null,
+				"payment_terms": null,
+				"phone": null,
+				"postal_code": null,
+				"state": null,
+				"tax_id": null,
+				"taxable": true,
+				"taxes": [],
+				"type": "company",
+				"object": "customer",
+				"statement_pdf_url": "https://tesla198.sandbox.invoiced.com/statements/Cg5ONrb6YEs4FwjdQpDnKAzj/pdf",
+				"sign_up_url": null,
+				"payment_source": null,
+				"sign_up_page": null
+			},
+			"date": 1583684797,
+			"draft": false,
+			"due_date": null,
+			"id": 2818436,
+			"name": "Invoice",
+			"needs_attention": false,
+			"next_chase_on": null,
+			"next_payment_attempt": null,
+			"notes": null,
+			"number": "INV-00004",
+			"paid": false,
+			"payment_plan": null,
+			"payment_terms": null,
+			"purchase_order": null,
+			"status": "not_sent",
+			"subscription": null,
+			"subtotal": 412,
+			"total": 435.22,
+			"object": "invoice",
+			"url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww",
+			"pdf_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/pdf",
+			"csv_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/csv",
+			"payment_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/payment",
+			"ship_to": null,
+			"payment_source": null,
+			"items": [{
+				"amount": 412,
+				"catalog_item": null,
+				"created_at": 1583684877,
+				"description": "",
+				"discountable": true,
+				"id": 26684187,
+				"name": "Service II",
+				"quantity": 1,
+				"taxable": true,
+				"type": null,
+				"unit_cost": 412,
+				"object": "line_item",
+				"discounts": [{
+					"amount": 8.24,
+					"expires": null,
+					"id": 2486560,
+					"object": "discount",
+					"coupon": {
+						"created_at": 1583685415,
+						"currency": null,
+						"duration": 0,
+						"exclusive": false,
+						"expiration_date": null,
+						"id": "discount1",
+						"is_percent": true,
+						"max_redemptions": 0,
+						"name": "discount1",
+						"value": 2,
+						"object": "coupon"
+					}
+				}],
+				"taxes": [{
+					"amount": 16.15,
+					"id": 2486098,
+					"object": "tax",
+					"tax_rate": {
+						"created_at": 1583684856,
+						"currency": null,
+						"id": "linetax1",
+						"inclusive": false,
+						"is_percent": true,
+						"name": "linetax1",
+						"value": 4,
+						"object": "tax_rate"
+					}
+				}]
+			}],
+			"discounts": [{
+				"amount": 12.11,
+				"expires": null,
+				"id": 2486561,
+				"object": "discount",
+				"coupon": {
+					"created_at": 1583685424,
+					"currency": null,
+					"duration": 0,
+					"exclusive": false,
+					"expiration_date": null,
+					"id": "discount2",
+					"is_percent": true,
+					"max_redemptions": 0,
+					"name": "discount2",
+					"value": 3,
+					"object": "coupon"
+				}
+			}],
+			"taxes": [{
+				"amount": 27.42,
+				"id": 2486099,
+				"object": "tax",
+				"tax_rate": {
+					"created_at": 1583684874,
+					"currency": null,
+					"id": "state_tax",
+					"inclusive": false,
+					"is_percent": true,
+					"name": "state_tax",
+					"value": 7,
+					"object": "tax_rate"
+				}
+			}],
+			"shipping": []
+		},
+		"previous": {
+			"balance": 457.32,
+			"total": 457.32,
+			"items": [{
+				"quantity": 1,
+				"unit_cost": 412,
+				"discounts": [{
+					"coupon": {
+						"exclusive": null,
+						"max_redemptions": null,
+						"value": 2
+					}
+				}],
+				"taxes": [{
+					"tax_rate": {
+						"value": 4
+					}
+				}]
+			}],
+			"discounts": [{
+				"coupon": {
+					"exclusive": null,
+					"max_redemptions": null,
+					"value": 3
+				}
+			}],
+			"taxes": [{
+				"tax_rate": {
+					"value": 7
+				}
+			}]
+		}
+	},
+	"id": 6083005,
+	"timestamp": 1583685428,
+	"type": "invoice.updated",
+	"user": {
+		"created_at": 1422906559,
+		"email": "parag@invoiced.com",
+		"first_name": "Parag",
+		"id": 831,
+		"last_name": "Patel",
+		"two_factor_enabled": false,
+		"registered": true
+	}
+}`
+
+	so := new(Event)
+
+	err := json.Unmarshal([]byte(s), so)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	prevInv, err := so.ParseInvoicePreviousEvent()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if prevInv == nil {
+		t.Fatal("Previous invoice should not be nil")
+	}
+
+	fmt.Println(prevInv)
+
+}
+
+func TestCleanMetaDataArray(t *testing.T) {
+	d := `{"balance":457.32,"total":457.32,"items":[{"quantity":1,"unit_cost":412,"metadata":[],"discounts":[{"coupon":{"exclusive":null,"max_redemptions":null,"metadata":[],"value":2}}],"taxes":[{"tax_rate":{"value":4,"metadata":[]}}]}],"discounts":[{"coupon":{"exclusive":null,"max_redemptions":null,"metadata":[],"value":3}}],"taxes":[{"tax_rate":{"value":7,"metadata":[]}}]}
+`
+
+	cleanData := CleanMetaDataArray([]byte(d))
+
+	if strings.Contains(string(cleanData),`"metadata": []`) {
+		t.Fatal("Did not cleanse data properly.")
+	} else if strings.Contains(string(cleanData),`"metadata":[]`) {
+		t.Fatal("Did not cleanse data properly.")
 	}
 
 }
