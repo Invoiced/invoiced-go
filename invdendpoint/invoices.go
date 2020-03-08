@@ -50,6 +50,43 @@ type Invoice struct {
 	Sent                   bool                   `json:"sent,omitempty"`
 }
 
+func (i *Invoice) TotalTaxAmount() float64 {
+  totalTax := 0.0
+
+  for _, lineItem := range i.Items {
+  	lineItemTaxes := lineItem.Taxes
+
+  	for _, lineItemTax := range lineItemTaxes {
+  		totalTax += lineItemTax.Amount
+	}
+  }
+
+  for _, invoiceTax := range i.Taxes{
+  	totalTax += invoiceTax.Amount
+  }
+
+  return totalTax
+}
+
+
+func (i *Invoice) TotalDiscountAmount() float64 {
+	totalDiscount := 0.0
+
+	for _, lineItem := range i.Items {
+		lineItemDiscounts := lineItem.Discounts
+
+		for _, lineItemDiscount := range lineItemDiscounts {
+			totalDiscount += lineItemDiscount.Amount
+		}
+	}
+
+	for _, invoiceDiscount := range i.Discounts{
+		totalDiscount += invoiceDiscount.Amount
+	}
+
+	return totalDiscount
+}
+
 
 func (i *Invoice) UnmarshalJSON(data []byte) error {
 	type invoice2 Invoice
