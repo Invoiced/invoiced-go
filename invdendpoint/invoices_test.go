@@ -310,3 +310,255 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 
 
 }
+
+func TestTotalTaxAmount(t *testing.T) {
+	s := `{
+      "attempt_count": 0,
+      "autopay": false,
+      "balance": 457.32,
+      "chase": false,
+      "closed": false,
+      "created_at": 1583684877,
+      "currency": "usd",
+      "customer": 757661,
+      "date": 1583684797,
+      "draft": false,
+      "due_date": null,
+      "id": 2818436,
+      "name": "Invoice",
+      "needs_attention": false,
+      "next_chase_on": null,
+      "next_payment_attempt": null,
+      "notes": null,
+      "number": "INV-00004",
+      "paid": false,
+      "payment_plan": null,
+      "payment_terms": null,
+      "purchase_order": null,
+      "status": "not_sent",
+      "subscription": null,
+      "subtotal": 412,
+      "total": 457.32,
+      "object": "invoice",
+      "url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww",
+      "pdf_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/pdf",
+      "csv_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/csv",
+      "payment_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/payment",
+      "ship_to": null,
+      "payment_source": null,
+      "items": [
+        {
+          "amount": 412,
+          "catalog_item": null,
+          "created_at": 1583684877,
+          "description": "",
+          "discountable": true,
+          "id": 26684187,
+          "name": "Service II",
+          "quantity": 1,
+          "taxable": true,
+          "type": null,
+          "unit_cost": 412,
+          "object": "line_item",
+          "discounts": [],
+          "taxes": [
+            {
+              "amount": 16.48,
+              "id": 2486098,
+              "object": "tax",
+              "tax_rate": {
+                "created_at": 1583684856,
+                "currency": null,
+                "id": "linetax1",
+                "inclusive": false,
+                "is_percent": true,
+                "name": "linetax1",
+                "value": 4,
+                "object": "tax_rate"
+              }
+            }
+          ]
+        }
+      ],
+      "discounts": [],
+      "taxes": [
+        {
+          "amount": 28.84,
+          "id": 2486099,
+          "object": "tax",
+          "tax_rate": {
+            "created_at": 1583684874,
+            "currency": null,
+            "id": "state_tax",
+            "inclusive": false,
+            "is_percent": true,
+            "name": "state_tax",
+            "value": 7,
+            "object": "tax_rate"
+          }
+        }
+      ],
+      "shipping": []
+    }`
+
+	so := new(Invoice)
+
+	err := json.Unmarshal([]byte(s), so)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	totalTax := so.TotalTaxAmount()
+
+	if totalTax != 45.32 {
+		t.Fatal("Tax amount does not match")
+	}
+
+}
+
+func TestTotalDiscountAmount(t *testing.T) {
+	s := `{
+    "attempt_count": 0,
+    "autopay": false,
+    "balance": 435.22,
+    "chase": false,
+    "closed": false,
+    "created_at": 1583684877,
+    "csv_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/csv",
+    "currency": "usd",
+    "customer":78687565,
+    "date": 1583684797,
+    "discounts": [
+        {
+            "amount": 12.11,
+            "coupon": {
+                "created_at": 1583685424,
+                "currency": null,
+                "duration": 0,
+                "exclusive": false,
+                "expiration_date": null,
+                "id": "discount2",
+                "is_percent": true,
+                "max_redemptions": 0,
+                "name": "discount2",
+                "object": "coupon",
+                "value": 3
+            },
+            "expires": null,
+            "id": 2486561,
+            "object": "discount"
+        }
+    ],
+    "draft": false,
+    "due_date": null,
+    "id": 2818436,
+    "items": [
+        {
+            "amount": 412,
+            "catalog_item": null,
+            "created_at": 1583684877,
+            "description": "",
+            "discountable": true,
+            "discounts": [
+                {
+                    "amount": 8.24,
+                    "coupon": {
+                        "created_at": 1583685415,
+                        "currency": null,
+                        "duration": 0,
+                        "exclusive": false,
+                        "expiration_date": null,
+                        "id": "discount1",
+                        "is_percent": true,
+                        "max_redemptions": 0,
+                        "name": "discount1",
+                        "object": "coupon",
+                        "value": 2
+                    },
+                    "expires": null,
+                    "id": 2486560,
+                    "object": "discount"
+                }
+            ],
+            "id": 26684187,
+            "name": "Service II",
+            "object": "line_item",
+            "quantity": 1,
+            "taxable": true,
+            "taxes": [
+                {
+                    "amount": 16.15,
+                    "id": 2486098,
+                    "object": "tax",
+                    "tax_rate": {
+                        "created_at": 1583684856,
+                        "currency": null,
+                        "id": "linetax1",
+                        "inclusive": false,
+                        "is_percent": true,
+                        "name": "linetax1",
+                        "object": "tax_rate",
+                        "value": 4
+                    }
+                }
+            ],
+            "type": null,
+            "unit_cost": 412
+        }
+    ],
+    "name": "Invoice",
+    "needs_attention": false,
+    "next_chase_on": null,
+    "next_payment_attempt": null,
+    "notes": null,
+    "number": "INV-00004",
+    "object": "invoice",
+    "paid": false,
+    "payment_plan": null,
+    "payment_source": null,
+    "payment_terms": null,
+    "payment_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/payment",
+    "pdf_url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww/pdf",
+    "purchase_order": null,
+    "ship_to": null,
+    "shipping": [],
+    "status": "not_sent",
+    "subscription": null,
+    "subtotal": 412,
+    "taxes": [
+        {
+            "amount": 27.42,
+            "id": 2486099,
+            "object": "tax",
+            "tax_rate": {
+                "created_at": 1583684874,
+                "currency": null,
+                "id": "state_tax",
+                "inclusive": false,
+                "is_percent": true,
+                "name": "state_tax",
+                "object": "tax_rate",
+                "value": 7
+            }
+        }
+    ],
+    "total": 435.22,
+    "url": "https://tesla198.sandbox.invoiced.com/invoices/sBpN7NmRSPTYZ472rzynY6Ww"
+}`
+
+	so := new(Invoice)
+
+	err := json.Unmarshal([]byte(s), so)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	totalDiscount := so.TotalDiscountAmount()
+
+	if totalDiscount != 20.35 {
+		t.Fatal("Total discount amount does not match")
+	}
+
+}

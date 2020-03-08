@@ -17,7 +17,7 @@ const devRequestURL = "https://api.sandbox.invoiced.com"
 const requestType = "application/json"
 const InvoicedTokenString = "invoicedToken"
 
-const version = "5.2.1"
+const version = "5.3.0"
 
 func Version() string {
 	return version
