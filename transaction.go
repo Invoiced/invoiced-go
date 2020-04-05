@@ -390,6 +390,7 @@ func SafeTransactionForCreation(transaction *invdendpoint.Transaction) (*invdend
 	transData :=new(invdendpoint.Transaction)
 	transData.Customer = transaction.Customer
 	transData.Invoice = transaction.Invoice
+	transData.Date = transaction.Date
 	transData.CreditNote = transaction.CreditNote
 	transData.Type = transaction.Type
 	transData.Method = transaction.Method
