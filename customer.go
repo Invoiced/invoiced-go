@@ -291,7 +291,7 @@ func (c *Customer) CreateContact(contact *invdendpoint.Contact) (*invdendpoint.C
 }
 
 func (c *Customer) RetrieveContact(contactID int64) (*invdendpoint.Contact, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts" + strconv.FormatInt(contactID, 10)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts/" + strconv.FormatInt(contactID, 10)
 
 	retrievedContact := new(invdendpoint.Contact)
 
@@ -317,7 +317,7 @@ func (c *Customer) UpdateContact(contactToUpdate *invdendpoint.Contact) (*invden
 		return nil,err
 	}
 
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts" + strconv.FormatInt(contactToUpdate.Id, 10)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts/" + strconv.FormatInt(contactToUpdate.Id, 10)
 
 	contResp := new(invdendpoint.Contact)
 
@@ -357,7 +357,7 @@ NEXT:
 
 func (c *Customer) DeleteContact(contactID int64) error {
 
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts" + strconv.FormatInt(contactID, 10)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts/" + strconv.FormatInt(contactID, 10)
 
 	err := c.delete(endPoint)
 
@@ -503,7 +503,7 @@ func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 
 func (c *Customer) RetrievePendingLineItem(id int64) (*invdendpoint.PendingLineItem, error) {
 
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items" + strconv.FormatInt(id, 10)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items/" + strconv.FormatInt(id, 10)
 
 	retrievedPendingLineItem := new(invdendpoint.PendingLineItem)
 
@@ -523,7 +523,7 @@ func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 		return nil, errors.New("Need to supply a pending line item id in order to update a pending line item")
 	}
 
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items" + strconv.FormatInt(pendingLineItem.Id, 10)
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items/" + strconv.FormatInt(pendingLineItem.Id, 10)
 
 	pliDataToUpdate, err := SafePendingLineItemForUpdate(pendingLineItem)
 
