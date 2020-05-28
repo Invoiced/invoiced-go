@@ -459,6 +459,7 @@ func SafeInvoiceForCreation(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, e
 	invData.Metadata = inv.Metadata
 	invData.Attachments = inv.Attachments
 	invData.DisabledPaymentMethods = inv.DisabledPaymentMethods
+	invData.Taxes = inv.Taxes
 
 
 	return invData,nil
@@ -486,6 +487,7 @@ func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, err
 	invData.Metadata = inv.Metadata
 	invData.Attachments = inv.Attachments
 	invData.DisabledPaymentMethods = inv.DisabledPaymentMethods
+	invData.Taxes = inv.Taxes
 
 
 	return invData,nil
