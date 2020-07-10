@@ -20,7 +20,7 @@ type Invoice struct {
 	AutoPay                bool                   `json:"autopay,omitempty"`              //Invoice collection mode, auto or manual
 	Currency               string                 `json:"currency,omitempty"`             //3-letter ISO code
 	Draft                  bool                   `json:"draft"`                          //When false, the invoice is considered outstanding, or when true, the invoice is a draft
-	Closed                 bool                   `json:"closed,omitempty"`               //When true, an invoice is closed and considered bad debt. No further payments are allowed.
+	Closed                 bool                   `json:"closed"`               		  //When true, an invoice is closed and considered bad debt. No further payments are allowed.
 	Paid                   bool                   `json:"paid,omitempty"`                 //Indicates whether an invoice has been paid in full
 	Status                 string                 `json:"status,omitempty"`               //Invoice state, one of draft, not_sent, sent, viewed, past_due, pending, paid
 	Chase                  bool                   `json:"chase,omitempty"`                //Whether chasing is enabled for the invoice

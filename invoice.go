@@ -460,7 +460,7 @@ func SafeInvoiceForCreation(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, e
 	invData.Attachments = inv.Attachments
 	invData.DisabledPaymentMethods = inv.DisabledPaymentMethods
 	invData.Taxes = inv.Taxes
-
+	invData.AutoPay = inv.AutoPay
 
 	return invData,nil
 }
@@ -488,6 +488,7 @@ func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, err
 	invData.Attachments = inv.Attachments
 	invData.DisabledPaymentMethods = inv.DisabledPaymentMethods
 	invData.Taxes = inv.Taxes
+	invData.AutoPay = inv.AutoPay
 
 
 	return invData,nil
