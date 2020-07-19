@@ -10,7 +10,7 @@ type Transaction struct {
 	Object 			  string 				 `json:"object,omitempty"`			  	//Object type, transaction
 	Customer          int64                  `json:"customer,omitempty"`           //Customer ID, required if invoice ID is not supplied
 	Invoice           int64                  `json:"invoice,omitempty"`            //Invoice ID, if any
-	CreditNote        string                 `json:"credit_note,omitempty"`        //Associated Credit Note, if any
+	CreditNote        int64                 `json:"credit_note,omitempty"`        //Associated Credit Note, if any
 	Type              string                 `json:"type,omitempty"`               //Transaction type, charge, payment, refund, or adjustment - required
 	Date              int64                  `json:"date,omitempty"`               //Transaction date, defaults to current timestamp
 	Method            string                 `json:"method,omitempty"`             //Payment instrument used to facilitate transaction, defaults to other
