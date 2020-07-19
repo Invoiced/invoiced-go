@@ -19,7 +19,7 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
     "addons": [
         {
             "id": 3,
-            "catalog_item": "ipad-license"
+            "catalog_item": "ipad-license",
             "quantity": 11,
             "created_at": 1420391704
         }
