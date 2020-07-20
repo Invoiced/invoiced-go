@@ -185,7 +185,7 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 }
 
 func (c *Estimate) GenerateInvoice() (*Invoice, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint) + "/invoice"
+	endPoint :=  makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/invoice"
 
 	invResp := c.NewInvoice()
 
