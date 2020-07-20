@@ -18,7 +18,7 @@ type Estimate struct {
 	Currency               string                 `json:"currency,omitempty"`                 //3-letter ISO code
 	Draft                  bool                   `json:"draft,omitempty"`                    //When false, the invoice is considered outstanding, or when true, the invoice is a draft
 	Closed                 bool                   `json:"closed,omitempty"`                   //When true, an invoice is closed and considered bad debt. No further payments are allowed.
-	Approved               bool                   `json:"approved,omitempty"`                 //When true, an invoice is closed and considered bad debt. No further payments are allowed.
+	Approved               string                 `json:"approved,omitempty"`                 //When true, an invoice is closed and considered bad debt. No further payments are allowed.
 	Status                 string                 `json:"status,omitempty"`                   //Invoice state, one of draft, not_sent, sent, viewed, past_due, pending, paid
 	Date                   int64                  `json:"date,omitempty"`                     //Invoice date
 	ExpirationDate         int64                  `json:"expiration_date,omitempty"`          //Estimate expiration date

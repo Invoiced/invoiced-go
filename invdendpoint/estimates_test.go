@@ -7,73 +7,41 @@ import (
 
 func TestUnmarshalEstimateObject(t *testing.T) {
 	s := `{
-  "approved": null,
-  "closed": false,
-  "created_at": 1415229884,
-  "currency": "usd",
-  "customer": 15444,
-  "date": 1416290400,
-  "deposit": 0,
-  "deposit_paid": false,
-  "discounts": [],
-  "draft": false,
-  "expiration_date": null,
-  "id": 2048,
-  "invoice": null,
-  "items": [
-    {
-      "amount": 45,
-      "catalog_item": null,
-      "description": null,
-      "discountable": true,
-      "discounts": [],
-      "id": 7,
-      "metadata": {},
-      "name": "Copy Paper, Case",
-      "object": "line_item",
-      "quantity": 1,
-      "taxable": true,
-      "taxes": [],
-      "type": "product",
-      "unit_cost": 45
+    "approval": {
+        "id": 250,
+        "initials": "RR",
+        "ip": "67.79.55.186",
+        "timestamp": 1595209318,
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"
     },
-    {
-      "amount": 10,
-      "catalog_item": "delivery",
-      "description": null,
-      "discountable": true,
-      "discounts": [],
-      "id": 8,
-      "metadata": {},
-      "name": "Delivery",
-      "object": "line_item",
-      "quantity": 1,
-      "taxable": true,
-      "taxes": [],
-      "type": "service",
-      "unit_cost": 10
-    }
-  ],
-  "metadata": {},
-  "name": null,
-  "notes": null,
-  "number": "EST-0016",
-  "object": "estimate",
-  "payment_terms": "NET 14",
-  "pdf_url": "https://dundermifflin.invoiced.com/estimates/IZmXbVOPyvfD3GPBmyd6FwXY/pdf",
-  "ship_to": null,
-  "status": "not_sent",
-  "subtotal": 55,
-  "taxes": [
-    {
-      "amount": 3.85,
-      "id": 20554,
-      "object": "tax",
-      "tax_rate": null
-    }
-  ],
-  "total": 51.15,
-  "url": "https://dundermifflin.invoiced.com/estimates/IZmXbVOPyvfD3GPBmyd6FwXY"
+    "approved": "RR",
+    "closed": true,
+    "created_at": 1595209305,
+    "currency": "usd",
+    "customer": 1094399,
+    "date": 1595209239,
+    "deposit": 0,
+    "deposit_paid": false,
+    "discounts": [],
+    "draft": false,
+    "expiration_date": null,
+    "id": 14101,
+    "invoice": null,
+    "metadata": {},
+    "name": "Estimate",
+    "notes": null,
+    "number": "SDLL-00001",
+    "object": "estimate",
+    "payment_terms": "NET 14",
+    "pdf_url": "https://tesla.sandbox.invoiced.com/estimates/krtvjafiHpGkcRGgVuFZEqAv/pdf",
+    "purchase_order": null,
+    "ship_to": null,
+    "shipping": [],
+    "status": "approved",
+    "subtotal": 200,
+    "taxes": [],
+    "total": 200,
+    "url": "https://tesla.sandbox.invoiced.com/estimates/krtvjafiHpGkcRGgVuFZEqAv"
 }`
 
 	so := new(Estimate)
