@@ -43,7 +43,7 @@ type Customer struct {
 	Type               string     `json:"type,omitempty"`                     //Organization type, company or person
 	ParentCustomer      int64     `json:"parent_customer,omitempty"`          //Parent customer ID
 	Notes              string     `json:"notes,omitempty"`                    //Private customer notes
-	SignUpPage         string     `json:"sign_up_page,omitempty"`
+	SignUpPage         int64      `json:"sign_up_page,omitempty"`
 	SignUpUrl          string     `json:"sign_up_url,omitempty"` //URL to download the latest account statement
 	StatementPdfUrl    string     `json:"statement_pdf_url,omitempty"` //URL to download the latest account statement
 	CreatedAt          int64      `json:"created_at,omitempty"`        //Timestamp when created

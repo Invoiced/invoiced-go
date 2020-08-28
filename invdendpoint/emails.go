@@ -19,6 +19,10 @@ type EmailDetail struct {
 
 type EmailResponses []EmailResponse
 
+func (e EmailResponses) Error() string {
+	panic("implement me")
+}
+
 type EmailResponse struct {
 	Id           string `json:"id,omitempty"`
 	State        string `json:"state,omitempty"`
