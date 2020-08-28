@@ -21,10 +21,10 @@ type Subscription struct {
 	Cycles                int64                  `json:"cycles,omitempty"`                  //Number of billing cycles the subscription runs for, when null runs until canceled (default).
 	PeriodStart           int64                  `json:"period_start,omitempty"`            //Start of the current billing period
 	PeriodEnd             int64                  `json:"period_end,omitempty"`              //End of the current billing period
-	CancelAtPeriodEnd     bool                   `json:"cancel_at_period_end"`              //When true the subscription will be canceled at the end of the current billing period
-	CanceledAt            int64                  `json:"cancel_at"`                         //Timestamp the subscription was canceled
+	CancelAtPeriodEnd     bool                   `json:"cancel_at_period_end,omitempty"`              //When true the subscription will be canceled at the end of the current billing period
+	CanceledAt            int64                  `json:"cancel_at,omitempty"`                         //Timestamp the subscription was canceled
 	Status                string                 `json:"status,omitempty"`                  //Subscription status, one of not_started, active, past_due, finished
-	Paused                bool                   `json:"paused,omitempty"`                  //When true, subscription is paused
+	Paused                bool                   `json:"paused"`                            //When true, subscription is paused
 	SnapToNthDay          int                    `json:"snap_to_nth_day,omitempty"`         //Snap billing cycles to a specific day of the month (also known as calendar billing), off by default
 	ContractPeriodStart   int64                  `json:"contract_period_start,omitempty"`   //Start of current contract period
 	ContractPeriodEnd     int64                  `json:"contract_period_end,omitempty"`     //End of current contract period
