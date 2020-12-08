@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestUnMarshalCatalogItemObject(t *testing.T) {
+func TestUnMarshalItemObject(t *testing.T) {
 	s := `{
   "id": "delivery",
   "object": "catalog_item",
@@ -22,7 +22,7 @@ func TestUnMarshalCatalogItemObject(t *testing.T) {
   "metadata": {}
 }`
 
-	so := new(CatalogItem)
+	so := new(Item)
 
 	err := json.Unmarshal([]byte(s), so)
 

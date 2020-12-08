@@ -5,7 +5,7 @@ const PlansEndPoint = "/plans"
 type Plan struct {
 	Id            string                 `json:"id,omitempty"`
 	Object        string                 `json:"object,omitempty"`
-	CatalogItem   string                 `json:"catalog_item,omitempty"`
+	Item          string                 `json:"catalog_item,omitempty"`
 	Name          string                 `json:"name,omitempty"`
 	Currency      string                 `json:"currency,omitempty"`
 	Amount        float64                `json:"amount,omitempty"`

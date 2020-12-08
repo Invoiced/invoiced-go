@@ -21,14 +21,7 @@ go get -u https://github.com/Invoiced/invoiced-go
 
 ## Requirements
 
-- >= Go 1.11
-
-## Version
-5.4.10
-```go
-//Will print out the version.
-invd.Version()
-```
+- Go 1.11+
 
 ## Usage
 
