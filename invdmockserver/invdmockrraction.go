@@ -36,11 +36,9 @@ func NewRRActionMap() *RRActionMap {
 	rrActionMap.store = store
 
 	return rrActionMap
-
 }
 
 func (r *RRActionMap) Put(rrActionObject *RRActionObject) error {
-
 	method := rrActionObject.Request.Method
 	url := rrActionObject.Request.Url
 
@@ -70,7 +68,6 @@ func (r *RRActionMap) Put(rrActionObject *RRActionObject) error {
 			}
 
 			equal, err := invdutil.JsonEqual(jsonBody1, jsonBody2)
-
 			if err != nil {
 				return err
 			}
@@ -86,11 +83,9 @@ func (r *RRActionMap) Put(rrActionObject *RRActionObject) error {
 	}
 
 	return nil
-
 }
 
 func (r *RRActionMap) Get(method, url, body string) (*RRActionObject, bool, error) {
-
 	if len(body) == 0 {
 		body = "{}"
 	}
@@ -116,7 +111,6 @@ func (r *RRActionMap) Get(method, url, body string) (*RRActionObject, bool, erro
 		jsonBody2 := body
 
 		equal, err := invdutil.JsonEqual(jsonBody1, jsonBody2)
-
 		if err != nil {
 			return nil, false, err
 		}
@@ -128,5 +122,4 @@ func (r *RRActionMap) Get(method, url, body string) (*RRActionObject, bool, erro
 	}
 
 	return nil, false, nil
-
 }

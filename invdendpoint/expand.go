@@ -17,7 +17,6 @@ func NewExpand() *Expand {
 
 func (e *Expand) Set(key string) {
 	e.params = append(e.params, key)
-
 }
 
 func (e *Expand) String() string {
@@ -29,5 +28,4 @@ func (e *Expand) String() string {
 	s = strings.TrimRight(s, ",")
 
 	return s
-
 }

@@ -1,18 +1,18 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestChasingCadence_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.ChasingCadence
+	var mockListResponse [1]invdendpoint.ChasingCadence
 
 	mockResponse := new(invdendpoint.ChasingCadence)
 	mockResponse.Id = int64(123)
@@ -35,7 +35,6 @@ func TestChasingCadence_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -43,5 +42,4 @@ func TestChasingCadence_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].ChasingCadence, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }

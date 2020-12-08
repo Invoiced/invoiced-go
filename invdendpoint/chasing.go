@@ -2,7 +2,6 @@ package invdendpoint
 
 const ChasingCadencesEndPoint = "/chasing_cadences"
 
-
 type ChasingCadence struct {
 	AssignmentConditions string        `json:"assignment_conditions,omitempty"`
 	AssignmentMode       string        `json:"assignment_mode,omitempty"`

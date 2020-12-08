@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestTransactionCreate(t *testing.T) {
@@ -19,7 +20,6 @@ func TestTransactionCreate(t *testing.T) {
 	mockTransactionResponse.GatewayId = "234"
 
 	server, err := invdmockserver.New(200, mockTransactionResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -36,7 +36,6 @@ func TestTransactionCreate(t *testing.T) {
 	transactionToCreate.Gateway = "dell"
 
 	createdTransaction, err := transaction.Create(transactionToCreate)
-
 	if err != nil {
 		t.Fatal("Error Creating transaction", err)
 	}
@@ -44,7 +43,6 @@ func TestTransactionCreate(t *testing.T) {
 	if !reflect.DeepEqual(createdTransaction.Transaction, mockTransactionResponse) {
 		t.Fatal("Transaction Was Not Created Succesfully", createdTransaction.Transaction, mockTransactionResponse)
 	}
-
 }
 
 func TestTransactionCreateError(t *testing.T) {
@@ -55,7 +53,6 @@ func TestTransactionCreateError(t *testing.T) {
 	mockErrorResponse.Param = "name"
 
 	server, err := invdmockserver.New(400, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -77,7 +74,6 @@ func TestTransactionCreateError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransactionUpdate(t *testing.T) {
@@ -112,7 +108,6 @@ func TestTransactionUpdate(t *testing.T) {
 	if !reflect.DeepEqual(mockTransactionResponse, transactionToUpdate.Transaction) {
 		t.Fatal("Error Transaction Not Updated Properly")
 	}
-
 }
 
 func TestTransactionUpdateError(t *testing.T) {
@@ -123,7 +118,6 @@ func TestTransactionUpdateError(t *testing.T) {
 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
 	server, err := invdmockserver.New(401, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -144,18 +138,15 @@ func TestTransactionUpdateError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransactionDelete(t *testing.T) {
-
 	key := "api key"
 
 	mocktransactionResponse := ""
 	mocktransactionID := int64(2341)
 
 	server, err := invdmockserver.New(204, mocktransactionResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -173,7 +164,6 @@ func TestTransactionDelete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error Occured Deleting Transaction")
 	}
-
 }
 
 func TestTransactionDeleteError(t *testing.T) {
@@ -186,7 +176,6 @@ func TestTransactionDeleteError(t *testing.T) {
 	mockTransactionID := int64(-999)
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -204,11 +193,9 @@ func TestTransactionDeleteError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransactionRetrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockTransactionResponseID := int64(1523)
@@ -229,7 +216,6 @@ func TestTransactionRetrieve(t *testing.T) {
 	transaction := conn.NewTransaction()
 
 	retrievedTransaction, err := transaction.Retrieve(mockTransactionResponseID)
-
 	if err != nil {
 		t.Fatal("Error Creating transaction", err)
 	}
@@ -237,7 +223,6 @@ func TestTransactionRetrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.Transaction, mockTransactionResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransactionRetrieveError(t *testing.T) {
@@ -250,7 +235,6 @@ func TestTransactionRetrieveError(t *testing.T) {
 	mockTransactionID := int64(-999)
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -264,14 +248,12 @@ func TestTransactionRetrieveError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_Count_Error(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Transaction
+	var mockListResponse [1]invdendpoint.Transaction
 
 	mockResponse := new(invdendpoint.Transaction)
 	mockResponse.Id = int64(1234)
@@ -294,11 +276,9 @@ func TestTransaction_Count_Error(t *testing.T) {
 	if result != int64(-1) || err == nil {
 		t.Fatal("Unexpectedly successful")
 	}
-
 }
 
 func TestTransaction_List(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Transactions
@@ -311,7 +291,6 @@ func TestTransaction_List(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -323,7 +302,6 @@ func TestTransaction_List(t *testing.T) {
 	transaction := conn.NewTransaction()
 
 	invoiceResp, nextEndpoint, err := transaction.List(nil, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -335,11 +313,9 @@ func TestTransaction_List(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_ListAll(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Transactions
@@ -352,7 +328,6 @@ func TestTransaction_ListAll(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -364,7 +339,6 @@ func TestTransaction_ListAll(t *testing.T) {
 	subscription := conn.NewTransaction()
 
 	invoiceResp, err := subscription.ListAll(nil, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -372,13 +346,12 @@ func TestTransaction_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_SendReceipt(t *testing.T) {
 	key := "test api key"
 
-	var mockEmailResponse [1] invdendpoint.EmailResponse
+	var mockEmailResponse [1]invdendpoint.EmailResponse
 
 	mockResponse := new(invdendpoint.EmailResponse)
 	mockResponse.Id = "abcdef"
@@ -399,7 +372,6 @@ func TestTransaction_SendReceipt(t *testing.T) {
 	subjectEntity := conn.NewTransaction()
 
 	sendResponse, err := subjectEntity.SendReceipt(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -407,11 +379,9 @@ func TestTransaction_SendReceipt(t *testing.T) {
 	if sendResponse[0].Message != "hello test" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestTransaction_Refund(t *testing.T) {
-
 	key := "test api key"
 
 	mockTransactionResponseID := int64(1523)
@@ -439,11 +409,9 @@ func TestTransaction_Refund(t *testing.T) {
 	if transaction.Id != int64(1523) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_InitiateCharge(t *testing.T) {
-
 	key := "test api key"
 
 	mockTransactionResponseID := int64(1523)
@@ -464,7 +432,6 @@ func TestTransaction_InitiateCharge(t *testing.T) {
 	chargeRequest := new(invdendpoint.ChargeRequest)
 
 	transaction, err := conn.NewTransaction().InitiateCharge(chargeRequest)
-
 	if err != nil {
 		t.Fatal("Error Creating transaction", err)
 	}
@@ -472,11 +439,9 @@ func TestTransaction_InitiateCharge(t *testing.T) {
 	if transaction.Id != int64(1523) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_ListSuccessfulChargesByInvoiceID(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Transactions
@@ -489,7 +454,6 @@ func TestTransaction_ListSuccessfulChargesByInvoiceID(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -501,7 +465,6 @@ func TestTransaction_ListSuccessfulChargesByInvoiceID(t *testing.T) {
 	subscription := conn.NewTransaction()
 
 	invoiceResp, err := subscription.ListSuccessfulChargesByInvoiceID(int64(1234))
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -509,11 +472,9 @@ func TestTransaction_ListSuccessfulChargesByInvoiceID(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_ListSuccessfulRefundsByInvoiceID(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Transactions
@@ -526,7 +487,6 @@ func TestTransaction_ListSuccessfulRefundsByInvoiceID(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -538,7 +498,6 @@ func TestTransaction_ListSuccessfulRefundsByInvoiceID(t *testing.T) {
 	subscription := conn.NewTransaction()
 
 	invoiceResp, err := subscription.ListSuccessfulRefundsByInvoiceID(int64(1234))
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -546,11 +505,9 @@ func TestTransaction_ListSuccessfulRefundsByInvoiceID(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_ListSuccessfulPaymentsByInvoiceID(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Transactions
@@ -563,7 +520,6 @@ func TestTransaction_ListSuccessfulPaymentsByInvoiceID(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -575,7 +531,6 @@ func TestTransaction_ListSuccessfulPaymentsByInvoiceID(t *testing.T) {
 	subscription := conn.NewTransaction()
 
 	invoiceResp, err := subscription.ListSuccessfulPaymentsByInvoiceID(int64(1234))
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -583,11 +538,9 @@ func TestTransaction_ListSuccessfulPaymentsByInvoiceID(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_ListSuccessfulChargesAndPaymentsByInvoiceID(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Transactions
@@ -600,7 +553,6 @@ func TestTransaction_ListSuccessfulChargesAndPaymentsByInvoiceID(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -612,7 +564,6 @@ func TestTransaction_ListSuccessfulChargesAndPaymentsByInvoiceID(t *testing.T) {
 	subscription := conn.NewTransaction()
 
 	invoiceResp, err := subscription.ListSuccessfulChargesAndPaymentsByInvoiceID(int64(1234))
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -620,11 +571,9 @@ func TestTransaction_ListSuccessfulChargesAndPaymentsByInvoiceID(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestTransaction_ListSuccessfulByInvoiceID(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Transactions
@@ -637,7 +586,6 @@ func TestTransaction_ListSuccessfulByInvoiceID(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -649,7 +597,6 @@ func TestTransaction_ListSuccessfulByInvoiceID(t *testing.T) {
 	subscription := conn.NewTransaction()
 
 	invoiceResp, err := subscription.ListSuccessfulByInvoiceID(int64(1234))
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -657,5 +604,4 @@ func TestTransaction_ListSuccessfulByInvoiceID(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Transaction, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }

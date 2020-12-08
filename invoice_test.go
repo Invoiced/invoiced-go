@@ -1,12 +1,13 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestInvoiceCreate(t *testing.T) {
@@ -36,7 +37,6 @@ func TestInvoiceCreate(t *testing.T) {
 	mockInvoiceResponse.Name = invoiceToCreate.Name
 
 	createdInvoice, err := invoice.Create(invoiceToCreate)
-
 	if err != nil {
 		t.Fatal("Error Creating invoice", err)
 	}
@@ -44,7 +44,6 @@ func TestInvoiceCreate(t *testing.T) {
 	if !reflect.DeepEqual(createdInvoice.Invoice, mockInvoiceResponse) {
 		t.Fatal("Invoice Not Created Succesfully")
 	}
-
 }
 
 func TestInvoiceCreateError(t *testing.T) {
@@ -55,7 +54,6 @@ func TestInvoiceCreateError(t *testing.T) {
 	mockErrorResponse.Param = "name"
 
 	server, err := invdmockserver.New(400, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,7 +76,6 @@ func TestInvoiceCreateError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoiceUpdate(t *testing.T) {
@@ -94,7 +91,6 @@ func TestInvoiceUpdate(t *testing.T) {
 	mockInvoiceResponse.Balance = 42.22
 
 	server, err := invdmockserver.New(200, mockInvoiceResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +111,6 @@ func TestInvoiceUpdate(t *testing.T) {
 	if !reflect.DeepEqual(mockInvoiceResponse, invoiceToUpdate.Invoice) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoiceUpdateError(t *testing.T) {
@@ -126,7 +121,6 @@ func TestInvoiceUpdateError(t *testing.T) {
 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
 	server, err := invdmockserver.New(401, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -148,18 +142,15 @@ func TestInvoiceUpdateError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoiceDelete(t *testing.T) {
-
 	key := "api key"
 
 	mockinvoiceResponse := ""
 	mockinvoiceID := int64(2341)
 
 	server, err := invdmockserver.New(204, mockinvoiceResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -177,7 +168,6 @@ func TestInvoiceDelete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error Occured Deleting Invoice")
 	}
-
 }
 
 func TestInvoiceDeleteError(t *testing.T) {
@@ -188,7 +178,6 @@ func TestInvoiceDeleteError(t *testing.T) {
 	mockErrorResponse.Message = "You Do Not Have Permission To Do That"
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal()
 	}
@@ -208,11 +197,9 @@ func TestInvoiceDeleteError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoiceListAllByNumber(t *testing.T) {
-
 	key := "test api key"
 
 	var mockInvoicesResponse invdendpoint.Invoices
@@ -228,7 +215,6 @@ func TestInvoiceListAllByNumber(t *testing.T) {
 	mockInvoicesResponse = append(mockInvoicesResponse, *mockInvoiceResponse)
 
 	server, err := invdmockserver.New(200, mockInvoicesResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -240,7 +226,6 @@ func TestInvoiceListAllByNumber(t *testing.T) {
 	invoice := conn.NewInvoice()
 
 	invoiceResp, err := invoice.ListInvoiceByNumber(mockInvoiceNumber)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -248,11 +233,9 @@ func TestInvoiceListAllByNumber(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp.Invoice, mockInvoiceResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoiceList(t *testing.T) {
-
 	key := "test api key"
 
 	var mockInvoicesResponse invdendpoint.Invoices
@@ -268,7 +251,6 @@ func TestInvoiceList(t *testing.T) {
 	mockInvoicesResponse = append(mockInvoicesResponse, *mockInvoiceResponse)
 
 	server, err := invdmockserver.New(200, mockInvoicesResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -280,7 +262,6 @@ func TestInvoiceList(t *testing.T) {
 	invoice := conn.NewInvoice()
 
 	invoiceResp, nextEndpoint, err := invoice.List(nil, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -292,7 +273,6 @@ func TestInvoiceList(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Invoice, mockInvoiceResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoiceListError(t *testing.T) {
@@ -305,7 +285,6 @@ func TestInvoiceListError(t *testing.T) {
 	mockInvoiceNumber := "INV-32421"
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -325,14 +304,12 @@ func TestInvoiceListError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoice_Count_Error(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Invoice
+	var mockListResponse [1]invdendpoint.Invoice
 
 	mockResponse := new(invdendpoint.Invoice)
 	mockResponse.Id = int64(1234)
@@ -360,11 +337,9 @@ func TestInvoice_Count_Error(t *testing.T) {
 	if result != int64(-1) {
 		t.Fatal("Unexpectedly successful")
 	}
-
 }
 
 func TestInvoice_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.Invoice)
@@ -383,7 +358,6 @@ func TestInvoice_Retrieve(t *testing.T) {
 	entity := conn.NewInvoice()
 
 	retrievedEntity, err := entity.Retrieve(int64(1234))
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -391,7 +365,6 @@ func TestInvoice_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedEntity.Invoice, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestInvoice_Void(t *testing.T) {
@@ -422,13 +395,12 @@ func TestInvoice_Void(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.Invoice) {
 		t.Fatal("Error: entity not voided correctly")
 	}
-
 }
 
 func TestInvoice_SendEmail(t *testing.T) {
 	key := "test api key"
 
-	var mockEmailResponse [1] invdendpoint.EmailResponse
+	var mockEmailResponse [1]invdendpoint.EmailResponse
 
 	mockResponse := new(invdendpoint.EmailResponse)
 	mockResponse.Id = "abcdef"
@@ -449,7 +421,6 @@ func TestInvoice_SendEmail(t *testing.T) {
 	subjectEntity := conn.NewInvoice()
 
 	sendResponse, err := subjectEntity.SendEmail(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -457,13 +428,12 @@ func TestInvoice_SendEmail(t *testing.T) {
 	if sendResponse[0].Message != "hello test" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestInvoice_SendText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1] invdendpoint.TextResponse
+	var mockTextResponse [1]invdendpoint.TextResponse
 
 	mockResponse := new(invdendpoint.TextResponse)
 	mockResponse.Id = "abcdef"
@@ -484,7 +454,6 @@ func TestInvoice_SendText(t *testing.T) {
 	subjectEntity := conn.NewInvoice()
 
 	sendResponse, err := subjectEntity.SendText(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -492,7 +461,6 @@ func TestInvoice_SendText(t *testing.T) {
 	if sendResponse[0].Message != "hello text" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestInvoice_SendLetter(t *testing.T) {
@@ -515,7 +483,6 @@ func TestInvoice_SendLetter(t *testing.T) {
 	subjectEntity := conn.NewInvoice()
 
 	sendResponse, err := subjectEntity.SendLetter()
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -523,7 +490,6 @@ func TestInvoice_SendLetter(t *testing.T) {
 	if sendResponse.State != "queued" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestInvoice_Pay(t *testing.T) {
@@ -554,11 +520,9 @@ func TestInvoice_Pay(t *testing.T) {
 	if subjectEntity.Balance != float64(0) {
 		t.Fatal("Error: pay not completed correctly")
 	}
-
 }
 
 func TestInvoice_ListAttachments(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Files
@@ -571,7 +535,6 @@ func TestInvoice_ListAttachments(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -583,7 +546,6 @@ func TestInvoice_ListAttachments(t *testing.T) {
 	entity := conn.NewInvoice()
 	entity.Id = 2
 	attachments, err := entity.ListAttachments()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -591,11 +553,9 @@ func TestInvoice_ListAttachments(t *testing.T) {
 	if !reflect.DeepEqual(attachments[0].File, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoice_RetrieveNotes(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Notes
@@ -608,7 +568,6 @@ func TestInvoice_RetrieveNotes(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -620,7 +579,6 @@ func TestInvoice_RetrieveNotes(t *testing.T) {
 	entity := conn.NewInvoice()
 	entity.Id = 2
 	notes, err := entity.RetrieveNotes()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -628,7 +586,6 @@ func TestInvoice_RetrieveNotes(t *testing.T) {
 	if !reflect.DeepEqual(notes[0].Note, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestInvoice_CreatePaymentPlan(t *testing.T) {
@@ -646,7 +603,6 @@ func TestInvoice_CreatePaymentPlan(t *testing.T) {
 	conn := MockConnection(key, server)
 
 	subjectEntity, err := conn.NewInvoice().CreatePaymentPlan(conn.NewPaymentPlanRequest())
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -654,7 +610,6 @@ func TestInvoice_CreatePaymentPlan(t *testing.T) {
 	if subjectEntity.Id != int64(1234) {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestInvoice_RetrievePaymentPlan(t *testing.T) {
@@ -673,7 +628,6 @@ func TestInvoice_RetrievePaymentPlan(t *testing.T) {
 
 	defaultEntity := conn.NewInvoice()
 	subjectEntity, err := defaultEntity.RetrievePaymentPlan()
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -681,15 +635,12 @@ func TestInvoice_RetrievePaymentPlan(t *testing.T) {
 	if subjectEntity.Id != int64(1234) {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestInvoice_CancelPaymentPlan(t *testing.T) {
-
 	key := "api key"
 
 	server, err := invdmockserver.New(204, nil, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -703,5 +654,4 @@ func TestInvoice_CancelPaymentPlan(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred during deletion")
 	}
-
 }

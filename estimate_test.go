@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestEstimate_Create(t *testing.T) {
@@ -17,7 +18,6 @@ func TestEstimate_Create(t *testing.T) {
 	mockResponse.Name = "nomenclature"
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,6 @@ func TestEstimate_Create(t *testing.T) {
 	requestEntity.Name = "nomenclature"
 
 	createdEntity, err := entity.Create(requestEntity)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -42,7 +41,6 @@ func TestEstimate_Create(t *testing.T) {
 	if !reflect.DeepEqual(createdEntity.Estimate, mockResponse) {
 		t.Fatal("entity was not created", createdEntity.Estimate, mockResponse)
 	}
-
 }
 
 func TestEstimate_Save(t *testing.T) {
@@ -74,18 +72,15 @@ func TestEstimate_Save(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.Estimate) {
 		t.Fatal("Error: entity not updated correctly")
 	}
-
 }
 
 func TestEstimate_Delete(t *testing.T) {
-
 	key := "api key"
 
 	mockResponse := ""
 	mockResponseId := int64(1234)
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,11 +98,9 @@ func TestEstimate_Delete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
 	}
-
 }
 
 func TestEstimate_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.Estimate)
@@ -126,7 +119,6 @@ func TestEstimate_Retrieve(t *testing.T) {
 	entity := conn.NewEstimate()
 
 	retrievedTransaction, err := entity.Retrieve(int64(1234))
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -134,14 +126,12 @@ func TestEstimate_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.Estimate, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestEstimate_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Estimate
+	var mockListResponse [1]invdendpoint.Estimate
 
 	mockResponse := new(invdendpoint.Estimate)
 	mockResponse.Id = int64(1234)
@@ -164,7 +154,6 @@ func TestEstimate_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
@@ -172,7 +161,6 @@ func TestEstimate_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].Estimate, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestEstimate_Void(t *testing.T) {
@@ -203,14 +191,12 @@ func TestEstimate_Void(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.Estimate) {
 		t.Fatal("Error: entity not voided correctly")
 	}
-
 }
 
 func TestEstimate_Count_Error(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Estimate
+	var mockListResponse [1]invdendpoint.Estimate
 
 	mockResponse := new(invdendpoint.Estimate)
 	mockResponse.Id = int64(1234)
@@ -238,13 +224,12 @@ func TestEstimate_Count_Error(t *testing.T) {
 	if result != int64(-1) {
 		t.Fatal("Unexpectedly successful")
 	}
-
 }
 
 func TestEstimate_SendEmail(t *testing.T) {
 	key := "test api key"
 
-	var mockEmailResponse [1] invdendpoint.EmailResponse
+	var mockEmailResponse [1]invdendpoint.EmailResponse
 
 	mockResponse := new(invdendpoint.EmailResponse)
 	mockResponse.Id = "abcdef"
@@ -265,7 +250,6 @@ func TestEstimate_SendEmail(t *testing.T) {
 	subjectEntity := conn.NewEstimate()
 
 	sendResponse, err := subjectEntity.SendEmail(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -273,13 +257,12 @@ func TestEstimate_SendEmail(t *testing.T) {
 	if sendResponse[0].Message != "hello test" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestEstimate_SendText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1] invdendpoint.TextResponse
+	var mockTextResponse [1]invdendpoint.TextResponse
 
 	mockResponse := new(invdendpoint.TextResponse)
 	mockResponse.Id = "abcdef"
@@ -300,7 +283,6 @@ func TestEstimate_SendText(t *testing.T) {
 	subjectEntity := conn.NewEstimate()
 
 	sendResponse, err := subjectEntity.SendText(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -308,7 +290,6 @@ func TestEstimate_SendText(t *testing.T) {
 	if sendResponse[0].Message != "hello text" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestEstimate_SendLetter(t *testing.T) {
@@ -331,7 +312,6 @@ func TestEstimate_SendLetter(t *testing.T) {
 	subjectEntity := conn.NewEstimate()
 
 	sendResponse, err := subjectEntity.SendLetter()
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -339,11 +319,9 @@ func TestEstimate_SendLetter(t *testing.T) {
 	if sendResponse.State != "queued" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestEstimate_List(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Estimates
@@ -359,7 +337,6 @@ func TestEstimate_List(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -371,7 +348,6 @@ func TestEstimate_List(t *testing.T) {
 	entity := conn.NewEstimate()
 
 	entityResp, nextEndpoint, err := entity.List(nil, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -383,7 +359,6 @@ func TestEstimate_List(t *testing.T) {
 	if !reflect.DeepEqual(entityResp[0].Estimate, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestEstimate_GenerateInvoice(t *testing.T) {
@@ -403,7 +378,6 @@ func TestEstimate_GenerateInvoice(t *testing.T) {
 
 	defaultEntity := conn.NewEstimate()
 	subjectEntity, err := defaultEntity.GenerateInvoice()
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -411,11 +385,9 @@ func TestEstimate_GenerateInvoice(t *testing.T) {
 	if subjectEntity.Name != "entity example" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestEstimate_ListAttachments(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Files
@@ -428,7 +400,6 @@ func TestEstimate_ListAttachments(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -438,7 +409,6 @@ func TestEstimate_ListAttachments(t *testing.T) {
 	conn := MockConnection(key, server)
 
 	entity, err := conn.NewEstimate().ListAttachments()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -446,5 +416,4 @@ func TestEstimate_ListAttachments(t *testing.T) {
 	if !reflect.DeepEqual(entity[0].File, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }

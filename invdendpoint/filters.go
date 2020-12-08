@@ -1,12 +1,14 @@
 package invdendpoint
 
-import "net/url"
-import "strconv"
-import "errors"
-import "sort"
+import (
+	"net/url"
+	"strconv"
+	"errors"
+	"sort"
+)
 
 type Filter struct {
-	params map[string]string
+	params   map[string]string
 	metadata bool
 }
 
@@ -24,7 +26,7 @@ func NewMetadataFilter() *Filter {
 	return f
 }
 
-//Can only set Numeric Types and Strings
+// Can only set Numeric Types and Strings
 func (f *Filter) Set(key string, value interface{}) error {
 	switch v := value.(type) {
 	case string:
@@ -44,7 +46,6 @@ func (f *Filter) Set(key string, value interface{}) error {
 	}
 
 	return nil
-
 }
 
 func (f *Filter) Get(key string) string {
@@ -55,7 +56,6 @@ func (f *Filter) Get(key string) string {
 	}
 
 	return v
-
 }
 
 func (f *Filter) String() string {
@@ -81,5 +81,4 @@ func (f *Filter) String() string {
 	}
 
 	return uValues.Encode()
-
 }

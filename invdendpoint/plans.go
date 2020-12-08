@@ -23,5 +23,3 @@ type Tier struct {
 	UnitCost float64 `json:"unit_cost,omitempty"`
 	MinQty   float64 `json:"min_qty,omitempty"`
 }
-
-

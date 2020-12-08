@@ -16,7 +16,6 @@ func TestUnMarshalDiscountObject(t *testing.T) {
 	so := new(Discount)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,5 +27,4 @@ func TestUnMarshalDiscountObject(t *testing.T) {
 	if so.Amount != 5 {
 		t.Fatal("Amount is incorrect")
 	}
-
 }

@@ -3,7 +3,6 @@ package invdendpoint
 import "testing"
 
 func TestFilter(t *testing.T) {
-
 	f := NewFilter()
 	err := f.Set("customer", 1)
 	if err != nil {
@@ -26,11 +25,9 @@ func TestFilter(t *testing.T) {
 			t.Fatal("Expected => ", correctValue, ", Got => ", tmp)
 		}
 	}
-
 }
 
 func TestMetadataFilter(t *testing.T) {
-
 	f := NewMetadataFilter()
 	err := f.Set("icp_number", 1)
 	if err != nil {
@@ -49,15 +46,12 @@ func TestMetadataFilter(t *testing.T) {
 			t.Fatal("Expected => ", correctValue, ", Got => ", tmp)
 		}
 	}
-
 }
 
 func TestEmptyFilter(t *testing.T) {
-
 	f := NewFilter()
 
 	if f.String() != "" {
 		t.Fatal("URL String is not equal")
 	}
-
 }

@@ -17,11 +17,9 @@ func NewAPIError(typeE, message, param string) *APIError {
 
 func (apiErr *APIError) Error() string {
 	b, err := json.Marshal(apiErr)
-
 	if err != nil {
 		return ""
 	}
 
 	return string(b)
-
 }

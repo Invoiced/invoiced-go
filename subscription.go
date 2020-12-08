@@ -1,8 +1,9 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"errors"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 type Subscription struct {
@@ -15,7 +16,6 @@ type Subscriptions []*Subscription
 func (c *Connection) NewSubscription() *Subscription {
 	subscription := new(invdendpoint.Subscription)
 	return &Subscription{c, subscription}
-
 }
 
 func (c *Connection) NewPreviewRequest() *invdendpoint.SubscriptionPreviewRequest {
@@ -32,7 +32,6 @@ func (c *Subscription) Count() (int64, error) {
 	}
 
 	return count, nil
-
 }
 
 func (c *Subscription) Create(subscription *Subscription) (*Subscription, error) {
@@ -43,7 +42,6 @@ func (c *Subscription) Create(subscription *Subscription) (*Subscription, error)
 	}
 
 	subDataToCreate, err := SafeSubscriptionForCreation(subscription.Subscription)
-
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +57,6 @@ func (c *Subscription) Create(subscription *Subscription) (*Subscription, error)
 	subResp.Connection = c.Connection
 
 	return subResp, nil
-
 }
 
 func (c *Subscription) Cancel() error {
@@ -72,7 +69,6 @@ func (c *Subscription) Cancel() error {
 	}
 
 	return nil
-
 }
 
 func (c *Subscription) Save() error {
@@ -80,7 +76,6 @@ func (c *Subscription) Save() error {
 	subResp := new(Subscription)
 
 	subDataToUpdate, err := SafeSubscriptionsForUpdate(c.Subscription)
-
 	if err != nil {
 		return err
 	}
@@ -94,7 +89,6 @@ func (c *Subscription) Save() error {
 	c.Subscription = subResp.Subscription
 
 	return nil
-
 }
 
 func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
@@ -111,7 +105,6 @@ func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 	}
 
 	return subscription, nil
-
 }
 
 func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, error) {
@@ -137,11 +130,9 @@ NEXT:
 
 	for _, subscription := range subscriptions {
 		subscription.Connection = c.Connection
-
 	}
 
 	return subscriptions, nil
-
 }
 
 func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, string, error) {
@@ -158,13 +149,10 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 
 	for _, subscription := range subscriptions {
 		subscription.Connection = c.Connection
-
 	}
 
 	return subscriptions, nextEndPoint, nil
-
 }
-
 
 func (c *Subscription) Preview(subPreviewRequest *invdendpoint.SubscriptionPreviewRequest) (*invdendpoint.SubscriptionPreview, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id) + "/preview"
@@ -181,18 +169,16 @@ func (c *Subscription) Preview(subPreviewRequest *invdendpoint.SubscriptionPrevi
 		return nil, apiErr
 	}
 
-
 	return subPreviewResp, nil
-
 }
 
-//SafeSubscriptionForCreation prunes subscription data for just fields that can be used for creation of a subscription
+// SafeSubscriptionForCreation prunes subscription data for just fields that can be used for creation of a subscription
 func SafeSubscriptionForCreation(sub *invdendpoint.Subscription) (*invdendpoint.Subscription, error) {
-	if sub == nil  {
+	if sub == nil {
 		return nil, errors.New("Subscription is nil")
 	}
 
-	subData :=new(invdendpoint.Subscription)
+	subData := new(invdendpoint.Subscription)
 	subData.Customer = sub.Customer
 	subData.Plan = sub.Plan
 	subData.StartDate = sub.StartDate
@@ -209,18 +195,16 @@ func SafeSubscriptionForCreation(sub *invdendpoint.Subscription) (*invdendpoint.
 	subData.CancelAtPeriodEnd = sub.CancelAtPeriodEnd
 	subData.Metadata = sub.Metadata
 
-
-
-	return subData,nil
+	return subData, nil
 }
 
-//SafeSubscriptionsForUpdate prunes subscription data for just fields that can be used for updating of a subscription
+// SafeSubscriptionsForUpdate prunes subscription data for just fields that can be used for updating of a subscription
 func SafeSubscriptionsForUpdate(sub *invdendpoint.Subscription) (*invdendpoint.Subscription, error) {
-	if sub == nil  {
+	if sub == nil {
 		return nil, errors.New("Subscription is nil")
 	}
 
-	subData :=new(invdendpoint.Subscription)
+	subData := new(invdendpoint.Subscription)
 
 	subData.Plan = sub.Plan
 	subData.StartDate = sub.StartDate
@@ -235,6 +219,5 @@ func SafeSubscriptionsForUpdate(sub *invdendpoint.Subscription) (*invdendpoint.S
 	subData.Prorate = sub.Prorate
 	subData.ProrationDate = sub.ProrationDate
 
-
-	return subData,nil
+	return subData, nil
 }

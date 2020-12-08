@@ -36,9 +36,7 @@ func TestUnMarshalChasingCadenceObject(t *testing.T) {
 	so := new(ChasingCadence)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

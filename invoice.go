@@ -3,6 +3,7 @@ package invdapi
 import (
 	"errors"
 	"fmt"
+
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
@@ -17,7 +18,6 @@ type Invoices []*Invoice
 func (c *Connection) NewInvoice() *Invoice {
 	invoice := new(invdendpoint.Invoice)
 	return &Invoice{c, invoice, false}
-
 }
 
 func (c *Connection) NewPaymentPlanRequest() *invdendpoint.PaymentPlanRequest {
@@ -34,7 +34,6 @@ func (c *Invoice) Count() (int64, error) {
 	}
 
 	return count, nil
-
 }
 
 func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
@@ -45,9 +44,8 @@ func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
 		return nil, errors.New("invoice cannot be nil")
 	}
 
-	//safe prune invoice data for creation
-	invdInvToCreate,err := SafeInvoiceForCreation(invoice.Invoice)
-
+	// safe prune invoice data for creation
+	invdInvToCreate, err := SafeInvoiceForCreation(invoice.Invoice)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +57,6 @@ func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
 	}
 
 	return invResp, nil
-
 }
 
 func (c *Invoice) Delete() error {
@@ -72,7 +69,6 @@ func (c *Invoice) Delete() error {
 	}
 
 	return nil
-
 }
 
 func (c *Invoice) Save() error {
@@ -81,7 +77,6 @@ func (c *Invoice) Save() error {
 	invResp := new(invdendpoint.Invoice)
 
 	invDataToUpdate, err := SafeInvoiceForUpdate(c.Invoice)
-
 	if err != nil {
 		return err
 	}
@@ -95,7 +90,6 @@ func (c *Invoice) Save() error {
 	c.Invoice = invResp
 
 	return nil
-
 }
 
 func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
@@ -116,24 +110,20 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 	}
 
 	return invoice, nil
-
 }
 
 func (c *Invoice) Void() (*Invoice, error) {
-
 	invResp := c.NewInvoice()
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/void"
 
-	apiErr := c.postWithoutData(endPoint,invResp)
+	apiErr := c.postWithoutData(endPoint, invResp)
 
 	if apiErr != nil {
-		return nil,apiErr
+		return nil, apiErr
 	}
 
-
-	return invResp,nil
-
+	return invResp, nil
 }
 
 func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
@@ -144,16 +134,14 @@ func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) 
 		endPoint = addIncludeToEndPoint(endPoint, "updated_at")
 	}
 
-	return c.ListAllHelper(endPoint,filter,sort)
-
+	return c.ListAllHelper(endPoint, filter, sort)
 }
 
 func (c *Invoice) ListAllHelper(endPoint string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
-
 	invoices := make(Invoices, 0)
 NEXT:
 
-	tmpInvoices,endPoint,apiErr := c.ListHelper(endPoint,filter,sort)
+	tmpInvoices, endPoint, apiErr := c.ListHelper(endPoint, filter, sort)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -166,11 +154,10 @@ NEXT:
 	}
 
 	return invoices, nil
-
 }
 
 func (c *Invoice) ListHelper(endPoint string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
-	if len(endPoint)  == 0 {
+	if len(endPoint) == 0 {
 		endPoint = c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 		endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 		if c.IncludeUpdatedAt {
@@ -179,7 +166,7 @@ func (c *Invoice) ListHelper(endPoint string, filter *invdendpoint.Filter, sort 
 	}
 
 	invoicesToReturn := make(Invoices, 0)
-	invoices := make(invdendpoint.Invoices,0)
+	invoices := make(invdendpoint.Invoices, 0)
 
 	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &invoices)
 
@@ -191,25 +178,22 @@ func (c *Invoice) ListHelper(endPoint string, filter *invdendpoint.Filter, sort 
 		inv := c.Connection.NewInvoice()
 		invData := invoice
 		inv.Invoice = &invData
-		invoicesToReturn = append(invoicesToReturn,inv)
+		invoicesToReturn = append(invoicesToReturn, inv)
 
 	}
 
 	return invoicesToReturn, nextEndPoint, nil
-
 }
 
 func (c *Invoice) ListAllInvoicesStartDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
-	return c.ListAllInvoicesStartEndDate(filter,sort,invoiceDate,0)
-
+	return c.ListAllInvoicesStartEndDate(filter, sort, invoiceDate, 0)
 }
 
 func (c *Invoice) ListAllInvoicesEndDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
-	return c.ListAllInvoicesStartEndDate(filter,sort,0,invoiceDate)
-
+	return c.ListAllInvoicesStartEndDate(filter, sort, 0, invoiceDate)
 }
 
-func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, startDate,endDate int64) (Invoices, error) {
+func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, startDate, endDate int64) (Invoices, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.InvoicesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
@@ -221,8 +205,7 @@ func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort 
 		endPoint = addEndDateToEndPoint(endPoint, endDate)
 	}
 
-	return c.ListAllHelper(endPoint,filter,sort)
-
+	return c.ListAllHelper(endPoint, filter, sort)
 }
 
 func (c *Invoice) ListAllInvoicesUpdatedDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
@@ -233,20 +216,16 @@ func (c *Invoice) ListAllInvoicesUpdatedDate(filter *invdendpoint.Filter, sort *
 		endPoint = addUpdatedAfterToEndPoint(endPoint, invoiceDate)
 	}
 
-	return c.ListAllHelper(endPoint,filter,sort)
-
+	return c.ListAllHelper(endPoint, filter, sort)
 }
 
 func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
-	return c.ListHelper("",filter,sort)
-
+	return c.ListHelper("", filter, sort)
 }
 
 func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
-
 	filter := invdendpoint.NewFilter()
 	err := filter.Set("number", invoiceNumber)
-
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +241,6 @@ func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 	}
 
 	return invoices[0], nil
-
 }
 
 func (c *Invoice) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
@@ -271,13 +249,11 @@ func (c *Invoice) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.E
 	emailResp := new(invdendpoint.EmailResponses)
 
 	err := c.create(endPoint, emailReq, emailResp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return *emailResp, nil
-
 }
 
 func (c *Invoice) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
@@ -286,13 +262,11 @@ func (c *Invoice) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResp
 	resp := new(invdendpoint.TextResponses)
 
 	err := c.create(endPoint, req, resp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return *resp, nil
-
 }
 
 func (c *Invoice) SendLetter() (*invdendpoint.LetterResponse, error) {
@@ -301,20 +275,17 @@ func (c *Invoice) SendLetter() (*invdendpoint.LetterResponse, error) {
 	resp := new(invdendpoint.LetterResponse)
 
 	err := c.create(endPoint, nil, resp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return resp, nil
-
 }
 
 func (c *Invoice) Pay() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/pay"
 	invoice := new(invdendpoint.Invoice)
 	err := c.create(endPoint, nil, invoice)
-
 	if err != nil {
 		return nil
 	}
@@ -322,7 +293,6 @@ func (c *Invoice) Pay() error {
 	c.Invoice = invoice
 
 	return nil
-
 }
 
 func (c *Invoice) ListAttachments() (Files, error) {
@@ -350,7 +320,6 @@ NEXT:
 	}
 
 	return files, nil
-
 }
 
 func (c *Invoice) RetrieveNotes() (Notes, error) {
@@ -378,9 +347,7 @@ NEXT:
 	}
 
 	return notes, nil
-
 }
-
 
 func (c *Invoice) CreatePaymentPlan(paymentPlanRequest *invdendpoint.PaymentPlanRequest) (*invdendpoint.PaymentPlan, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/payment_plan"
@@ -397,11 +364,8 @@ func (c *Invoice) CreatePaymentPlan(paymentPlanRequest *invdendpoint.PaymentPlan
 		return nil, apiErr
 	}
 
-
 	return paymentPlanResp, nil
-
 }
-
 
 func (c *Invoice) RetrievePaymentPlan() (*invdendpoint.PaymentPlan, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/payment_plan"
@@ -415,7 +379,6 @@ func (c *Invoice) RetrievePaymentPlan() (*invdendpoint.PaymentPlan, error) {
 	}
 
 	return paymentPlanResp, nil
-
 }
 
 func (c *Invoice) CancelPaymentPlan() error {
@@ -428,7 +391,6 @@ func (c *Invoice) CancelPaymentPlan() error {
 	}
 
 	return nil
-
 }
 
 func (c *Invoice) String() string {
@@ -437,13 +399,13 @@ func (c *Invoice) String() string {
 	return header + " " + "JSON: " + c.Invoice.String()
 }
 
-//SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
+// SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
 func SafeInvoiceForCreation(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, error) {
-	if inv == nil  {
+	if inv == nil {
 		return nil, errors.New("Invoice is nil or Invoice.Invoice is nil")
 	}
 
-	invData :=new(invdendpoint.Invoice)
+	invData := new(invdendpoint.Invoice)
 	invData.Customer = inv.Customer
 	invData.Name = inv.Name
 	invData.Number = inv.Number
@@ -462,16 +424,16 @@ func SafeInvoiceForCreation(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, e
 	invData.Taxes = inv.Taxes
 	invData.AutoPay = inv.AutoPay
 
-	return invData,nil
+	return invData, nil
 }
 
-//SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
+// SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
 func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, error) {
-	if inv == nil  {
+	if inv == nil {
 		return nil, errors.New("Invoice is nil or Invoice.Invoice is nil")
 	}
 
-	invData :=new(invdendpoint.Invoice)
+	invData := new(invdendpoint.Invoice)
 	invData.Name = inv.Name
 	invData.Number = inv.Number
 	invData.Currency = inv.Currency
@@ -490,7 +452,5 @@ func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, err
 	invData.Taxes = inv.Taxes
 	invData.AutoPay = inv.AutoPay
 
-
-	return invData,nil
+	return invData, nil
 }
-

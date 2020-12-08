@@ -1,17 +1,17 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestEvent_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Event
+	var mockListResponse [1]invdendpoint.Event
 
 	mockResponse := new(invdendpoint.Event)
 	mockResponse.Id = int64(123)
@@ -31,7 +31,6 @@ func TestEvent_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -39,11 +38,9 @@ func TestEvent_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].Event, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestEvent_List(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Events
@@ -54,7 +51,6 @@ func TestEvent_List(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,7 +62,6 @@ func TestEvent_List(t *testing.T) {
 	entity := conn.NewEvent()
 
 	entityResp, nextEndpoint, err := entity.List(nil, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,11 +73,9 @@ func TestEvent_List(t *testing.T) {
 	if !reflect.DeepEqual(entityResp[0].Event, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestEvent_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.Event)
@@ -98,7 +91,6 @@ func TestEvent_Retrieve(t *testing.T) {
 	entity := conn.NewEvent()
 
 	retrievedTransaction, err := entity.Retrieve(int64(1234))
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -106,5 +98,4 @@ func TestEvent_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.Event, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }

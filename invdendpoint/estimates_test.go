@@ -47,9 +47,7 @@ func TestUnmarshalEstimateObject(t *testing.T) {
 	so := new(Estimate)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

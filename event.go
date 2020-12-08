@@ -14,7 +14,6 @@ type Events []*Event
 func (c *Connection) NewEvent() *Event {
 	event := new(invdendpoint.Event)
 	return &Event{c, event}
-
 }
 
 func (c *Event) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Events, error) {
@@ -40,11 +39,9 @@ NEXT:
 
 	for _, event := range events {
 		event.Connection = c.Connection
-
 	}
 
 	return events, nil
-
 }
 
 func (c *Event) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Events, string, error) {
@@ -61,13 +58,10 @@ func (c *Event) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Even
 
 	for _, event := range events {
 		event.Connection = c.Connection
-
 	}
 
 	return events, nextEndPoint, nil
-
 }
-
 
 func (c *Event) Retrieve(id int64) (*Event, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EventsEndPoint), id)
@@ -77,11 +71,9 @@ func (c *Event) Retrieve(id int64) (*Event, error) {
 	event := &Event{c.Connection, eventEndPoint}
 
 	_, err := c.retrieveDataFromAPI(endPoint, event)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return event, nil
-
 }

@@ -76,9 +76,7 @@ func TestUnMarshalCreditNoteObject(t *testing.T) {
 	so := new(CreditNote)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

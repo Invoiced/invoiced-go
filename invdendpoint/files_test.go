@@ -19,7 +19,6 @@ func TestUnMarshalFileObject(t *testing.T) {
 	so := new(File)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,5 +50,4 @@ func TestUnMarshalFileObject(t *testing.T) {
 	if so.CreatedAt != 1464625855 {
 		t.Fatal("CreatedAt is incorrect")
 	}
-
 }

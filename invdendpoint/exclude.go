@@ -17,7 +17,6 @@ func NewExclude() *Exclude {
 
 func (e *Exclude) Set(key string) {
 	e.params = append(e.params, key)
-
 }
 
 func (e *Exclude) String() string {
@@ -29,5 +28,4 @@ func (e *Exclude) String() string {
 	s = strings.TrimRight(s, ",")
 
 	return s
-
 }

@@ -29,7 +29,6 @@ func TestUnMarshalTransactionObject(t *testing.T) {
 	so := new(Transaction)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,5 +68,4 @@ func TestUnMarshalTransactionObject(t *testing.T) {
 	if so.CreatedAt != 1415228628 {
 		t.Fatal("Transaction has incorrect createdAt")
 	}
-
 }

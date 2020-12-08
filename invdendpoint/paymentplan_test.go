@@ -48,7 +48,6 @@ func TestUnMarshalPaymentPlan(t *testing.T) {
 	so := new(PaymentPlan)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,8 +60,7 @@ func TestUnMarshalPaymentPlan(t *testing.T) {
 		t.Fatal("Id does not match")
 	}
 
-	if so.Approval.Ip !="217.15.151.36" {
+	if so.Approval.Ip != "217.15.151.36" {
 		t.Fatal("ip address is incorrect")
 	}
-
 }

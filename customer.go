@@ -2,8 +2,9 @@ package invdapi
 
 import (
 	"errors"
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"strconv"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 type Customer struct {
@@ -16,7 +17,6 @@ type Customers []*Customer
 func (c *Connection) NewCustomer() *Customer {
 	customer := new(invdendpoint.Customer)
 	return &Customer{c, customer}
-
 }
 
 func (c *Connection) NewContact() *invdendpoint.Contact {
@@ -41,7 +41,6 @@ func (c *Customer) Count() (int64, error) {
 	}
 
 	return count, nil
-
 }
 
 func (c *Customer) Create(customer *Customer) (*Customer, error) {
@@ -53,7 +52,6 @@ func (c *Customer) Create(customer *Customer) (*Customer, error) {
 	}
 
 	custDataToCreate, err := SafeCustomerForCreation(customer.Customer)
-
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +65,6 @@ func (c *Customer) Create(customer *Customer) (*Customer, error) {
 	custResp.Connection = c.Connection
 
 	return custResp, nil
-
 }
 
 func (c *Customer) Delete() error {
@@ -80,14 +77,12 @@ func (c *Customer) Delete() error {
 	}
 
 	return nil
-
 }
 
 func (c *Customer) Save() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
 
 	custDataToUpdate, err := SafeCustomerForUpdate(c.Customer)
-
 	if err != nil {
 		return nil
 	}
@@ -103,12 +98,9 @@ func (c *Customer) Save() error {
 	c.Customer = custResp.Customer
 
 	return nil
-
 }
 
-
 func (c *Customer) FreeUpdate(customerData interface{}) error {
-
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
 
 	custResp := new(Customer)
@@ -122,7 +114,6 @@ func (c *Customer) FreeUpdate(customerData interface{}) error {
 	c.Customer = custResp.Customer
 
 	return nil
-
 }
 
 func (c *Customer) Retrieve(id int64) (*Customer, error) {
@@ -139,7 +130,6 @@ func (c *Customer) Retrieve(id int64) (*Customer, error) {
 	}
 
 	return customer, nil
-
 }
 
 func (c *Customer) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Customers, error) {
@@ -165,11 +155,9 @@ NEXT:
 
 	for _, customer := range customers {
 		customer.Connection = c.Connection
-
 	}
 
 	return customers, nil
-
 }
 
 func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Customers, string, error) {
@@ -186,18 +174,14 @@ func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (C
 
 	for _, customer := range customers {
 		customer.Connection = c.Connection
-
 	}
 
 	return customers, nextEndPoint, nil
-
 }
 
 func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error) {
-
 	filter := invdendpoint.NewFilter()
 	err := filter.Set("number", customerNumber)
-
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +197,6 @@ func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error
 	}
 
 	return customers[0], nil
-
 }
 
 func (c *Customer) GetBalance() (*invdendpoint.CustomerBalance, error) {
@@ -235,7 +218,6 @@ func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (i
 
 	custStmtResp := new(invdendpoint.EmailResponses)
 	err := c.create(endPoint, custStmtReq, custStmtResp)
-
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +230,6 @@ func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (inv
 
 	custStmtResp := new(invdendpoint.TextResponses)
 	err := c.create(endPoint, custStmtReq, custStmtResp)
-
 	if err != nil {
 		return nil, err
 	}
@@ -261,7 +242,6 @@ func (c *Customer) SendStatementLetter(custStmtReq *invdendpoint.LetterRequest) 
 
 	custStmtResp := new(invdendpoint.LetterResponse)
 	err := c.create(endPoint, custStmtReq, custStmtResp)
-
 	if err != nil {
 		return nil, err
 	}
@@ -273,9 +253,8 @@ func (c *Customer) CreateContact(contact *invdendpoint.Contact) (*invdendpoint.C
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts"
 
 	contactDataToCreate, err := SafeContactForCreation(contact)
-
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	contResp := new(invdendpoint.Contact)
@@ -287,7 +266,6 @@ func (c *Customer) CreateContact(contact *invdendpoint.Contact) (*invdendpoint.C
 	}
 
 	return contResp, nil
-
 }
 
 func (c *Customer) RetrieveContact(contactID int64) (*invdendpoint.Contact, error) {
@@ -296,25 +274,21 @@ func (c *Customer) RetrieveContact(contactID int64) (*invdendpoint.Contact, erro
 	retrievedContact := new(invdendpoint.Contact)
 
 	_, err := c.retrieveDataFromAPI(endPoint, retrievedContact)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return retrievedContact, nil
-
 }
 
 func (c *Customer) UpdateContact(contactToUpdate *invdendpoint.Contact) (*invdendpoint.Contact, error) {
-
 	if contactToUpdate.Id <= 0 {
 		return nil, errors.New("Need to supply a contact id in order to update a contact")
 	}
 
 	contactDataToUpdate, err := SafeContactForUpdate(contactToUpdate)
-
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts/" + strconv.FormatInt(contactToUpdate.Id, 10)
@@ -328,7 +302,6 @@ func (c *Customer) UpdateContact(contactToUpdate *invdendpoint.Contact) (*invden
 	}
 
 	return contResp, nil
-
 }
 
 func (c *Customer) ListAllContacts() (invdendpoint.Contacts, error) {
@@ -352,21 +325,17 @@ NEXT:
 	}
 
 	return contacts, nil
-
 }
 
 func (c *Customer) DeleteContact(contactID int64) error {
-
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts/" + strconv.FormatInt(contactID, 10)
 
 	err := c.delete(endPoint)
-
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
 func (c *Customer) RetrieveNotes() (invdendpoint.Notes, error) {
@@ -390,16 +359,14 @@ NEXT:
 	}
 
 	return notes, nil
-
 }
 
 func (c *Customer) CreatePaymentSource(source *invdendpoint.PaymentSource) (*invdendpoint.PaymentSource, error) {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/payment_sources"
 
 	sourceDataToCreate, err := SafeSourceForCreation(source)
-
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	resp := new(invdendpoint.PaymentSource)
@@ -413,20 +380,19 @@ func (c *Customer) CreatePaymentSource(source *invdendpoint.PaymentSource) (*inv
 	return resp, nil
 }
 
-//SafeSourceForCreation prunes source object for just fields that can be used for creation
+// SafeSourceForCreation prunes source object for just fields that can be used for creation
 func SafeSourceForCreation(source *invdendpoint.PaymentSource) (*invdendpoint.PaymentSource, error) {
-
-	if source == nil  {
+	if source == nil {
 		return nil, errors.New("Source is nil")
 	}
 
-	sourceData :=new(invdendpoint.PaymentSource)
+	sourceData := new(invdendpoint.PaymentSource)
 	sourceData.Method = source.Method
 	sourceData.MakeDefault = source.MakeDefault
 	sourceData.InvoicedToken = source.InvoicedToken
 	sourceData.GatewayToken = source.GatewayToken
 
-	return sourceData,nil
+	return sourceData, nil
 }
 
 func (c *Customer) ListAllPaymentSources() (invdendpoint.PaymentSources, error) {
@@ -450,7 +416,6 @@ NEXT:
 	}
 
 	return sources, nil
-
 }
 
 func (c *Customer) DeleteCard(cardID int64) error {
@@ -463,7 +428,6 @@ func (c *Customer) DeleteCard(cardID int64) error {
 	}
 
 	return nil
-
 }
 
 func (c *Customer) DeleteBankAccount(acctID int64) error {
@@ -476,15 +440,12 @@ func (c *Customer) DeleteBankAccount(acctID int64) error {
 	}
 
 	return nil
-
 }
 
 func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
-
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items"
 
 	pliDataToUpdate, err := SafePendingLineItemForCreation(pendingLineItem)
-
 	if err != nil {
 		return nil, err
 	}
@@ -498,27 +459,22 @@ func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 	}
 
 	return pendingLineItemResp, nil
-
 }
 
 func (c *Customer) RetrievePendingLineItem(id int64) (*invdendpoint.PendingLineItem, error) {
-
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items/" + strconv.FormatInt(id, 10)
 
 	retrievedPendingLineItem := new(invdendpoint.PendingLineItem)
 
 	_, err := c.retrieveDataFromAPI(endPoint, retrievedPendingLineItem)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return retrievedPendingLineItem, nil
-
 }
 
 func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
-
 	if pendingLineItem.Id <= 0 {
 		return nil, errors.New("Need to supply a pending line item id in order to update a pending line item")
 	}
@@ -526,7 +482,6 @@ func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items/" + strconv.FormatInt(pendingLineItem.Id, 10)
 
 	pliDataToUpdate, err := SafePendingLineItemForUpdate(pendingLineItem)
-
 	if err != nil {
 		return nil, err
 	}
@@ -540,7 +495,6 @@ func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 	}
 
 	return pendingLineItemResp, nil
-
 }
 
 func (c *Customer) ListAllPendingLineItems() (invdendpoint.PendingLineItems, error) {
@@ -564,7 +518,6 @@ NEXT:
 	}
 
 	return plis, nil
-
 }
 
 func (c *Customer) TriggerInvoice() (*Invoice, error) {
@@ -573,13 +526,11 @@ func (c *Customer) TriggerInvoice() (*Invoice, error) {
 	invoice := c.NewInvoice()
 
 	err := c.create(endPoint, nil, invoice)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return invoice, nil
-
 }
 
 func (c *Customer) ConsolidateInvoices() (*Invoice, error) {
@@ -588,7 +539,6 @@ func (c *Customer) ConsolidateInvoices() (*Invoice, error) {
 	invoice := c.NewInvoice()
 
 	err := c.create(endPoint, nil, invoice)
-
 	if err != nil {
 		return nil, err
 	}
@@ -600,23 +550,20 @@ func (c *Customer) DeletePendingLineItem(id int64) error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
 
 	err := c.delete(endPoint)
-
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
-//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
 func SafeCustomerForCreation(cust *invdendpoint.Customer) (*invdendpoint.Customer, error) {
-
-	if cust == nil  {
+	if cust == nil {
 		return nil, errors.New("Customer is nil")
 	}
 
-	custData :=new(invdendpoint.Customer)
+	custData := new(invdendpoint.Customer)
 	custData.Name = cust.Name
 	custData.Number = cust.Number
 	custData.Email = cust.Email
@@ -648,17 +595,16 @@ func SafeCustomerForCreation(cust *invdendpoint.Customer) (*invdendpoint.Custome
 	custData.Metadata = cust.Metadata
 	custData.DisabledPaymentMethods = cust.DisabledPaymentMethods
 
-
-	return custData,nil
+	return custData, nil
 }
 
-//SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
+// SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
 func SafeCustomerForUpdate(cust *invdendpoint.Customer) (*invdendpoint.Customer, error) {
-	if cust == nil  {
+	if cust == nil {
 		return nil, errors.New("Customer is nil")
 	}
 
-	custData :=new(invdendpoint.Customer)
+	custData := new(invdendpoint.Customer)
 	custData.Name = cust.Name
 	custData.Number = cust.Number
 	custData.Email = cust.Email
@@ -691,14 +637,11 @@ func SafeCustomerForUpdate(cust *invdendpoint.Customer) (*invdendpoint.Customer,
 	custData.Metadata = cust.Metadata
 	custData.DisabledPaymentMethods = cust.DisabledPaymentMethods
 
-
-
-	return custData,nil
+	return custData, nil
 }
 
-//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
 func SafeContactForCreation(contact *invdendpoint.Contact) (*invdendpoint.Contact, error) {
-
 	if contact == nil {
 		return nil, errors.New("Contact is nil")
 	}
@@ -721,9 +664,8 @@ func SafeContactForCreation(contact *invdendpoint.Contact) (*invdendpoint.Contac
 	return contData, nil
 }
 
-//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
-func SafeContactForUpdate(contact *invdendpoint.Contact) (*invdendpoint.Contact, error)  {
-
+// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+func SafeContactForUpdate(contact *invdendpoint.Contact) (*invdendpoint.Contact, error) {
 	if contact == nil {
 		return nil, errors.New("Contact is nil")
 	}
@@ -746,9 +688,8 @@ func SafeContactForUpdate(contact *invdendpoint.Contact) (*invdendpoint.Contact,
 	return contData, nil
 }
 
-//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
 func SafePendingLineItemForCreation(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
-
 	if pendingLineItem == nil {
 		return nil, errors.New("PendingLineItem is nil")
 	}
@@ -764,14 +705,12 @@ func SafePendingLineItemForCreation(pendingLineItem *invdendpoint.PendingLineIte
 	pliData.Discounts = pendingLineItem.Discounts
 	pliData.Taxes = pendingLineItem.Taxes
 	pliData.Metadata = pendingLineItem.Metadata
-
 
 	return pliData, nil
 }
 
-//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
 func SafePendingLineItemForUpdate(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
-
 	if pendingLineItem == nil {
 		return nil, errors.New("PendingLineItem is nil")
 	}
@@ -787,7 +726,6 @@ func SafePendingLineItemForUpdate(pendingLineItem *invdendpoint.PendingLineItem)
 	pliData.Discounts = pendingLineItem.Discounts
 	pliData.Taxes = pendingLineItem.Taxes
 	pliData.Metadata = pendingLineItem.Metadata
-
 
 	return pliData, nil
 }

@@ -4,18 +4,21 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-const requestURL = "https://api.invoiced.com"
-const devRequestURL = "https://api.sandbox.invoiced.com"
-const requestType = "application/json"
-const InvoicedTokenString = "invoicedToken"
+const (
+	requestURL          = "https://api.invoiced.com"
+	devRequestURL       = "https://api.sandbox.invoiced.com"
+	requestType         = "application/json"
+	InvoicedTokenString = "invoicedToken"
+)
 
 const version = "5.4.10"
 
@@ -24,9 +27,9 @@ func Version() string {
 }
 
 type Connection struct {
-	key             string
-	client          *http.Client
-	url             string
+	key    string
+	client *http.Client
+	url    string
 }
 
 type InvoicedToken struct {
@@ -52,7 +55,6 @@ func checkStatusForError(status int, r io.Reader) error {
 	}
 
 	body, err := ioutil.ReadAll(r)
-
 	if err != nil {
 		return err
 	}
@@ -63,17 +65,13 @@ func checkStatusForError(status int, r io.Reader) error {
 
 	if err != nil {
 		apiError.Type = string(body)
-
 	}
 
 	return errors.New(apiError.Error())
-
 }
 
 func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) error {
-
 	body, err := ioutil.ReadAll(respBody)
-
 	if err != nil {
 		return err
 	}
@@ -84,11 +82,9 @@ func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) error {
 	}
 
 	return nil
-
 }
 
 func parseURLLinksFromString(s string) map[string]string {
-
 	urlAndLinkMap := make(map[string]string)
 
 	rawURLLinksAndRelations := strings.Split(s, ",")
@@ -105,7 +101,7 @@ func parseURLLinksFromString(s string) map[string]string {
 }
 
 func parseRawRelation(s string) string {
-	//parse rel="last" => last
+	// parse rel="last" => last
 
 	first := strings.Index(s, "\"")
 	last := strings.LastIndex(s, "\"")
@@ -115,7 +111,6 @@ func parseRawRelation(s string) string {
 	trimmed = strings.TrimSpace(trimmed)
 
 	return trimmed
-
 }
 
 func parseRawURL(s string) string {
@@ -129,11 +124,9 @@ func parseRawURL(s string) string {
 	trimmed = strings.TrimSpace(trimmed)
 
 	return trimmed
-
 }
 
 func addFilterSortToEndPoint(endpoint string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) string {
-
 	emptyFilter := true
 	emptySort := true
 
@@ -154,11 +147,9 @@ func addFilterSortToEndPoint(endpoint string, filter *invdendpoint.Filter, sort 
 	}
 
 	return endpoint
-
 }
 
 func addIncludeToEndPoint(endpoint string, includeValue string) string {
-
 	finalEndpoint := ""
 	if strings.Contains(endpoint, "?") {
 		finalEndpoint = endpoint + "&" + "include=" + includeValue
@@ -167,12 +158,9 @@ func addIncludeToEndPoint(endpoint string, includeValue string) string {
 	}
 
 	return finalEndpoint
-
 }
 
-
 func addStartDateToEndPoint(endpoint string, invoiceDate int64) string {
-
 	invoiceDateString := strconv.FormatInt(invoiceDate, 10)
 	finalEndpoint := ""
 	if strings.Contains(endpoint, "?") {
@@ -182,11 +170,9 @@ func addStartDateToEndPoint(endpoint string, invoiceDate int64) string {
 	}
 
 	return finalEndpoint
-
 }
 
 func addEndDateToEndPoint(endpoint string, invoiceDate int64) string {
-
 	invoiceDateString := strconv.FormatInt(invoiceDate, 10)
 	finalEndpoint := ""
 	if strings.Contains(endpoint, "?") {
@@ -196,12 +182,9 @@ func addEndDateToEndPoint(endpoint string, invoiceDate int64) string {
 	}
 
 	return finalEndpoint
-
 }
 
-
 func addUpdatedAfterToEndPoint(endpoint string, updatedAfter int64) string {
-
 	updatedAfterString := strconv.FormatInt(updatedAfter, 10)
 	finalEndpoint := ""
 	if strings.Contains(endpoint, "?") {
@@ -211,25 +194,18 @@ func addUpdatedAfterToEndPoint(endpoint string, updatedAfter int64) string {
 	}
 
 	return finalEndpoint
-
 }
-
-
 
 func makeEndPointSingular(endpoint string, id int64) string {
 	return endpoint + "/" + strconv.FormatInt(id, 10)
 }
 
 func (c *Connection) MakeEndPointURL(endPoint string) string {
-
 	return c.url + endPoint
 }
 
-
 func (c *Connection) get(endPoint string) (*http.Response, error) {
-
 	req, err := http.NewRequest("GET", endPoint, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -239,13 +215,10 @@ func (c *Connection) get(endPoint string) (*http.Response, error) {
 	resp, err := c.client.Do(req)
 
 	return resp, err
-
 }
 
 func (c *Connection) post(endPoint string, body io.Reader) (*http.Response, error) {
-
 	req, err := http.NewRequest("POST", endPoint, body)
-
 	if err != nil {
 		return nil, err
 	}
@@ -256,13 +229,10 @@ func (c *Connection) post(endPoint string, body io.Reader) (*http.Response, erro
 	resp, err := c.client.Do(req)
 
 	return resp, err
-
 }
 
 func (c *Connection) patch(endPoint string, body io.Reader) (*http.Response, error) {
-
 	req, err := http.NewRequest("PATCH", endPoint, body)
-
 	if err != nil {
 		return nil, err
 	}
@@ -273,13 +243,10 @@ func (c *Connection) patch(endPoint string, body io.Reader) (*http.Response, err
 	resp, err := c.client.Do(req)
 
 	return resp, err
-
 }
 
 func (c *Connection) deleteRequest(endPoint string) (*http.Response, error) {
-
 	req, err := http.NewRequest("DELETE", endPoint, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -290,13 +257,10 @@ func (c *Connection) deleteRequest(endPoint string) (*http.Response, error) {
 	resp, err := c.client.Do(req)
 
 	return resp, err
-
 }
 
 func (c *Connection) create(endPoint string, requestData interface{}, responseData interface{}) error {
-
 	b, err := json.Marshal(requestData)
-
 	if err != nil {
 		return err
 	}
@@ -304,7 +268,6 @@ func (c *Connection) create(endPoint string, requestData interface{}, responseDa
 	body := bytes.NewBuffer(b)
 
 	resp, err := c.post(endPoint, body)
-
 	if err != nil {
 		return err
 	}
@@ -322,13 +285,10 @@ func (c *Connection) create(endPoint string, requestData interface{}, responseDa
 	}
 
 	return nil
-
 }
 
 func (c *Connection) delete(endPoint string) error {
-
 	resp, err := c.deleteRequest(endPoint)
-
 	if err != nil {
 		return err
 	}
@@ -340,13 +300,10 @@ func (c *Connection) delete(endPoint string) error {
 	}
 
 	return nil
-
 }
 
 func (c *Connection) update(endPoint string, requestData interface{}, responseData interface{}) error {
-
 	b, err := json.Marshal(requestData)
-
 	if err != nil {
 		return err
 	}
@@ -354,7 +311,6 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 	body := bytes.NewBuffer(b)
 
 	resp, err := c.patch(endPoint, body)
-
 	if err != nil {
 		return err
 	}
@@ -372,13 +328,10 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 	}
 
 	return nil
-
 }
 
 func (c *Connection) postWithoutData(endPoint string, responseData interface{}) error {
-
 	resp, err := c.post(endPoint, nil)
-
 	if err != nil {
 		return err
 	}
@@ -396,12 +349,10 @@ func (c *Connection) postWithoutData(endPoint string, responseData interface{}) 
 	}
 
 	return nil
-
 }
 
 func (c *Connection) count(endPoint string) (int64, error) {
 	resp, err := c.get(endPoint)
-
 	if err != nil {
 		return -1, err
 	}
@@ -417,21 +368,17 @@ func (c *Connection) count(endPoint string) (int64, error) {
 	s := resp.Header.Get("X-Total-Count")
 
 	i, err := strconv.ParseInt(s, 10, 64)
-
 	if err != nil {
 		return -1, err
 	}
 
 	return i, nil
-
 }
 
 func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface{}) (string, error) {
-
 	nextURL := ""
 
 	resp, err := c.get(endPoint)
-
 	if err != nil {
 		return "", err
 	}
@@ -461,5 +408,4 @@ func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface
 	}
 
 	return nextURL, nil
-
 }

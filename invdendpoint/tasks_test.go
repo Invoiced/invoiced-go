@@ -23,9 +23,7 @@ func TestUnMarshalTaskObject(t *testing.T) {
 	so := new(Task)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

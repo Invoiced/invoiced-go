@@ -18,11 +18,9 @@ func TestUnMarshalSmsRequest(t *testing.T) {
 	so := new(TextRequest)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }
 
 func TestUnMarshalSmsResponse(t *testing.T) {
@@ -37,9 +35,7 @@ func TestUnMarshalSmsResponse(t *testing.T) {
 	so := new(TextResponses)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

@@ -15,15 +15,12 @@ func TestSort(t *testing.T) {
 			t.Fatal("Expected => ", correctValue, ", Got => ", tmp)
 		}
 	}
-
 }
 
 func TestEmptySort(t *testing.T) {
-
 	f := NewSort()
 
 	if f.String() != "" {
 		t.Fatal("URL String is not equal", f.String())
 	}
-
 }

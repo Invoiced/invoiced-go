@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestCoupon_Create(t *testing.T) {
@@ -17,7 +18,6 @@ func TestCoupon_Create(t *testing.T) {
 	mockResponse.Name = "nomenclature"
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,6 @@ func TestCoupon_Create(t *testing.T) {
 	requestEntity.Name = "nomenclature"
 
 	createdEntity, err := entity.Create(requestEntity)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -42,7 +41,6 @@ func TestCoupon_Create(t *testing.T) {
 	if !reflect.DeepEqual(createdEntity.Coupon, mockResponse) {
 		t.Fatal("entity was not created", createdEntity.Coupon, mockResponse)
 	}
-
 }
 
 func TestCoupon_Save(t *testing.T) {
@@ -74,18 +72,15 @@ func TestCoupon_Save(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.Coupon) {
 		t.Fatal("Error: entity not updated correctly")
 	}
-
 }
 
 func TestCoupon_Delete(t *testing.T) {
-
 	key := "api key"
 
 	mockResponse := ""
 	mockResponseId := "example"
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,11 +98,9 @@ func TestCoupon_Delete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
 	}
-
 }
 
 func TestCoupon_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.Coupon)
@@ -126,7 +119,6 @@ func TestCoupon_Retrieve(t *testing.T) {
 	entity := conn.NewCoupon()
 
 	retrievedTransaction, err := entity.Retrieve("example")
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -134,14 +126,12 @@ func TestCoupon_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.Coupon, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestCoupon_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Coupon
+	var mockListResponse [1]invdendpoint.Coupon
 
 	mockResponse := new(invdendpoint.Coupon)
 	mockResponse.Id = "example"
@@ -164,7 +154,6 @@ func TestCoupon_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
@@ -172,5 +161,4 @@ func TestCoupon_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].Coupon, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }

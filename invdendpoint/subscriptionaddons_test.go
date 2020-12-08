@@ -17,9 +17,7 @@ func TestUnMarshalSubscriptionAddonObject(t *testing.T) {
 	so := new(SubscriptionAddon)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

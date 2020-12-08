@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestPlan_Create(t *testing.T) {
@@ -17,7 +18,6 @@ func TestPlan_Create(t *testing.T) {
 	mockResponse.Name = "nomenclature"
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,6 @@ func TestPlan_Create(t *testing.T) {
 	requestEntity.Name = "nomenclature"
 
 	createdEntity, err := entity.Create(requestEntity)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -42,7 +41,6 @@ func TestPlan_Create(t *testing.T) {
 	if !reflect.DeepEqual(createdEntity.Plan, mockResponse) {
 		t.Fatal("entity was not created", createdEntity.Plan, mockResponse)
 	}
-
 }
 
 func TestPlan_Save(t *testing.T) {
@@ -74,18 +72,15 @@ func TestPlan_Save(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.Plan) {
 		t.Fatal("Error: entity not updated correctly")
 	}
-
 }
 
 func TestPlan_Delete(t *testing.T) {
-
 	key := "api key"
 
 	mockResponse := ""
 	mockResponseId := "example"
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,11 +98,9 @@ func TestPlan_Delete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
 	}
-
 }
 
 func TestPlan_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.Plan)
@@ -126,7 +119,6 @@ func TestPlan_Retrieve(t *testing.T) {
 	entity := conn.NewPlan()
 
 	retrievedTransaction, err := entity.Retrieve("example")
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -134,14 +126,12 @@ func TestPlan_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.Plan, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestPlan_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Plan
+	var mockListResponse [1]invdendpoint.Plan
 
 	mockResponse := new(invdendpoint.Plan)
 	mockResponse.Id = "example"
@@ -164,7 +154,6 @@ func TestPlan_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
@@ -172,5 +161,4 @@ func TestPlan_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].Plan, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }

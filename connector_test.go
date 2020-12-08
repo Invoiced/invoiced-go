@@ -6,7 +6,6 @@ import (
 
 import "github.com/Invoiced/invoiced-go/invdendpoint"
 
-
 func TestParseRawRelation(t *testing.T) {
 	s := "          rel=\"       self     \"                           "
 	parsed := parseRawRelation(s)
@@ -28,7 +27,6 @@ func TestParseRawURL(t *testing.T) {
 func TestAddFilterSortToEndPointWithBothValues(t *testing.T) {
 	f := invdendpoint.NewFilter()
 	err := f.Set("id", 121123)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,11 +52,9 @@ func TestAddFilterSortToEndPointWithBothValues(t *testing.T) {
 	}
 
 	// endpoint2 := "https://www.do.com?"
-
 }
 
 func TestAddFilterSortToEndPointWithOnlySort(t *testing.T) {
-
 	s := invdendpoint.NewSort()
 	s.Set("name", invdendpoint.ASC)
 	s.Set("age", invdendpoint.DESC)
@@ -72,14 +68,12 @@ func TestAddFilterSortToEndPointWithOnlySort(t *testing.T) {
 	if value != correctValue {
 		t.Fatal("Error: resulting URL is incorrect it should be ", correctValue, " but instead got ", value)
 	}
-
 }
 
 func TestAddFilterSortToEndPointWithOnlyFilter(t *testing.T) {
 	f := invdendpoint.NewFilter()
 
 	err := f.Set("id", 121123)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,11 +93,9 @@ func TestAddFilterSortToEndPointWithOnlyFilter(t *testing.T) {
 	if value != correctValue {
 		t.Fatal("Error: resulting URL is incorrect it should be ", correctValue, " but instead got ", value)
 	}
-
 }
 
 func TestAddFilterSortToEndPointWithNothing(t *testing.T) {
-
 	endPoint := "https://www.do.com"
 
 	value := addFilterSortToEndPoint(endPoint, nil, nil)
@@ -113,7 +105,6 @@ func TestAddFilterSortToEndPointWithNothing(t *testing.T) {
 	if value != correctValue {
 		t.Fatal("Error: resulting URL is incorrect it should be ", correctValue, " but instead got ", value)
 	}
-
 }
 
 func TestMakeEndPointSingular(t *testing.T) {

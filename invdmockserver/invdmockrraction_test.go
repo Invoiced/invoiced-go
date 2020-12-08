@@ -7,7 +7,6 @@ import (
 )
 
 func TestRRActionObject(t *testing.T) {
-
 	jsonString := ` {
     "request": {
         "method": "POST",
@@ -26,17 +25,14 @@ func TestRRActionObject(t *testing.T) {
 	rrAction := new(RRActionObject)
 
 	err := json.Unmarshal([]byte(jsonString), rrAction)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// fmt.Println(rrAction.Response.Body)
-
 }
 
 func TestRRActionMap(t *testing.T) {
-
 	jsonString := ` {
     "request": {
         "method": "POST",
@@ -59,7 +55,6 @@ func TestRRActionMap(t *testing.T) {
 	rrActionObject1 := new(RRActionObject)
 
 	err := json.Unmarshal([]byte(jsonString), rrActionObject1)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +68,6 @@ func TestRRActionMap(t *testing.T) {
 	}
 
 	rrActionObject2, found, err := rrActionMap.Get("POST", "/customers", "{ \n  \"collection_mode\":\"manual\",\n  \"payment_terms\":\"NET 30\",\n  \"type\":\"company\" \n,\"email\":\"billing@acmecorp.com\" }")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +109,6 @@ func TestRRActionMap(t *testing.T) {
 	}
 
 	rrActionObject4, found, err := rrActionMap.Get("POST", "/customers", "")
-
 	if err != nil {
 		t.Fatal(err)
 	}

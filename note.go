@@ -1,8 +1,9 @@
 package invdapi
 
 import (
-"github.com/Invoiced/invoiced-go/invdendpoint"
-"errors"
+	"errors"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 type Note struct {
@@ -15,7 +16,6 @@ type Notes []*Note
 func (c *Connection) NewNote() *Note {
 	note := new(invdendpoint.Note)
 	return &Note{c, note}
-
 }
 
 func (c *Note) Create(createNoteRequest invdendpoint.CreateNoteRequest) (*Note, error) {
@@ -32,7 +32,6 @@ func (c *Note) Create(createNoteRequest invdendpoint.CreateNoteRequest) (*Note, 
 	noteResp.Connection = c.Connection
 
 	return noteResp, nil
-
 }
 
 func (c *Note) Save() error {
@@ -41,7 +40,6 @@ func (c *Note) Save() error {
 	noteResp := new(Note)
 
 	noteDataToUpdate, err := SafeNoteForUpdating(c.Note)
-
 	if err != nil {
 		return err
 	}
@@ -55,20 +53,17 @@ func (c *Note) Save() error {
 	c.Note = noteResp.Note
 
 	return nil
-
 }
 
 func (c *Note) Delete() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.NotesEndPoint), c.Id)
 
 	err := c.delete(endPoint)
-
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
 func (c *Note) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Notes, error) {
@@ -95,17 +90,13 @@ NEXT:
 
 	for _, note := range notes {
 		note.Connection = c.Connection
-
 	}
 
 	return notes, nil
-
 }
 
-
-//SafeCustomerForCreation prunes note data for just fields that can be used for creation of a note
-func SafeNoteForUpdating(note *invdendpoint.Note) (*invdendpoint.Note, error)  {
-
+// SafeCustomerForCreation prunes note data for just fields that can be used for creation of a note
+func SafeNoteForUpdating(note *invdendpoint.Note) (*invdendpoint.Note, error) {
 	if note == nil {
 		return nil, errors.New("task is nil")
 	}
