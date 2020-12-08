@@ -18,7 +18,7 @@ func TestUnmarshalTaxRateObject(t *testing.T) {
   "value": 5
 }`
 
-	so := new(CatalogItem)
+	so := new(Item)
 
 	err := json.Unmarshal([]byte(s), so)
 

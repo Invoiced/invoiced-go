@@ -754,7 +754,7 @@ func SafePendingLineItemForCreation(pendingLineItem *invdendpoint.PendingLineIte
 	}
 
 	pliData := new(invdendpoint.PendingLineItem)
-	pliData.CatalogItem = pendingLineItem.CatalogItem
+	pliData.Item = pendingLineItem.Item
 	pliData.Type = pendingLineItem.Type
 	pliData.Name = pendingLineItem.Name
 	pliData.Description = pendingLineItem.Description
@@ -777,7 +777,7 @@ func SafePendingLineItemForUpdate(pendingLineItem *invdendpoint.PendingLineItem)
 	}
 
 	pliData := new(invdendpoint.PendingLineItem)
-	pliData.CatalogItem = pendingLineItem.CatalogItem
+	pliData.Item = pendingLineItem.Item
 	pliData.Type = pendingLineItem.Type
 	pliData.Name = pendingLineItem.Name
 	pliData.Description = pendingLineItem.Description

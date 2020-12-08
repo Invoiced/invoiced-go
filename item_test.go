@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-func TestCatalogItem_Create(t *testing.T) {
+func TestItem_Create(t *testing.T) {
 	key := "test api key"
 
 	mockResponseId := "example"
-	mockResponse := new(invdendpoint.CatalogItem)
+	mockResponse := new(invdendpoint.Item)
 	mockResponse.Id = mockResponseId
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "delivery"
@@ -28,7 +28,7 @@ func TestCatalogItem_Create(t *testing.T) {
 
 	conn := MockConnection(key, server)
 
-	requestEntity := conn.NewCatalogItem()
+	requestEntity := conn.NewItem()
 
 	requestEntity.Id = "example"
 	requestEntity.Name = "delivery"
@@ -40,17 +40,17 @@ func TestCatalogItem_Create(t *testing.T) {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(requestEntity.CatalogItem, mockResponse) {
-		t.Fatal("entity was not created", requestEntity.CatalogItem, mockResponse)
+	if !reflect.DeepEqual(requestEntity.Item, mockResponse) {
+		t.Fatal("entity was not created", requestEntity.Item, mockResponse)
 	}
 
 }
 
-func TestCatalogItem_Save(t *testing.T) {
+func TestItem_Save(t *testing.T) {
 	key := "test api key"
 
 	mockResponseId := "delivery"
-	mockResponse := new(invdendpoint.CatalogItem)
+	mockResponse := new(invdendpoint.Item)
 	mockResponse.Id = mockResponseId
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -64,7 +64,7 @@ func TestCatalogItem_Save(t *testing.T) {
 
 	conn := MockConnection(key, server)
 
-	entityToUpdate := conn.NewCatalogItem()
+	entityToUpdate := conn.NewItem()
 
 	entityToUpdate.Name = "new-name"
 
@@ -74,13 +74,13 @@ func TestCatalogItem_Save(t *testing.T) {
 		t.Fatal("Error updating entity", err)
 	}
 
-	if !reflect.DeepEqual(mockResponse, entityToUpdate.CatalogItem) {
+	if !reflect.DeepEqual(mockResponse, entityToUpdate.Item) {
 		t.Fatal("Error: entity not updated correctly")
 	}
 
 }
 
-func TestCatalogItem_Delete(t *testing.T) {
+func TestItem_Delete(t *testing.T) {
 
 	key := "api key"
 
@@ -97,7 +97,7 @@ func TestCatalogItem_Delete(t *testing.T) {
 
 	conn := MockConnection(key, server)
 
-	entity := conn.NewCatalogItem()
+	entity := conn.NewItem()
 
 	entity.Id = mockResponseId
 
@@ -109,12 +109,12 @@ func TestCatalogItem_Delete(t *testing.T) {
 
 }
 
-func TestCatalogItem_Retrieve(t *testing.T) {
+func TestItem_Retrieve(t *testing.T) {
 
 	key := "test api key"
 
 	mockResponseId := "example"
-	mockResponse := new(invdendpoint.CatalogItem)
+	mockResponse := new(invdendpoint.Item)
 	mockResponse.Id = mockResponseId
 	mockResponse.Name = "delivery"
 	mockResponse.Type = "service"
@@ -128,7 +128,7 @@ func TestCatalogItem_Retrieve(t *testing.T) {
 	defer server.Close()
 
 	conn := MockConnection(key, server)
-	entity := conn.NewCatalogItem()
+	entity := conn.NewItem()
 
 	retrievedTransaction, err := entity.Retrieve(mockResponseId)
 
@@ -136,19 +136,19 @@ func TestCatalogItem_Retrieve(t *testing.T) {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.CatalogItem, mockResponse) {
+	if !reflect.DeepEqual(retrievedTransaction.Item, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 
 }
 
-func TestCatalogItem_ListAll(t *testing.T) {
+func TestItem_ListAll(t *testing.T) {
 
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.CatalogItem
+	var mockListResponse [1] invdendpoint.Item
 
-	mockResponse := new(invdendpoint.CatalogItem)
+	mockResponse := new(invdendpoint.Item)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
 
@@ -163,7 +163,7 @@ func TestCatalogItem_ListAll(t *testing.T) {
 	defer server.Close()
 
 	conn := MockConnection(key, server)
-	entity := conn.NewCatalogItem()
+	entity := conn.NewItem()
 
 	filter := invdendpoint.NewFilter()
 	sorter := invdendpoint.NewSort()
@@ -174,7 +174,7 @@ func TestCatalogItem_ListAll(t *testing.T) {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(result[0].CatalogItem, mockResponse) {
+	if !reflect.DeepEqual(result[0].Item, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 

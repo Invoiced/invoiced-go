@@ -1,15 +1,15 @@
 package invdendpoint
 
-const CatalogItemEndPoint = "/catalog_items"
+const ItemEndPoint = "/items"
 
-//A catalog item represents a product or service that you sell. Catalog items can be used to generate line items and can also be used as subscription addons.
+//An item represents a product or service that you sell. Items can be used to generate line items and can also be used as subscription addons.
 
-type CatalogItem struct {
-	Id             string                 `json:"id,omitempty"`               //The customer’s unique ID
-	Object         string                 `json:"object,omitempty"`           //Contact name
-	Name           string                 `json:"name,omitempty"`             //Email address
-	Currency       string                 `json:"currency,omitempty"`         //When true the contact will be copied on any account communications
-	UnitCost       float64                `json:"unit_cost,omitempty"`        //First address line
+type Item struct {
+	Id             string                 `json:"id,omitempty"`               //The item’s unique ID
+	Object         string                 `json:"object,omitempty"`           //Object name
+	Name           string                 `json:"name,omitempty"`
+	Currency       string                 `json:"currency,omitempty"`
+	UnitCost       float64                `json:"unit_cost,omitempty"`
 	Description    string                 `json:"description,omitempty"`      //Optional description
 	Type           string                 `json:"service,omitempty"`          //Optional line item type. Used to group line items by type in reporting
 	Taxable        bool                   `json:"taxable,omitempty"`          //Excludes amount from taxes when false
@@ -21,4 +21,4 @@ type CatalogItem struct {
 	Metadata       map[string]interface{} `json:"metadata,omitempty"`         //A hash of key/value pairs that can store additional information about this object.
 }
 
-type CatalogItems []CatalogItem
+type Items []Item

@@ -143,7 +143,7 @@ func SafePlanForCreation(plan *invdendpoint.Plan) (*invdendpoint.Plan, error) {
 	planData := new(invdendpoint.Plan)
 	planData.Id = plan.Id
 	planData.Object = plan.Object
-	planData.CatalogItem = plan.CatalogItem
+	planData.Item = plan.Item
 	planData.Name = plan.Name
 	planData.Currency = plan.Currency
 	planData.Amount = plan.Amount
