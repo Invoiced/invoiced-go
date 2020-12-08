@@ -1,7 +1,7 @@
 invdapi
 ========
 
-[![Build Status](https://travis-ci.org/Invoiced/invoiced-go.svg?branch=master)](https://travis-ci.org/Invoiced/invoiced-go)
+[![Build Status](https://travis-ci.com/Invoiced/invoiced-go.svg?branch=master)](https://travis-ci.com/Invoiced/invoiced-go)
 [![Coverage Status](https://coveralls.io/repos/github/Invoiced/invoiced-go/badge.svg?branch=master)](https://coveralls.io/github/Invoiced/invoiced-go?branch=master)
 
 This repository contains the Go client library for the [Invoiced](https://invoiced.com) API.
