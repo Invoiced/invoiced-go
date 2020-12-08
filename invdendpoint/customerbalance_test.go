@@ -25,9 +25,7 @@ func TestUnMarshalCustomerBalanceObject(t *testing.T) {
 	so := new(CustomerBalance)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestSubscriptionCreate(t *testing.T) {
@@ -19,7 +20,6 @@ func TestSubscriptionCreate(t *testing.T) {
 	mockSubscriptionResponse.Plan = "234"
 
 	server, err := invdmockserver.New(200, mockSubscriptionResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -36,7 +36,6 @@ func TestSubscriptionCreate(t *testing.T) {
 	subscriptionToCreate.Plan = "234"
 
 	createdSubscription, err := subscription.Create(subscriptionToCreate)
-
 	if err != nil {
 		t.Fatal("Error Creating subscription", err)
 	}
@@ -44,7 +43,6 @@ func TestSubscriptionCreate(t *testing.T) {
 	if !reflect.DeepEqual(createdSubscription.Subscription, mockSubscriptionResponse) {
 		t.Fatal("Subscription Was Not Created Succesfully", createdSubscription.Subscription, mockSubscriptionResponse)
 	}
-
 }
 
 func TestSubscriptionCreateError(t *testing.T) {
@@ -55,7 +53,6 @@ func TestSubscriptionCreateError(t *testing.T) {
 	mockErrorResponse.Param = "name"
 
 	server, err := invdmockserver.New(400, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -77,7 +74,6 @@ func TestSubscriptionCreateError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestSubscriptionUpdate(t *testing.T) {
@@ -112,7 +108,6 @@ func TestSubscriptionUpdate(t *testing.T) {
 	if !reflect.DeepEqual(mockSubscriptionResponse, subscriptionToUpdate.Subscription) {
 		t.Fatal("Error Subscription Not Updated Properly")
 	}
-
 }
 
 func TestSubscriptionUpdateError(t *testing.T) {
@@ -123,7 +118,6 @@ func TestSubscriptionUpdateError(t *testing.T) {
 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
 	server, err := invdmockserver.New(401, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -144,18 +138,15 @@ func TestSubscriptionUpdateError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestSubscriptionDelete(t *testing.T) {
-
 	key := "api key"
 
 	mocksubscriptionResponse := ""
 	mocksubscriptionID := int64(2341)
 
 	server, err := invdmockserver.New(204, mocksubscriptionResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -173,7 +164,6 @@ func TestSubscriptionDelete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error Occured Canceling Subscription")
 	}
-
 }
 
 func TestSubscriptionDeleteError(t *testing.T) {
@@ -186,7 +176,6 @@ func TestSubscriptionDeleteError(t *testing.T) {
 	mockSubscriptionID := int64(-999)
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -204,14 +193,12 @@ func TestSubscriptionDeleteError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestSubscription_Count_Error(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Subscription
+	var mockListResponse [1]invdendpoint.Subscription
 
 	mockResponse := new(invdendpoint.Subscription)
 	mockResponse.Id = int64(1234)
@@ -234,11 +221,9 @@ func TestSubscription_Count_Error(t *testing.T) {
 	if result != int64(-1) || err == nil {
 		t.Fatal("Unexpectedly successful")
 	}
-
 }
 
 func TestSubscriptionRetrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockSubscriptionResponseID := int64(1523)
@@ -259,7 +244,6 @@ func TestSubscriptionRetrieve(t *testing.T) {
 	subscription := conn.NewSubscription()
 
 	retrievedSubscription, err := subscription.Retrieve(mockSubscriptionResponseID)
-
 	if err != nil {
 		t.Fatal("Error Creating subscription", err)
 	}
@@ -267,7 +251,6 @@ func TestSubscriptionRetrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedSubscription.Subscription, mockSubscriptionResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestSubscriptionRetrieveError(t *testing.T) {
@@ -280,7 +263,6 @@ func TestSubscriptionRetrieveError(t *testing.T) {
 	mockSubscriptionID := int64(-999)
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -294,11 +276,9 @@ func TestSubscriptionRetrieveError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestSubscription_List(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Subscriptions
@@ -311,7 +291,6 @@ func TestSubscription_List(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -323,7 +302,6 @@ func TestSubscription_List(t *testing.T) {
 	subscription := conn.NewSubscription()
 
 	invoiceResp, nextEndpoint, err := subscription.List(nil, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -335,11 +313,9 @@ func TestSubscription_List(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestSubscription_ListAll(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Subscriptions
@@ -352,7 +328,6 @@ func TestSubscription_ListAll(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -364,7 +339,6 @@ func TestSubscription_ListAll(t *testing.T) {
 	subscription := conn.NewSubscription()
 
 	invoiceResp, err := subscription.ListAll(nil, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -372,11 +346,9 @@ func TestSubscription_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestSubscription_Preview(t *testing.T) {
-
 	key := "test api key"
 
 	mockSubscriptionResponse := new(invdendpoint.SubscriptionPreview)
@@ -393,7 +365,6 @@ func TestSubscription_Preview(t *testing.T) {
 	subscription := conn.NewSubscription()
 
 	retrievedSubscription, err := subscription.Preview(conn.NewPreviewRequest())
-
 	if err != nil {
 		t.Fatal("Error Creating subscription", err)
 	}
@@ -401,5 +372,4 @@ func TestSubscription_Preview(t *testing.T) {
 	if !reflect.DeepEqual(retrievedSubscription, mockSubscriptionResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }

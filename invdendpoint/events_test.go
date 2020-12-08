@@ -3,9 +3,10 @@ package invdendpoint
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Invoiced/invoiced-go/invdutil"
 	"strings"
 	"testing"
+
+	"github.com/Invoiced/invoiced-go/invdutil"
 )
 
 func TestUnMarshalEventObject(t *testing.T) {
@@ -40,7 +41,6 @@ func TestUnMarshalEventObject(t *testing.T) {
 	so := new(Event)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,7 +78,6 @@ func TestUnMarshalEventObject(t *testing.T) {
 	   }`
 
 	equal, err := invdutil.JsonEqual(object, string(so.Data))
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -86,7 +85,6 @@ func TestUnMarshalEventObject(t *testing.T) {
 	if !equal {
 		t.Fatal("Event object is incorrect")
 	}
-
 }
 
 func TestUnMarshalEventObject2(t *testing.T) {
@@ -216,19 +214,16 @@ func TestUnMarshalEventObject2(t *testing.T) {
 	so := new(Event)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		panic(err)
 	}
 
 	ie, err := so.ParseInvoiceEvent()
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	b, err := json.Marshal(ie)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -236,7 +231,6 @@ func TestUnMarshalEventObject2(t *testing.T) {
 	if !strings.Contains(string(b), "725981") {
 		t.Fatal("Customer id was not set")
 	}
-
 }
 
 func TestUnMarshalEventPreviousObject(t *testing.T) {
@@ -449,13 +443,11 @@ func TestUnMarshalEventPreviousObject(t *testing.T) {
 	so := new(Event)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	prevInv, err := so.ParseInvoicePreviousEvent()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -465,7 +457,6 @@ func TestUnMarshalEventPreviousObject(t *testing.T) {
 	}
 
 	fmt.Println(prevInv)
-
 }
 
 func TestCleanMetaDataArray(t *testing.T) {
@@ -474,10 +465,9 @@ func TestCleanMetaDataArray(t *testing.T) {
 
 	cleanData := CleanMetaDataArray([]byte(d))
 
-	if strings.Contains(string(cleanData),`"metadata": []`) {
+	if strings.Contains(string(cleanData), `"metadata": []`) {
 		t.Fatal("Did not cleanse data properly.")
-	} else if strings.Contains(string(cleanData),`"metadata":[]`) {
+	} else if strings.Contains(string(cleanData), `"metadata":[]`) {
 		t.Fatal("Did not cleanse data properly.")
 	}
-
 }

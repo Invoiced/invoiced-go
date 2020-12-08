@@ -1,8 +1,10 @@
 package invdutil
 
-import "gopkg.in/yaml.v2"
-import "path/filepath"
-import "io/ioutil"
+import (
+	"gopkg.in/yaml.v2"
+	"path/filepath"
+	"io/ioutil"
+)
 
 type YamlConfigFile struct {
 	Apikey string
@@ -10,12 +12,10 @@ type YamlConfigFile struct {
 
 func ReadAPIKeyFromYaml(path string) (string, error) {
 	filename, err := filepath.Abs(path)
-
 	if err != nil {
 		return "", err
 	}
 	yamlFile, err := ioutil.ReadFile(filename)
-
 	if err != nil {
 		return "", err
 	}
@@ -29,5 +29,4 @@ func ReadAPIKeyFromYaml(path string) (string, error) {
 	}
 
 	return yamlConfig.Apikey, nil
-
 }

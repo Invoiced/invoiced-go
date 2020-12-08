@@ -1,8 +1,10 @@
 package invdendpoint
 
-import "net/url"
-import "strings"
-import "sort"
+import (
+	"net/url"
+	"strings"
+	"sort"
+)
 
 type SortOrder int
 
@@ -19,7 +21,6 @@ func (s SortOrder) String() string {
 	}
 
 	return ""
-
 }
 
 type Sort struct {
@@ -38,7 +39,6 @@ func (s *Sort) Set(column string, order SortOrder) {
 }
 
 func (s *Sort) String() string {
-
 	uValues := url.Values{}
 	orderString := ""
 	orderedKeys := []string{}
@@ -50,7 +50,6 @@ func (s *Sort) String() string {
 	sort.Strings(orderedKeys)
 
 	for _, column := range orderedKeys {
-
 		orderString += column + " " + s.orders[column].String() + ","
 	}
 	orderString = strings.TrimRight(orderString, ",")
@@ -61,5 +60,4 @@ func (s *Sort) String() string {
 	uValues.Set("sort", orderString)
 
 	return uValues.Encode()
-
 }

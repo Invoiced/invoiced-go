@@ -21,7 +21,6 @@ func GetRRActionMap() *RRActionMap {
 }
 
 func LoadJsonMappings() error {
-
 	rrActionMap = NewRRActionMap()
 
 	files, _ := ioutil.ReadDir(dir)
@@ -36,7 +35,6 @@ func LoadJsonMappings() error {
 	for _, jsonFile := range jsonFiles {
 
 		b, err := ioutil.ReadFile(dir + jsonFile.Name())
-
 		if err != nil {
 			return err
 		}
@@ -60,11 +58,9 @@ func LoadJsonMappings() error {
 	}
 
 	return nil
-
 }
 
 func NewJsonFileServer(ssl bool) (*httptest.Server, error) {
-
 	var server *httptest.Server
 
 	f := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -76,7 +72,6 @@ func NewJsonFileServer(ssl bool) (*httptest.Server, error) {
 		w.Header().Set("Content-Type", "application/json")
 
 		body, err := ioutil.ReadAll(r.Body)
-
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintln(w, err.Error())
@@ -84,7 +79,6 @@ func NewJsonFileServer(ssl bool) (*httptest.Server, error) {
 		}
 
 		rrActionObject, found, err := rrActionMap.Get(method, url, string(body))
-
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintln(w, err.Error())
@@ -112,15 +106,12 @@ func NewJsonFileServer(ssl bool) (*httptest.Server, error) {
 	}
 
 	return server, nil
-
 }
 
 func New(code int, body interface{}, dataType string, ssl bool) (*httptest.Server, error) {
-
 	if dataType == "xml" {
 
 		_, err := xml.Marshal(body)
-
 		if err != nil {
 			return nil, err
 		}
@@ -128,14 +119,12 @@ func New(code int, body interface{}, dataType string, ssl bool) (*httptest.Serve
 	} else if dataType == "json" {
 
 		_, err := json.Marshal(body)
-
 		if err != nil {
 			return nil, err
 		}
 
 	} else {
 		return nil, errors.New("dataType in MockServer not recognized")
-
 	}
 
 	f := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

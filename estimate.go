@@ -1,11 +1,11 @@
 package invdapi
 
 import (
-"errors"
-"fmt"
-"github.com/Invoiced/invoiced-go/invdendpoint"
-)
+	"errors"
+	"fmt"
 
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+)
 
 type Estimate struct {
 	*Connection
@@ -17,7 +17,6 @@ type Estimates []*Estimate
 func (c *Connection) NewEstimate() *Estimate {
 	estimate := new(invdendpoint.Estimate)
 	return &Estimate{c, estimate}
-
 }
 
 func (c *Estimate) Count() (int64, error) {
@@ -30,7 +29,6 @@ func (c *Estimate) Count() (int64, error) {
 	}
 
 	return count, nil
-
 }
 
 func (c *Estimate) Create(estimate *Estimate) (*Estimate, error) {
@@ -42,9 +40,8 @@ func (c *Estimate) Create(estimate *Estimate) (*Estimate, error) {
 		return nil, errors.New("invoice cannot be nil")
 	}
 
-	//safe prune invoice data for creation
-	invdEstToCreate,err := SafeEstimateForCreation(estimate.Estimate)
-
+	// safe prune invoice data for creation
+	invdEstToCreate, err := SafeEstimateForCreation(estimate.Estimate)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,6 @@ func (c *Estimate) Create(estimate *Estimate) (*Estimate, error) {
 	estResp.Connection = c.Connection
 
 	return estResp, nil
-
 }
 
 func (c *Estimate) Delete() error {
@@ -71,25 +67,22 @@ func (c *Estimate) Delete() error {
 	}
 
 	return nil
-
 }
 
 func (c *Estimate) Void() (*Estimate, error) {
-
 	estResp := new(Estimate)
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/void"
 
-	apiErr := c.postWithoutData(endPoint,estResp)
+	apiErr := c.postWithoutData(endPoint, estResp)
 
 	if apiErr != nil {
-		return nil,apiErr
+		return nil, apiErr
 	}
 
 	estResp.Connection = c.Connection
 
-	return estResp,nil
-
+	return estResp, nil
 }
 
 func (c *Estimate) Save() error {
@@ -98,7 +91,6 @@ func (c *Estimate) Save() error {
 	estResp := new(Estimate)
 
 	invdEstToUpdate, err := SafeEstimateForUpdate(c.Estimate)
-
 	if err != nil {
 		return err
 	}
@@ -112,7 +104,6 @@ func (c *Estimate) Save() error {
 	c.Estimate = estResp.Estimate
 
 	return nil
-
 }
 
 func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
@@ -129,7 +120,6 @@ func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
 	}
 
 	return estimate, nil
-
 }
 
 func (c *Estimate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Estimates, error) {
@@ -159,11 +149,9 @@ NEXT:
 	}
 
 	return estimates, nil
-
 }
 
 func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Estimates, string, error) {
-
 	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint)
 	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
 
@@ -177,15 +165,13 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 
 	for _, estimate := range estimates {
 		estimate.Connection = c.Connection
-
 	}
 
 	return estimates, nextEndPoint, nil
-
 }
 
 func (c *Estimate) GenerateInvoice() (*Invoice, error) {
-	endPoint :=  makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/invoice"
+	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/invoice"
 
 	invResp := c.NewInvoice()
 
@@ -196,7 +182,6 @@ func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 	}
 
 	return invResp, nil
-
 }
 
 func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
@@ -205,13 +190,11 @@ func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.
 	emailResp := new(invdendpoint.EmailResponses)
 
 	err := c.create(endPoint, emailReq, emailResp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return *emailResp, nil
-
 }
 
 func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
@@ -220,13 +203,11 @@ func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextRes
 	resp := new(invdendpoint.TextResponses)
 
 	err := c.create(endPoint, req, resp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return *resp, nil
-
 }
 
 func (c *Estimate) SendLetter() (*invdendpoint.LetterResponse, error) {
@@ -235,13 +216,11 @@ func (c *Estimate) SendLetter() (*invdendpoint.LetterResponse, error) {
 	resp := new(invdendpoint.LetterResponse)
 
 	err := c.create(endPoint, nil, resp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return resp, nil
-
 }
 
 func (c *Estimate) ListAttachments() (Files, error) {
@@ -269,10 +248,7 @@ NEXT:
 	}
 
 	return files, nil
-
 }
-
-
 
 func (c *Estimate) String() string {
 	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
@@ -280,16 +256,15 @@ func (c *Estimate) String() string {
 	return header + " " + "JSON: " + c.Estimate.String()
 }
 
-//SafeEstimateForCreation prunes estimate data for just fields that can be used for creation of a invoice
+// SafeEstimateForCreation prunes estimate data for just fields that can be used for creation of a invoice
 func SafeEstimateForCreation(estimate *invdendpoint.Estimate) (*invdendpoint.Estimate, error) {
-
-	if estimate == nil  {
+	if estimate == nil {
 		return nil, errors.New("Estimate is nil")
 	}
 
-	estData :=new(invdendpoint.Estimate)
+	estData := new(invdendpoint.Estimate)
 	estData.Customer = estimate.Customer
-	estData.Invoice= estimate.Invoice
+	estData.Invoice = estimate.Invoice
 	estData.Name = estimate.Name
 	estData.Number = estimate.Number
 	estData.Currency = estimate.Currency
@@ -309,17 +284,16 @@ func SafeEstimateForCreation(estimate *invdendpoint.Estimate) (*invdendpoint.Est
 	estData.DisabledPaymentMethods = estimate.DisabledPaymentMethods
 	estData.CalculateTax = estimate.CalculateTax
 
-	return estData,nil
+	return estData, nil
 }
 
-//SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
+// SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
 func SafeEstimateForUpdate(estimate *invdendpoint.Estimate) (*invdendpoint.Estimate, error) {
-
-	if estimate == nil  {
+	if estimate == nil {
 		return nil, errors.New("Estimate is nil")
 	}
 
-	estData :=new(invdendpoint.Estimate)
+	estData := new(invdendpoint.Estimate)
 	estData.Name = estimate.Name
 	estData.Number = estimate.Number
 	estData.Currency = estimate.Currency
@@ -340,5 +314,5 @@ func SafeEstimateForUpdate(estimate *invdendpoint.Estimate) (*invdendpoint.Estim
 	estData.DisabledPaymentMethods = estimate.DisabledPaymentMethods
 	estData.CalculateTax = estimate.CalculateTax
 
-	return estData,nil
+	return estData, nil
 }

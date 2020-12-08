@@ -23,7 +23,6 @@ func TestUnMarshalContactObject(t *testing.T) {
 	so := new(Contact)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -47,5 +46,4 @@ func TestUnMarshalContactObject(t *testing.T) {
 	if so.CreatedAt != 1463510889 {
 		t.Fatal("Created At is incorrect")
 	}
-
 }

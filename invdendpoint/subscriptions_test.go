@@ -46,7 +46,6 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	so := new(Subscription)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -101,7 +100,6 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 
 	if so.Url != "https://dundermifflin.invoiced.com/subscriptions/o2mAd2wWVfYy16XZto7xHwXX" {
 		t.Fatal("Url is incorrect")
-
 	}
 
 	if so.Prorate != true {
@@ -115,11 +113,9 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	if so.CreatedAt != 1420391704 {
 		t.Fatal("Subscription CreatedAt is incorrect")
 	}
-
 }
 
-func TestUnMarshalSubscriptionsPreview(t *testing.T)  {
-
+func TestUnMarshalSubscriptionsPreview(t *testing.T) {
 	data := `{
   "first_invoice": {
     "attempt_count": null,
@@ -187,7 +183,6 @@ func TestUnMarshalSubscriptionsPreview(t *testing.T)  {
 	so := new(SubscriptionPreview)
 
 	err := json.Unmarshal([]byte(data), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -203,7 +198,4 @@ func TestUnMarshalSubscriptionsPreview(t *testing.T)  {
 	if so.RecurringTotal != 50 {
 		t.Fatal("Recurring total should not ")
 	}
-
-
-
 }

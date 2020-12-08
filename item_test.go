@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestItem_Create(t *testing.T) {
@@ -19,7 +20,6 @@ func TestItem_Create(t *testing.T) {
 	mockResponse.Type = "service"
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +43,6 @@ func TestItem_Create(t *testing.T) {
 	if !reflect.DeepEqual(requestEntity.Item, mockResponse) {
 		t.Fatal("entity was not created", requestEntity.Item, mockResponse)
 	}
-
 }
 
 func TestItem_Save(t *testing.T) {
@@ -77,18 +76,15 @@ func TestItem_Save(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.Item) {
 		t.Fatal("Error: entity not updated correctly")
 	}
-
 }
 
 func TestItem_Delete(t *testing.T) {
-
 	key := "api key"
 
 	mockResponse := ""
 	mockResponseId := "example"
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -106,11 +102,9 @@ func TestItem_Delete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error Occured Deleting Transaction")
 	}
-
 }
 
 func TestItem_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponseId := "example"
@@ -131,7 +125,6 @@ func TestItem_Retrieve(t *testing.T) {
 	entity := conn.NewItem()
 
 	retrievedTransaction, err := entity.Retrieve(mockResponseId)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -139,14 +132,12 @@ func TestItem_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.Item, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestItem_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Item
+	var mockListResponse [1]invdendpoint.Item
 
 	mockResponse := new(invdendpoint.Item)
 	mockResponse.Id = "example"
@@ -169,7 +160,6 @@ func TestItem_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -177,5 +167,4 @@ func TestItem_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].Item, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }

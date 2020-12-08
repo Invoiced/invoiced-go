@@ -27,9 +27,7 @@ func TestUnMarshalPliObject(t *testing.T) {
 	so := new(PendingLineItem)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

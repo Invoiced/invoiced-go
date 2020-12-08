@@ -7,7 +7,6 @@ import (
 type ChasingCadence struct {
 	*Connection
 	*invdendpoint.ChasingCadence
-
 }
 
 type ChasingCadences []*ChasingCadence
@@ -15,9 +14,7 @@ type ChasingCadences []*ChasingCadence
 func (c *Connection) NewChasingCadence() *ChasingCadence {
 	chasing := new(invdendpoint.ChasingCadence)
 	return &ChasingCadence{c, chasing}
-
 }
-
 
 func (c *ChasingCadence) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (ChasingCadences, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.ChasingCadencesEndPoint)
@@ -43,9 +40,7 @@ NEXT:
 
 	for _, chase := range chasing {
 		chase.Connection = c.Connection
-
 	}
 
 	return chasing, nil
-
 }

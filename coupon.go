@@ -1,14 +1,14 @@
 package invdapi
 
 import (
-"errors"
-"github.com/Invoiced/invoiced-go/invdendpoint"
+	"errors"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 type Coupon struct {
 	*Connection
 	*invdendpoint.Coupon
-
 }
 
 type Coupons []*Coupon
@@ -16,7 +16,6 @@ type Coupons []*Coupon
 func (c *Connection) NewCoupon() *Coupon {
 	coupon := new(invdendpoint.Coupon)
 	return &Coupon{c, coupon}
-
 }
 
 func (c *Coupon) Create(coupon *Coupon) (*Coupon, error) {
@@ -24,14 +23,12 @@ func (c *Coupon) Create(coupon *Coupon) (*Coupon, error) {
 
 	couponResp := new(Coupon)
 
-
 	if coupon == nil {
 		return nil, errors.New("coupon is nil")
 	}
 
-	//safe prune file data for creation
+	// safe prune file data for creation
 	invdCouponDataToCreate, err := SafeCouponForCreation(coupon.Coupon)
-
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +42,6 @@ func (c *Coupon) Create(coupon *Coupon) (*Coupon, error) {
 	couponResp.Connection = c.Connection
 
 	return couponResp, nil
-
 }
 
 func (c *Coupon) Save() error {
@@ -54,7 +50,6 @@ func (c *Coupon) Save() error {
 	taxRateResp := new(Coupon)
 
 	invdTaxRatDataToUpdate, err := SafeCouponForUpdating(c.Coupon)
-
 	if err != nil {
 		return err
 	}
@@ -68,20 +63,17 @@ func (c *Coupon) Save() error {
 	c.Coupon = taxRateResp.Coupon
 
 	return nil
-
 }
 
 func (c *Coupon) Delete() error {
 	endPoint := c.MakeEndPointURL(invdendpoint.CouponsEndPoint) + "/" + c.Id
 
 	err := c.delete(endPoint)
-
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
 func (c *Coupon) Retrieve(id string) (*Coupon, error) {
@@ -92,13 +84,11 @@ func (c *Coupon) Retrieve(id string) (*Coupon, error) {
 	coupon := &Coupon{c.Connection, couponEndPoint}
 
 	_, err := c.retrieveDataFromAPI(endPoint, coupon)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return coupon, nil
-
 }
 
 func (c *Coupon) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Coupons, error) {
@@ -125,20 +115,16 @@ NEXT:
 
 	for _, coupon := range coupons {
 		coupon.Connection = c.Connection
-
 	}
 
 	return coupons, nil
-
 }
 
-//SafeCouponForCreation prunes coupon data for just fields that can be used for creation of a coupon
+// SafeCouponForCreation prunes coupon data for just fields that can be used for creation of a coupon
 func SafeCouponForCreation(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, error) {
-
 	if coupon == nil {
 		return nil, errors.New("coupon is nil")
 	}
-
 
 	couponData := new(invdendpoint.Coupon)
 	couponData.Id = coupon.Id
@@ -154,13 +140,11 @@ func SafeCouponForCreation(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, e
 	return couponData, nil
 }
 
-//SafeTaxRateForUpdating prunes coupon data for just fields that can be used for updating of a plan
+// SafeTaxRateForUpdating prunes coupon data for just fields that can be used for updating of a plan
 func SafeCouponForUpdating(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, error) {
-
 	if coupon == nil {
 		return nil, errors.New("coupon is nil")
 	}
-
 
 	couponData := new(invdendpoint.Coupon)
 	couponData.Name = coupon.Name
@@ -168,5 +152,3 @@ func SafeCouponForUpdating(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, e
 
 	return couponData, nil
 }
-
-

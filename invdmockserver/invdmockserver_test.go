@@ -16,9 +16,7 @@ type XmlTest struct {
 }
 
 func TestLoadJsonMappings(t *testing.T) {
-
 	err := LoadJsonMappings()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,13 +24,11 @@ func TestLoadJsonMappings(t *testing.T) {
 	if GetRRActionMap() == nil {
 		t.Fatal("GetRRActionMap should not be nil")
 	}
-
 }
 
 func TestJsonFileServer(t *testing.T) {
-	//references connection_rr_52.json
+	// references connection_rr_52.json
 	err := LoadJsonMappings()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,7 +40,6 @@ func TestJsonFileServer(t *testing.T) {
 	defer server.Close()
 
 	resp, err := http.Get(server.URL + "/customers/198971")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,11 +47,9 @@ func TestJsonFileServer(t *testing.T) {
 	if resp.StatusCode != 404 {
 		t.Fatal("Status code is incorrect ", resp.StatusCode)
 	}
-
 }
 
 func TestJsonMockServer(t *testing.T) {
-
 	j := new(JsonTest)
 	j.Msg = "Hello World"
 	server, err := New(200, j, "json", false)
@@ -66,13 +59,11 @@ func TestJsonMockServer(t *testing.T) {
 	defer server.Close()
 
 	resp, err := http.Get(server.URL)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,7 +73,6 @@ func TestJsonMockServer(t *testing.T) {
 	if strings.TrimSpace(string(b)) != expectedResponse {
 		t.Fatal("Incorrect Response From JsonMockServer, actual response => ", string(b), " ,expected resonse => ", expectedResponse)
 	}
-
 }
 
 func TestXMLMockServer(t *testing.T) {
@@ -95,13 +85,11 @@ func TestXMLMockServer(t *testing.T) {
 	defer server.Close()
 
 	resp, err := http.Get(server.URL)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -124,7 +112,6 @@ func TestRespCodeMockServer(t *testing.T) {
 	defer server.Close()
 
 	resp, err := http.Get(server.URL)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -132,5 +119,4 @@ func TestRespCodeMockServer(t *testing.T) {
 	if resp.StatusCode != statusCode {
 		t.Fatal("Status Code does not match")
 	}
-
 }

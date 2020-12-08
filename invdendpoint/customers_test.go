@@ -42,7 +42,6 @@ func TestUnMarshalCustomerObject(t *testing.T) {
 	so := new(Customer)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,7 +59,6 @@ func TestUnMarshalCustomerObject(t *testing.T) {
 	}
 
 	if so.Type != "company" {
-
 		t.Fatal("Type is incorrect")
 	}
 
@@ -71,11 +69,9 @@ func TestUnMarshalCustomerObject(t *testing.T) {
 	if so.CreatedAt != 1415222128 {
 		t.Fatal("Created At is incorrect")
 	}
-
 }
 
 func TestCustomerUnmarshalCardObject(t *testing.T) {
-
 	s := `{
   "id": 850,
   "object": "card",
@@ -89,7 +85,6 @@ func TestCustomerUnmarshalCardObject(t *testing.T) {
 	so := new(Card)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -121,11 +116,9 @@ func TestCustomerUnmarshalCardObject(t *testing.T) {
 	if so.Funding != "credit" {
 		t.Fatal("Funding is incorrect")
 	}
-
 }
 
 func TestCustomerUnmarshalBankObject(t *testing.T) {
-
 	s := `{
   "id": 4321,
   "object": "card",
@@ -139,7 +132,6 @@ func TestCustomerUnmarshalBankObject(t *testing.T) {
 	so := new(BankAccount)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -171,5 +163,4 @@ func TestCustomerUnmarshalBankObject(t *testing.T) {
 	if so.Currency != "usd" {
 		t.Fatal("Currency is incorrect")
 	}
-
 }

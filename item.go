@@ -1,8 +1,9 @@
 package invdapi
 
 import (
-"errors"
-"github.com/Invoiced/invoiced-go/invdendpoint"
+	"errors"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 type Item struct {
@@ -15,7 +16,6 @@ type Items []*Item
 func (c *Connection) NewItem() *Item {
 	item := new(invdendpoint.Item)
 	return &Item{c, item}
-
 }
 
 func (c *Item) Create(item *Item) (*Item, error) {
@@ -23,15 +23,12 @@ func (c *Item) Create(item *Item) (*Item, error) {
 
 	itemResp := new(Item)
 
-
 	if item == nil {
 		return nil, errors.New("item is nil")
 	}
 
-
-	//safe prune file data for creation
+	// safe prune file data for creation
 	invdItemDataToCreate, err := SafeItemForCreation(item.Item)
-
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +42,6 @@ func (c *Item) Create(item *Item) (*Item, error) {
 	itemResp.Connection = c.Connection
 
 	return itemResp, nil
-
 }
 
 func (c *Item) Save() error {
@@ -54,7 +50,6 @@ func (c *Item) Save() error {
 	itemResp := new(Item)
 
 	itemDataToUpdate, err := SafeItemForUpdating(c.Item)
-
 	if err != nil {
 		return err
 	}
@@ -68,20 +63,17 @@ func (c *Item) Save() error {
 	c.Item = itemResp.Item
 
 	return nil
-
 }
 
 func (c *Item) Delete() error {
 	endPoint := c.MakeEndPointURL(invdendpoint.ItemEndPoint) + "/" + c.Id
 
 	err := c.delete(endPoint)
-
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
 func (c *Item) Retrieve(id string) (*Item, error) {
@@ -92,13 +84,11 @@ func (c *Item) Retrieve(id string) (*Item, error) {
 	item := &Item{c.Connection, itemEndPoint}
 
 	_, err := c.retrieveDataFromAPI(endPoint, item)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return item, nil
-
 }
 
 func (c *Item) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Items, error) {
@@ -125,16 +115,13 @@ NEXT:
 
 	for _, item := range items {
 		item.Connection = c.Connection
-
 	}
 
 	return items, nil
-
 }
 
-//SafeForCreation prunes item data for just fields that can be used for creation of an item
+// SafeForCreation prunes item data for just fields that can be used for creation of an item
 func SafeItemForCreation(item *invdendpoint.Item) (*invdendpoint.Item, error) {
-
 	if item == nil {
 		return nil, errors.New("task is nil")
 	}
@@ -155,9 +142,8 @@ func SafeItemForCreation(item *invdendpoint.Item) (*invdendpoint.Item, error) {
 	return itemData, nil
 }
 
-//SafeForUpdating prunes item data for just fields that can be used for updating of an item
+// SafeForUpdating prunes item data for just fields that can be used for updating of an item
 func SafeItemForUpdating(item *invdendpoint.Item) (*invdendpoint.Item, error) {
-
 	if item == nil {
 		return nil, errors.New("task is nil")
 	}

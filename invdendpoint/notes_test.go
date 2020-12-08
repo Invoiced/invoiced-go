@@ -26,9 +26,7 @@ func TestUnmarshalNoteObject(t *testing.T) {
 	so := new(Note)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

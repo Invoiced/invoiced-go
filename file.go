@@ -1,8 +1,9 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"errors"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 type File struct {
@@ -15,16 +16,14 @@ type Files []*File
 func (c *Connection) NewFile() *File {
 	file := new(invdendpoint.File)
 	return &File{c, file}
-
 }
 
 func (c *File) Create(file *File) (*File, error) {
 	endPoint := c.MakeEndPointURL(invdendpoint.FilesEndPoint)
 	fileResp := new(File)
 
-	//safe prune file data for creation
-	invdFileDataToCreate,err := SafeFileForCreation(file.File)
-
+	// safe prune file data for creation
+	invdFileDataToCreate, err := SafeFileForCreation(file.File)
 	if err != nil {
 		return nil, err
 	}
@@ -38,20 +37,17 @@ func (c *File) Create(file *File) (*File, error) {
 	fileResp.Connection = c.Connection
 
 	return fileResp, nil
-
 }
 
 func (c *File) Delete() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.FilesEndPoint), c.Id)
 
 	err := c.delete(endPoint)
-
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
 func (c *File) Retrieve(id int64) (*File, error) {
@@ -62,18 +58,15 @@ func (c *File) Retrieve(id int64) (*File, error) {
 	file := &File{c.Connection, custEndPoint}
 
 	_, err := c.retrieveDataFromAPI(endPoint, file)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return file, nil
-
 }
 
-//SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
-func SafeFileForCreation(file *invdendpoint.File) (*invdendpoint.File, error)  {
-
+// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
+func SafeFileForCreation(file *invdendpoint.File) (*invdendpoint.File, error) {
 	if file == nil {
 		return nil, errors.New("file is nil")
 	}

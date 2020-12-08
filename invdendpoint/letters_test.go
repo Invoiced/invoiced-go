@@ -15,11 +15,9 @@ func TestUnMarshalLetterRequest(t *testing.T) {
 	so := new(LetterRequest)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }
 
 func TestUnMarshalLetterResponse(t *testing.T) {
@@ -35,9 +33,7 @@ func TestUnMarshalLetterResponse(t *testing.T) {
 	so := new(LetterResponse)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

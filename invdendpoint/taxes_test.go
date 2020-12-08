@@ -15,7 +15,6 @@ func TestUnMarshalTaxObject(t *testing.T) {
 	so := new(Tax)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,5 +26,4 @@ func TestUnMarshalTaxObject(t *testing.T) {
 	if so.Amount != 3.85 {
 		t.Fatal("Item 1 has incorrect type")
 	}
-
 }

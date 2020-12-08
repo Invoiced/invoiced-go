@@ -1,47 +1,49 @@
 package invdendpoint
 
-const TransactionsEndPoint = "/transactions"
-const ChargesEndPoint = "/charges"
+const (
+	TransactionsEndPoint = "/transactions"
+	ChargesEndPoint      = "/charges"
+)
 
 type Transactions []Transaction
 
 type Transaction struct {
-	Id                int64                  `json:"id,omitempty"`				   //The transaction’s unique ID
-	Object 			  string 				 `json:"object,omitempty"`			  	//Object type, transaction
-	Customer          int64                  `json:"customer,omitempty"`           //Customer ID, required if invoice ID is not supplied
-	Invoice           int64                  `json:"invoice,omitempty"`            //Invoice ID, if any
-	CreditNote        int64                 `json:"credit_note,omitempty"`        //Associated Credit Note, if any
-	Type              string                 `json:"type,omitempty"`               //Transaction type, charge, payment, refund, or adjustment - required
-	Date              int64                  `json:"date,omitempty"`               //Transaction date, defaults to current timestamp
-	Method            string                 `json:"method,omitempty"`             //Payment instrument used to facilitate transaction, defaults to other
-	Status            string                 `json:"status,omitempty"`             //Transaction status, one of succeeded, pending, or failed, defaults to succeeded
-	Gateway           string                 `json:"gateway,omitempty"`            //Payment gateway that processed the transaction, if any
-	GatewayId         string                 `json:"gateway_id,omitempty"`         //Transaction ID from the payment gateway, or check # if method is check
-	PaymentSource     *PaymentSource         `json:"payment_source,omitempty"`     //Payment source used for transaction, if any
-	Currency          string                 `json:"currency,omitempty"`           //3-letter ISO code
-	Amount            float64                `json:"amount,omitempty"`             //Transaction amount
-	Fee               float64                `json:"fee,omitempty"`                //Processing fees
-	Notes             string                 `json:"notes,omitempty"`              //Internal notes
-	FailureReason     string                 `json:"failure_reason,omitempty"`     //Failure message from the payment gateway (only available when status = failed)
-	ParentTransaction int64                  `json:"parent_transaction,omitempty"` //ID of the original transaction for refunds
-	PdfUrl            string                 `json:"pdf_url,omitempty"`            //URL to download the invoice as a PDF
-	CreatedAt         int64                  `json:"created_at,omitempty"`         //Timestamp when created
-	Metadata          map[string]interface{} `json:"metadata,omitempty"`           //A hash of key/value pairs that can store additional information about this object.
+	Id                int64                  `json:"id,omitempty"`                 // The transaction’s unique ID
+	Object            string                 `json:"object,omitempty"`             // Object type, transaction
+	Customer          int64                  `json:"customer,omitempty"`           // Customer ID, required if invoice ID is not supplied
+	Invoice           int64                  `json:"invoice,omitempty"`            // Invoice ID, if any
+	CreditNote        int64                  `json:"credit_note,omitempty"`        // Associated Credit Note, if any
+	Type              string                 `json:"type,omitempty"`               // Transaction type, charge, payment, refund, or adjustment - required
+	Date              int64                  `json:"date,omitempty"`               // Transaction date, defaults to current timestamp
+	Method            string                 `json:"method,omitempty"`             // Payment instrument used to facilitate transaction, defaults to other
+	Status            string                 `json:"status,omitempty"`             // Transaction status, one of succeeded, pending, or failed, defaults to succeeded
+	Gateway           string                 `json:"gateway,omitempty"`            // Payment gateway that processed the transaction, if any
+	GatewayId         string                 `json:"gateway_id,omitempty"`         // Transaction ID from the payment gateway, or check # if method is check
+	PaymentSource     *PaymentSource         `json:"payment_source,omitempty"`     // Payment source used for transaction, if any
+	Currency          string                 `json:"currency,omitempty"`           // 3-letter ISO code
+	Amount            float64                `json:"amount,omitempty"`             // Transaction amount
+	Fee               float64                `json:"fee,omitempty"`                // Processing fees
+	Notes             string                 `json:"notes,omitempty"`              // Internal notes
+	FailureReason     string                 `json:"failure_reason,omitempty"`     // Failure message from the payment gateway (only available when status = failed)
+	ParentTransaction int64                  `json:"parent_transaction,omitempty"` // ID of the original transaction for refunds
+	PdfUrl            string                 `json:"pdf_url,omitempty"`            // URL to download the invoice as a PDF
+	CreatedAt         int64                  `json:"created_at,omitempty"`         // Timestamp when created
+	Metadata          map[string]interface{} `json:"metadata,omitempty"`           // A hash of key/value pairs that can store additional information about this object.
 }
 
 type ChargeRequest struct {
-	Customer          int64         `json:"customer,omitempty"`     	   //Customer ID, required if invoice ID is not supplied
-	Method            int64         `json:"method,omitempty"`              //Payment method ID, required
-	Currency          string        `json:"currency,omitempty"`            //Optional, defaults to company currency
-	Amount            float64       `json:"amount,omitempty"`              //Charge amount, required
-	InvoicedToken     string        `json:"invoiced_token,omitempty"`      //Optional, generated by invoiced.js
-	GatewayToken      string        `json:"gateway_token,omitempty"`       //Optional, generated by payment gateway
-	PaymentSourceType string        `json:"payment_source_type,omitempty"` //One of card, bank_account
-	PayementSourceId  float64       `json:"payment_source_id,omitempty"`   //Optional, card or bank account ID
-	VaultMethod       bool          `json:"valut_method,omitempty"`        //Optional; when true, vaults the payment source on the customer’s account
-	MakeDefault       bool          `json:"make_default,omitempty"`        //Optional; when this and vault_method are true, saves payment as default on customer’s account
-	ReceiptEmail      string        `json:"receipt_email,omitempty"`       //Optional; where the payment receipt is sent
-	Splits            []ChargeSplit `json:"splits,omitempty"`              //Required, contains payment application, i.e. [{“type”: “invoice”, “invoice”: 1234, “amount”: 400.00}]
+	Customer          int64         `json:"customer,omitempty"`            // Customer ID, required if invoice ID is not supplied
+	Method            int64         `json:"method,omitempty"`              // Payment method ID, required
+	Currency          string        `json:"currency,omitempty"`            // Optional, defaults to company currency
+	Amount            float64       `json:"amount,omitempty"`              // Charge amount, required
+	InvoicedToken     string        `json:"invoiced_token,omitempty"`      // Optional, generated by invoiced.js
+	GatewayToken      string        `json:"gateway_token,omitempty"`       // Optional, generated by payment gateway
+	PaymentSourceType string        `json:"payment_source_type,omitempty"` // One of card, bank_account
+	PayementSourceId  float64       `json:"payment_source_id,omitempty"`   // Optional, card or bank account ID
+	VaultMethod       bool          `json:"valut_method,omitempty"`        // Optional; when true, vaults the payment source on the customer’s account
+	MakeDefault       bool          `json:"make_default,omitempty"`        // Optional; when this and vault_method are true, saves payment as default on customer’s account
+	ReceiptEmail      string        `json:"receipt_email,omitempty"`       // Optional; where the payment receipt is sent
+	Splits            []ChargeSplit `json:"splits,omitempty"`              // Required, contains payment application, i.e. [{“type”: “invoice”, “invoice”: 1234, “amount”: 400.00}]
 }
 
 type ChargeSplit struct {

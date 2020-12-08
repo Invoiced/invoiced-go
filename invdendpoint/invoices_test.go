@@ -81,7 +81,6 @@ func TestUnMarshalObject2(t *testing.T) {
 	so := new(Invoice)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -163,7 +162,6 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 	so := new(Invoice)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -307,8 +305,6 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 	if so.CalculateTaxes != true {
 		t.Fatal("CalculateTaxes flag is incorrect")
 	}
-
-
 }
 
 func TestTotalTaxAmount(t *testing.T) {
@@ -404,7 +400,6 @@ func TestTotalTaxAmount(t *testing.T) {
 	so := new(Invoice)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -414,7 +409,6 @@ func TestTotalTaxAmount(t *testing.T) {
 	if totalTax != 45.32 {
 		t.Fatal("Tax amount does not match")
 	}
-
 }
 
 func TestTotalDiscountAmount(t *testing.T) {
@@ -550,7 +544,6 @@ func TestTotalDiscountAmount(t *testing.T) {
 	so := new(Invoice)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -560,5 +553,4 @@ func TestTotalDiscountAmount(t *testing.T) {
 	if totalDiscount != 20.35 {
 		t.Fatal("Total discount amount does not match")
 	}
-
 }

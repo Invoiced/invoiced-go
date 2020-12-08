@@ -25,9 +25,7 @@ func TestUnmarshalPlanObject(t *testing.T) {
 	so := new(Plan)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

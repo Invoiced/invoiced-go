@@ -24,9 +24,7 @@ func TestUnMarshalCouponObject(t *testing.T) {
 	so := new(Coupon)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

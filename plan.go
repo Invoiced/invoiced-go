@@ -1,9 +1,9 @@
-
 package invdapi
 
 import (
-"errors"
-"github.com/Invoiced/invoiced-go/invdendpoint"
+	"errors"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 type Plan struct {
@@ -16,7 +16,6 @@ type Plans []*Plan
 func (c *Connection) NewPlan() *Plan {
 	plan := new(invdendpoint.Plan)
 	return &Plan{c, plan}
-
 }
 
 func (c *Plan) Create(plan *Plan) (*Plan, error) {
@@ -24,15 +23,12 @@ func (c *Plan) Create(plan *Plan) (*Plan, error) {
 
 	planResp := new(Plan)
 
-
 	if plan == nil {
 		return nil, errors.New("plan is nil")
 	}
 
-
-	//safe prune file data for creation
+	// safe prune file data for creation
 	invdPlanDataToCreate, err := SafePlanForCreation(plan.Plan)
-
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +42,6 @@ func (c *Plan) Create(plan *Plan) (*Plan, error) {
 	planResp.Connection = c.Connection
 
 	return planResp, nil
-
 }
 
 func (c *Plan) Save() error {
@@ -55,7 +50,6 @@ func (c *Plan) Save() error {
 	planResp := new(Plan)
 
 	planDataToUpdate, err := SafePlanForUpdating(c.Plan)
-
 	if err != nil {
 		return err
 	}
@@ -69,20 +63,17 @@ func (c *Plan) Save() error {
 	c.Plan = planResp.Plan
 
 	return nil
-
 }
 
 func (c *Plan) Delete() error {
 	endPoint := c.MakeEndPointURL(invdendpoint.PlansEndPoint) + "/" + c.Id
 
 	err := c.delete(endPoint)
-
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
 func (c *Plan) Retrieve(id string) (*Plan, error) {
@@ -93,13 +84,11 @@ func (c *Plan) Retrieve(id string) (*Plan, error) {
 	plan := &Plan{c.Connection, planEndPoint}
 
 	_, err := c.retrieveDataFromAPI(endPoint, plan)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return plan, nil
-
 }
 
 func (c *Plan) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Plans, error) {
@@ -126,16 +115,13 @@ NEXT:
 
 	for _, plan := range plans {
 		plan.Connection = c.Connection
-
 	}
 
 	return plans, nil
-
 }
 
-//SafeCustomerForCreation prunes plan data for just fields that can be used for creation of a plan
+// SafeCustomerForCreation prunes plan data for just fields that can be used for creation of a plan
 func SafePlanForCreation(plan *invdendpoint.Plan) (*invdendpoint.Plan, error) {
-
 	if plan == nil {
 		return nil, errors.New("plan is nil")
 	}
@@ -158,9 +144,8 @@ func SafePlanForCreation(plan *invdendpoint.Plan) (*invdendpoint.Plan, error) {
 	return planData, nil
 }
 
-//SafeTaskForUpdating prunes plan data for just fields that can be used for updating of a plan
+// SafeTaskForUpdating prunes plan data for just fields that can be used for updating of a plan
 func SafePlanForUpdating(plan *invdendpoint.Plan) (*invdendpoint.Plan, error) {
-
 	if plan == nil {
 		return nil, errors.New("plan is nil")
 	}

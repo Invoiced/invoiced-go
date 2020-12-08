@@ -1,4 +1,4 @@
-//Transactions can represent a charge, payment, refund, or adjustment.
+// Transactions can represent a charge, payment, refund, or adjustment.
 // We record charge and refund transactions for you that happen through Invoiced. The payment transaction type is designated for recording offline payments like checks. Finally, an adjustment transaction represents any additional credit or debits to a customer’s balance.
 // Most transactions will be associated with an invoice, however, not all. For example, if you wanted to credit your customer for $20 you would create an adjustment transaction for -$20 using the customer ID only instead of the invoice ID.
 // We currently support the following payment methods on transactions:
@@ -12,9 +12,10 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"strconv"
 	"errors"
+	"strconv"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 type Transaction struct {
@@ -39,7 +40,6 @@ func (c *Transaction) Count() (int64, error) {
 	}
 
 	return count, nil
-
 }
 
 func (c *Transaction) Create(transaction *Transaction) (*Transaction, error) {
@@ -50,9 +50,8 @@ func (c *Transaction) Create(transaction *Transaction) (*Transaction, error) {
 		return nil, errors.New("transaction cannot be nil")
 	}
 
-	//safe prune invoice data for creation
-	invdTransDataToCreate,err := SafeTransactionForCreation(transaction.Transaction)
-
+	// safe prune invoice data for creation
+	invdTransDataToCreate, err := SafeTransactionForCreation(transaction.Transaction)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +65,6 @@ func (c *Transaction) Create(transaction *Transaction) (*Transaction, error) {
 	txnResp.Connection = c.Connection
 
 	return txnResp, nil
-
 }
 
 func (c *Transaction) Delete() error {
@@ -79,16 +77,14 @@ func (c *Transaction) Delete() error {
 	}
 
 	return nil
-
 }
 
 func (c *Transaction) Save() error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id)
 	txnResp := new(Transaction)
 
-	//safe prune invoice data for updating
-	invdTransDataToUpdate,err := SafeTransactionForUpdate(c.Transaction)
-
+	// safe prune invoice data for updating
+	invdTransDataToUpdate, err := SafeTransactionForUpdate(c.Transaction)
 	if err != nil {
 		return err
 	}
@@ -102,7 +98,6 @@ func (c *Transaction) Save() error {
 	c.Transaction = txnResp.Transaction
 
 	return nil
-
 }
 
 func (c *Transaction) Retrieve(id int64) (*Transaction, error) {
@@ -119,7 +114,6 @@ func (c *Transaction) Retrieve(id int64) (*Transaction, error) {
 	}
 
 	return transaction, nil
-
 }
 
 func (c *Transaction) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, error) {
@@ -145,11 +139,9 @@ NEXT:
 
 	for _, transaction := range transactions {
 		transaction.Connection = c.Connection
-
 	}
 
 	return transactions, nil
-
 }
 
 func (c *Transaction) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Transactions, string, error) {
@@ -166,28 +158,24 @@ func (c *Transaction) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort)
 
 	for _, transaction := range transactions {
 		transaction.Connection = c.Connection
-
 	}
 
 	return transactions, nextEndPoint, nil
-
 }
 
 func (c *Transaction) ListSuccessfulByInvoiceID(invoiceID int64) (Transactions, error) {
-
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
 	filter := invdendpoint.NewFilter()
 	err := filter.Set("invoice", invoiceIDString)
-
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	err = filter.Set("status", "succeeded")
 
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	transactions, apiError := c.ListAll(filter, nil)
@@ -201,11 +189,9 @@ func (c *Transaction) ListSuccessfulByInvoiceID(invoiceID int64) (Transactions, 
 	}
 
 	return transactions, nil
-
 }
 
 func (c *Transaction) ListSuccessfulChargesByInvoiceID(invoiceID int64) (Transactions, error) {
-
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
 	filter := invdendpoint.NewFilter()
@@ -233,20 +219,17 @@ func (c *Transaction) ListSuccessfulChargesByInvoiceID(invoiceID int64) (Transac
 	}
 
 	return transactions, nil
-
 }
 
 func (c *Transaction) ListSuccessfulRefundsByInvoiceID(invoiceID int64) (Transactions, error) {
-
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
 	filter := invdendpoint.NewFilter()
-	err  := filter.Set("invoice", invoiceIDString)
-
+	err := filter.Set("invoice", invoiceIDString)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	err = filter.Set("status", "succeeded")
 
 	if err != nil {
@@ -270,16 +253,13 @@ func (c *Transaction) ListSuccessfulRefundsByInvoiceID(invoiceID int64) (Transac
 	}
 
 	return transactions, nil
-
 }
 
 func (c *Transaction) ListSuccessfulPaymentsByInvoiceID(invoiceID int64) (Transactions, error) {
-
 	invoiceIDString := strconv.FormatInt(invoiceID, 10)
 
 	filter := invdendpoint.NewFilter()
 	err := filter.Set("invoice", invoiceIDString)
-
 	if err != nil {
 		return nil, err
 	}
@@ -306,19 +286,15 @@ func (c *Transaction) ListSuccessfulPaymentsByInvoiceID(invoiceID int64) (Transa
 	}
 
 	return transactions, nil
-
 }
 
 func (c *Transaction) ListSuccessfulChargesAndPaymentsByInvoiceID(invoiceID int64) (Transactions, error) {
-
 	charges, err := c.ListSuccessfulChargesByInvoiceID(invoiceID)
-
 	if err != nil {
 		return nil, err
 	}
 
 	payments, err := c.ListSuccessfulPaymentsByInvoiceID(invoiceID)
-
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +302,6 @@ func (c *Transaction) ListSuccessfulChargesAndPaymentsByInvoiceID(invoiceID int6
 	chargesPayments := append(charges, payments...)
 
 	return chargesPayments, nil
-
 }
 
 func (c *Transaction) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
@@ -335,20 +310,17 @@ func (c *Transaction) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendp
 	emailResp := new(invdendpoint.EmailResponses)
 
 	err := c.create(endPoint, emailReq, emailResp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return *emailResp, nil
-
 }
 
 func (c *Transaction) Refund(refund float64) error {
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TransactionsEndPoint), c.Id) + "/refunds"
 	transaction := new(invdendpoint.Transaction)
 	err := c.create(endPoint, nil, transaction)
-
 	if err != nil {
 		return nil
 	}
@@ -356,7 +328,6 @@ func (c *Transaction) Refund(refund float64) error {
 	c.Transaction = transaction
 
 	return nil
-
 }
 
 func (c *Transaction) InitiateCharge(chargeRequest *invdendpoint.ChargeRequest) (*Transaction, error) {
@@ -376,18 +347,15 @@ func (c *Transaction) InitiateCharge(chargeRequest *invdendpoint.ChargeRequest) 
 	txnResp.Connection = c.Connection
 
 	return txnResp, nil
-
 }
 
-
-//SafeTransactionForCreation prunes transaction data for just fields that can be used for creation of a transaction
+// SafeTransactionForCreation prunes transaction data for just fields that can be used for creation of a transaction
 func SafeTransactionForCreation(transaction *invdendpoint.Transaction) (*invdendpoint.Transaction, error) {
-
-	if transaction == nil  {
+	if transaction == nil {
 		return nil, errors.New("Transaction is nil")
 	}
 
-	transData :=new(invdendpoint.Transaction)
+	transData := new(invdendpoint.Transaction)
 	transData.Customer = transaction.Customer
 	transData.Invoice = transaction.Invoice
 	transData.Date = transaction.Date
@@ -402,18 +370,16 @@ func SafeTransactionForCreation(transaction *invdendpoint.Transaction) (*invdend
 	transData.Notes = transaction.Notes
 	transData.Metadata = transaction.Metadata
 
-
-	return transData,nil
+	return transData, nil
 }
 
-//SafeTransactionForUpdate prunes transaction data for just fields that can be used for creation of a transactiobn
+// SafeTransactionForUpdate prunes transaction data for just fields that can be used for creation of a transactiobn
 func SafeTransactionForUpdate(transaction *invdendpoint.Transaction) (*invdendpoint.Transaction, error) {
-
 	if transaction == nil {
 		return nil, errors.New("Transaction is nil")
 	}
 
-	transData :=new(invdendpoint.Transaction)
+	transData := new(invdendpoint.Transaction)
 
 	transData.Date = transaction.Date
 	transData.Method = transaction.Method
@@ -425,7 +391,5 @@ func SafeTransactionForUpdate(transaction *invdendpoint.Transaction) (*invdendpo
 	transData.Notes = transaction.Notes
 	transData.Metadata = transaction.Metadata
 
-
 	return transData, nil
-
 }

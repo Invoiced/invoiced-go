@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestNote_Create(t *testing.T) {
@@ -17,7 +18,6 @@ func TestNote_Create(t *testing.T) {
 	mockResponse.Notes = "nomenclature"
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,10 +28,9 @@ func TestNote_Create(t *testing.T) {
 
 	entity := conn.NewNote()
 
-	request := invdendpoint.CreateNoteRequest{CustomerID:int64(1234)}
+	request := invdendpoint.CreateNoteRequest{CustomerID: int64(1234)}
 
 	createdEntity, err := entity.Create(request)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -39,7 +38,6 @@ func TestNote_Create(t *testing.T) {
 	if !reflect.DeepEqual(createdEntity.Note, mockResponse) {
 		t.Fatal("entity was not created", createdEntity.Note, mockResponse)
 	}
-
 }
 
 func TestNote_Save(t *testing.T) {
@@ -71,18 +69,15 @@ func TestNote_Save(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.Note) {
 		t.Fatal("Error: entity not updated correctly")
 	}
-
 }
 
 func TestNote_Delete(t *testing.T) {
-
 	key := "api key"
 
 	mockResponse := ""
 	mockResponseId := int64(1234)
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -100,14 +95,12 @@ func TestNote_Delete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
 	}
-
 }
 
 func TestNote_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.Note
+	var mockListResponse [1]invdendpoint.Note
 
 	mockResponse := new(invdendpoint.Note)
 	mockResponse.Id = int64(1234)
@@ -130,7 +123,6 @@ func TestNote_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
@@ -138,5 +130,4 @@ func TestNote_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].Note, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }

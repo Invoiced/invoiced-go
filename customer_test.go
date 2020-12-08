@@ -2,12 +2,13 @@ package invdapi
 
 import (
 	"encoding/json"
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestCustomerMetadata(t *testing.T) {
@@ -19,7 +20,6 @@ func TestCustomerMetadata(t *testing.T) {
 	mockCustomer.Metadata = m
 
 	b, err := json.Marshal(mockCustomer)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,28 +27,25 @@ func TestCustomerMetadata(t *testing.T) {
 	if string(b) != `{"id":34,"metadata":{"integration_name":"QBO"}}` {
 		t.Fatal("Json is wrong", "right json =>", string(b))
 	}
-
 }
 
 func TestCustomerCreate(t *testing.T) {
-
-	//Set up the mock customer response
+	// Set up the mock customer response
 	mockCustomerResponseID := int64(1523)
 	mockCustomerResponse := new(Customer)
 	mockCustomerResponseData := new(invdendpoint.Customer)
 	mockCustomerResponse.Customer = mockCustomerResponseData
 	mockCustomerResponse.Id = mockCustomerResponseID
 
-	//Launch our mock server
+	// Launch our mock server
 	server, err := invdmockserver.New(200, mockCustomerResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer server.Close()
 
-	//Establish our mock connection
+	// Establish our mock connection
 	key := "test api key"
 	conn := MockConnection(key, server)
 
@@ -61,20 +58,18 @@ func TestCustomerCreate(t *testing.T) {
 	customerToCreate.Name = "Test Customer Original " + s
 	customerToCreate.Id = mockCustomerResponse.Id
 	mockCustomerResponse.Name = customerToCreate.Name
-	//mockCustomerResponse.Connection = conn
+	// mockCustomerResponse.Connection = conn
 
-	//Make the call to create our customer
+	// Make the call to create our customer
 	createdCustomer, err := customer.Create(customerToCreate)
-
 	if err != nil {
 		t.Fatal("Error Creating Customer", err)
 	}
 
-	//Customer that we wanted to create should equal the customer we created
+	// Customer that we wanted to create should equal the customer we created
 	if !reflect.DeepEqual(createdCustomer, customerToCreate) {
 		t.Fatal(createdCustomer.Customer, customerToCreate.Customer)
 	}
-
 }
 
 func TestCustomerCreateError(t *testing.T) {
@@ -85,7 +80,6 @@ func TestCustomerCreateError(t *testing.T) {
 	mockErrorResponse.Param = "name"
 
 	server, err := invdmockserver.New(400, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -108,7 +102,6 @@ func TestCustomerCreateError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
 		t.Fatal("Error messages do not match up", mockErrorResponse, ",", apiErr)
 	}
-
 }
 
 func TestCustomerUpdate(t *testing.T) {
@@ -123,7 +116,6 @@ func TestCustomerUpdate(t *testing.T) {
 	mockCustomerResponse.CreatedAt = mockCreatedTime
 
 	server, err := invdmockserver.New(200, mockCustomerResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -149,7 +141,6 @@ func TestCustomerUpdate(t *testing.T) {
 	if !reflect.DeepEqual(mockCustomerResponse, customerToUpdate.Customer) {
 		t.Fatal("Updated Customers Do Not Match Up")
 	}
-
 }
 
 func TestCustomerUpdateError(t *testing.T) {
@@ -160,7 +151,6 @@ func TestCustomerUpdateError(t *testing.T) {
 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
 	server, err := invdmockserver.New(401, mockErrorResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -183,18 +173,15 @@ func TestCustomerUpdateError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestCustomerDelete(t *testing.T) {
-
 	key := "api key"
 
 	mockCustomerResponse := ""
 	mockCustomerID := int64(2341)
 
 	server, err := invdmockserver.New(204, mockCustomerResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -212,7 +199,6 @@ func TestCustomerDelete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occured deleting customer")
 	}
-
 }
 
 func TestCustomerDeleteError(t *testing.T) {
@@ -225,7 +211,6 @@ func TestCustomerDeleteError(t *testing.T) {
 	mockCustomerID := int64(-999)
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", false)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -247,11 +232,9 @@ func TestCustomerDeleteError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestCustomerList(t *testing.T) {
-
 	key := "test api key"
 
 	var mockCustomersResponse invdendpoint.Customers
@@ -268,7 +251,6 @@ func TestCustomerList(t *testing.T) {
 	mockCustomersResponse = append(mockCustomersResponse, *mockCustomerResponse)
 
 	server, err := invdmockserver.New(200, mockCustomersResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -280,7 +262,6 @@ func TestCustomerList(t *testing.T) {
 	customer := conn.NewCustomer()
 
 	retrievedCustomer, err := customer.ListCustomerByNumber("CUST-21312")
-
 	if err != nil {
 		t.Fatal("Error Creating Customer", err)
 	}
@@ -288,7 +269,6 @@ func TestCustomerList(t *testing.T) {
 	if !reflect.DeepEqual(retrievedCustomer.Customer, mockCustomerResponse) {
 		t.Fatal("Retrieved Customer does not match the mock customer retrievedCustomer => ", retrievedCustomer.Customer, ", mockCustomer => ", mockCustomerResponse)
 	}
-
 }
 
 func TestCustomerListError(t *testing.T) {
@@ -301,9 +281,7 @@ func TestCustomerListError(t *testing.T) {
 	mockCustomerNumber := "CUST-33442"
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
-
 	if err != nil {
-
 		t.Fatal(err)
 	}
 
@@ -322,11 +300,9 @@ func TestCustomerListError(t *testing.T) {
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestCustomer_List(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Customers
@@ -342,7 +318,6 @@ func TestCustomer_List(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -354,7 +329,6 @@ func TestCustomer_List(t *testing.T) {
 	entity := conn.NewCustomer()
 
 	entityResp, nextEndpoint, err := entity.List(nil, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -366,11 +340,9 @@ func TestCustomer_List(t *testing.T) {
 	if !reflect.DeepEqual(entityResp[0].Customer, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestCustomer_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.Customer)
@@ -389,7 +361,6 @@ func TestCustomer_Retrieve(t *testing.T) {
 	entity := conn.NewCustomer()
 
 	retrievedTransaction, err := entity.Retrieve(int64(1234))
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -397,11 +368,9 @@ func TestCustomer_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.Customer, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestCustomer_GetBalance(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.CustomerBalance)
@@ -417,7 +386,6 @@ func TestCustomer_GetBalance(t *testing.T) {
 	entity := conn.NewCustomer()
 
 	retrievedItem, err := entity.GetBalance()
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -425,13 +393,12 @@ func TestCustomer_GetBalance(t *testing.T) {
 	if retrievedItem.TotalOutstanding != 1 {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestCustomer_SendStatementEmail(t *testing.T) {
 	key := "test api key"
 
-	var mockEmailResponse [1] invdendpoint.EmailResponse
+	var mockEmailResponse [1]invdendpoint.EmailResponse
 
 	mockResponse := new(invdendpoint.EmailResponse)
 	mockResponse.Id = "abcdef"
@@ -452,7 +419,6 @@ func TestCustomer_SendStatementEmail(t *testing.T) {
 	subjectEntity := conn.NewCustomer()
 
 	sendResponse, err := subjectEntity.SendStatementEmail(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -460,13 +426,12 @@ func TestCustomer_SendStatementEmail(t *testing.T) {
 	if sendResponse[0].Message != "hello test" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestCustomer_SendStatementText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1] invdendpoint.TextResponse
+	var mockTextResponse [1]invdendpoint.TextResponse
 
 	mockResponse := new(invdendpoint.TextResponse)
 	mockResponse.Id = "abcdef"
@@ -487,7 +452,6 @@ func TestCustomer_SendStatementText(t *testing.T) {
 	subjectEntity := conn.NewCustomer()
 
 	sendResponse, err := subjectEntity.SendStatementText(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -495,7 +459,6 @@ func TestCustomer_SendStatementText(t *testing.T) {
 	if sendResponse[0].Message != "hello text" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestCustomer_SendStatementLetter(t *testing.T) {
@@ -518,7 +481,6 @@ func TestCustomer_SendStatementLetter(t *testing.T) {
 	subjectEntity := conn.NewCustomer()
 
 	sendResponse, err := subjectEntity.SendStatementLetter(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -526,7 +488,6 @@ func TestCustomer_SendStatementLetter(t *testing.T) {
 	if sendResponse.State != "queued" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestCustomer_CreateContact(t *testing.T) {
@@ -548,7 +509,6 @@ func TestCustomer_CreateContact(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.CreateContact(conn.NewContact())
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -556,7 +516,6 @@ func TestCustomer_CreateContact(t *testing.T) {
 	if subjectEntity.Name != "entity example" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestCustomer_RetrieveContact(t *testing.T) {
@@ -578,7 +537,6 @@ func TestCustomer_RetrieveContact(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.RetrieveContact(1234)
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -586,7 +544,6 @@ func TestCustomer_RetrieveContact(t *testing.T) {
 	if subjectEntity.Name != "entity example" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestCustomer_UpdateContact(t *testing.T) {
@@ -618,11 +575,9 @@ func TestCustomer_UpdateContact(t *testing.T) {
 	if subjectEntity.Name != "entity example 2" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestCustomer_ListAllContacts(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Contacts
@@ -638,7 +593,6 @@ func TestCustomer_ListAllContacts(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -649,7 +603,6 @@ func TestCustomer_ListAllContacts(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.ListAllContacts()
-
 	if err != nil {
 		t.Fatal("Error with contact", err)
 	}
@@ -657,15 +610,12 @@ func TestCustomer_ListAllContacts(t *testing.T) {
 	if subjectEntity[0].Name != "Mock Contact" {
 		t.Fatal("Retrieval not correct")
 	}
-
 }
 
 func TestCustomer_DeleteContact(t *testing.T) {
-
 	key := "api key"
 
 	server, err := invdmockserver.New(204, nil, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -683,7 +633,6 @@ func TestCustomer_DeleteContact(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred during deletion")
 	}
-
 }
 
 func TestCustomer_CreatePaymentSource_Card(t *testing.T) {
@@ -706,7 +655,6 @@ func TestCustomer_CreatePaymentSource_Card(t *testing.T) {
 	defaultEntity := conn.NewCustomer()
 	intermediate := conn.NewPaymentSource()
 	subjectEntity, err := defaultEntity.CreatePaymentSource(intermediate)
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -718,7 +666,6 @@ func TestCustomer_CreatePaymentSource_Card(t *testing.T) {
 	if subjectEntity.Brand != "Visa" {
 		t.Fatal("Did not instantiate correctly", err)
 	}
-
 }
 
 func TestCustomer_CreatePaymentSource_Acct(t *testing.T) {
@@ -741,7 +688,6 @@ func TestCustomer_CreatePaymentSource_Acct(t *testing.T) {
 	defaultEntity := conn.NewCustomer()
 	intermediate := conn.NewPaymentSource()
 	subjectEntity, err := defaultEntity.CreatePaymentSource(intermediate)
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -753,11 +699,9 @@ func TestCustomer_CreatePaymentSource_Acct(t *testing.T) {
 	if !subjectEntity.Verified {
 		t.Fatal("Did not instantiate correctly", err)
 	}
-
 }
 
 func TestCustomer_ListAllPaymentSources(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.PaymentSources
@@ -772,7 +716,6 @@ func TestCustomer_ListAllPaymentSources(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponseAcct)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -783,7 +726,6 @@ func TestCustomer_ListAllPaymentSources(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.ListAllPaymentSources()
-
 	if err != nil {
 		t.Fatal("Error with source: ", err)
 	}
@@ -795,15 +737,12 @@ func TestCustomer_ListAllPaymentSources(t *testing.T) {
 	if subjectEntity[1].BankAccount.Object != "bank_account" {
 		t.Fatal("Error with operation")
 	}
-
 }
 
 func TestCustomer_DeleteCard(t *testing.T) {
-
 	key := "api key"
 
 	server, err := invdmockserver.New(204, nil, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -819,15 +758,12 @@ func TestCustomer_DeleteCard(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred during deletion")
 	}
-
 }
 
 func TestCustomer_DeleteBankAccount(t *testing.T) {
-
 	key := "api key"
 
 	server, err := invdmockserver.New(204, nil, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -842,7 +778,6 @@ func TestCustomer_DeleteBankAccount(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred during deletion")
 	}
-
 }
 
 func TestCustomer_CreatePendingLineItem(t *testing.T) {
@@ -862,7 +797,6 @@ func TestCustomer_CreatePendingLineItem(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.CreatePendingLineItem(conn.NewPendingLineItem())
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -870,7 +804,6 @@ func TestCustomer_CreatePendingLineItem(t *testing.T) {
 	if subjectEntity.Name != "entity example" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestCustomer_RetrievePendingLineItem(t *testing.T) {
@@ -890,7 +823,6 @@ func TestCustomer_RetrievePendingLineItem(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.RetrievePendingLineItem(1234)
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -898,7 +830,6 @@ func TestCustomer_RetrievePendingLineItem(t *testing.T) {
 	if subjectEntity.Name != "entity example" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestCustomer_UpdatePendingLineItem(t *testing.T) {
@@ -928,15 +859,12 @@ func TestCustomer_UpdatePendingLineItem(t *testing.T) {
 	if subjectEntity.Name != "entity example 2" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestCustomer_DeletePendingLineItem(t *testing.T) {
-
 	key := "api key"
 
 	server, err := invdmockserver.New(204, nil, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -954,11 +882,9 @@ func TestCustomer_DeletePendingLineItem(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred during deletion")
 	}
-
 }
 
 func TestCustomer_ListAllPendingLineItems(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.PendingLineItems
@@ -970,7 +896,6 @@ func TestCustomer_ListAllPendingLineItems(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -981,7 +906,6 @@ func TestCustomer_ListAllPendingLineItems(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.ListAllPendingLineItems()
-
 	if err != nil {
 		t.Fatal("Error with pli", err)
 	}
@@ -989,11 +913,9 @@ func TestCustomer_ListAllPendingLineItems(t *testing.T) {
 	if subjectEntity[0].Name != "Mock Pli" {
 		t.Fatal("Retrieval not correct")
 	}
-
 }
 
 func TestCustomer_RetrieveNotes(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Notes
@@ -1005,7 +927,6 @@ func TestCustomer_RetrieveNotes(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1016,7 +937,6 @@ func TestCustomer_RetrieveNotes(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.RetrieveNotes()
-
 	if err != nil {
 		t.Fatal("Error with note", err)
 	}
@@ -1024,7 +944,6 @@ func TestCustomer_RetrieveNotes(t *testing.T) {
 	if subjectEntity[0].Notes != "Mock Note" {
 		t.Fatal("Retrieval not correct")
 	}
-
 }
 
 func TestCustomer_TriggerInvoice(t *testing.T) {
@@ -1044,7 +963,6 @@ func TestCustomer_TriggerInvoice(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.TriggerInvoice()
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -1052,7 +970,6 @@ func TestCustomer_TriggerInvoice(t *testing.T) {
 	if subjectEntity.Name != "entity example" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }
 
 func TestCustomer_ConsolidateInvoices(t *testing.T) {
@@ -1072,7 +989,6 @@ func TestCustomer_ConsolidateInvoices(t *testing.T) {
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.ConsolidateInvoices()
-
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -1080,5 +996,4 @@ func TestCustomer_ConsolidateInvoices(t *testing.T) {
 	if subjectEntity.Name != "entity example" {
 		t.Fatal("Error: operation not completed correctly")
 	}
-
 }

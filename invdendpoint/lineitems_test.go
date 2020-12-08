@@ -25,7 +25,6 @@ func TestUnMarshalLineItemObject(t *testing.T) {
 	so := new(LineItem)
 
 	err := json.Unmarshal([]byte(s), so)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,5 +56,4 @@ func TestUnMarshalLineItemObject(t *testing.T) {
 	if !so.Taxable {
 		t.Fatal("Item 1 has incorrect taxable")
 	}
-
 }

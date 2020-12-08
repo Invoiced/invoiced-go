@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestCreditNote_Create(t *testing.T) {
@@ -17,7 +18,6 @@ func TestCreditNote_Create(t *testing.T) {
 	mockResponse.Name = "nomenclature"
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,6 @@ func TestCreditNote_Create(t *testing.T) {
 	requestEntity.Name = "nomenclature"
 
 	createdEntity, err := entity.Create(requestEntity)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -42,7 +41,6 @@ func TestCreditNote_Create(t *testing.T) {
 	if !reflect.DeepEqual(createdEntity.CreditNote, mockResponse) {
 		t.Fatal("entity was not created", createdEntity.CreditNote, mockResponse)
 	}
-
 }
 
 func TestCreditNote_Save(t *testing.T) {
@@ -74,7 +72,6 @@ func TestCreditNote_Save(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.CreditNote) {
 		t.Fatal("Error: entity not updated correctly")
 	}
-
 }
 
 func TestCreditNote_Void(t *testing.T) {
@@ -105,18 +102,15 @@ func TestCreditNote_Void(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.CreditNote) {
 		t.Fatal("Error: entity not voided correctly")
 	}
-
 }
 
 func TestCreditNote_Delete(t *testing.T) {
-
 	key := "api key"
 
 	mockResponse := ""
 	mockResponseId := int64(1234)
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -134,11 +128,9 @@ func TestCreditNote_Delete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
 	}
-
 }
 
 func TestCreditNote_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.CreditNote)
@@ -157,7 +149,6 @@ func TestCreditNote_Retrieve(t *testing.T) {
 	entity := conn.NewCreditNote()
 
 	retrievedTransaction, err := entity.Retrieve(int64(1234))
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -165,14 +156,12 @@ func TestCreditNote_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.CreditNote, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestCreditNote_CountErr(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.CreditNote
+	var mockListResponse [1]invdendpoint.CreditNote
 
 	mockResponse := new(invdendpoint.CreditNote)
 	mockResponse.Id = int64(1234)
@@ -200,14 +189,12 @@ func TestCreditNote_CountErr(t *testing.T) {
 	if result != int64(-1) {
 		t.Fatal("Unexpectedly successful")
 	}
-
 }
 
 func TestCreditNote_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.CreditNote
+	var mockListResponse [1]invdendpoint.CreditNote
 
 	mockResponse := new(invdendpoint.CreditNote)
 	mockResponse.Id = int64(1234)
@@ -230,7 +217,6 @@ func TestCreditNote_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
@@ -238,11 +224,9 @@ func TestCreditNote_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].CreditNote, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestCreditNote_ListAttachments(t *testing.T) {
-
 	key := "test api key"
 
 	var mockResponses invdendpoint.Files
@@ -255,7 +239,6 @@ func TestCreditNote_ListAttachments(t *testing.T) {
 	mockResponses = append(mockResponses, *mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -265,7 +248,6 @@ func TestCreditNote_ListAttachments(t *testing.T) {
 	conn := MockConnection(key, server)
 
 	entity, err := conn.NewCreditNote().ListAttachments()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -273,13 +255,12 @@ func TestCreditNote_ListAttachments(t *testing.T) {
 	if !reflect.DeepEqual(entity[0].File, mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
-
 }
 
 func TestCreditNote_SendEmail(t *testing.T) {
 	key := "test api key"
 
-	var mockEmailResponse [1] invdendpoint.EmailResponse
+	var mockEmailResponse [1]invdendpoint.EmailResponse
 
 	mockResponse := new(invdendpoint.EmailResponse)
 	mockResponse.Id = "abcdef"
@@ -300,7 +281,6 @@ func TestCreditNote_SendEmail(t *testing.T) {
 	subjectEntity := conn.NewCreditNote()
 
 	sendResponse, err := subjectEntity.SendEmail(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -308,13 +288,12 @@ func TestCreditNote_SendEmail(t *testing.T) {
 	if sendResponse[0].Message != "hello test" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestCreditNote_SendText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1] invdendpoint.TextResponse
+	var mockTextResponse [1]invdendpoint.TextResponse
 
 	mockResponse := new(invdendpoint.TextResponse)
 	mockResponse.Id = "abcdef"
@@ -335,7 +314,6 @@ func TestCreditNote_SendText(t *testing.T) {
 	subjectEntity := conn.NewCreditNote()
 
 	sendResponse, err := subjectEntity.SendText(nil)
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -343,7 +321,6 @@ func TestCreditNote_SendText(t *testing.T) {
 	if sendResponse[0].Message != "hello text" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }
 
 func TestCreditNote_SendLetter(t *testing.T) {
@@ -366,7 +343,6 @@ func TestCreditNote_SendLetter(t *testing.T) {
 	subjectEntity := conn.NewCreditNote()
 
 	sendResponse, err := subjectEntity.SendLetter()
-
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -374,5 +350,4 @@ func TestCreditNote_SendLetter(t *testing.T) {
 	if sendResponse.State != "queued" {
 		t.Fatal("Error: send not completed correctly")
 	}
-
 }

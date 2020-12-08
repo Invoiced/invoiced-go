@@ -1,11 +1,11 @@
 package invdapi
 
 import (
-"errors"
-"fmt"
-"github.com/Invoiced/invoiced-go/invdendpoint"
-)
+	"errors"
+	"fmt"
 
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+)
 
 type CreditNote struct {
 	*Connection
@@ -17,7 +17,6 @@ type CreditNotes []*CreditNote
 func (c *Connection) NewCreditNote() *CreditNote {
 	creditNote := new(invdendpoint.CreditNote)
 	return &CreditNote{c, creditNote}
-
 }
 
 func (c *CreditNote) Count() (int64, error) {
@@ -30,7 +29,6 @@ func (c *CreditNote) Count() (int64, error) {
 	}
 
 	return count, nil
-
 }
 
 func (c *CreditNote) Create(creditNote *CreditNote) (*CreditNote, error) {
@@ -42,9 +40,8 @@ func (c *CreditNote) Create(creditNote *CreditNote) (*CreditNote, error) {
 		return nil, errors.New("credit note cannot be nil")
 	}
 
-	//safe prune invoice data for creation
-	invdCNToCreate,err := SafeCreditNoteForCreation(creditNote.CreditNote)
-
+	// safe prune invoice data for creation
+	invdCNToCreate, err := SafeCreditNoteForCreation(creditNote.CreditNote)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,6 @@ func (c *CreditNote) Create(creditNote *CreditNote) (*CreditNote, error) {
 	cnResp.Connection = c.Connection
 
 	return cnResp, nil
-
 }
 
 func (c *CreditNote) Delete() error {
@@ -71,25 +67,22 @@ func (c *CreditNote) Delete() error {
 	}
 
 	return nil
-
 }
 
 func (c *CreditNote) Void() (*CreditNote, error) {
-
 	cnResp := new(CreditNote)
 
 	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/void"
 
-	apiErr := c.postWithoutData(endPoint,cnResp)
+	apiErr := c.postWithoutData(endPoint, cnResp)
 
 	if apiErr != nil {
-		return nil,apiErr
+		return nil, apiErr
 	}
 
 	cnResp.Connection = c.Connection
 
-	return cnResp,nil
-
+	return cnResp, nil
 }
 
 func (c *CreditNote) Save() error {
@@ -98,7 +91,6 @@ func (c *CreditNote) Save() error {
 	cnResp := new(CreditNote)
 
 	invdCnToUpdate, err := SafeCreditNoteForUpdate(c.CreditNote)
-
 	if err != nil {
 		return err
 	}
@@ -112,7 +104,6 @@ func (c *CreditNote) Save() error {
 	c.CreditNote = cnResp.CreditNote
 
 	return nil
-
 }
 
 func (c *CreditNote) Retrieve(id int64) (*CreditNote, error) {
@@ -129,7 +120,6 @@ func (c *CreditNote) Retrieve(id int64) (*CreditNote, error) {
 	}
 
 	return creditNote, nil
-
 }
 
 func (c *CreditNote) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (CreditNotes, error) {
@@ -159,7 +149,6 @@ NEXT:
 	}
 
 	return creditNotes, nil
-
 }
 
 func (c *CreditNote) ListAttachments() (Files, error) {
@@ -187,7 +176,6 @@ NEXT:
 	}
 
 	return files, nil
-
 }
 
 func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
@@ -196,13 +184,11 @@ func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoin
 	emailResp := new(invdendpoint.EmailResponses)
 
 	err := c.create(endPoint, emailReq, emailResp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return *emailResp, nil
-
 }
 
 func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
@@ -211,13 +197,11 @@ func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextR
 	resp := new(invdendpoint.TextResponses)
 
 	err := c.create(endPoint, req, resp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return *resp, nil
-
 }
 
 func (c *CreditNote) SendLetter() (*invdendpoint.LetterResponse, error) {
@@ -226,16 +210,12 @@ func (c *CreditNote) SendLetter() (*invdendpoint.LetterResponse, error) {
 	resp := new(invdendpoint.LetterResponse)
 
 	err := c.create(endPoint, nil, resp)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return resp, nil
-
 }
-
-
 
 func (c *CreditNote) String() string {
 	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
@@ -243,16 +223,15 @@ func (c *CreditNote) String() string {
 	return header + " " + "JSON: " + c.CreditNote.String()
 }
 
-//SafeEstimateForCreation prunes credit note data for just fields that can be used for creation of a credit note
+// SafeEstimateForCreation prunes credit note data for just fields that can be used for creation of a credit note
 func SafeCreditNoteForCreation(creditNote *invdendpoint.CreditNote) (*invdendpoint.CreditNote, error) {
-
-	if creditNote == nil  {
+	if creditNote == nil {
 		return nil, errors.New("CreditNote is nil")
 	}
 
-	cnData :=new(invdendpoint.CreditNote)
+	cnData := new(invdendpoint.CreditNote)
 	cnData.Customer = creditNote.Customer
-	cnData.Invoice= creditNote.Invoice
+	cnData.Invoice = creditNote.Invoice
 	cnData.Name = creditNote.Name
 	cnData.Number = creditNote.Number
 	cnData.Currency = creditNote.Currency
@@ -267,17 +246,16 @@ func SafeCreditNoteForCreation(creditNote *invdendpoint.CreditNote) (*invdendpoi
 	cnData.Attachments = creditNote.Attachments
 	cnData.CalculateTax = creditNote.CalculateTax
 
-	return cnData,nil
+	return cnData, nil
 }
 
-//SafeCreditNoteForUpdate prunes creditnote data for just fields that can be used for updating a credit note
+// SafeCreditNoteForUpdate prunes creditnote data for just fields that can be used for updating a credit note
 func SafeCreditNoteForUpdate(creditNote *invdendpoint.CreditNote) (*invdendpoint.CreditNote, error) {
-
-	if creditNote == nil  {
+	if creditNote == nil {
 		return nil, errors.New("CreditNote is nil")
 	}
 
-	cnData :=new(invdendpoint.CreditNote)
+	cnData := new(invdendpoint.CreditNote)
 	cnData.Name = creditNote.Name
 	cnData.Number = creditNote.Number
 	cnData.Currency = creditNote.Currency
@@ -292,5 +270,5 @@ func SafeCreditNoteForUpdate(creditNote *invdendpoint.CreditNote) (*invdendpoint
 	cnData.Attachments = creditNote.Attachments
 	cnData.CalculateTax = creditNote.CalculateTax
 
-	return cnData,nil
+	return cnData, nil
 }

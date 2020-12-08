@@ -1,11 +1,12 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-	"github.com/Invoiced/invoiced-go/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestTaxRate_Create(t *testing.T) {
@@ -17,7 +18,6 @@ func TestTaxRate_Create(t *testing.T) {
 	mockResponse.Name = "nomenclature"
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,6 @@ func TestTaxRate_Create(t *testing.T) {
 	requestEntity.Name = "nomenclature"
 
 	createdEntity, err := entity.Create(requestEntity)
-
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -42,7 +41,6 @@ func TestTaxRate_Create(t *testing.T) {
 	if !reflect.DeepEqual(createdEntity.TaxRate, mockResponse) {
 		t.Fatal("entity was not created", createdEntity.TaxRate, mockResponse)
 	}
-
 }
 
 func TestTaxRate_Save(t *testing.T) {
@@ -74,18 +72,15 @@ func TestTaxRate_Save(t *testing.T) {
 	if !reflect.DeepEqual(mockResponse, entityToUpdate.TaxRate) {
 		t.Fatal("Error: entity not updated correctly")
 	}
-
 }
 
 func TestTaxRate_Delete(t *testing.T) {
-
 	key := "api key"
 
 	mockResponse := ""
 	mockResponseId := "example"
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,11 +98,9 @@ func TestTaxRate_Delete(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
 	}
-
 }
 
 func TestTaxRate_Retrieve(t *testing.T) {
-
 	key := "test api key"
 
 	mockResponse := new(invdendpoint.TaxRate)
@@ -126,7 +119,6 @@ func TestTaxRate_Retrieve(t *testing.T) {
 	entity := conn.NewTaxRate()
 
 	retrievedTransaction, err := entity.Retrieve("example")
-
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
@@ -134,14 +126,12 @@ func TestTaxRate_Retrieve(t *testing.T) {
 	if !reflect.DeepEqual(retrievedTransaction.TaxRate, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
 
 func TestTaxRate_ListAll(t *testing.T) {
-
 	key := "test api key"
 
-	var mockListResponse [1] invdendpoint.TaxRate
+	var mockListResponse [1]invdendpoint.TaxRate
 
 	mockResponse := new(invdendpoint.TaxRate)
 	mockResponse.Id = "example"
@@ -164,7 +154,6 @@ func TestTaxRate_ListAll(t *testing.T) {
 	sorter := invdendpoint.NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
-
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
@@ -172,5 +161,4 @@ func TestTaxRate_ListAll(t *testing.T) {
 	if !reflect.DeepEqual(result[0].TaxRate, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
-
 }
