@@ -70,7 +70,7 @@ func (c *CreditNote) Delete() error {
 func (c *CreditNote) Void() (*CreditNote, error) {
 	cnResp := new(CreditNote)
 
-	endpoint :=  invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
+	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
 
 	apiErr := c.postWithoutData(endpoint, cnResp)
 
@@ -175,7 +175,7 @@ NEXT:
 }
 
 func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
-	endpoint :=  invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
+	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
 
@@ -188,7 +188,7 @@ func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoin
 }
 
 func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
-	endpoint :=  invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
+	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
 
 	resp := new(invdendpoint.TextResponses)
 
@@ -201,7 +201,7 @@ func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextR
 }
 
 func (c *CreditNote) SendLetter() (*invdendpoint.LetterResponse, error) {
-	endpoint :=  invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
+	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
 
 	resp := new(invdendpoint.LetterResponse)
 

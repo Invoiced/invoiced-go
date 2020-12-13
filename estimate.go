@@ -59,7 +59,7 @@ func (c *Estimate) Create(estimate *Estimate) (*Estimate, error) {
 }
 
 func (c *Estimate) Delete() error {
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	apiErr := c.delete(endpoint)
 
@@ -73,7 +73,7 @@ func (c *Estimate) Delete() error {
 func (c *Estimate) Void() (*Estimate, error) {
 	estResp := new(Estimate)
 
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
 
 	apiErr := c.postWithoutData(endpoint, estResp)
 
@@ -87,7 +87,7 @@ func (c *Estimate) Void() (*Estimate, error) {
 }
 
 func (c *Estimate) Save() error {
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	estResp := new(Estimate)
 
@@ -108,7 +108,7 @@ func (c *Estimate) Save() error {
 }
 
 func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(id, 10)
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(id, 10)
 
 	custEndpoint := new(invdendpoint.Estimate)
 
@@ -172,7 +172,7 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 }
 
 func (c *Estimate) GenerateInvoice() (*Invoice, error) {
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/invoice"
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/invoice"
 
 	invResp := c.NewInvoice()
 
@@ -186,7 +186,7 @@ func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 }
 
 func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
 
@@ -199,7 +199,7 @@ func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.
 }
 
 func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
 
 	resp := new(invdendpoint.TextResponses)
 
@@ -212,7 +212,7 @@ func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextRes
 }
 
 func (c *Estimate) SendLetter() (*invdendpoint.LetterResponse, error) {
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
 
 	resp := new(invdendpoint.LetterResponse)
 
@@ -225,7 +225,7 @@ func (c *Estimate) SendLetter() (*invdendpoint.LetterResponse, error) {
 }
 
 func (c *Estimate) ListAttachments() (Files, error) {
-	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
 
 	files := make(Files, 0)
 

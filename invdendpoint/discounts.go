@@ -1,6 +1,5 @@
 package invdendpoint
 
-// Represents the application of a discount to an invoice or line item.
 type Discount struct {
 	Id      int64   `json:"id,omitempty"`      // The discount’s unique ID
 	Amount  float64 `json:"amount,omitempty"`  // Discount amount

@@ -1,6 +1,5 @@
 package invdendpoint
 
-// Contacts can be attached to customers. A contact could represent an additional email recipient for a customer, or perhaps an address in addition to the billing address, like a shipping address.
 type Contact struct {
 	Id         int64  `json:"id,omitempty"`          // The customer’s unique ID
 	Object     string `json:"object,omitempty"`      // Object type, contact

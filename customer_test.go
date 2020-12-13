@@ -373,7 +373,7 @@ func TestCustomer_Retrieve(t *testing.T) {
 func TestCustomer_GetBalance(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.CustomerBalance)
+	mockResponse := new(invdendpoint.Balance)
 	mockResponse.TotalOutstanding = 1
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)

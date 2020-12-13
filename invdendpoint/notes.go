@@ -4,7 +4,6 @@ const NoteEndpoint = "/notes"
 
 type Notes []Note
 
-// Represents a note
 type Note struct {
 	Id        int64  `json:"id,omitempty"`         // The note’s unique ID
 	Object    string `json:"object,omitempty"`     // Object type, note
