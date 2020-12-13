@@ -311,41 +311,35 @@ func SafePaymentForCreation(payment *invdendpoint.Payment) (*invdendpoint.Paymen
 		return nil, errors.New("Payment is nil")
 	}
 
-	transData := new(invdendpoint.Payment)
-	transData.Customer = payment.Customer
-	transData.Invoice = payment.Invoice
-	transData.Date = payment.Date
-	transData.CreditNote = payment.CreditNote
-	transData.Type = payment.Type
-	transData.Method = payment.Method
-	transData.Status = payment.Status
-	transData.Gateway = payment.Gateway
-	transData.GatewayId = payment.GatewayId
-	transData.Currency = payment.Currency
-	transData.Amount = payment.Amount
-	transData.Notes = payment.Notes
-	transData.Metadata = payment.Metadata
+	paymentData := new(invdendpoint.Payment)
+	paymentData.Customer = payment.Customer
+	paymentData.Date = payment.Date
+	paymentData.Method = payment.Method
+	paymentData.Currency = payment.Currency
+	paymentData.Amount = payment.Amount
+	paymentData.Notes = payment.Notes
+	paymentData.Reference = payment.Reference
+	paymentData.AppliedTo = payment.AppliedTo
 
-	return transData, nil
+	return paymentData, nil
 }
 
-// SafePaymentForUpdate prunes payment data for just fields that can be used for creation of a transactiobn
+// SafePaymentForUpdate prunes payment data for just fields that can be used for creation of a payment
 func SafePaymentForUpdate(payment *invdendpoint.Payment) (*invdendpoint.Payment, error) {
 	if payment == nil {
 		return nil, errors.New("Payment is nil")
 	}
 
-	transData := new(invdendpoint.Payment)
+	paymentData := new(invdendpoint.Payment)
 
-	transData.Date = payment.Date
-	transData.Method = payment.Method
-	transData.Status = payment.Status
-	transData.Gateway = payment.Gateway
-	transData.GatewayId = payment.GatewayId
-	transData.Currency = payment.Currency
-	transData.Amount = payment.Amount
-	transData.Notes = payment.Notes
-	transData.Metadata = payment.Metadata
+	paymentData.Customer = payment.Customer
+	paymentData.Date = payment.Date
+	paymentData.Method = payment.Method
+	paymentData.Currency = payment.Currency
+	paymentData.Amount = payment.Amount
+	paymentData.Notes = payment.Notes
+	paymentData.Reference = payment.Reference
+	paymentData.AppliedTo = payment.AppliedTo
 
-	return transData, nil
+	return paymentData, nil
 }
