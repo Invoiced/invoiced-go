@@ -14,10 +14,9 @@ import (
 )
 
 const (
-	requestURL          = "https://api.invoiced.com"
-	devRequestURL       = "https://api.sandbox.invoiced.com"
-	requestType         = "application/json"
-	InvoicedTokenString = "invoicedToken"
+	requestURL    = "https://api.invoiced.com"
+	devRequestURL = "https://api.sandbox.invoiced.com"
+	requestType   = "application/json"
 )
 
 const version = "5.4.10"

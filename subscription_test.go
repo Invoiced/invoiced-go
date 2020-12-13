@@ -26,7 +26,7 @@ func TestSubscriptionCreate(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subscription := conn.NewSubscription()
 
@@ -59,7 +59,7 @@ func TestSubscriptionCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	subscription := conn.NewSubscription()
 	subscriptionToCreate := subscription.NewSubscription()
 	subscriptionToCreate.Customer = 234112
@@ -92,7 +92,7 @@ func TestSubscriptionUpdate(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subscriptionToUpdate := conn.NewSubscription()
 
@@ -124,7 +124,7 @@ func TestSubscriptionUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	subcriptionToUpdate := conn.NewSubscription()
 
 	subcriptionToUpdate.Cycles = 42
@@ -153,7 +153,7 @@ func TestSubscriptionDelete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subscription := conn.NewSubscription()
 
@@ -182,7 +182,7 @@ func TestSubscriptionDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subscription := conn.NewSubscription()
 
@@ -213,7 +213,7 @@ func TestSubscription_Count_Error(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewSubscription()
 
 	result, err := entity.Count()
@@ -240,7 +240,7 @@ func TestSubscriptionRetrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	subscription := conn.NewSubscription()
 
 	retrievedSubscription, err := subscription.Retrieve(mockSubscriptionResponseID)
@@ -268,7 +268,7 @@ func TestSubscriptionRetrieveError(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	subscription := conn.NewSubscription()
 
 	_, err = subscription.Retrieve(mockSubscriptionID)
@@ -297,7 +297,7 @@ func TestSubscription_List(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subscription := conn.NewSubscription()
 
@@ -334,7 +334,7 @@ func TestSubscription_ListAll(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subscription := conn.NewSubscription()
 
@@ -361,7 +361,7 @@ func TestSubscription_Preview(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	subscription := conn.NewSubscription()
 
 	retrievedSubscription, err := subscription.Preview(conn.NewPreviewRequest())

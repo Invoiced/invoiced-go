@@ -47,7 +47,7 @@ func TestCustomerCreate(t *testing.T) {
 
 	// Establish our mock connection
 	key := "test api key"
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -86,7 +86,7 @@ func TestCustomerCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	custConn := conn.NewCustomer()
 
@@ -122,7 +122,7 @@ func TestCustomerUpdate(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customerToUpdate := conn.NewCustomer()
 
@@ -157,7 +157,7 @@ func TestCustomerUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 	customer.Name = "Parag Patel"
@@ -188,7 +188,7 @@ func TestCustomerDelete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -217,7 +217,7 @@ func TestCustomerDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -257,7 +257,7 @@ func TestCustomerList(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -287,7 +287,7 @@ func TestCustomerListError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -324,7 +324,7 @@ func TestCustomer_List(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewCustomer()
 
@@ -357,15 +357,15 @@ func TestCustomer_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewCustomer()
 
-	retrievedTransaction, err := entity.Retrieve(int64(1234))
+	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.Customer, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.Customer, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -382,7 +382,7 @@ func TestCustomer_GetBalance(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewCustomer()
 
 	retrievedItem, err := entity.GetBalance()
@@ -414,7 +414,7 @@ func TestCustomer_SendStatementEmail(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewCustomer()
 
@@ -447,7 +447,7 @@ func TestCustomer_SendStatementText(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewCustomer()
 
@@ -476,7 +476,7 @@ func TestCustomer_SendStatementLetter(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewCustomer()
 
@@ -505,7 +505,7 @@ func TestCustomer_CreateContact(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.CreateContact(conn.NewContact())
@@ -533,7 +533,7 @@ func TestCustomer_RetrieveContact(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.RetrieveContact(1234)
@@ -561,7 +561,7 @@ func TestCustomer_UpdateContact(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity := defaultEntity.NewContact()
@@ -599,7 +599,7 @@ func TestCustomer_ListAllContacts(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.ListAllContacts()
@@ -622,7 +622,7 @@ func TestCustomer_DeleteContact(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 	contact := customer.NewContact()
@@ -650,7 +650,7 @@ func TestCustomer_CreatePaymentSource_Card(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	intermediate := conn.NewPaymentSource()
@@ -683,7 +683,7 @@ func TestCustomer_CreatePaymentSource_Acct(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	intermediate := conn.NewPaymentSource()
@@ -722,7 +722,7 @@ func TestCustomer_ListAllPaymentSources(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.ListAllPaymentSources()
@@ -749,7 +749,7 @@ func TestCustomer_DeleteCard(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 
@@ -770,7 +770,7 @@ func TestCustomer_DeleteBankAccount(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 	err = customer.DeleteBankAccount(int64(1234))
@@ -793,7 +793,7 @@ func TestCustomer_CreatePendingLineItem(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.CreatePendingLineItem(conn.NewPendingLineItem())
@@ -819,7 +819,7 @@ func TestCustomer_RetrievePendingLineItem(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.RetrievePendingLineItem(1234)
@@ -845,7 +845,7 @@ func TestCustomer_UpdatePendingLineItem(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity := defaultEntity.NewPendingLineItem()
@@ -871,7 +871,7 @@ func TestCustomer_DeletePendingLineItem(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
 	contact := customer.NewPendingLineItem()
@@ -902,7 +902,7 @@ func TestCustomer_ListAllPendingLineItems(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.ListAllPendingLineItems()
@@ -933,7 +933,7 @@ func TestCustomer_RetrieveNotes(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.RetrieveNotes()
@@ -959,7 +959,7 @@ func TestCustomer_TriggerInvoice(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.TriggerInvoice()
@@ -985,7 +985,7 @@ func TestCustomer_ConsolidateInvoices(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
 	subjectEntity, err := defaultEntity.ConsolidateInvoices()

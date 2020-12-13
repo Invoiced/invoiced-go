@@ -24,7 +24,7 @@ func TestCreditNote_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewCreditNote()
 
@@ -57,7 +57,7 @@ func TestCreditNote_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewCreditNote()
 
@@ -89,7 +89,7 @@ func TestCreditNote_Void(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewCreditNote()
 
@@ -117,7 +117,7 @@ func TestCreditNote_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewCreditNote()
 
@@ -145,15 +145,15 @@ func TestCreditNote_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewCreditNote()
 
-	retrievedTransaction, err := entity.Retrieve(int64(1234))
+	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.CreditNote, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.CreditNote, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -177,7 +177,7 @@ func TestCreditNote_CountErr(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewCreditNote()
 
 	result, err := entity.Count()
@@ -210,7 +210,7 @@ func TestCreditNote_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewCreditNote()
 
 	filter := invdendpoint.NewFilter()
@@ -245,7 +245,7 @@ func TestCreditNote_ListAttachments(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity, err := conn.NewCreditNote().ListAttachments()
 	if err != nil {
@@ -276,7 +276,7 @@ func TestCreditNote_SendEmail(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewCreditNote()
 
@@ -309,7 +309,7 @@ func TestCreditNote_SendText(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewCreditNote()
 
@@ -338,7 +338,7 @@ func TestCreditNote_SendLetter(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewCreditNote()
 

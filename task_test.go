@@ -24,7 +24,7 @@ func TestTask_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewTask()
 
@@ -57,7 +57,7 @@ func TestTask_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewTask()
 
@@ -87,7 +87,7 @@ func TestTask_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewTask()
 
@@ -115,15 +115,15 @@ func TestTask_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewTask()
 
-	retrievedTransaction, err := entity.Retrieve(int64(1234))
+	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.Task, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.Task, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -147,7 +147,7 @@ func TestTask_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewTask()
 
 	filter := invdendpoint.NewFilter()

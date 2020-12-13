@@ -28,7 +28,7 @@ func TestChasingCadence_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewChasingCadence()
 
 	filter := invdendpoint.NewFilter()

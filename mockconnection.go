@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 )
 
-// MockConnection is helpful when writing tests for
+// mockConnection is helpful when writing tests for
 // functions that use an Invoice connection to interact
 // with the Invoice API. It requires an arbitrary string
 // as its key parameter and an initialized http server.
@@ -16,7 +16,7 @@ import (
 // 	mockInvoiceResponse := new(invdendpoint.Invoice)
 // 	mockInvoiceResponse.Id = int64(12345)
 // 	server, _ := invdmockserver.New(200, mockInvoiceResponse, "json", true)
-// 	conn := MockConnection(key, server)
+// 	conn := mockConnection(key, server)
 // 	invoice := conn.NewInvoice()
 //
 // Make sure that if you have rules that prune `unused-packages`,
@@ -28,7 +28,7 @@ import (
 // 			name = "github.com/Invoiced/invoiced-go"
 // 			unused-packages = false
 
-func MockConnection(key string, server *httptest.Server) *Connection {
+func mockConnection(key string, server *httptest.Server) *Connection {
 	c := new(Connection)
 	c.key = key
 

@@ -24,7 +24,7 @@ func TestFile_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewFile()
 
@@ -56,7 +56,7 @@ func TestFile_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewFile()
 
@@ -84,15 +84,15 @@ func TestFile_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewFile()
 
-	retrievedTransaction, err := entity.Retrieve(int64(1234))
+	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.File, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.File, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }

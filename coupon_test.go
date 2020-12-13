@@ -24,7 +24,7 @@ func TestCoupon_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewCoupon()
 
@@ -57,7 +57,7 @@ func TestCoupon_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewCoupon()
 
@@ -87,7 +87,7 @@ func TestCoupon_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewCoupon()
 
@@ -115,15 +115,15 @@ func TestCoupon_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewCoupon()
 
-	retrievedTransaction, err := entity.Retrieve("example")
+	retrievedPayment, err := entity.Retrieve("example")
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.Coupon, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.Coupon, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -147,7 +147,7 @@ func TestCoupon_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewCoupon()
 
 	filter := invdendpoint.NewFilter()

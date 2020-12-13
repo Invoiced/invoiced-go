@@ -24,7 +24,7 @@ func TestEstimate_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewEstimate()
 
@@ -57,7 +57,7 @@ func TestEstimate_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewEstimate()
 
@@ -87,7 +87,7 @@ func TestEstimate_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewEstimate()
 
@@ -115,15 +115,15 @@ func TestEstimate_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewEstimate()
 
-	retrievedTransaction, err := entity.Retrieve(int64(1234))
+	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.Estimate, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.Estimate, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -147,7 +147,7 @@ func TestEstimate_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewEstimate()
 
 	filter := invdendpoint.NewFilter()
@@ -178,7 +178,7 @@ func TestEstimate_Void(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewEstimate()
 
@@ -212,7 +212,7 @@ func TestEstimate_Count_Error(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewEstimate()
 
 	result, err := entity.Count()
@@ -245,7 +245,7 @@ func TestEstimate_SendEmail(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewEstimate()
 
@@ -278,7 +278,7 @@ func TestEstimate_SendText(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewEstimate()
 
@@ -307,7 +307,7 @@ func TestEstimate_SendLetter(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewEstimate()
 
@@ -343,7 +343,7 @@ func TestEstimate_List(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewEstimate()
 
@@ -374,7 +374,7 @@ func TestEstimate_GenerateInvoice(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewEstimate()
 	subjectEntity, err := defaultEntity.GenerateInvoice()
@@ -406,7 +406,7 @@ func TestEstimate_ListAttachments(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity, err := conn.NewEstimate().ListAttachments()
 	if err != nil {

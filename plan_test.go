@@ -24,7 +24,7 @@ func TestPlan_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewPlan()
 
@@ -57,7 +57,7 @@ func TestPlan_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewPlan()
 
@@ -87,7 +87,7 @@ func TestPlan_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewPlan()
 
@@ -115,15 +115,15 @@ func TestPlan_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewPlan()
 
-	retrievedTransaction, err := entity.Retrieve("example")
+	retrievedPayment, err := entity.Retrieve("example")
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.Plan, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.Plan, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -147,7 +147,7 @@ func TestPlan_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewPlan()
 
 	filter := invdendpoint.NewFilter()
