@@ -24,7 +24,7 @@ func TestNote_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewNote()
 
@@ -54,7 +54,7 @@ func TestNote_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewNote()
 
@@ -84,7 +84,7 @@ func TestNote_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewNote()
 
@@ -116,7 +116,7 @@ func TestNote_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewNote()
 
 	filter := invdendpoint.NewFilter()

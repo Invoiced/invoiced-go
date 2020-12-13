@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestUnMarshalTransactionObject(t *testing.T) {
+func TestUnMarshalPaymentObject(t *testing.T) {
 	s := `{
     "id": 20939,
     "customer": 15460,
@@ -20,13 +20,13 @@ func TestUnMarshalTransactionObject(t *testing.T) {
     "amount": 800,
     "fee": 0,
     "notes": null,
-    "parent_transaction": null,
+    "parent_payment": null,
     "pdf_url": "https://dundermifflin.invoiced.com/payments/IZmXbVOPyvfD3GPBmyd6FwXY/pdf",
     "created_at": 1415228628,
     "metadata": {}
 }`
 
-	so := new(Transaction)
+	so := new(Payment)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {
@@ -34,38 +34,38 @@ func TestUnMarshalTransactionObject(t *testing.T) {
 	}
 
 	if so.Id != 20939 {
-		t.Fatal("Transaction has incorrect periodstart")
+		t.Fatal("Payment has incorrect periodstart")
 	}
 
 	if so.Customer != 15460 {
-		t.Fatal("Transaction has incorrect periodstart")
+		t.Fatal("Payment has incorrect periodstart")
 	}
 
 	if so.Invoice != 44648 {
-		t.Fatal("Transaction has incorrect invoice")
+		t.Fatal("Payment has incorrect invoice")
 	}
 
 	if so.Date != 1410843600 {
-		t.Fatal("Transaction has incorrect invoice")
+		t.Fatal("Payment has incorrect invoice")
 	}
 
 	if so.Type != "payment" {
-		t.Fatal("Transaction has incorrect type")
+		t.Fatal("Payment has incorrect type")
 	}
 
 	if so.Currency != "usd" {
-		t.Fatal("Transaction has incorrect currency")
+		t.Fatal("Payment has incorrect currency")
 	}
 
 	if so.Amount != 800 {
-		t.Fatal("Transaction has incorrect amount")
+		t.Fatal("Payment has incorrect amount")
 	}
 
 	if so.PdfUrl != "https://dundermifflin.invoiced.com/payments/IZmXbVOPyvfD3GPBmyd6FwXY/pdf" {
-		t.Fatal("Transaction has incorrect pdf")
+		t.Fatal("Payment has incorrect pdf")
 	}
 
 	if so.CreatedAt != 1415228628 {
-		t.Fatal("Transaction has incorrect createdAt")
+		t.Fatal("Payment has incorrect createdAt")
 	}
 }

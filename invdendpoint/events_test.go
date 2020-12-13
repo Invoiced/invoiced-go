@@ -12,7 +12,7 @@ import (
 func TestUnMarshalEventObject(t *testing.T) {
 	s := `{
     "id": 1228003,
-    "type": "transaction.created",
+    "type": "payment.created",
     "data": {
         "object": {
             "amount": 55,
@@ -28,7 +28,7 @@ func TestUnMarshalEventObject(t *testing.T) {
             "metadata": [],
             "method": "other",
             "notes": null,
-            "parent_transaction": null,
+            "parent_payment": null,
             "status": "succeeded",
             "theme": null,
             "type": "payment",
@@ -49,7 +49,7 @@ func TestUnMarshalEventObject(t *testing.T) {
 		t.Fatal("Event id is incorrect")
 	}
 
-	if so.Type != "transaction.created" {
+	if so.Type != "payment.created" {
 		t.Fatal("Event type is incorrect")
 	}
 
@@ -68,7 +68,7 @@ func TestUnMarshalEventObject(t *testing.T) {
 	           "metadata": [],
 	           "method": "other",
 	           "notes": null,
-	           "parent_transaction": null,
+	           "parent_payment": null,
 	           "status": "succeeded",
 	           "theme": null,
 	           "type": "payment",

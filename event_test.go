@@ -24,7 +24,7 @@ func TestEvent_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewEvent()
 
 	filter := invdendpoint.NewFilter()
@@ -57,7 +57,7 @@ func TestEvent_List(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewEvent()
 
@@ -87,15 +87,15 @@ func TestEvent_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewEvent()
 
-	retrievedTransaction, err := entity.Retrieve(int64(1234))
+	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.Event, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.Event, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }

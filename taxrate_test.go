@@ -24,7 +24,7 @@ func TestTaxRate_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewTaxRate()
 
@@ -57,7 +57,7 @@ func TestTaxRate_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewTaxRate()
 
@@ -87,7 +87,7 @@ func TestTaxRate_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewTaxRate()
 
@@ -115,15 +115,15 @@ func TestTaxRate_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewTaxRate()
 
-	retrievedTransaction, err := entity.Retrieve("example")
+	retrievedPayment, err := entity.Retrieve("example")
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.TaxRate, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.TaxRate, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -147,7 +147,7 @@ func TestTaxRate_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewTaxRate()
 
 	filter := invdendpoint.NewFilter()

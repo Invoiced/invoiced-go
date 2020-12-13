@@ -2,8 +2,8 @@ package invdendpoint
 
 import (
 	"net/url"
-	"strings"
 	"sort"
+	"strings"
 )
 
 type SortOrder int

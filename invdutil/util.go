@@ -1,9 +1,10 @@
 package invdutil
 
 import (
-	"gopkg.in/yaml.v2"
-	"path/filepath"
 	"io/ioutil"
+	"path/filepath"
+
+	"gopkg.in/yaml.v2"
 )
 
 type YamlConfigFile struct {

@@ -26,7 +26,7 @@ func TestItem_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	requestEntity := conn.NewItem()
 
@@ -61,7 +61,7 @@ func TestItem_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewItem()
 
@@ -91,7 +91,7 @@ func TestItem_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewItem()
 
@@ -100,7 +100,7 @@ func TestItem_Delete(t *testing.T) {
 	err = entity.Delete()
 
 	if err != nil {
-		t.Fatal("Error Occured Deleting Transaction")
+		t.Fatal("Error Occured Deleting Payment")
 	}
 }
 
@@ -121,15 +121,15 @@ func TestItem_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewItem()
 
-	retrievedTransaction, err := entity.Retrieve(mockResponseId)
+	retrievedPayment, err := entity.Retrieve(mockResponseId)
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedTransaction.Item, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment.Item, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -153,7 +153,7 @@ func TestItem_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewItem()
 
 	filter := invdendpoint.NewFilter()

@@ -1,10 +1,10 @@
 package invdendpoint
 
 import (
-	"net/url"
-	"strconv"
 	"errors"
+	"net/url"
 	"sort"
+	"strconv"
 )
 
 type Filter struct {

@@ -8,7 +8,7 @@ This repository contains the Go client library for the [Invoiced](https://invoic
 
 ## API Documentation
 
-[The API Documenation](http://invoiced.com/docs/api/) is good to look at, as it list fields which can used for creating versus updating objects.  The Go Client Library uses all of the endpoint object's fields.  The server will  simply return an error if you try to use a field that should not be used during a create or update call.
+[The API Documentation](https://www.invoiced.com/resources/docs/api/?go#) is good to look at, as it list fields which can used for creating versus updating objects.  The Go Client Library uses all of the endpoint object's fields.  The server will  simply return an error if you try to use a field that should not be used during a create or update call.
 
 ## Installing
 

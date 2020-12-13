@@ -27,7 +27,7 @@ func TestInvoiceCreate(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -60,7 +60,7 @@ func TestInvoiceCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -97,7 +97,7 @@ func TestInvoiceUpdate(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoiceToUpdate := conn.NewInvoice()
 	invoiceToUpdate.Balance = 42.22
@@ -127,7 +127,7 @@ func TestInvoiceUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoiceToUpdate := conn.NewInvoice()
 
@@ -157,7 +157,7 @@ func TestInvoiceDelete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -184,7 +184,7 @@ func TestInvoiceDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -221,7 +221,7 @@ func TestInvoiceListAllByNumber(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -257,7 +257,7 @@ func TestInvoiceList(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -291,7 +291,7 @@ func TestInvoiceListError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	invoice := conn.NewInvoice()
 
@@ -325,7 +325,7 @@ func TestInvoice_Count_Error(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewInvoice()
 
 	result, err := entity.Count()
@@ -354,7 +354,7 @@ func TestInvoice_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 	entity := conn.NewInvoice()
 
 	retrievedEntity, err := entity.Retrieve(int64(1234))
@@ -382,7 +382,7 @@ func TestInvoice_Void(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewInvoice()
 
@@ -416,7 +416,7 @@ func TestInvoice_SendEmail(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewInvoice()
 
@@ -449,7 +449,7 @@ func TestInvoice_SendText(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewInvoice()
 
@@ -478,7 +478,7 @@ func TestInvoice_SendLetter(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewInvoice()
 
@@ -507,7 +507,7 @@ func TestInvoice_Pay(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity := conn.NewInvoice()
 
@@ -541,7 +541,7 @@ func TestInvoice_ListAttachments(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewInvoice()
 	entity.Id = 2
@@ -574,7 +574,7 @@ func TestInvoice_RetrieveNotes(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	entity := conn.NewInvoice()
 	entity.Id = 2
@@ -600,7 +600,7 @@ func TestInvoice_CreatePaymentPlan(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	subjectEntity, err := conn.NewInvoice().CreatePaymentPlan(conn.NewPaymentPlanRequest())
 	if err != nil {
@@ -624,7 +624,7 @@ func TestInvoice_RetrievePaymentPlan(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewInvoice()
 	subjectEntity, err := defaultEntity.RetrievePaymentPlan()
@@ -647,7 +647,7 @@ func TestInvoice_CancelPaymentPlan(t *testing.T) {
 
 	defer server.Close()
 
-	conn := MockConnection(key, server)
+	conn := mockConnection(key, server)
 
 	err = conn.NewInvoice().CancelPaymentPlan()
 
