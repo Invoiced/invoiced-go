@@ -1,6 +1,6 @@
 package invdendpoint
 
-const NotesEndPoint = "/notes"
+const NoteEndpoint = "/notes"
 
 type Notes []Note
 

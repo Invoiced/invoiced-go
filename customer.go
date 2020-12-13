@@ -32,9 +32,7 @@ func (c *Connection) NewPendingLineItem() *invdendpoint.PendingLineItem {
 }
 
 func (c *Customer) Count() (int64, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CustomersEndPoint)
-
-	count, apiErr := c.count(endPoint)
+	count, apiErr := c.count(invdendpoint.CustomerEndpoint)
 
 	if apiErr != nil {
 		return -1, apiErr
@@ -44,7 +42,6 @@ func (c *Customer) Count() (int64, error) {
 }
 
 func (c *Customer) Create(customer *Customer) (*Customer, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CustomersEndPoint)
 	custResp := new(Customer)
 
 	if customer == nil {
@@ -56,7 +53,7 @@ func (c *Customer) Create(customer *Customer) (*Customer, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, custDataToCreate, custResp)
+	apiErr := c.create(invdendpoint.CustomerEndpoint, custDataToCreate, custResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -68,9 +65,9 @@ func (c *Customer) Create(customer *Customer) (*Customer, error) {
 }
 
 func (c *Customer) Delete() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	apiErr := c.delete(endPoint)
+	apiErr := c.delete(endpoint)
 
 	if apiErr != nil {
 		return apiErr
@@ -80,7 +77,7 @@ func (c *Customer) Delete() error {
 }
 
 func (c *Customer) Save() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	custDataToUpdate, err := SafeCustomerForUpdate(c.Customer)
 	if err != nil {
@@ -89,7 +86,7 @@ func (c *Customer) Save() error {
 
 	custResp := new(Customer)
 
-	apiErr := c.update(endPoint, custDataToUpdate, custResp)
+	apiErr := c.update(endpoint, custDataToUpdate, custResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -101,11 +98,11 @@ func (c *Customer) Save() error {
 }
 
 func (c *Customer) FreeUpdate(customerData interface{}) error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	custResp := new(Customer)
 
-	apiErr := c.update(endPoint, customerData, custResp)
+	apiErr := c.update(endpoint, customerData, custResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -117,13 +114,13 @@ func (c *Customer) FreeUpdate(customerData interface{}) error {
 }
 
 func (c *Customer) Retrieve(id int64) (*Customer, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), id)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndPoint := new(invdendpoint.Customer)
+	custEndpoint := new(invdendpoint.Customer)
 
-	customer := &Customer{c.Connection, custEndPoint}
+	customer := &Customer{c.Connection, custEndpoint}
 
-	_, apiErr := c.retrieveDataFromAPI(endPoint, customer)
+	_, apiErr := c.retrieveDataFromAPI(endpoint, customer)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -133,15 +130,15 @@ func (c *Customer) Retrieve(id int64) (*Customer, error) {
 }
 
 func (c *Customer) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Customers, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CustomersEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := invdendpoint.CustomerEndpoint
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	customers := make(Customers, 0)
 
 NEXT:
 	tmpCustomers := make(Customers, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpCustomers)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpCustomers)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -149,7 +146,7 @@ NEXT:
 
 	customers = append(customers, tmpCustomers...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -161,12 +158,12 @@ NEXT:
 }
 
 func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Customers, string, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CustomersEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := invdendpoint.CustomerEndpoint
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	customers := make(Customers, 0)
 
-	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &customers)
+	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &customers)
 
 	if apiErr != nil {
 		return nil, "", apiErr
@@ -176,7 +173,7 @@ func (c *Customer) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (C
 		customer.Connection = c.Connection
 	}
 
-	return customers, nextEndPoint, nil
+	return customers, nextEndpoint, nil
 }
 
 func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error) {
@@ -200,11 +197,11 @@ func (c *Customer) ListCustomerByNumber(customerNumber string) (*Customer, error
 }
 
 func (c *Customer) GetBalance() (*invdendpoint.CustomerBalance, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/balance"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/balance"
 
 	custBalance := new(invdendpoint.CustomerBalance)
 
-	_, apiErr := c.retrieveDataFromAPI(endPoint, custBalance)
+	_, apiErr := c.retrieveDataFromAPI(endpoint, custBalance)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -214,10 +211,10 @@ func (c *Customer) GetBalance() (*invdendpoint.CustomerBalance, error) {
 }
 
 func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/emails"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
 	custStmtResp := new(invdendpoint.EmailResponses)
-	err := c.create(endPoint, custStmtReq, custStmtResp)
+	err := c.create(endpoint, custStmtReq, custStmtResp)
 	if err != nil {
 		return nil, err
 	}
@@ -226,10 +223,10 @@ func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (i
 }
 
 func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/text_messages"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
 
 	custStmtResp := new(invdendpoint.TextResponses)
-	err := c.create(endPoint, custStmtReq, custStmtResp)
+	err := c.create(endpoint, custStmtReq, custStmtResp)
 	if err != nil {
 		return nil, err
 	}
@@ -238,10 +235,10 @@ func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (inv
 }
 
 func (c *Customer) SendStatementLetter(custStmtReq *invdendpoint.LetterRequest) (*invdendpoint.LetterResponse, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/letters"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
 
 	custStmtResp := new(invdendpoint.LetterResponse)
-	err := c.create(endPoint, custStmtReq, custStmtResp)
+	err := c.create(endpoint, custStmtReq, custStmtResp)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +247,7 @@ func (c *Customer) SendStatementLetter(custStmtReq *invdendpoint.LetterRequest) 
 }
 
 func (c *Customer) CreateContact(contact *invdendpoint.Contact) (*invdendpoint.Contact, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/contacts"
 
 	contactDataToCreate, err := SafeContactForCreation(contact)
 	if err != nil {
@@ -259,7 +256,7 @@ func (c *Customer) CreateContact(contact *invdendpoint.Contact) (*invdendpoint.C
 
 	contResp := new(invdendpoint.Contact)
 
-	err = c.create(endPoint, contactDataToCreate, contResp)
+	err = c.create(endpoint, contactDataToCreate, contResp)
 
 	if err != nil {
 		return nil, err
@@ -269,11 +266,11 @@ func (c *Customer) CreateContact(contact *invdendpoint.Contact) (*invdendpoint.C
 }
 
 func (c *Customer) RetrieveContact(contactID int64) (*invdendpoint.Contact, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts/" + strconv.FormatInt(contactID, 10)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/contacts/" + strconv.FormatInt(contactID, 10)
 
 	retrievedContact := new(invdendpoint.Contact)
 
-	_, err := c.retrieveDataFromAPI(endPoint, retrievedContact)
+	_, err := c.retrieveDataFromAPI(endpoint, retrievedContact)
 	if err != nil {
 		return nil, err
 	}
@@ -291,11 +288,11 @@ func (c *Customer) UpdateContact(contactToUpdate *invdendpoint.Contact) (*invden
 		return nil, err
 	}
 
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts/" + strconv.FormatInt(contactToUpdate.Id, 10)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/contacts/" + strconv.FormatInt(contactToUpdate.Id, 10)
 
 	contResp := new(invdendpoint.Contact)
 
-	err = c.update(endPoint, contactDataToUpdate, contResp)
+	err = c.update(endpoint, contactDataToUpdate, contResp)
 
 	if err != nil {
 		return nil, err
@@ -305,14 +302,14 @@ func (c *Customer) UpdateContact(contactToUpdate *invdendpoint.Contact) (*invden
 }
 
 func (c *Customer) ListAllContacts() (invdendpoint.Contacts, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/contacts"
 
 	contacts := make(invdendpoint.Contacts, 0)
 
 NEXT:
 	tmpContacts := make(invdendpoint.Contacts, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpContacts)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpContacts)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -320,7 +317,7 @@ NEXT:
 
 	contacts = append(contacts, tmpContacts...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -328,9 +325,9 @@ NEXT:
 }
 
 func (c *Customer) DeleteContact(contactID int64) error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/contacts/" + strconv.FormatInt(contactID, 10)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/contacts/" + strconv.FormatInt(contactID, 10)
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -339,14 +336,14 @@ func (c *Customer) DeleteContact(contactID int64) error {
 }
 
 func (c *Customer) RetrieveNotes() (invdendpoint.Notes, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/notes"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/notes"
 
 	notes := make(invdendpoint.Notes, 0)
 
 NEXT:
 	tmpNotes := make(invdendpoint.Notes, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpNotes)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpNotes)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -354,7 +351,7 @@ NEXT:
 
 	notes = append(notes, tmpNotes...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -362,7 +359,7 @@ NEXT:
 }
 
 func (c *Customer) CreatePaymentSource(source *invdendpoint.PaymentSource) (*invdendpoint.PaymentSource, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/payment_sources"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/payment_sources"
 
 	sourceDataToCreate, err := SafeSourceForCreation(source)
 	if err != nil {
@@ -371,7 +368,7 @@ func (c *Customer) CreatePaymentSource(source *invdendpoint.PaymentSource) (*inv
 
 	resp := new(invdendpoint.PaymentSource)
 
-	err = c.create(endPoint, sourceDataToCreate, resp)
+	err = c.create(endpoint, sourceDataToCreate, resp)
 
 	if err != nil {
 		return nil, err
@@ -396,14 +393,14 @@ func SafeSourceForCreation(source *invdendpoint.PaymentSource) (*invdendpoint.Pa
 }
 
 func (c *Customer) ListAllPaymentSources() (invdendpoint.PaymentSources, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/payment_sources"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/payment_sources"
 
 	sources := make(invdendpoint.PaymentSources, 0)
 
 NEXT:
 	tmpSources := make(invdendpoint.PaymentSources, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpSources)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpSources)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -411,7 +408,7 @@ NEXT:
 
 	sources = append(sources, tmpSources...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -419,9 +416,9 @@ NEXT:
 }
 
 func (c *Customer) DeleteCard(cardID int64) error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/cards/" + strconv.FormatInt(cardID, 10)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/cards/" + strconv.FormatInt(cardID, 10)
 
-	apiErr := c.delete(endPoint)
+	apiErr := c.delete(endpoint)
 
 	if apiErr != nil {
 		return apiErr
@@ -431,9 +428,9 @@ func (c *Customer) DeleteCard(cardID int64) error {
 }
 
 func (c *Customer) DeleteBankAccount(acctID int64) error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/bank_accounts/" + strconv.FormatInt(acctID, 10)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/bank_accounts/" + strconv.FormatInt(acctID, 10)
 
-	apiErr := c.delete(endPoint)
+	apiErr := c.delete(endpoint)
 
 	if apiErr != nil {
 		return apiErr
@@ -443,7 +440,7 @@ func (c *Customer) DeleteBankAccount(acctID int64) error {
 }
 
 func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLineItem) (*invdendpoint.PendingLineItem, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/line_items"
 
 	pliDataToUpdate, err := SafePendingLineItemForCreation(pendingLineItem)
 	if err != nil {
@@ -452,7 +449,7 @@ func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 
 	pendingLineItemResp := new(invdendpoint.PendingLineItem)
 
-	err = c.create(endPoint, pliDataToUpdate, pendingLineItemResp)
+	err = c.create(endpoint, pliDataToUpdate, pendingLineItemResp)
 
 	if err != nil {
 		return nil, err
@@ -462,11 +459,11 @@ func (c *Customer) CreatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 }
 
 func (c *Customer) RetrievePendingLineItem(id int64) (*invdendpoint.PendingLineItem, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items/" + strconv.FormatInt(id, 10)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/line_items/" + strconv.FormatInt(id, 10)
 
 	retrievedPendingLineItem := new(invdendpoint.PendingLineItem)
 
-	_, err := c.retrieveDataFromAPI(endPoint, retrievedPendingLineItem)
+	_, err := c.retrieveDataFromAPI(endpoint, retrievedPendingLineItem)
 	if err != nil {
 		return nil, err
 	}
@@ -479,7 +476,7 @@ func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 		return nil, errors.New("Need to supply a pending line item id in order to update a pending line item")
 	}
 
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items/" + strconv.FormatInt(pendingLineItem.Id, 10)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/line_items/" + strconv.FormatInt(pendingLineItem.Id, 10)
 
 	pliDataToUpdate, err := SafePendingLineItemForUpdate(pendingLineItem)
 	if err != nil {
@@ -488,7 +485,7 @@ func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 
 	pendingLineItemResp := new(invdendpoint.PendingLineItem)
 
-	err = c.update(endPoint, pliDataToUpdate, pendingLineItemResp)
+	err = c.update(endpoint, pliDataToUpdate, pendingLineItemResp)
 
 	if err != nil {
 		return nil, err
@@ -498,14 +495,14 @@ func (c *Customer) UpdatePendingLineItem(pendingLineItem *invdendpoint.PendingLi
 }
 
 func (c *Customer) ListAllPendingLineItems() (invdendpoint.PendingLineItems, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/line_items"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/line_items"
 
 	plis := make(invdendpoint.PendingLineItems, 0)
 
 NEXT:
 	tmpPlis := make(invdendpoint.PendingLineItems, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpPlis)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpPlis)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -513,7 +510,7 @@ NEXT:
 
 	plis = append(plis, tmpPlis...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -521,11 +518,11 @@ NEXT:
 }
 
 func (c *Customer) TriggerInvoice() (*Invoice, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/invoices"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/invoices"
 
 	invoice := c.NewInvoice()
 
-	err := c.create(endPoint, nil, invoice)
+	err := c.create(endpoint, nil, invoice)
 	if err != nil {
 		return nil, err
 	}
@@ -534,11 +531,11 @@ func (c *Customer) TriggerInvoice() (*Invoice, error) {
 }
 
 func (c *Customer) ConsolidateInvoices() (*Invoice, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id) + "/consolidate_invoices"
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/consolidate_invoices"
 
 	invoice := c.NewInvoice()
 
-	err := c.create(endPoint, nil, invoice)
+	err := c.create(endpoint, nil, invoice)
 	if err != nil {
 		return nil, err
 	}
@@ -547,9 +544,9 @@ func (c *Customer) ConsolidateInvoices() (*Invoice, error) {
 }
 
 func (c *Customer) DeletePendingLineItem(id int64) error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CustomersEndPoint), c.Id)
+	endpoint :=  invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}

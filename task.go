@@ -2,6 +2,7 @@ package invdapi
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
@@ -19,7 +20,7 @@ func (c *Connection) NewTask() *Task {
 }
 
 func (c *Task) Create(task *Task) (*Task, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.TaskEndPoint)
+	endpoint := invdendpoint.TaskEndpoint
 
 	taskResp := new(Task)
 
@@ -29,7 +30,7 @@ func (c *Task) Create(task *Task) (*Task, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdTaskDataToCreate, taskResp)
+	apiErr := c.create(endpoint, invdTaskDataToCreate, taskResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -41,7 +42,7 @@ func (c *Task) Create(task *Task) (*Task, error) {
 }
 
 func (c *Task) Save() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TaskEndPoint), c.Id)
+	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	taskResp := new(Task)
 
@@ -50,7 +51,7 @@ func (c *Task) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, taskDataToUpdate, taskResp)
+	apiErr := c.update(endpoint, taskDataToUpdate, taskResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -62,9 +63,9 @@ func (c *Task) Save() error {
 }
 
 func (c *Task) Delete() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TaskEndPoint), c.Id)
+	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -73,13 +74,13 @@ func (c *Task) Delete() error {
 }
 
 func (c *Task) Retrieve(id int64) (*Task, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.TaskEndPoint), id)
+	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	taskEndPoint := new(invdendpoint.Task)
+	taskEndpoint := new(invdendpoint.Task)
 
-	task := &Task{c.Connection, taskEndPoint}
+	task := &Task{c.Connection, taskEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endPoint, task)
+	_, err := c.retrieveDataFromAPI(endpoint, task)
 	if err != nil {
 		return nil, err
 	}
@@ -88,16 +89,16 @@ func (c *Task) Retrieve(id int64) (*Task, error) {
 }
 
 func (c *Task) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Tasks, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.TaskEndPoint)
+	endpoint := invdendpoint.TaskEndpoint
 
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	tasks := make(Tasks, 0)
 
 NEXT:
 	tmpTasks := make(Tasks, 0)
 
-	endPointTmp, apiErr := c.retrieveDataFromAPI(endPoint, &tmpTasks)
+	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpTasks)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -105,7 +106,7 @@ NEXT:
 
 	tasks = append(tasks, tmpTasks...)
 
-	if endPointTmp != "" {
+	if endpointTmp != "" {
 		goto NEXT
 	}
 

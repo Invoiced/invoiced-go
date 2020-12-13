@@ -1,6 +1,6 @@
 package invdendpoint
 
-const ItemEndPoint = "/items"
+const ItemEndpoint = "/items"
 
 // An item represents a product or service that you sell. Items can be used to generate line items and can also be used as subscription addons.
 

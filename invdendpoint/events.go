@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const EventsEndPoint = "/events"
+const EventEndpoint = "/events"
 
 type Events []Event
 

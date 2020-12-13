@@ -1,6 +1,6 @@
 package invdendpoint
 
-const ChargesEndPoint = "/charges"
+const ChargeEndpoint = "/charges"
 
 type ChargeRequest struct {
 	Customer          int64         `json:"customer,omitempty"`            // Customer ID, required if invoice ID is not supplied

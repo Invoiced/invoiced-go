@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-const CustomersEndPoint = "/customers"
+const CustomerEndpoint = "/customers"
 
 type Customers []Customer
 

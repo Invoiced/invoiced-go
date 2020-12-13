@@ -1,6 +1,6 @@
 package invdendpoint
 
-const ChasingCadencesEndPoint = "/chasing_cadences"
+const ChasingCadenceEndpoint = "/chasing_cadences"
 
 type ChasingCadence struct {
 	AssignmentConditions string        `json:"assignment_conditions,omitempty"`

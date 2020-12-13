@@ -19,7 +19,7 @@ func (c *Connection) NewPlan() *Plan {
 }
 
 func (c *Plan) Create(plan *Plan) (*Plan, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.PlansEndPoint)
+	endpoint := invdendpoint.PlanEndpoint
 
 	planResp := new(Plan)
 
@@ -33,7 +33,7 @@ func (c *Plan) Create(plan *Plan) (*Plan, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdPlanDataToCreate, planResp)
+	apiErr := c.create(endpoint, invdPlanDataToCreate, planResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -45,7 +45,7 @@ func (c *Plan) Create(plan *Plan) (*Plan, error) {
 }
 
 func (c *Plan) Save() error {
-	endPoint := c.MakeEndPointURL(invdendpoint.PlansEndPoint) + "/" + c.Id
+	endpoint := invdendpoint.PlanEndpoint + "/" + c.Id
 
 	planResp := new(Plan)
 
@@ -54,7 +54,7 @@ func (c *Plan) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, planDataToUpdate, planResp)
+	apiErr := c.update(endpoint, planDataToUpdate, planResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -66,9 +66,9 @@ func (c *Plan) Save() error {
 }
 
 func (c *Plan) Delete() error {
-	endPoint := c.MakeEndPointURL(invdendpoint.PlansEndPoint) + "/" + c.Id
+	endpoint := invdendpoint.PlanEndpoint + "/" + c.Id
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -77,13 +77,13 @@ func (c *Plan) Delete() error {
 }
 
 func (c *Plan) Retrieve(id string) (*Plan, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.PlansEndPoint) + "/" + id
+	endpoint := invdendpoint.PlanEndpoint + "/" + id
 
-	planEndPoint := new(invdendpoint.Plan)
+	planEndpoint := new(invdendpoint.Plan)
 
-	plan := &Plan{c.Connection, planEndPoint}
+	plan := &Plan{c.Connection, planEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endPoint, plan)
+	_, err := c.retrieveDataFromAPI(endpoint, plan)
 	if err != nil {
 		return nil, err
 	}
@@ -92,16 +92,16 @@ func (c *Plan) Retrieve(id string) (*Plan, error) {
 }
 
 func (c *Plan) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Plans, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.PlansEndPoint)
+	endpoint := invdendpoint.PlanEndpoint
 
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	plans := make(Plans, 0)
 
 NEXT:
 	tmpPlans := make(Plans, 0)
 
-	endPointTmp, apiErr := c.retrieveDataFromAPI(endPoint, &tmpPlans)
+	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpPlans)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -109,7 +109,7 @@ NEXT:
 
 	plans = append(plans, tmpPlans...)
 
-	if endPointTmp != "" {
+	if endpointTmp != "" {
 		goto NEXT
 	}
 

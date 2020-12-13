@@ -1,6 +1,6 @@
 package invdendpoint
 
-const CouponsEndPoint = "/coupons"
+const CouponEndpoint = "/coupons"
 
 type Coupon struct {
 	Id             string                 `json:"id,omitempty"`              // The discount’s unique ID

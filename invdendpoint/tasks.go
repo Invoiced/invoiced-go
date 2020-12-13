@@ -1,6 +1,6 @@
 package invdendpoint
 
-const TaskEndPoint = "/tasks"
+const TaskEndpoint = "/tasks"
 
 type Tasks []Task
 

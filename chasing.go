@@ -17,16 +17,14 @@ func (c *Connection) NewChasingCadence() *ChasingCadence {
 }
 
 func (c *ChasingCadence) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (ChasingCadences, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.ChasingCadencesEndPoint)
-
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := addFilterAndSort(invdendpoint.ChasingCadenceEndpoint, filter, sort)
 
 	chasing := make(ChasingCadences, 0)
 
 NEXT:
 	tmpChasing := make(ChasingCadences, 0)
 
-	endPointTmp, apiErr := c.retrieveDataFromAPI(endPoint, &tmpChasing)
+	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpChasing)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -34,7 +32,7 @@ NEXT:
 
 	chasing = append(chasing, tmpChasing...)
 
-	if endPointTmp != "" {
+	if endpointTmp != "" {
 		goto NEXT
 	}
 

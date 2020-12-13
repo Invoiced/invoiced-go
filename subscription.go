@@ -2,6 +2,7 @@ package invdapi
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
@@ -23,9 +24,9 @@ func (c *Connection) NewPreviewRequest() *invdendpoint.SubscriptionPreviewReques
 }
 
 func (c *Subscription) Count() (int64, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endpoint := invdendpoint.SubscriptionEndpoint
 
-	count, apiErr := c.count(endPoint)
+	count, apiErr := c.count(endpoint)
 
 	if apiErr != nil {
 		return -1, apiErr
@@ -35,7 +36,7 @@ func (c *Subscription) Count() (int64, error) {
 }
 
 func (c *Subscription) Create(subscription *Subscription) (*Subscription, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endpoint := invdendpoint.SubscriptionEndpoint
 
 	if subscription == nil {
 		return nil, errors.New("Subscription is nil")
@@ -48,7 +49,7 @@ func (c *Subscription) Create(subscription *Subscription) (*Subscription, error)
 
 	subResp := new(Subscription)
 
-	apiErr := c.create(endPoint, subDataToCreate, subResp)
+	apiErr := c.create(endpoint, subDataToCreate, subResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -60,9 +61,9 @@ func (c *Subscription) Create(subscription *Subscription) (*Subscription, error)
 }
 
 func (c *Subscription) Cancel() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
+	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	apiErr := c.delete(endPoint)
+	apiErr := c.delete(endpoint)
 
 	if apiErr != nil {
 		return apiErr
@@ -72,7 +73,7 @@ func (c *Subscription) Cancel() error {
 }
 
 func (c *Subscription) Save() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id)
+	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 	subResp := new(Subscription)
 
 	subDataToUpdate, err := SafeSubscriptionsForUpdate(c.Subscription)
@@ -80,7 +81,7 @@ func (c *Subscription) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, subDataToUpdate, subResp)
+	apiErr := c.update(endpoint, subDataToUpdate, subResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -92,13 +93,13 @@ func (c *Subscription) Save() error {
 }
 
 func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), id)
+	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndPoint := new(invdendpoint.Subscription)
+	custEndpoint := new(invdendpoint.Subscription)
 
-	subscription := &Subscription{c.Connection, custEndPoint}
+	subscription := &Subscription{c.Connection, custEndpoint}
 
-	_, apiErr := c.retrieveDataFromAPI(endPoint, subscription)
+	_, apiErr := c.retrieveDataFromAPI(endpoint, subscription)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -108,15 +109,15 @@ func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 }
 
 func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := invdendpoint.SubscriptionEndpoint
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	subscriptions := make(Subscriptions, 0)
 
 NEXT:
 	tmpSubscriptions := make(Subscriptions, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpSubscriptions)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -124,7 +125,7 @@ NEXT:
 
 	subscriptions = append(subscriptions, tmpSubscriptions...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -136,12 +137,12 @@ NEXT:
 }
 
 func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, string, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := invdendpoint.SubscriptionEndpoint
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	subscriptions := make(Subscriptions, 0)
 
-	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &subscriptions)
+	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &subscriptions)
 
 	if apiErr != nil {
 		return nil, "", apiErr
@@ -151,11 +152,11 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 		subscription.Connection = c.Connection
 	}
 
-	return subscriptions, nextEndPoint, nil
+	return subscriptions, nextEndpoint, nil
 }
 
 func (c *Subscription) Preview(subPreviewRequest *invdendpoint.SubscriptionPreviewRequest) (*invdendpoint.SubscriptionPreview, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint), c.Id) + "/preview"
+	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/preview"
 
 	if subPreviewRequest == nil {
 		return nil, errors.New("Subscription is nil")
@@ -163,7 +164,7 @@ func (c *Subscription) Preview(subPreviewRequest *invdendpoint.SubscriptionPrevi
 
 	subPreviewResp := new(invdendpoint.SubscriptionPreview)
 
-	apiErr := c.create(endPoint, subPreviewRequest, subPreviewResp)
+	apiErr := c.create(endpoint, subPreviewRequest, subPreviewResp)
 
 	if apiErr != nil {
 		return nil, apiErr

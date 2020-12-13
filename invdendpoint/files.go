@@ -1,6 +1,6 @@
 package invdendpoint
 
-const FilesEndPoint = "/files"
+const FileEndpoint = "/files"
 
 // Represents an external file.
 type File struct {

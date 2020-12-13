@@ -2,6 +2,7 @@ package invdapi
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
@@ -19,11 +20,11 @@ func (c *Connection) NewNote() *Note {
 }
 
 func (c *Note) Create(createNoteRequest invdendpoint.CreateNoteRequest) (*Note, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.NotesEndPoint)
+	endpoint := invdendpoint.NoteEndpoint
 
 	noteResp := new(Note)
 
-	apiErr := c.create(endPoint, createNoteRequest, noteResp)
+	apiErr := c.create(endpoint, createNoteRequest, noteResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -35,7 +36,7 @@ func (c *Note) Create(createNoteRequest invdendpoint.CreateNoteRequest) (*Note, 
 }
 
 func (c *Note) Save() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.NotesEndPoint), c.Id)
+	endpoint := invdendpoint.NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	noteResp := new(Note)
 
@@ -44,7 +45,7 @@ func (c *Note) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, noteDataToUpdate, noteResp)
+	apiErr := c.update(endpoint, noteDataToUpdate, noteResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -56,9 +57,9 @@ func (c *Note) Save() error {
 }
 
 func (c *Note) Delete() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.NotesEndPoint), c.Id)
+	endpoint := invdendpoint.NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -67,16 +68,16 @@ func (c *Note) Delete() error {
 }
 
 func (c *Note) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Notes, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.NotesEndPoint)
+	endpoint := invdendpoint.NoteEndpoint
 
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	notes := make(Notes, 0)
 
 NEXT:
 	tmpNotes := make(Notes, 0)
 
-	endPointTmp, apiErr := c.retrieveDataFromAPI(endPoint, &tmpNotes)
+	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpNotes)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -84,7 +85,7 @@ NEXT:
 
 	notes = append(notes, tmpNotes...)
 
-	if endPointTmp != "" {
+	if endpointTmp != "" {
 		goto NEXT
 	}
 

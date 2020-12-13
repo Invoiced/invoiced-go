@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-const EstimatesEndPoint = "/estimates"
+const EstimateEndpoint = "/estimates"
 
 type Estimates []Estimate
 

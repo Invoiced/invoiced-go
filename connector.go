@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	requestURL    = "https://api.invoiced.com"
-	devRequestURL = "https://api.sandbox.invoiced.com"
+	productionUrl = "https://api.invoiced.com"
+	sandboxUrl    = "https://api.sandbox.invoiced.com"
 	requestType   = "application/json"
 )
 
@@ -26,26 +26,22 @@ func Version() string {
 }
 
 type Connection struct {
-	key    string
-	client *http.Client
-	url    string
+	key     string
+	client  *http.Client
+	baseUrl string
 }
 
-type InvoicedToken struct {
-	Key string `json:"invoicedApiKey"`
-}
-
-func NewConnection(key string, devMode bool) *Connection {
-	c := new(Connection)
-	c.key = key
-	c.client = new(http.Client)
-	if devMode {
-		c.url = devRequestURL
-	} else {
-		c.url = requestURL
+func NewConnection(key string, sandbox bool) *Connection {
+	url := productionUrl
+	if sandbox {
+		url = sandboxUrl
 	}
 
-	return c
+	return &Connection{
+		key:     key,
+		client:  new(http.Client),
+		baseUrl: url,
+	}
 }
 
 func checkStatusForError(status int, r io.Reader) error {
@@ -69,12 +65,12 @@ func checkStatusForError(status int, r io.Reader) error {
 	return errors.New(apiError.Error())
 }
 
-func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) error {
+func pushDataIntoStruct(endpointData interface{}, respBody io.Reader) error {
 	body, err := ioutil.ReadAll(respBody)
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(body, endPointData)
+	err = json.Unmarshal(body, endpointData)
 
 	if err != nil {
 		return err
@@ -83,15 +79,15 @@ func pushDataIntoStruct(endPointData interface{}, respBody io.Reader) error {
 	return nil
 }
 
-func parseURLLinksFromString(s string) map[string]string {
+func parseLinkHeader(s string) map[string]string {
 	urlAndLinkMap := make(map[string]string)
 
 	rawURLLinksAndRelations := strings.Split(s, ",")
 
 	for _, rawURLLinkRelation := range rawURLLinksAndRelations {
 		parsedRawURLAndRelation := strings.Split(rawURLLinkRelation, ";")
-		url := parseRawURL(parsedRawURLAndRelation[0])
-		relation := parseRawRelation(parsedRawURLAndRelation[1])
+		url := parseLinkUrl(parsedRawURLAndRelation[0])
+		relation := parseRelValue(parsedRawURLAndRelation[1])
 
 		urlAndLinkMap[relation] = url
 	}
@@ -99,7 +95,7 @@ func parseURLLinksFromString(s string) map[string]string {
 	return urlAndLinkMap
 }
 
-func parseRawRelation(s string) string {
+func parseRelValue(s string) string {
 	// parse rel="last" => last
 
 	first := strings.Index(s, "\"")
@@ -112,7 +108,7 @@ func parseRawRelation(s string) string {
 	return trimmed
 }
 
-func parseRawURL(s string) string {
+func parseLinkUrl(s string) string {
 	//<https://api.invoiced.com/invoices?page=1>
 	trimmed := strings.TrimSpace(s)
 
@@ -125,7 +121,7 @@ func parseRawURL(s string) string {
 	return trimmed
 }
 
-func addFilterSortToEndPoint(endpoint string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) string {
+func addFilterAndSort(url string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) string {
 	emptyFilter := true
 	emptySort := true
 
@@ -138,73 +134,29 @@ func addFilterSortToEndPoint(endpoint string, filter *invdendpoint.Filter, sort 
 	}
 
 	if !emptyFilter && !emptySort {
-		return endpoint + "?" + filter.String() + "&" + sort.String()
+		return url + "?" + filter.String() + "&" + sort.String()
 	} else if !emptyFilter && emptySort {
-		return endpoint + "?" + filter.String()
+		return url + "?" + filter.String()
 	} else if emptyFilter && !emptySort {
-		return endpoint + "?" + sort.String()
+		return url + "?" + sort.String()
 	}
 
-	return endpoint
+	return url
 }
 
-func addIncludeToEndPoint(endpoint string, includeValue string) string {
-	finalEndpoint := ""
-	if strings.Contains(endpoint, "?") {
-		finalEndpoint = endpoint + "&" + "include=" + includeValue
+func addQueryParameter(url string, name string, value string) string {
+	if strings.Contains(url, "?") {
+		url += "&"
 	} else {
-		finalEndpoint = endpoint + "?" + "include=" + includeValue
+		url += "?"
 	}
 
-	return finalEndpoint
+	return url + name + "=" + value
 }
 
-func addStartDateToEndPoint(endpoint string, invoiceDate int64) string {
-	invoiceDateString := strconv.FormatInt(invoiceDate, 10)
-	finalEndpoint := ""
-	if strings.Contains(endpoint, "?") {
-		finalEndpoint = endpoint + "&" + "start_date=" + invoiceDateString
-	} else {
-		finalEndpoint = endpoint + "?" + "start_date=" + invoiceDateString
-	}
-
-	return finalEndpoint
-}
-
-func addEndDateToEndPoint(endpoint string, invoiceDate int64) string {
-	invoiceDateString := strconv.FormatInt(invoiceDate, 10)
-	finalEndpoint := ""
-	if strings.Contains(endpoint, "?") {
-		finalEndpoint = endpoint + "&" + "end_date=" + invoiceDateString
-	} else {
-		finalEndpoint = endpoint + "?" + "end_date=" + invoiceDateString
-	}
-
-	return finalEndpoint
-}
-
-func addUpdatedAfterToEndPoint(endpoint string, updatedAfter int64) string {
-	updatedAfterString := strconv.FormatInt(updatedAfter, 10)
-	finalEndpoint := ""
-	if strings.Contains(endpoint, "?") {
-		finalEndpoint = endpoint + "&" + "updated_after=" + updatedAfterString
-	} else {
-		finalEndpoint = endpoint + "?" + "updated_after=" + updatedAfterString
-	}
-
-	return finalEndpoint
-}
-
-func makeEndPointSingular(endpoint string, id int64) string {
-	return endpoint + "/" + strconv.FormatInt(id, 10)
-}
-
-func (c *Connection) MakeEndPointURL(endPoint string) string {
-	return c.url + endPoint
-}
-
-func (c *Connection) get(endPoint string) (*http.Response, error) {
-	req, err := http.NewRequest("GET", endPoint, nil)
+func (c *Connection) get(endpoint string) (*http.Response, error) {
+	url := c.baseUrl + endpoint
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -216,8 +168,9 @@ func (c *Connection) get(endPoint string) (*http.Response, error) {
 	return resp, err
 }
 
-func (c *Connection) post(endPoint string, body io.Reader) (*http.Response, error) {
-	req, err := http.NewRequest("POST", endPoint, body)
+func (c *Connection) post(endpoint string, body io.Reader) (*http.Response, error) {
+	url := c.baseUrl + endpoint
+	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, err
 	}
@@ -230,8 +183,9 @@ func (c *Connection) post(endPoint string, body io.Reader) (*http.Response, erro
 	return resp, err
 }
 
-func (c *Connection) patch(endPoint string, body io.Reader) (*http.Response, error) {
-	req, err := http.NewRequest("PATCH", endPoint, body)
+func (c *Connection) patch(endpoint string, body io.Reader) (*http.Response, error) {
+	url := c.baseUrl + endpoint
+	req, err := http.NewRequest("PATCH", url, body)
 	if err != nil {
 		return nil, err
 	}
@@ -244,8 +198,9 @@ func (c *Connection) patch(endPoint string, body io.Reader) (*http.Response, err
 	return resp, err
 }
 
-func (c *Connection) deleteRequest(endPoint string) (*http.Response, error) {
-	req, err := http.NewRequest("DELETE", endPoint, nil)
+func (c *Connection) deleteRequest(endpoint string) (*http.Response, error) {
+	url := c.baseUrl + endpoint
+	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -258,7 +213,7 @@ func (c *Connection) deleteRequest(endPoint string) (*http.Response, error) {
 	return resp, err
 }
 
-func (c *Connection) create(endPoint string, requestData interface{}, responseData interface{}) error {
+func (c *Connection) create(endpoint string, requestData interface{}, responseData interface{}) error {
 	b, err := json.Marshal(requestData)
 	if err != nil {
 		return err
@@ -266,7 +221,7 @@ func (c *Connection) create(endPoint string, requestData interface{}, responseDa
 
 	body := bytes.NewBuffer(b)
 
-	resp, err := c.post(endPoint, body)
+	resp, err := c.post(endpoint, body)
 	if err != nil {
 		return err
 	}
@@ -286,8 +241,8 @@ func (c *Connection) create(endPoint string, requestData interface{}, responseDa
 	return nil
 }
 
-func (c *Connection) delete(endPoint string) error {
-	resp, err := c.deleteRequest(endPoint)
+func (c *Connection) delete(endpoint string) error {
+	resp, err := c.deleteRequest(endpoint)
 	if err != nil {
 		return err
 	}
@@ -301,7 +256,7 @@ func (c *Connection) delete(endPoint string) error {
 	return nil
 }
 
-func (c *Connection) update(endPoint string, requestData interface{}, responseData interface{}) error {
+func (c *Connection) update(endpoint string, requestData interface{}, responseData interface{}) error {
 	b, err := json.Marshal(requestData)
 	if err != nil {
 		return err
@@ -309,7 +264,7 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 
 	body := bytes.NewBuffer(b)
 
-	resp, err := c.patch(endPoint, body)
+	resp, err := c.patch(endpoint, body)
 	if err != nil {
 		return err
 	}
@@ -329,8 +284,8 @@ func (c *Connection) update(endPoint string, requestData interface{}, responseDa
 	return nil
 }
 
-func (c *Connection) postWithoutData(endPoint string, responseData interface{}) error {
-	resp, err := c.post(endPoint, nil)
+func (c *Connection) postWithoutData(endpoint string, responseData interface{}) error {
+	resp, err := c.post(endpoint, nil)
 	if err != nil {
 		return err
 	}
@@ -350,8 +305,8 @@ func (c *Connection) postWithoutData(endPoint string, responseData interface{}) 
 	return nil
 }
 
-func (c *Connection) count(endPoint string) (int64, error) {
-	resp, err := c.get(endPoint)
+func (c *Connection) count(endpoint string) (int64, error) {
+	resp, err := c.get(endpoint)
 	if err != nil {
 		return -1, err
 	}
@@ -374,10 +329,10 @@ func (c *Connection) count(endPoint string) (int64, error) {
 	return i, nil
 }
 
-func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface{}) (string, error) {
+func (c *Connection) retrieveDataFromAPI(endpoint string, endpointData interface{}) (string, error) {
 	nextURL := ""
 
-	resp, err := c.get(endPoint)
+	resp, err := c.get(endpoint)
 	if err != nil {
 		return "", err
 	}
@@ -387,7 +342,7 @@ func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface
 	link := resp.Header.Get("Link")
 
 	if link != "" {
-		nextMap := parseURLLinksFromString(link)
+		nextMap := parseLinkHeader(link)
 
 		if nextMap["self"] != nextMap["next"] {
 			nextURL = nextMap["next"]
@@ -400,7 +355,7 @@ func (c *Connection) retrieveDataFromAPI(endPoint string, endPointData interface
 		return "", apiError
 	}
 
-	err = pushDataIntoStruct(endPointData, resp.Body)
+	err = pushDataIntoStruct(endpointData, resp.Body)
 
 	if err != nil {
 		return "", err
