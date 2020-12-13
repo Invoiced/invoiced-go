@@ -19,7 +19,7 @@ before_install:
 - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.17.1
 script:
 - golangci-lint run
-- go test . ./invdmockserver/ ./invdutil/ -v -covermode=count -coverprofile=coverage.out
+- go test ./... -v -covermode=count -coverprofile=coverage.out
 - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken=$COVERALLS_TOKEN
 env:
   global:
