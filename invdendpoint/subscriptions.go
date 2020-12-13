@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-const SubscriptionsEndPoint = "/subscriptions"
+const SubscriptionEndpoint = "/subscriptions"
 
 type Subscriptions []Subscription
 

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-const CreditNotesEndPoint = "/credit_notes"
+const CreditNoteEndpoint = "/credit_notes"
 
 type CreditNotes []CreditNote
 

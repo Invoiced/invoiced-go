@@ -19,8 +19,6 @@ func (c *Connection) NewCoupon() *Coupon {
 }
 
 func (c *Coupon) Create(coupon *Coupon) (*Coupon, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CouponsEndPoint)
-
 	couponResp := new(Coupon)
 
 	if coupon == nil {
@@ -33,7 +31,7 @@ func (c *Coupon) Create(coupon *Coupon) (*Coupon, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdCouponDataToCreate, couponResp)
+	apiErr := c.create(invdendpoint.CouponEndpoint, invdCouponDataToCreate, couponResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -45,7 +43,7 @@ func (c *Coupon) Create(coupon *Coupon) (*Coupon, error) {
 }
 
 func (c *Coupon) Save() error {
-	endPoint := c.MakeEndPointURL(invdendpoint.CouponsEndPoint) + "/" + c.Id
+	endpoint := invdendpoint.CouponEndpoint + "/" + c.Id
 
 	taxRateResp := new(Coupon)
 
@@ -54,7 +52,7 @@ func (c *Coupon) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, invdTaxRatDataToUpdate, taxRateResp)
+	apiErr := c.update(endpoint, invdTaxRatDataToUpdate, taxRateResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -66,9 +64,9 @@ func (c *Coupon) Save() error {
 }
 
 func (c *Coupon) Delete() error {
-	endPoint := c.MakeEndPointURL(invdendpoint.CouponsEndPoint) + "/" + c.Id
+	endpoint := invdendpoint.CouponEndpoint + "/" + c.Id
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -77,13 +75,13 @@ func (c *Coupon) Delete() error {
 }
 
 func (c *Coupon) Retrieve(id string) (*Coupon, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CouponsEndPoint) + "/" + id
+	endpoint := invdendpoint.CouponEndpoint + "/" + id
 
-	couponEndPoint := new(invdendpoint.Coupon)
+	couponEndpoint := new(invdendpoint.Coupon)
 
-	coupon := &Coupon{c.Connection, couponEndPoint}
+	coupon := &Coupon{c.Connection, couponEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endPoint, coupon)
+	_, err := c.retrieveDataFromAPI(endpoint, coupon)
 	if err != nil {
 		return nil, err
 	}
@@ -92,16 +90,14 @@ func (c *Coupon) Retrieve(id string) (*Coupon, error) {
 }
 
 func (c *Coupon) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Coupons, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CouponsEndPoint)
-
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := addFilterAndSort(invdendpoint.CouponEndpoint, filter, sort)
 
 	coupons := make(Coupons, 0)
 
 NEXT:
 	tmpCoupons := make(Coupons, 0)
 
-	endPointTmp, apiErr := c.retrieveDataFromAPI(endPoint, &tmpCoupons)
+	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpCoupons)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -109,7 +105,7 @@ NEXT:
 
 	coupons = append(coupons, tmpCoupons...)
 
-	if endPointTmp != "" {
+	if endpointTmp != "" {
 		goto NEXT
 	}
 

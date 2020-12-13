@@ -3,6 +3,7 @@ package invdapi
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
@@ -20,9 +21,9 @@ func (c *Connection) NewEstimate() *Estimate {
 }
 
 func (c *Estimate) Count() (int64, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint)
+	endpoint := invdendpoint.EstimateEndpoint
 
-	count, apiErr := c.count(endPoint)
+	count, apiErr := c.count(endpoint)
 
 	if apiErr != nil {
 		return -1, apiErr
@@ -32,7 +33,7 @@ func (c *Estimate) Count() (int64, error) {
 }
 
 func (c *Estimate) Create(estimate *Estimate) (*Estimate, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint)
+	endpoint := invdendpoint.EstimateEndpoint
 
 	estResp := new(Estimate)
 
@@ -46,7 +47,7 @@ func (c *Estimate) Create(estimate *Estimate) (*Estimate, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdEstToCreate, estResp)
+	apiErr := c.create(endpoint, invdEstToCreate, estResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -58,9 +59,9 @@ func (c *Estimate) Create(estimate *Estimate) (*Estimate, error) {
 }
 
 func (c *Estimate) Delete() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id)
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	apiErr := c.delete(endPoint)
+	apiErr := c.delete(endpoint)
 
 	if apiErr != nil {
 		return apiErr
@@ -72,9 +73,9 @@ func (c *Estimate) Delete() error {
 func (c *Estimate) Void() (*Estimate, error) {
 	estResp := new(Estimate)
 
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/void"
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
 
-	apiErr := c.postWithoutData(endPoint, estResp)
+	apiErr := c.postWithoutData(endpoint, estResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -86,7 +87,7 @@ func (c *Estimate) Void() (*Estimate, error) {
 }
 
 func (c *Estimate) Save() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id)
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	estResp := new(Estimate)
 
@@ -95,7 +96,7 @@ func (c *Estimate) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, invdEstToUpdate, estResp)
+	apiErr := c.update(endpoint, invdEstToUpdate, estResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -107,13 +108,13 @@ func (c *Estimate) Save() error {
 }
 
 func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), id)
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndPoint := new(invdendpoint.Estimate)
+	custEndpoint := new(invdendpoint.Estimate)
 
-	estimate := &Estimate{c.Connection, custEndPoint}
+	estimate := &Estimate{c.Connection, custEndpoint}
 
-	_, apiErr := c.retrieveDataFromAPI(endPoint, estimate)
+	_, apiErr := c.retrieveDataFromAPI(endpoint, estimate)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -123,16 +124,16 @@ func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
 }
 
 func (c *Estimate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Estimates, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint)
+	endpoint := invdendpoint.EstimateEndpoint
 
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	estimates := make(Estimates, 0)
 
 NEXT:
 	tmpInvoices := make(Estimates, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpInvoices)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpInvoices)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -140,7 +141,7 @@ NEXT:
 
 	estimates = append(estimates, tmpInvoices...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -152,12 +153,12 @@ NEXT:
 }
 
 func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Estimates, string, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.EstimatesEndPoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := invdendpoint.EstimateEndpoint
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	estimates := make(Estimates, 0)
 
-	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &estimates)
+	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &estimates)
 
 	if apiErr != nil {
 		return nil, "", apiErr
@@ -167,15 +168,15 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 		estimate.Connection = c.Connection
 	}
 
-	return estimates, nextEndPoint, nil
+	return estimates, nextEndpoint, nil
 }
 
 func (c *Estimate) GenerateInvoice() (*Invoice, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/invoice"
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/invoice"
 
 	invResp := c.NewInvoice()
 
-	apiErr := c.postWithoutData(endPoint, invResp)
+	apiErr := c.postWithoutData(endpoint, invResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -185,11 +186,11 @@ func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 }
 
 func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/emails"
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
 
-	err := c.create(endPoint, emailReq, emailResp)
+	err := c.create(endpoint, emailReq, emailResp)
 	if err != nil {
 		return nil, err
 	}
@@ -198,11 +199,11 @@ func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.
 }
 
 func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/text_messages"
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
 
 	resp := new(invdendpoint.TextResponses)
 
-	err := c.create(endPoint, req, resp)
+	err := c.create(endpoint, req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -211,11 +212,11 @@ func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextRes
 }
 
 func (c *Estimate) SendLetter() (*invdendpoint.LetterResponse, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/letters"
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
 
 	resp := new(invdendpoint.LetterResponse)
 
-	err := c.create(endPoint, nil, resp)
+	err := c.create(endpoint, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -224,14 +225,14 @@ func (c *Estimate) SendLetter() (*invdendpoint.LetterResponse, error) {
 }
 
 func (c *Estimate) ListAttachments() (Files, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.EstimatesEndPoint), c.Id) + "/attachments"
+	endpoint :=  invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
 
 	files := make(Files, 0)
 
 NEXT:
 	tempFiles := make(Files, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tempFiles)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tempFiles)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -239,7 +240,7 @@ NEXT:
 
 	files = append(files, tempFiles...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 

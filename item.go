@@ -19,7 +19,7 @@ func (c *Connection) NewItem() *Item {
 }
 
 func (c *Item) Create(item *Item) (*Item, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.ItemEndPoint)
+	endpoint := invdendpoint.ItemEndpoint
 
 	itemResp := new(Item)
 
@@ -33,7 +33,7 @@ func (c *Item) Create(item *Item) (*Item, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdItemDataToCreate, itemResp)
+	apiErr := c.create(endpoint, invdItemDataToCreate, itemResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -45,7 +45,7 @@ func (c *Item) Create(item *Item) (*Item, error) {
 }
 
 func (c *Item) Save() error {
-	endPoint := c.MakeEndPointURL(invdendpoint.ItemEndPoint) + "/" + c.Id
+	endpoint := invdendpoint.ItemEndpoint + "/" + c.Id
 
 	itemResp := new(Item)
 
@@ -54,7 +54,7 @@ func (c *Item) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, itemDataToUpdate, itemResp)
+	apiErr := c.update(endpoint, itemDataToUpdate, itemResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -66,9 +66,9 @@ func (c *Item) Save() error {
 }
 
 func (c *Item) Delete() error {
-	endPoint := c.MakeEndPointURL(invdendpoint.ItemEndPoint) + "/" + c.Id
+	endpoint := invdendpoint.ItemEndpoint + "/" + c.Id
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -77,13 +77,13 @@ func (c *Item) Delete() error {
 }
 
 func (c *Item) Retrieve(id string) (*Item, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.ItemEndPoint) + "/" + id
+	endpoint := invdendpoint.ItemEndpoint + "/" + id
 
-	itemEndPoint := new(invdendpoint.Item)
+	itemEndpoint := new(invdendpoint.Item)
 
-	item := &Item{c.Connection, itemEndPoint}
+	item := &Item{c.Connection, itemEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endPoint, item)
+	_, err := c.retrieveDataFromAPI(endpoint, item)
 	if err != nil {
 		return nil, err
 	}
@@ -92,16 +92,16 @@ func (c *Item) Retrieve(id string) (*Item, error) {
 }
 
 func (c *Item) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Items, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.ItemEndPoint)
+	endpoint := invdendpoint.ItemEndpoint
 
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	items := make(Items, 0)
 
 NEXT:
 	tmpItems := make(Items, 0)
 
-	endPointTmp, apiErr := c.retrieveDataFromAPI(endPoint, &tmpItems)
+	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpItems)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -109,7 +109,7 @@ NEXT:
 
 	items = append(items, tmpItems...)
 
-	if endPointTmp != "" {
+	if endpointTmp != "" {
 		goto NEXT
 	}
 

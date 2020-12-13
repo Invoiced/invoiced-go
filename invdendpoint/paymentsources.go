@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	SourcesEndPoint      = "/payment_sources"
-	CardsEndPoint        = "/cards"
-	BankAccountsEndPoint = "/bank_accounts"
+	SourceEndpoint      = "/payment_sources"
+	CardEndpoint        = "/cards"
+	BankAccountEndpoint = "/bank_accounts"
 )
 
 type PaymentSource struct {

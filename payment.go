@@ -19,9 +19,9 @@ func (c *Connection) NewPayment() *Payment {
 }
 
 func (c *Payment) Count() (int64, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.PaymentEndpoint)
+	endpoint := invdendpoint.PaymentEndpoint
 
-	count, apiErr := c.count(endPoint)
+	count, apiErr := c.count(endpoint)
 
 	if apiErr != nil {
 		return -1, apiErr
@@ -31,7 +31,7 @@ func (c *Payment) Count() (int64, error) {
 }
 
 func (c *Payment) Create(payment *Payment) (*Payment, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.PaymentEndpoint)
+	endpoint := invdendpoint.PaymentEndpoint
 	txnResp := new(Payment)
 
 	if payment == nil {
@@ -44,7 +44,7 @@ func (c *Payment) Create(payment *Payment) (*Payment, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdTransDataToCreate, txnResp)
+	apiErr := c.create(endpoint, invdTransDataToCreate, txnResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -56,9 +56,9 @@ func (c *Payment) Create(payment *Payment) (*Payment, error) {
 }
 
 func (c *Payment) Delete() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.PaymentEndpoint), c.Id)
+	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	apiErr := c.delete(endPoint)
+	apiErr := c.delete(endpoint)
 
 	if apiErr != nil {
 		return apiErr
@@ -68,7 +68,7 @@ func (c *Payment) Delete() error {
 }
 
 func (c *Payment) Save() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.PaymentEndpoint), c.Id)
+	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 	txnResp := new(Payment)
 
 	// safe prune invoice data for updating
@@ -77,7 +77,7 @@ func (c *Payment) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, invdTransDataToUpdate, txnResp)
+	apiErr := c.update(endpoint, invdTransDataToUpdate, txnResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -89,13 +89,13 @@ func (c *Payment) Save() error {
 }
 
 func (c *Payment) Retrieve(id int64) (*Payment, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.PaymentEndpoint), id)
+	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndPoint := new(invdendpoint.Payment)
+	custEndpoint := new(invdendpoint.Payment)
 
-	payment := &Payment{c.Connection, custEndPoint}
+	payment := &Payment{c.Connection, custEndpoint}
 
-	_, apiErr := c.retrieveDataFromAPI(endPoint, payment)
+	_, apiErr := c.retrieveDataFromAPI(endpoint, payment)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -105,15 +105,15 @@ func (c *Payment) Retrieve(id int64) (*Payment, error) {
 }
 
 func (c *Payment) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Payments, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.PaymentEndpoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := invdendpoint.PaymentEndpoint
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	payments := make(Payments, 0)
 
 NEXT:
 	tmpPayments := make(Payments, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpPayments)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpPayments)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -121,7 +121,7 @@ NEXT:
 
 	payments = append(payments, tmpPayments...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -133,12 +133,12 @@ NEXT:
 }
 
 func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Payments, string, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.PaymentEndpoint)
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := invdendpoint.PaymentEndpoint
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	payments := make(Payments, 0)
 
-	nextEndPoint, apiErr := c.retrieveDataFromAPI(endPoint, &payments)
+	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &payments)
 
 	if apiErr != nil {
 		return nil, "", apiErr
@@ -148,7 +148,7 @@ func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Pa
 		payment.Connection = c.Connection
 	}
 
-	return payments, nextEndPoint, nil
+	return payments, nextEndpoint, nil
 }
 
 func (c *Payment) ListSuccessfulByInvoiceID(invoiceID int64) (Payments, error) {
@@ -293,11 +293,11 @@ func (c *Payment) ListSuccessfulChargesAndPaymentsByInvoiceID(invoiceID int64) (
 }
 
 func (c *Payment) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.InvoicesEndPoint), c.Id) + "/emails"
+	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
 
-	err := c.create(endPoint, emailReq, emailResp)
+	err := c.create(endpoint, emailReq, emailResp)
 	if err != nil {
 		return nil, err
 	}

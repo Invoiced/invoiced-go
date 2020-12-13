@@ -2,6 +2,7 @@ package invdapi
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
@@ -19,7 +20,7 @@ func (c *Connection) NewFile() *File {
 }
 
 func (c *File) Create(file *File) (*File, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.FilesEndPoint)
+	endpoint := invdendpoint.FileEndpoint
 	fileResp := new(File)
 
 	// safe prune file data for creation
@@ -28,7 +29,7 @@ func (c *File) Create(file *File) (*File, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdFileDataToCreate, fileResp)
+	apiErr := c.create(endpoint, invdFileDataToCreate, fileResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -40,9 +41,9 @@ func (c *File) Create(file *File) (*File, error) {
 }
 
 func (c *File) Delete() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.FilesEndPoint), c.Id)
+	endpoint :=  invdendpoint.FileEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -51,13 +52,13 @@ func (c *File) Delete() error {
 }
 
 func (c *File) Retrieve(id int64) (*File, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.FilesEndPoint), id)
+	endpoint :=  invdendpoint.FileEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndPoint := new(invdendpoint.File)
+	custEndpoint := new(invdendpoint.File)
 
-	file := &File{c.Connection, custEndPoint}
+	file := &File{c.Connection, custEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endPoint, file)
+	_, err := c.retrieveDataFromAPI(endpoint, file)
 	if err != nil {
 		return nil, err
 	}

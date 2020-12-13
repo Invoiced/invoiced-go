@@ -37,7 +37,7 @@ func mockConnection(key string, server *httptest.Server) *Connection {
 	}
 
 	c.client = &http.Client{Transport: transport}
-	c.url = server.URL
+	c.baseUrl = server.URL
 
 	return c
 }

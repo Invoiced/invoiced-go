@@ -2,7 +2,6 @@ package invdmockserver
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -109,14 +108,7 @@ func NewJsonFileServer(ssl bool) (*httptest.Server, error) {
 }
 
 func New(code int, body interface{}, dataType string, ssl bool) (*httptest.Server, error) {
-	if dataType == "xml" {
-
-		_, err := xml.Marshal(body)
-		if err != nil {
-			return nil, err
-		}
-
-	} else if dataType == "json" {
+	if dataType == "json" {
 
 		_, err := json.Marshal(body)
 		if err != nil {
@@ -130,11 +122,7 @@ func New(code int, body interface{}, dataType string, ssl bool) (*httptest.Serve
 	f := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var bodyMarshalled []byte
 
-		if dataType == "xml" {
-			w.Header().Set("Content-Type", "application/xml")
-			bodyMarshalled, _ = xml.Marshal(body)
-
-		} else if dataType == "json" {
+		if dataType == "json" {
 			w.Header().Set("Content-Type", "application/json")
 			bodyMarshalled, _ = json.Marshal(body)
 		}

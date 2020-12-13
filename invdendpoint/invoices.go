@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-const InvoicesEndPoint = "/invoices"
+const InvoiceEndpoint = "/invoices"
 
 type Invoices []Invoice
 

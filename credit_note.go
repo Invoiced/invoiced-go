@@ -1,8 +1,10 @@
 package invdapi
 
+import "C"
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
@@ -20,9 +22,7 @@ func (c *Connection) NewCreditNote() *CreditNote {
 }
 
 func (c *CreditNote) Count() (int64, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint)
-
-	count, apiErr := c.count(endPoint)
+	count, apiErr := c.count(invdendpoint.CreditNoteEndpoint)
 
 	if apiErr != nil {
 		return -1, apiErr
@@ -32,8 +32,6 @@ func (c *CreditNote) Count() (int64, error) {
 }
 
 func (c *CreditNote) Create(creditNote *CreditNote) (*CreditNote, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint)
-
 	cnResp := new(CreditNote)
 
 	if creditNote == nil {
@@ -46,7 +44,7 @@ func (c *CreditNote) Create(creditNote *CreditNote) (*CreditNote, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdCNToCreate, cnResp)
+	apiErr := c.create(invdendpoint.CreditNoteEndpoint, invdCNToCreate, cnResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -58,9 +56,9 @@ func (c *CreditNote) Create(creditNote *CreditNote) (*CreditNote, error) {
 }
 
 func (c *CreditNote) Delete() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id)
+	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	apiErr := c.delete(endPoint)
+	apiErr := c.delete(endpoint)
 
 	if apiErr != nil {
 		return apiErr
@@ -72,9 +70,9 @@ func (c *CreditNote) Delete() error {
 func (c *CreditNote) Void() (*CreditNote, error) {
 	cnResp := new(CreditNote)
 
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/void"
+	endpoint :=  invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
 
-	apiErr := c.postWithoutData(endPoint, cnResp)
+	apiErr := c.postWithoutData(endpoint, cnResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -86,7 +84,7 @@ func (c *CreditNote) Void() (*CreditNote, error) {
 }
 
 func (c *CreditNote) Save() error {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id)
+	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	cnResp := new(CreditNote)
 
@@ -95,7 +93,7 @@ func (c *CreditNote) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, invdCnToUpdate, cnResp)
+	apiErr := c.update(endpoint, invdCnToUpdate, cnResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -107,13 +105,13 @@ func (c *CreditNote) Save() error {
 }
 
 func (c *CreditNote) Retrieve(id int64) (*CreditNote, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), id)
+	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndPoint := new(invdendpoint.CreditNote)
+	custEndpoint := new(invdendpoint.CreditNote)
 
-	creditNote := &CreditNote{c.Connection, custEndPoint}
+	creditNote := &CreditNote{c.Connection, custEndpoint}
 
-	_, apiErr := c.retrieveDataFromAPI(endPoint, creditNote)
+	_, apiErr := c.retrieveDataFromAPI(endpoint, creditNote)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -123,16 +121,14 @@ func (c *CreditNote) Retrieve(id int64) (*CreditNote, error) {
 }
 
 func (c *CreditNote) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (CreditNotes, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint)
-
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint := addFilterAndSort(invdendpoint.CreditNoteEndpoint, filter, sort)
 
 	creditNotes := make(CreditNotes, 0)
 
 NEXT:
 	tmpCreditNotes := make(CreditNotes, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tmpCreditNotes)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpCreditNotes)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -140,7 +136,7 @@ NEXT:
 
 	creditNotes = append(creditNotes, tmpCreditNotes...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -152,14 +148,14 @@ NEXT:
 }
 
 func (c *CreditNote) ListAttachments() (Files, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/attachments"
+	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
 
 	files := make(Files, 0)
 
 NEXT:
 	tempFiles := make(Files, 0)
 
-	endPoint, apiErr := c.retrieveDataFromAPI(endPoint, &tempFiles)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tempFiles)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -167,7 +163,7 @@ NEXT:
 
 	files = append(files, tempFiles...)
 
-	if endPoint != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -179,11 +175,11 @@ NEXT:
 }
 
 func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/emails"
+	endpoint :=  invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
 	emailResp := new(invdendpoint.EmailResponses)
 
-	err := c.create(endPoint, emailReq, emailResp)
+	err := c.create(endpoint, emailReq, emailResp)
 	if err != nil {
 		return nil, err
 	}
@@ -192,11 +188,11 @@ func (c *CreditNote) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoin
 }
 
 func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/text_messages"
+	endpoint :=  invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
 
 	resp := new(invdendpoint.TextResponses)
 
-	err := c.create(endPoint, req, resp)
+	err := c.create(endpoint, req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -205,11 +201,11 @@ func (c *CreditNote) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextR
 }
 
 func (c *CreditNote) SendLetter() (*invdendpoint.LetterResponse, error) {
-	endPoint := makeEndPointSingular(c.MakeEndPointURL(invdendpoint.CreditNotesEndPoint), c.Id) + "/letters"
+	endpoint :=  invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
 
 	resp := new(invdendpoint.LetterResponse)
 
-	err := c.create(endPoint, nil, resp)
+	err := c.create(endpoint, nil, resp)
 	if err != nil {
 		return nil, err
 	}

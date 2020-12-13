@@ -1,6 +1,6 @@
 package invdendpoint
 
-const RatesEndPoint = "/tax_rates"
+const RateEndpoint = "/tax_rates"
 
 type TaxRate struct {
 	Id        string                 `json:"id,omitempty"`

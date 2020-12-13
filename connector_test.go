@@ -1,6 +1,7 @@
 package invdapi
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -8,7 +9,7 @@ import "github.com/Invoiced/invoiced-go/invdendpoint"
 
 func TestParseRawRelation(t *testing.T) {
 	s := "          rel=\"       self     \"                           "
-	parsed := parseRawRelation(s)
+	parsed := parseRelValue(s)
 
 	if parsed != "self" {
 		t.Fatal("Error: Parsing of relation is not self")
@@ -17,14 +18,14 @@ func TestParseRawRelation(t *testing.T) {
 
 func TestParseRawURL(t *testing.T) {
 	s := "     <  https://api.invoiced.com/invoices?page=1  > "
-	parsed := parseRawURL(s)
+	parsed := parseLinkUrl(s)
 
 	if parsed != "https://api.invoiced.com/invoices?page=1" {
 		t.Fatal("Error: Parsing of URL", " parsed => ", parsed)
 	}
 }
 
-func TestAddFilterSortToEndPointWithBothValues(t *testing.T) {
+func TestAddFilterSortToEndpointWithBothValues(t *testing.T) {
 	f := invdendpoint.NewFilter()
 	err := f.Set("id", 121123)
 	if err != nil {
@@ -41,9 +42,9 @@ func TestAddFilterSortToEndPointWithBothValues(t *testing.T) {
 	s.Set("name", invdendpoint.ASC)
 	s.Set("age", invdendpoint.DESC)
 
-	endPoint := "https://www.do.com"
+	endpoint := "https://www.do.com"
 
-	value := addFilterSortToEndPoint(endPoint, f, s)
+	value := addFilterAndSort(endpoint, f, s)
 
 	correctValue := "https://www.do.com?filter%5Baddress%5D=121123&filter%5Bid%5D=121123&sort=age+DESC%2Cname+ASC"
 
@@ -54,14 +55,14 @@ func TestAddFilterSortToEndPointWithBothValues(t *testing.T) {
 	// endpoint2 := "https://www.do.com?"
 }
 
-func TestAddFilterSortToEndPointWithOnlySort(t *testing.T) {
+func TestAddFilterSortToEndpointWithOnlySort(t *testing.T) {
 	s := invdendpoint.NewSort()
 	s.Set("name", invdendpoint.ASC)
 	s.Set("age", invdendpoint.DESC)
 
-	endPoint := "https://www.do.com"
+	endpoint := "https://www.do.com"
 
-	value := addFilterSortToEndPoint(endPoint, nil, s)
+	value := addFilterAndSort(endpoint, nil, s)
 
 	correctValue := "https://www.do.com?sort=age+DESC%2Cname+ASC"
 
@@ -70,7 +71,7 @@ func TestAddFilterSortToEndPointWithOnlySort(t *testing.T) {
 	}
 }
 
-func TestAddFilterSortToEndPointWithOnlyFilter(t *testing.T) {
+func TestAddFilterSortToEndpointWithOnlyFilter(t *testing.T) {
 	f := invdendpoint.NewFilter()
 
 	err := f.Set("id", 121123)
@@ -84,9 +85,9 @@ func TestAddFilterSortToEndPointWithOnlyFilter(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	endPoint := "https://www.do.com"
+	endpoint := "https://www.do.com"
 
-	value := addFilterSortToEndPoint(endPoint, f, nil)
+	value := addFilterAndSort(endpoint, f, nil)
 
 	correctValue := "https://www.do.com?filter%5Baddress%5D=121123&filter%5Bid%5D=121123"
 
@@ -95,10 +96,10 @@ func TestAddFilterSortToEndPointWithOnlyFilter(t *testing.T) {
 	}
 }
 
-func TestAddFilterSortToEndPointWithNothing(t *testing.T) {
-	endPoint := "https://www.do.com"
+func TestAddFilterSortToEndpointWithNothing(t *testing.T) {
+	endpoint := "https://www.do.com"
 
-	value := addFilterSortToEndPoint(endPoint, nil, nil)
+	value := addFilterAndSort(endpoint, nil, nil)
 
 	correctValue := "https://www.do.com"
 
@@ -107,14 +108,14 @@ func TestAddFilterSortToEndPointWithNothing(t *testing.T) {
 	}
 }
 
-func TestMakeEndPointSingular(t *testing.T) {
+func TestMakeEndpointSingular(t *testing.T) {
 	endpoint := "https://www.do.com/customer"
 
-	singularEndPoint := makeEndPointSingular(endpoint, 5)
+	singularEndpoint := endpoint + "/" + strconv.FormatInt(5, 10)
 
-	correctSingularEndPoint := "https://www.do.com/customer/5"
+	correctSingularEndpoint := "https://www.do.com/customer/5"
 
-	if singularEndPoint != correctSingularEndPoint {
-		t.Fatal("Expect =>", singularEndPoint, " Got =>", correctSingularEndPoint)
+	if singularEndpoint != correctSingularEndpoint {
+		t.Fatal("Expect =>", singularEndpoint, " Got =>", correctSingularEndpoint)
 	}
 }

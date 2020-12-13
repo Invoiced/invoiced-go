@@ -19,7 +19,7 @@ func (c *Connection) NewTaxRate() *TaxRate {
 }
 
 func (c *TaxRate) Create(taxRate *TaxRate) (*TaxRate, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.RatesEndPoint)
+	endpoint := invdendpoint.RateEndpoint
 
 	taxRateResp := new(TaxRate)
 
@@ -33,7 +33,7 @@ func (c *TaxRate) Create(taxRate *TaxRate) (*TaxRate, error) {
 		return nil, err
 	}
 
-	apiErr := c.create(endPoint, invdTaxRateDataToCreate, taxRateResp)
+	apiErr := c.create(endpoint, invdTaxRateDataToCreate, taxRateResp)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -45,7 +45,7 @@ func (c *TaxRate) Create(taxRate *TaxRate) (*TaxRate, error) {
 }
 
 func (c *TaxRate) Save() error {
-	endPoint := c.MakeEndPointURL(invdendpoint.RatesEndPoint) + "/" + c.Id
+	endpoint := invdendpoint.RateEndpoint + "/" + c.Id
 
 	taxRateResp := new(TaxRate)
 
@@ -54,7 +54,7 @@ func (c *TaxRate) Save() error {
 		return err
 	}
 
-	apiErr := c.update(endPoint, invdTaxRatDataToUpdate, taxRateResp)
+	apiErr := c.update(endpoint, invdTaxRatDataToUpdate, taxRateResp)
 
 	if apiErr != nil {
 		return apiErr
@@ -66,9 +66,9 @@ func (c *TaxRate) Save() error {
 }
 
 func (c *TaxRate) Delete() error {
-	endPoint := c.MakeEndPointURL(invdendpoint.RatesEndPoint) + "/" + c.Id
+	endpoint := invdendpoint.RateEndpoint + "/" + c.Id
 
-	err := c.delete(endPoint)
+	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -77,13 +77,13 @@ func (c *TaxRate) Delete() error {
 }
 
 func (c *TaxRate) Retrieve(id string) (*TaxRate, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.RatesEndPoint) + "/" + id
+	endpoint := invdendpoint.RateEndpoint + "/" + id
 
-	taxRateEndPoint := new(invdendpoint.TaxRate)
+	taxRateEndpoint := new(invdendpoint.TaxRate)
 
-	taxRate := &TaxRate{c.Connection, taxRateEndPoint}
+	taxRate := &TaxRate{c.Connection, taxRateEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endPoint, taxRate)
+	_, err := c.retrieveDataFromAPI(endpoint, taxRate)
 	if err != nil {
 		return nil, err
 	}
@@ -92,16 +92,16 @@ func (c *TaxRate) Retrieve(id string) (*TaxRate, error) {
 }
 
 func (c *TaxRate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (TaxRates, error) {
-	endPoint := c.MakeEndPointURL(invdendpoint.RatesEndPoint)
+	endpoint := invdendpoint.RateEndpoint
 
-	endPoint = addFilterSortToEndPoint(endPoint, filter, sort)
+	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	taxRates := make(TaxRates, 0)
 
 NEXT:
 	tmpTaxRates := make(TaxRates, 0)
 
-	endPointTmp, apiErr := c.retrieveDataFromAPI(endPoint, &tmpTaxRates)
+	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpTaxRates)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -109,7 +109,7 @@ NEXT:
 
 	taxRates = append(taxRates, tmpTaxRates...)
 
-	if endPointTmp != "" {
+	if endpointTmp != "" {
 		goto NEXT
 	}
 
