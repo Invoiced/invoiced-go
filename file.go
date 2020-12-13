@@ -41,7 +41,7 @@ func (c *File) Create(file *File) (*File, error) {
 }
 
 func (c *File) Delete() error {
-	endpoint :=  invdendpoint.FileEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	endpoint := invdendpoint.FileEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
 	err := c.delete(endpoint)
 	if err != nil {
@@ -52,7 +52,7 @@ func (c *File) Delete() error {
 }
 
 func (c *File) Retrieve(id int64) (*File, error) {
-	endpoint :=  invdendpoint.FileEndpoint + "/" + strconv.FormatInt(id, 10)
+	endpoint := invdendpoint.FileEndpoint + "/" + strconv.FormatInt(id, 10)
 
 	custEndpoint := new(invdendpoint.File)
 

@@ -8,5 +8,3 @@ type User struct {
 	Registered       bool   `json:"registered,omitempty"`
 	TwoFactorEnabled bool   `json:"two_factor_enabled,omitempty"`
 }
-
-// unmarshaling for this struct is tested in notes_test.go and other places

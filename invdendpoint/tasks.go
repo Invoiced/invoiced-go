@@ -4,7 +4,6 @@ const TaskEndpoint = "/tasks"
 
 type Tasks []Task
 
-// Represents an task
 type Task struct {
 	Id                int64  `json:"id,omitempty"`                   // The note’s unique ID
 	Name              string `json:"name,omitempty"`                 // Name

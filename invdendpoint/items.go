@@ -2,8 +2,6 @@ package invdendpoint
 
 const ItemEndpoint = "/items"
 
-// An item represents a product or service that you sell. Items can be used to generate line items and can also be used as subscription addons.
-
 type Item struct {
 	Id             string                 `json:"id,omitempty"`     // The item’s unique ID
 	Object         string                 `json:"object,omitempty"` // Object name

@@ -70,4 +70,3 @@ func TestJsonMockServer(t *testing.T) {
 		t.Fatal("Incorrect Response From JsonMockServer, actual response => ", string(b), " ,expected resonse => ", expectedResponse)
 	}
 }
-

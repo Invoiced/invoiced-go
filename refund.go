@@ -1,8 +1,9 @@
 package invdapi
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"strconv"
+
+	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
 func (c *Payment) Refund(refund float64) error {

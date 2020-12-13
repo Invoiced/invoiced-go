@@ -2,7 +2,6 @@ package invdendpoint
 
 const FileEndpoint = "/files"
 
-// Represents an external file.
 type File struct {
 	Id        int64  `json:"id,omitempty"`         // The file’s unique ID
 	Object    string `json:"object,omitempty"`     // file

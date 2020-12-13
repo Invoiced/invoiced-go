@@ -22,7 +22,7 @@ func TestUnMarshalCustomerBalanceObject(t *testing.T) {
   "total_outstanding": 470
 }`
 
-	so := new(CustomerBalance)
+	so := new(Balance)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {
