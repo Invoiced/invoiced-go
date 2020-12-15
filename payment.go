@@ -318,6 +318,7 @@ func SafePaymentForCreation(payment *invdendpoint.Payment) (*invdendpoint.Paymen
 	paymentData.Currency = payment.Currency
 	paymentData.Amount = payment.Amount
 	paymentData.Notes = payment.Notes
+	paymentData.Source = payment.Source
 	paymentData.Reference = payment.Reference
 	paymentData.AppliedTo = payment.AppliedTo
 
@@ -338,6 +339,7 @@ func SafePaymentForUpdate(payment *invdendpoint.Payment) (*invdendpoint.Payment,
 	paymentData.Currency = payment.Currency
 	paymentData.Amount = payment.Amount
 	paymentData.Notes = payment.Notes
+	paymentData.Source = payment.Source
 	paymentData.Reference = payment.Reference
 	paymentData.AppliedTo = payment.AppliedTo
 

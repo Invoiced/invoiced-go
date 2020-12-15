@@ -12,9 +12,9 @@ func TestCreateRefund(t *testing.T) {
 	key := "test api key"
 
 	mockPaymentResponseID := int64(1523)
-	mockPaymentResponse := new(invdendpoint.Payment)
+	mockPaymentResponse := new(invdendpoint.Refund)
 	mockPaymentResponse.Id = mockPaymentResponseID
-	mockPaymentResponse.Customer = 234112
+	mockPaymentResponse.Charge = 234112
 	mockPaymentResponse.GatewayId = "234"
 
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
@@ -26,8 +26,8 @@ func TestCreateRefund(t *testing.T) {
 	defer server.Close()
 
 	conn := mockConnection(key, server)
-	refund := conn.NewPayment()
-	err = refund.Refund(123.00)
+	refund := conn.NewRefund()
+	err = refund.Create(234112, 123.00)
 
 	if err != nil {
 		t.Fatal("Error Creating refund", err)

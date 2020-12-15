@@ -567,7 +567,6 @@ func SafeCustomerForCreation(cust *invdendpoint.Customer) (*invdendpoint.Custome
 	custData.AutoPay = cust.AutoPay
 	custData.AutoPayDelays = cust.AutoPayDelays
 	custData.PaymentTerms = cust.PaymentTerms
-	custData.StripeToken = cust.StripeToken
 	custData.AttentionTo = cust.AttentionTo
 	custData.Address1 = cust.Address1
 	custData.Address2 = cust.Address2
@@ -575,6 +574,7 @@ func SafeCustomerForCreation(cust *invdendpoint.Customer) (*invdendpoint.Custome
 	custData.State = cust.State
 	custData.PostalCode = cust.PostalCode
 	custData.Language = cust.Language
+	custData.Currency = cust.Currency
 	custData.Chase = cust.Chase
 	custData.Phone = cust.Phone
 	custData.CreditHold = cust.CreditHold
@@ -607,7 +607,6 @@ func SafeCustomerForUpdate(cust *invdendpoint.Customer) (*invdendpoint.Customer,
 	custData.Email = cust.Email
 	custData.AutoPay = cust.AutoPay
 	custData.PaymentTerms = cust.PaymentTerms
-	custData.StripeToken = cust.StripeToken
 	custData.AttentionTo = cust.AttentionTo
 	custData.Address1 = cust.Address1
 	custData.Address2 = cust.Address2
@@ -616,6 +615,7 @@ func SafeCustomerForUpdate(cust *invdendpoint.Customer) (*invdendpoint.Customer,
 	custData.PostalCode = cust.PostalCode
 	custData.Country = cust.Country
 	custData.Language = cust.Language
+	custData.Currency = cust.Currency
 	custData.Chase = cust.Chase
 	custData.ChasingCadence = cust.ChasingCadence
 	custData.Phone = cust.Phone

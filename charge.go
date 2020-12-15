@@ -6,20 +6,29 @@ import (
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-func (c *Payment) InitiateCharge(chargeRequest *invdendpoint.ChargeRequest) (*Payment, error) {
-	txnResp := new(Payment)
+type Charge struct {
+	*Connection
+	*invdendpoint.Charge
+}
+
+func (c *Connection) NewCharge() *Charge {
+	return &Charge{c, new(invdendpoint.Charge)}
+}
+
+func (c *Charge) Create(chargeRequest *invdendpoint.ChargeRequest) (*Payment, error) {
+	payment := new(Payment)
 
 	if chargeRequest == nil {
 		return nil, errors.New("chargeRequest cannot be nil")
 	}
 
-	apiErr := c.create(invdendpoint.ChargeEndpoint, chargeRequest, txnResp)
+	apiErr := c.create(invdendpoint.ChargeEndpoint, chargeRequest, payment)
 
 	if apiErr != nil {
 		return nil, apiErr
 	}
 
-	txnResp.Connection = c.Connection
+	payment.Connection = c.Connection
 
-	return txnResp, nil
+	return payment, nil
 }

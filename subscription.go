@@ -184,6 +184,7 @@ func SafeSubscriptionForCreation(sub *invdendpoint.Subscription) (*invdendpoint.
 	subData.Plan = sub.Plan
 	subData.StartDate = sub.StartDate
 	subData.BillIn = sub.BillIn
+	subData.BillInAdvanceDays = sub.BillInAdvanceDays
 	subData.Quantity = sub.Quantity
 	subData.Addons = sub.Addons
 	subData.Discounts = sub.Discounts
@@ -210,6 +211,7 @@ func SafeSubscriptionsForUpdate(sub *invdendpoint.Subscription) (*invdendpoint.S
 	subData.Plan = sub.Plan
 	subData.StartDate = sub.StartDate
 	subData.BillIn = sub.BillIn
+	subData.BillInAdvanceDays = sub.BillInAdvanceDays
 	subData.Quantity = sub.Quantity
 	subData.Addons = sub.Addons
 	subData.Paused = sub.Paused

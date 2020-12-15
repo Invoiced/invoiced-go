@@ -19,7 +19,7 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
     "addons": [
         {
             "id": 3,
-            "catalog_item": "ipad-license",
+            "plan": "ipad-license",
             "quantity": 11,
             "created_at": 1420391704
         }
@@ -86,8 +86,8 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 		t.Fatal("Subscription Addon 0 has incorrect status")
 	}
 
-	if so.Addons[0].Item != "ipad-license" {
-		t.Fatal("Subscription Addon Item 0 has incorrect value")
+	if so.Addons[0].Plan != "ipad-license" {
+		t.Fatal("Subscription Addon Plan 0 has incorrect value")
 	}
 
 	if so.Addons[0].Quantity != 11 {

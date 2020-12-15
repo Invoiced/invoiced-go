@@ -14,7 +14,10 @@ type LineItem struct {
 	Taxable      bool                   `json:"taxable,omitempty"`      // Excludes amount from invoice taxes when false
 	Taxes        []Tax                  `json:"taxes,omitempty"`        // Line item Taxes
 	Plan         string                 `json:"plan,omitempty"`         // Plan ID, only present when type is plan
-	Metadata     map[string]interface{} `json:"metadata,omitempty"`     // A hash of key/value pairs that can store additional information about this object.
+	PeriodStart  int64                  `json:"period_start,omitempty"`
+	PeriodEnd    int64                  `json:"period_end,omitempty"`
+	Prorated     bool                   `json:"prorated,omitempty"`
+	Metadata     map[string]interface{} `json:"metadata,omitempty"` // A hash of key/value pairs that can store additional information about this object.
 }
 
 type LineItemPreview struct {
@@ -30,5 +33,8 @@ type LineItemPreview struct {
 	Taxable      bool                   `json:"taxable,omitempty"`      // Excludes amount from invoice taxes when false
 	Taxes        []Tax                  `json:"taxes,omitempty"`        // Line item Taxes
 	Plan         string                 `json:"plan,omitempty"`         // Plan ID, only present when type is plan
-	Metadata     map[string]interface{} `json:"metadata,omitempty"`     // A hash of key/value pairs that can store additional information about this object.
+	PeriodStart  int64                  `json:"period_start,omitempty"`
+	PeriodEnd    int64                  `json:"period_end,omitempty"`
+	Prorated     bool                   `json:"prorated,omitempty"`
+	Metadata     map[string]interface{} `json:"metadata,omitempty"` // A hash of key/value pairs that can store additional information about this object.
 }

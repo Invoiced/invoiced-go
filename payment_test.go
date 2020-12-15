@@ -17,7 +17,7 @@ func TestPaymentCreate(t *testing.T) {
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 	mockPaymentResponse.Customer = 234112
-	mockPaymentResponse.GatewayId = "234"
+	mockPaymentResponse.Reference = "234"
 
 	server, err := invdmockserver.New(200, mockPaymentResponse, "json", true)
 	if err != nil {
@@ -33,7 +33,6 @@ func TestPaymentCreate(t *testing.T) {
 	paymentToCreate := payment.NewPayment()
 
 	paymentToCreate.Customer = 234112
-	paymentToCreate.Gateway = "dell"
 
 	createdPayment, err := payment.Create(paymentToCreate)
 	if err != nil {
@@ -63,7 +62,7 @@ func TestPaymentCreateError(t *testing.T) {
 	payment := conn.NewPayment()
 	paymentToCreate := payment.NewPayment()
 	paymentToCreate.Customer = 234112
-	paymentToCreate.GatewayId = "234"
+	paymentToCreate.Reference = "234"
 
 	_, apiErr := payment.Create(paymentToCreate)
 
@@ -84,7 +83,7 @@ func TestPaymentUpdate(t *testing.T) {
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 	mockPaymentResponse.Customer = 234112
-	mockPaymentResponse.GatewayId = "234"
+	mockPaymentResponse.Reference = "234"
 
 	server, err := invdmockserver.New(200, mockPaymentResponse, "json", true)
 	if err != nil {
@@ -202,7 +201,7 @@ func TestPaymentRetrieve(t *testing.T) {
 	mockPaymentResponse := new(invdendpoint.Payment)
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.Customer = 234112
-	mockPaymentResponse.GatewayId = "234"
+	mockPaymentResponse.Reference = "234"
 
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 

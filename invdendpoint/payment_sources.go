@@ -24,23 +24,38 @@ type PaymentSource struct {
 type PaymentSources []PaymentSource
 
 type Card struct {
-	Id       int64  `json:"id,omitempty"`        // The card’s unique ID
-	Object   string `json:"object,omitempty"`    // card
-	Brand    string `json:"brand,omitempty"`     // Card brand
-	Last4    string `json:"last4,omitempty"`     // Last 4 digits of card
-	ExpMonth int    `json:"exp_month,omitempty"` // Expiry month
-	ExpYear  int    `json:"exp_year,omitempty"`  // Expiry year
-	Funding  string `json:"funding,omitempty"`   // Funding instrument, can be credit, debit, prepaid, or unknown
+	Id              int64  `json:"id,omitempty"`     // The card’s unique ID
+	Object          string `json:"object,omitempty"` // card
+	Gateway         string `json:"gateway,omitempty"`
+	GatewayId       string `json:"gateway_id,omitempty"`
+	GatewayCustomer string `json:"gateway_customer,omitempty"`
+	Chargeable      bool   `json:"chargeable,omitempty"`
+	Brand           string `json:"brand,omitempty"`     // Card brand
+	Last4           string `json:"last4,omitempty"`     // Last 4 digits of card
+	ExpMonth        int    `json:"exp_month,omitempty"` // Expiry month
+	ExpYear         int    `json:"exp_year,omitempty"`  // Expiry year
+	Funding         string `json:"funding,omitempty"`   // Funding instrument, can be credit, debit, prepaid, or unknown
+	FailureReason   string `json:"failure_reason,omitempty"`
+	ReceiptEmail    string `json:"receipt_email,omitempty"`
+	CreatedAt       int64  `json:"created_at,omitempty"`
 }
 
 type BankAccount struct {
-	Id            int64  `json:"id,omitempty"`             // The bank account’s unique ID
-	Object        string `json:"object,omitempty"`         // bank_account
-	BankName      string `json:"bank_name,omitempty"`      // Bank name
-	Last4         string `json:"last4,omitempty"`          // Last 4 digits of bank account
-	RoutingNumber string `json:"routing_number,omitempty"` // Bank routing number
-	Verified      bool   `json:"verified,omitempty"`       // Whether the bank account has been verified with instant verification or micro-deposits
-	Currency      string `json:"currency,omitempty"`       // 3-letter ISO code
+	Id              int64  `json:"id,omitempty"`     // The bank account’s unique ID
+	Object          string `json:"object,omitempty"` // bank_account
+	Gateway         string `json:"gateway,omitempty"`
+	GatewayId       string `json:"gateway_id,omitempty"`
+	GatewayCustomer string `json:"gateway_customer,omitempty"`
+	Chargeable      bool   `json:"chargeable,omitempty"`
+	BankName        string `json:"bank_name,omitempty"`      // Bank name
+	Last4           string `json:"last4,omitempty"`          // Last 4 digits of bank account
+	RoutingNumber   string `json:"routing_number,omitempty"` // Bank routing number
+	Verified        bool   `json:"verified,omitempty"`       // Whether the bank account has been verified with instant verification or micro-deposits
+	Currency        string `json:"currency,omitempty"`       // 3-letter ISO code
+	Country         string `json:"country,omitempty"`        // 2-letter ISO code
+	FailureReason   string `json:"failure_reason,omitempty"`
+	ReceiptEmail    string `json:"receipt_email,omitempty"`
+	CreatedAt       int64  `json:"created_at,omitempty"`
 }
 
 func (d *PaymentSource) UnmarshalJSON(data []byte) error {
