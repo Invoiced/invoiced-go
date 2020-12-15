@@ -190,10 +190,6 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 		t.Fatal("Paid is incorrect")
 	}
 
-	if so.Chase {
-		t.Fatal("Chase is incorrect")
-	}
-
 	if so.Date != 1416290400 {
 		t.Fatal("Date is incorrect")
 	}

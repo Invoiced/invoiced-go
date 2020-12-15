@@ -41,16 +41,8 @@ func TestUnMarshalPaymentObject(t *testing.T) {
 		t.Fatal("Payment has incorrect periodstart")
 	}
 
-	if so.Invoice != 44648 {
-		t.Fatal("Payment has incorrect invoice")
-	}
-
 	if so.Date != 1410843600 {
 		t.Fatal("Payment has incorrect invoice")
-	}
-
-	if so.Type != "payment" {
-		t.Fatal("Payment has incorrect type")
 	}
 
 	if so.Currency != "usd" {

@@ -15,7 +15,7 @@ func TestCreateCharge(t *testing.T) {
 	mockChargeResponse := new(invdendpoint.Payment)
 	mockChargeResponse.Id = mockChargeResponseID
 	mockChargeResponse.Customer = 234112
-	mockChargeResponse.GatewayId = "234"
+	mockChargeResponse.Reference = "234"
 
 	mockChargeResponse.CreatedAt = time.Now().UnixNano()
 
@@ -28,7 +28,7 @@ func TestCreateCharge(t *testing.T) {
 
 	chargeRequest := new(invdendpoint.ChargeRequest)
 
-	charge, err := conn.NewPayment().InitiateCharge(chargeRequest)
+	charge, err := conn.NewCharge().Create(chargeRequest)
 	if err != nil {
 		t.Fatal("Error Creating charge", err)
 	}

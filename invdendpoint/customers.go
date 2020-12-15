@@ -17,7 +17,6 @@ type Customer struct {
 	AutoPay                bool                   `json:"autopay,omitempty"`            // Autopay
 	AutoPayDelays          int                    `json:"autopay_delay_days,omitempty"` // Number of days to delay AutoPay
 	PaymentTerms           string                 `json:"payment_terms,omitempty"`      // Payment terms used for manual collection mode, i.e. “NET 30”
-	StripeToken            string                 `json:"stripe_token,omitempty"`       // When provided sets the customer’s payment source to the tokenized Stripe card
 	PaymentSource          *PaymentSource         `json:"payment_source,omitempty"`     // Customer’s payment source, if attached
 	AttentionTo            string                 `json:"attention_to,omitempty"`       // Used for ATTN: address line if company
 	Address1               string                 `json:"address1,omitempty"`           // First address line
@@ -27,6 +26,7 @@ type Customer struct {
 	PostalCode             string                 `json:"postal_code,omitempty"`        // Zip or postal code
 	Country                string                 `json:"country,omitempty"`            // Two-letter ISO code
 	Language               string                 `json:"language,omitempty"`           // Two-letter ISO code
+	Currency               string                 `json:"currency,omitempty"`           // Three-letter ISO code
 	Chase                  bool                   `json:"boolean,omitempty"`            // Chasing enabled? - defaults to true
 	ChasingCadence         int64                  `json:"chasing_cadence,omitempty"`    // Cadence ID
 	NextChaseStep          int64                  `json:"next_chase_step,omitempty"`
@@ -40,6 +40,7 @@ type Customer struct {
 	AvalaraEntityUseCode   string                 `json:"avalara_entity_use_code,omitempty"`  // Avalara-specific entity use code
 	AvalaraExemptionNumber string                 `json:"avalara_exemption_number,omitempty"` // Tax-exempt number to pass to Avalara
 	Type                   string                 `json:"type,omitempty"`                     // Organization type, company or person
+	BillToParent           bool                   `json:"bill_to_parent,omitempty"`           // Parent customer ID
 	ParentCustomer         int64                  `json:"parent_customer,omitempty"`          // Parent customer ID
 	Notes                  string                 `json:"notes,omitempty"`                    // Private customer notes
 	SignUpPage             int64                  `json:"sign_up_page,omitempty"`

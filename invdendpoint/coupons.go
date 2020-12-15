@@ -3,13 +3,14 @@ package invdendpoint
 const CouponEndpoint = "/coupons"
 
 type Coupon struct {
-	Id             string                 `json:"id,omitempty"`              // The discount’s unique ID
-	Object         string                 `json:"object,omitempty"`          // Object type, coupon
-	Name           string                 `json:"name,omitempty"`            // Coupon name
-	Currency       string                 `json:"currency,omitempty"`        // 3-letter ISO code
-	Value          int64                  `json:"value,omitempty"`           // Amount
-	IsPercent      bool                   `json:"is_percent,omitempty"`      // When true the value is a %
-	Exclusive      bool                   `json:"exclusive,omitempty"`       // exclusive
+	Id             string                 `json:"id,omitempty"`         // The discount’s unique ID
+	Object         string                 `json:"object,omitempty"`     // Object type, coupon
+	Name           string                 `json:"name,omitempty"`       // Coupon name
+	Currency       string                 `json:"currency,omitempty"`   // 3-letter ISO code
+	Value          int64                  `json:"value,omitempty"`      // Amount
+	IsPercent      bool                   `json:"is_percent,omitempty"` // When true the value is a %
+	Exclusive      bool                   `json:"exclusive,omitempty"`  // exclusive
+	Duration       int64                  `json:"durationo,omitempty"`
 	ExpirationDate int64                  `json:"expiration_date,omitempty"` // Date coupon expires
 	MaxRedemptions int64                  `json:"max_redemptions,omitempty"` // Max number of times coupon can be used
 	CreatedAt      int64                  `json:"created_at,omitempty"`      // Timestamp when created

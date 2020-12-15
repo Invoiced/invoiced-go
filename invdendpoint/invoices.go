@@ -23,8 +23,6 @@ type Invoice struct {
 	Closed                 bool                   `json:"closed"`                         // When true, an invoice is closed and considered bad debt. No further payments are allowed.
 	Paid                   bool                   `json:"paid,omitempty"`                 // Indicates whether an invoice has been paid in full
 	Status                 string                 `json:"status,omitempty"`               // Invoice state, one of draft, not_sent, sent, viewed, past_due, pending, paid
-	Chase                  bool                   `json:"chase,omitempty"`                // Whether chasing is enabled for the invoice
-	NextChaseOn            int64                  `json:"next_chase_on,omitempty"`        // Next scheduled chase
 	AttemptCount           int64                  `json:"attempt_count,omitempty"`        //# of payment attempts
 	NextPaymentAttempt     int64                  `json:"next_payment_attempt,omitempty"` // Next scheduled charge attempt, when in automatic collection
 	Subscription           int64                  `json:"subscription,omitempty"`         // Subscription ID if invoice came from subscription
@@ -38,16 +36,15 @@ type Invoice struct {
 	Taxes                  []Tax                  `json:"taxes,omitempty"`                // Collection of Taxes
 	Total                  float64                `json:"total,omitempty"`                // Total
 	Balance                float64                `json:"balance,omitempty"`              // Balance owed
-	Tags                   []string               `json:"tags,omitempty"`                 // Invoice tags
 	Url                    string                 `json:"url,omitempty"`                  // URL to view the invoice in the billing portal
 	PaymentUrl             string                 `json:"payment_url,omitempty"`          // URL for the invoice payment page
 	PdfUrl                 string                 `json:"pdf_url,omitempty"`              // URL to download the invoice as a PDF
 	CreatedAt              int64                  `json:"created_at,omitempty"`           // Timestamp when created
 	Metadata               map[string]interface{} `json:"metadata,omitempty"`             // A hash of key/value pairs that can store additional information about this object.
 	CalculateTaxes         bool                   `json:"calculate_taxes,omitempty"`      // Flag to indicate whether taxes should be calculated on the invoice
+	ShipTo                 *ShippingDetail        `json:"ship_to,omitempty"`
 	Attachments            []int64                `json:"attachments,omitempty"`
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"`
-	Sent                   bool                   `json:"sent,omitempty"`
 }
 
 func (i *Invoice) TotalTaxAmount() float64 {
