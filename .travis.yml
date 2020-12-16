@@ -1,26 +1,30 @@
 dist: trusty
 
-go:
-    - "1.11.x"
-    - "1.12.x"
-    - tip
-
-
 language: go
+go:
+    - 1.11.x
+    - 1.12.x
+    - 1.13.x
+    - 1.14.x
+    - 1.15.x
 
 matrix:
     allow_failures:
-      - go: tip
+    - go: 1.13.x
+    - go: 1.14.x
+    - go: 1.15.x
     fast_finish: true
 
 before_install:
 - go get golang.org/x/tools/cmd/cover
 - go get github.com/mattn/goveralls
 - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.17.1
+
 script:
 - golangci-lint run
 - go test ./... -v -covermode=count -coverprofile=coverage.out
 - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken=$COVERALLS_TOKEN
+
 env:
   global:
   - secure: o1xQ0wJjv9gm6PrO9rJI6VPSn6KRHAjrrslkC4u4uJ31TE1dyGFtohoOCAQhsN+XV1GBAcQjEOOUJCdBDREOp/2RSNzSlCo+GWN3pMuyvTg2nnhhY3hJycjdsTtBJqDGxZUQ5uBuz+RiY0zJY0+tuZWdmbSkBG3Uql9jNQMueVxkNyRPoechhhP9A4EHf6DAGGU7TCAmULWPmX7pa1QMl/qzvI+lYtAZmIqsYJWldvJGhjd2BwSnW5W2sfQCzgOB4/bRqkJgXhZznq/vCFKqdJlVrAqxDk+Mf6RZLdIr024CraawaY13J1bw3ZZ+MtZ6Yeq+HiFQCCMpaWE72KFWKC5xmZhDEprQKj1GsfUqwOjk13N0G7EZ3jeSuHNQEPcHImnk3l0OXheBA1z8G+It31qVbvEBKL7QXy8WH/SQuybe0RGDaPd1gL1MT0xN4eJ4ne9BGq5tVxKkNOR2CQer9EPUhDVP/NyI/PHuVWk2R4DUfpZJuh2uOZT4udEm68RoY2g04NUEbkqGFOVxSluhCIXT3ZtxGp38YHFFGCjv5QaYy3Znq5k/8lYl9NW1SbgmgWDXEeV30jpgH/i5nsyTwEjpCgn8DKE4bTD//JU4dRav/h3aAAbDiJ0GbvWSIMGDyKtpRNo/yLEVQR7I26OvgO+Ifm78zQniZLove9EQnEU=
