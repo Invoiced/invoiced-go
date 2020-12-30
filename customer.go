@@ -554,6 +554,24 @@ func (c *Customer) DeletePendingLineItem(id int64) error {
 	return nil
 }
 
+func (c *Customer) CreateCreditBalanceAdjustment(amount float64) (*invdendpoint.BalanceAdjustment, error) {
+	endpoint := invdendpoint.CreditBalanceAdjustmentsEndpoint
+
+	adjustmentRequest := invdendpoint.BalanceAdjustment{
+		Customer: strconv.FormatInt(c.Id, 10),
+		Amount: amount,
+	}
+
+	var response invdendpoint.BalanceAdjustment
+
+	err := c.create(endpoint, adjustmentRequest, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
 // SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
 func SafeCustomerForCreation(cust *invdendpoint.Customer) (*invdendpoint.Customer, error) {
 	if cust == nil {
