@@ -558,7 +558,7 @@ func (c *Customer) CreateCreditBalanceAdjustment(amount float64) (*invdendpoint.
 	endpoint := invdendpoint.CreditBalanceAdjustmentsEndpoint
 
 	adjustmentRequest := invdendpoint.BalanceAdjustment{
-		Customer: c.Id,
+		Customer: int(c.Id),
 		Amount: amount,
 	}
 
