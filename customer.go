@@ -558,7 +558,7 @@ func (c *Customer) CreateCreditBalanceAdjustment(amount float64) (*invdendpoint.
 	endpoint := invdendpoint.CreditBalanceAdjustmentsEndpoint
 
 	adjustmentRequest := invdendpoint.BalanceAdjustment{
-		Customer: strconv.FormatInt(c.Id, 10),
+		Customer: int(c.Id),
 		Amount: amount,
 	}
 
@@ -569,7 +569,7 @@ func (c *Customer) CreateCreditBalanceAdjustment(amount float64) (*invdendpoint.
 		return nil, err
 	}
 
-	return response, nil
+	return &response, nil
 }
 
 // SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
