@@ -361,5 +361,5 @@ func (c *Connection) retrieveDataFromAPI(endpoint string, endpointData interface
 		return "", err
 	}
 
-	return nextURL, nil
+	return strings.Replace(nextURL,c.baseUrl,"",-1), nil
 }
