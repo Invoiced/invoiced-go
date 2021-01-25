@@ -18,6 +18,42 @@ func (c *Connection) NewEvent() *Event {
 	return &Event{c, event}
 }
 
+func (c *Event) ListAllByDatesAndUser(filter *invdendpoint.Filter, sort *invdendpoint.Sort,startDate int64, endDate int64, user string,objectType string, objectID int64) (Events, error) {
+	endpoint := invdendpoint.EventEndpoint
+	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = addQueryParameter(endpoint,"start_date",strconv.FormatInt(startDate,10))
+	endpoint = addQueryParameter(endpoint,"end_date",strconv.FormatInt(endDate,10))
+	endpoint = addQueryParameter(endpoint,"from",user)
+	if len(objectType) > 0 {
+		relatesTo := objectType + "," + strconv.FormatInt(objectID,10)
+		endpoint = addQueryParameter(endpoint,"related_to",relatesTo)
+	}
+
+
+	events := make(Events, 0)
+
+NEXT:
+	tmpEvents := make(Events, 0)
+
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpEvents)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	events = append(events, tmpEvents...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	for _, event := range events {
+		event.Connection = c.Connection
+	}
+
+	return events, nil
+}
+
 func (c *Event) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Events, error) {
 	endpoint := invdendpoint.EventEndpoint
 	endpoint = addFilterAndSort(endpoint, filter, sort)
