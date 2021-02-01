@@ -10,8 +10,8 @@ type Payment struct {
 	Customer  int64                `json:"customer,omitempty"` // Customer ID, required if invoice ID is not supplied
 	Date      int64                `json:"date,omitempty"`     // Payment date, defaults to current timestamp
 	Method    string               `json:"method,omitempty"`   // Payment instrument used to facilitate payment, defaults to other
-	Matched   string               `json:"matched,omitempty"`
-	Voided    string               `json:"voided,omitempty"`
+	Matched   bool               `json:"matched,omitempty"`
+	Voided    bool               `json:"voided,omitempty"`
 	Status    string        `json:"status,omitempty"`   // Payment status
 	Currency  string        `json:"currency,omitempty"` // 3-letter ISO code
 	Amount    float64       `json:"amount,omitempty"`   // Payment amount
