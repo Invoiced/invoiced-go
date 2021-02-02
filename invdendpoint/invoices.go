@@ -29,19 +29,20 @@ type Invoice struct {
 	Date                   int64                  `json:"date,omitempty"`                 // Invoice date
 	DueDate                int64                  `json:"due_date,omitempty"`             // Date payment is due by
 	PaymentTerms           string                 `json:"payment_terms,omitempty"`        // Payment terms for the invoice, i.e. “NET 30”
-	Items                  []LineItem             `json:"items,omitempty"`                // Collection of Line Items
-	Notes                  string                 `json:"notes,omitempty"`                // Additional notes displayed on invoice
-	Subtotal               float64                `json:"subtotal,omitempty"`             // Subtotal
-	Discounts              []Discount             `json:"discounts,omitempty"`            // Collection of Discounts
-	Taxes                  []Tax                  `json:"taxes,omitempty"`                // Collection of Taxes
-	Total                  float64                `json:"total,omitempty"`                // Total
-	Balance                float64                `json:"balance,omitempty"`              // Balance owed
-	Url                    string                 `json:"url,omitempty"`                  // URL to view the invoice in the billing portal
-	PaymentUrl             string                 `json:"payment_url,omitempty"`          // URL for the invoice payment page
-	PdfUrl                 string                 `json:"pdf_url,omitempty"`              // URL to download the invoice as a PDF
-	CreatedAt              int64                  `json:"created_at,omitempty"`           // Timestamp when created
-	Metadata               map[string]interface{} `json:"metadata,omitempty"`             // A hash of key/value pairs that can store additional information about this object.
-	CalculateTaxes         bool                   `json:"calculate_taxes,omitempty"`      // Flag to indicate whether taxes should be calculated on the invoice
+	PurchaseOrder          string                 `json:"purchase_order,omitempty"`
+	Items                  []LineItem             `json:"items,omitempty"`           // Collection of Line Items
+	Notes                  string                 `json:"notes,omitempty"`           // Additional notes displayed on invoice
+	Subtotal               float64                `json:"subtotal,omitempty"`        // Subtotal
+	Discounts              []Discount             `json:"discounts,omitempty"`       // Collection of Discounts
+	Taxes                  []Tax                  `json:"taxes,omitempty"`           // Collection of Taxes
+	Total                  float64                `json:"total,omitempty"`           // Total
+	Balance                float64                `json:"balance,omitempty"`         // Balance owed
+	Url                    string                 `json:"url,omitempty"`             // URL to view the invoice in the billing portal
+	PaymentUrl             string                 `json:"payment_url,omitempty"`     // URL for the invoice payment page
+	PdfUrl                 string                 `json:"pdf_url,omitempty"`         // URL to download the invoice as a PDF
+	CreatedAt              int64                  `json:"created_at,omitempty"`      // Timestamp when created
+	Metadata               map[string]interface{} `json:"metadata,omitempty"`        // A hash of key/value pairs that can store additional information about this object.
+	CalculateTaxes         bool                   `json:"calculate_taxes,omitempty"` // Flag to indicate whether taxes should be calculated on the invoice
 	ShipTo                 *ShippingDetail        `json:"ship_to,omitempty"`
 	Attachments            []int64                `json:"attachments,omitempty"`
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"`

@@ -3,7 +3,7 @@ package invdendpoint
 const ChargeEndpoint = "/charges"
 
 type ChargeRequest struct {
-	Customer          int64                `json:"customer,omitempty"`     // Customer ID, required if invoice ID is not supplied
+	Customer          int64         `json:"customer,omitempty"`            // Customer ID, required if invoice ID is not supplied
 	Method            string        `json:"method,omitempty"`              // Payment method ID, required
 	Currency          string        `json:"currency,omitempty"`            // Optional, defaults to company currency
 	Amount            float64       `json:"amount,omitempty"`              // Charge amount, required

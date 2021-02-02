@@ -75,7 +75,6 @@ func (e *Event) ParseInvoiceEvent() (*Invoice, error) {
 		return nil, err
 	}
 
-
 	b, err := eoData.MarshalJSON()
 	if err != nil {
 		return nil, err

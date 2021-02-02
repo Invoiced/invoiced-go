@@ -23,19 +23,20 @@ type Estimate struct {
 	Date                   int64                  `json:"date,omitempty"`            // Invoice date
 	ExpirationDate         int64                  `json:"expiration_date,omitempty"` // Estimate expiration date
 	PaymentTerms           string                 `json:"payment_terms,omitempty"`   // Payment terms for the invoice, i.e. “NET 30”
-	Items                  []LineItem             `json:"items,omitempty"`           // Collection of Line Items
-	Notes                  string                 `json:"notes,omitempty"`           // Additional notes displayed on invoice
-	Subtotal               float64                `json:"subtotal,omitempty"`        // Subtotal
-	Discounts              []Discount             `json:"discounts,omitempty"`       // Collection of Discounts
-	Taxes                  []Tax                  `json:"taxes,omitempty"`           // Collection of Taxes
-	ShipTo                 string                 `json:"ship_to,omitempty"`         // Shipipng Detail object
-	Total                  float64                `json:"total,omitempty"`           // Total
-	Deposit                float64                `json:"deposit,omitempty"`         // Deposit
-	DepositPaid            bool                   `json:"deposit_paid,omoitempty"`   // Deposit Paid
-	Url                    string                 `json:"url,omitempty"`             // URL to download the invoice as a PDF
-	PdfUrl                 string                 `json:"pdf_url,omitempty"`         // URL to download the invoice as a PDF
-	CreatedAt              int64                  `json:"created_at,omitempty"`      // Timestamp when created
-	Metadata               map[string]interface{} `json:"metadata,omitempty"`        // A hash of key/value pairs that can store additional information about this object.
+	PurchaseOrder          string                 `json:"purchase_order,omitempty"`
+	Items                  []LineItem             `json:"items,omitempty"`                    // Collection of Line Items
+	Notes                  string                 `json:"notes,omitempty"`                    // Additional notes displayed on invoice
+	Subtotal               float64                `json:"subtotal,omitempty"`                 // Subtotal
+	Discounts              []Discount             `json:"discounts,omitempty"`                // Collection of Discounts
+	Taxes                  []Tax                  `json:"taxes,omitempty"`                    // Collection of Taxes
+	ShipTo                 string                 `json:"ship_to,omitempty"`                  // Shipipng Detail object
+	Total                  float64                `json:"total,omitempty"`                    // Total
+	Deposit                float64                `json:"deposit,omitempty"`                  // Deposit
+	DepositPaid            bool                   `json:"deposit_paid,omoitempty"`            // Deposit Paid
+	Url                    string                 `json:"url,omitempty"`                      // URL to download the invoice as a PDF
+	PdfUrl                 string                 `json:"pdf_url,omitempty"`                  // URL to download the invoice as a PDF
+	CreatedAt              int64                  `json:"created_at,omitempty"`               // Timestamp when created
+	Metadata               map[string]interface{} `json:"metadata,omitempty"`                 // A hash of key/value pairs that can store additional information about this object.
 	Attachments            []int64                `json:"attachments,omitempty"`              // A list of File IDs to attach to the estimate
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"` // List of payment methods to disable for this estimate, i.e. ["credit_card", "wire_transfer"].
 	CalculateTax           bool                   `json:"calculate_taxes,omitempty"`          // Disables tax calculation, default is true
