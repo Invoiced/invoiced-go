@@ -401,7 +401,7 @@ func TestCustomer_SendStatementEmail(t *testing.T) {
 	var mockEmailResponse [1]invdendpoint.EmailResponse
 
 	mockResponse := new(invdendpoint.EmailResponse)
-	mockResponse.Id = "abcdef"
+	mockResponse.Id = 1
 	mockResponse.Message = "hello test"
 
 	mockResponse.CreatedAt = time.Now().UnixNano()

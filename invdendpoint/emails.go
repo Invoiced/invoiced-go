@@ -24,7 +24,7 @@ func (e EmailResponses) Error() string {
 }
 
 type EmailResponse struct {
-	Id           string `json:"id,omitempty"`
+	Id           int64  `json:"id,omitempty"`
 	State        string `json:"state,omitempty"`
 	RejectReason string `json:"reject_reason,omitempty"`
 	Email        string `json:"email,omitempty"`

@@ -23,7 +23,7 @@ func TestUnMarshalCustomerStatementRequest(t *testing.T) {
 func TestUnMarshalCustomerStatementsResponse(t *testing.T) {
 	s := `[
   {
-    "id": "f45382c6fbc44d44aa7f9a55eb2ce731",
+    "id": 231,
     "state": "sent",
     "reject_reason": null,
     "email": "client@example.com",
