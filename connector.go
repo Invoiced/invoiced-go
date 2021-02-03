@@ -19,7 +19,7 @@ const (
 	requestType   = "application/json"
 )
 
-const version = "6.0.0"
+const version = "6.1.0"
 
 func Version() string {
 	return version
