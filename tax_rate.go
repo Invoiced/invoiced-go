@@ -2,7 +2,6 @@ package invdapi
 
 import (
 	"errors"
-
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 

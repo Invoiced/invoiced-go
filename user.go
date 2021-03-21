@@ -2,7 +2,6 @@ package invdapi
 
 import (
 	"strconv"
-
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 

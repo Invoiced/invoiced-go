@@ -198,6 +198,7 @@ func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort 
 	url := invdendpoint.InvoiceEndpoint
 	url = addFilterAndSort(url, filter, sort)
 
+
 	if startDate > 0 {
 		startDateString := strconv.FormatInt(startDate, 10)
 		url = addQueryParameter(url, "start_date", startDateString)
@@ -428,6 +429,7 @@ func SafeInvoiceForCreation(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, e
 	invData.Taxes = inv.Taxes
 	invData.AutoPay = inv.AutoPay
 	invData.ShipTo = inv.ShipTo
+	invData.PurchaseOrder = inv.PurchaseOrder
 
 	return invData, nil
 }
@@ -456,6 +458,7 @@ func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, err
 	invData.Taxes = inv.Taxes
 	invData.AutoPay = inv.AutoPay
 	invData.ShipTo = inv.ShipTo
+	invData.PurchaseOrder = inv.PurchaseOrder
 
 	return invData, nil
 }
