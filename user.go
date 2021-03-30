@@ -104,4 +104,25 @@ NEXT:
 	return users, nil
 }
 
+func (c *User) SetUserEmailFrequency(userEmailFrequency string, id int64) (*User, error) {
+	endpoint := invdendpoint.UsersEndpoint + "/" + strconv.FormatInt(id, 10) + "/frequency"
+
+	userResp := new(User)
+
+	userRequest := new(invdendpoint.UserEmailUpdateRequest)
+	userRequest.Id = id
+	userRequest.EmailUpdateFrequency = userEmailFrequency
+
+	apiErr := c.update(endpoint, userRequest, userResp)
+
+	if apiErr != nil {
+		return nil,apiErr
+	}
+
+
+	userResp.Connection = c.Connection
+
+	return userResp, nil
+}
+
 

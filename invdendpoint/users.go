@@ -23,6 +23,11 @@ type UserResponse struct {
 	User                 *User               `json:"user,omitempty"`
 }
 
+type UserEmailUpdateRequest struct {
+	Id                   int64               `json:"id"`
+	EmailUpdateFrequency string              `json:"email_update_frequency"`
+}
+
 type User struct {
 	Email            string `json:"email,omitempty"`
 	FirstName        string `json:"first_name,omitempty"`
