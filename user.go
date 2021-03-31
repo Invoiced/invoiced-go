@@ -1,6 +1,7 @@
 package invdapi
 
 import (
+	"fmt"
 	"strconv"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
@@ -85,7 +86,7 @@ func (c *User) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Us
 NEXT:
 	tmpUsers := make(Users, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpUsers)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpUsers)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -93,7 +94,9 @@ NEXT:
 
 	users = append(users, tmpUsers...)
 
-	if endpointTmp != "" {
+	fmt.Println("endpointTmp => ",endpoint)
+
+	if endpoint != "" {
 		goto NEXT
 	}
 

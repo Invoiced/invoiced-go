@@ -86,7 +86,7 @@ func (c *Notification) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.S
 NEXT:
 	tmpNotifications := make(Notifications, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpNotifications)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpNotifications)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -94,7 +94,7 @@ NEXT:
 
 	notifications = append(notifications, tmpNotifications...)
 
-	if endpointTmp != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
