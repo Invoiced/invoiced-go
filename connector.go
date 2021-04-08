@@ -232,6 +232,10 @@ func (c *Connection) create(endpoint string, requestData interface{}, responseDa
 		return apiError
 	}
 
+	if responseData == nil {
+		return nil
+	}
+
 	err = pushDataIntoStruct(responseData, resp.Body)
 
 	if err != nil {

@@ -28,6 +28,10 @@ type UserEmailUpdateRequest struct {
 	EmailUpdateFrequency string              `json:"email_update_frequency"`
 }
 
+type UserInviteRequest struct {
+	Id                   int64               `json:"id"`
+}
+
 type User struct {
 	Email            string `json:"email,omitempty"`
 	FirstName        string `json:"first_name,omitempty"`
