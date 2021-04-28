@@ -16,7 +16,7 @@ func (c *Connection) NewCharge() *Charge {
 }
 
 func (c *Charge) Create(chargeRequest *invdendpoint.ChargeRequest) (*Payment, error) {
-	payment := new(Payment)
+	payment := c.NewPayment()
 
 	if chargeRequest == nil {
 		return nil, errors.New("chargeRequest cannot be nil")
