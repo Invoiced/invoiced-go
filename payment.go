@@ -15,7 +15,8 @@ type Payment struct {
 type Payments []*Payment
 
 func (c *Connection) NewPayment() *Payment {
-	return &Payment{c, new(invdendpoint.Payment)}
+	 p := new(invdendpoint.Payment)
+	return &Payment{c,  p}
 }
 
 func (c *Payment) Count() (int64, error) {
@@ -32,7 +33,7 @@ func (c *Payment) Count() (int64, error) {
 
 func (c *Payment) Create(payment *Payment) (*Payment, error) {
 	endpoint := invdendpoint.PaymentEndpoint
-	txnResp := new(Payment)
+	txnResp := c.NewPayment()
 
 	if payment == nil {
 		return nil, errors.New("payment cannot be nil")
@@ -69,7 +70,7 @@ func (c *Payment) Delete() error {
 
 func (c *Payment) Save() error {
 	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	txnResp := new(Payment)
+	txnResp := c.NewPayment()
 
 	// safe prune invoice data for updating
 	invdTransDataToUpdate, err := SafePaymentForUpdate(c.Payment)
@@ -108,10 +109,11 @@ func (c *Payment) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) 
 	endpoint := invdendpoint.PaymentEndpoint
 	endpoint = addFilterAndSort(endpoint, filter, sort)
 
-	payments := make(Payments, 0)
+	payments := make(invdendpoint.Payments, 0)
+	paymentsToReturn := make(Payments, 0)
 
 NEXT:
-	tmpPayments := make(Payments, 0)
+	tmpPayments := make(invdendpoint.Payments, 0)
 
 	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpPayments)
 
@@ -126,17 +128,21 @@ NEXT:
 	}
 
 	for _, payment := range payments {
-		payment.Connection = c.Connection
+		inv := c.Connection.NewPayment()
+		invData := payment
+		inv.Payment = &invData
+		paymentsToReturn = append(paymentsToReturn, inv)
 	}
 
-	return payments, nil
+	return paymentsToReturn, nil
 }
 
 func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Payments, string, error) {
 	endpoint := invdendpoint.PaymentEndpoint
 	endpoint = addFilterAndSort(endpoint, filter, sort)
 
-	payments := make(Payments, 0)
+	payments := make(invdendpoint.Payments, 0)
+	paymentsToReturn := make(Payments, 0)
 
 	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &payments)
 
@@ -145,10 +151,14 @@ func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Pa
 	}
 
 	for _, payment := range payments {
-		payment.Connection = c.Connection
+		inv := c.Connection.NewPayment()
+		invData := payment
+		inv.Payment = &invData
+		paymentsToReturn = append(paymentsToReturn, inv)
+
 	}
 
-	return payments, nextEndpoint, nil
+	return paymentsToReturn, nextEndpoint, nil
 }
 
 func (c *Payment) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {

@@ -86,7 +86,6 @@ func (i *Invoice) TotalDiscountAmount() float64 {
 
 func (i *Invoice) UnmarshalJSON(data []byte) error {
 	type invoice2 Invoice
-
 	if err := json.Unmarshal(data, (*invoice2)(i)); err != nil {
 		return err
 	}
