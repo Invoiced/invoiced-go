@@ -430,6 +430,7 @@ func SafeInvoiceForCreation(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, e
 	invData.AutoPay = inv.AutoPay
 	invData.ShipTo = inv.ShipTo
 	invData.PurchaseOrder = inv.PurchaseOrder
+	invData.Sent = inv.Sent
 
 	return invData, nil
 }
@@ -459,6 +460,7 @@ func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, err
 	invData.AutoPay = inv.AutoPay
 	invData.ShipTo = inv.ShipTo
 	invData.PurchaseOrder = inv.PurchaseOrder
+	invData.Sent = inv.Sent
 
 	return invData, nil
 }

@@ -46,6 +46,7 @@ type Invoice struct {
 	ShipTo                 *ShippingDetail        `json:"ship_to,omitempty"`
 	Attachments            []int64                `json:"attachments,omitempty"`
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"`
+	Sent 				   bool 				  `json:"sent,omitempty"`
 }
 
 func (i *Invoice) TotalTaxAmount() float64 {
