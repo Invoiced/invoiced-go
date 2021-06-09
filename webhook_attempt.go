@@ -27,7 +27,7 @@ func (c *WebhookAttempt) ListAll(filter *invdendpoint.Filter, sort *invdendpoint
 NEXT:
 	tmpWebhookAttempts := make(WebhookAttempts, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpWebhookAttempts)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpWebhookAttempts)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -35,7 +35,7 @@ NEXT:
 
 	webhookAttempts = append(webhookAttempts, tmpWebhookAttempts...)
 
-	if endpointTmp != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
