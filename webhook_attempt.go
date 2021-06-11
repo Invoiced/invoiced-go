@@ -39,7 +39,7 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, webhookAttempt := range tmpWebhookAttempts {
+	for _, webhookAttempt := range webhookAttempts {
 		webhookAttempt.Connection = c.Connection
 	}
 
