@@ -17,7 +17,7 @@ type Subscription struct {
 	CustomerFull           *Customer              `json:"-"`
 	CustomerRaw             json.RawMessage        `json:"customer,omitempty"`
 	Plan                  string                 `json:"-"`       // Plan ID
-	PlanFull           *SubscriptionAddon              `json:"-"`
+	PlanFull           *Plan              `json:"-"`
 	PlanRaw             json.RawMessage        `json:"plan,omitempty"`
 	StartDate             int64                  `json:"start_date,omitempty"` // Timestamp subscription starts (or started)
 	BillIn                string                 `json:"bill_in,omitempty"`    // advance or arrears. Defaults to advance
@@ -121,15 +121,15 @@ func (i *Subscription) UnmarshalJSON(data []byte) error {
 
 	i.Plan  = string(aj)
 	i.Plan = strings.Trim(i.Plan, "\"")
-	plan := new(SubscriptionAddon)
+
+	plan := new(Plan)
 
 	err = json.Unmarshal(aj, plan)
 
 	if err == nil {
 		i.PlanFull = plan
-		i.Plan = plan.Plan
+		i.Plan = plan.Id
 	}
-
 
 	return nil
 }

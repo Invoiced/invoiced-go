@@ -51,7 +51,7 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fmt.Println("Subscription plan -> ",so.Plan)
+	fmt.Println("Subscription plan -> ", so.Plan)
 
 	if so.Id != 595 {
 		t.Fatal("Subscription has incorrect id")
@@ -60,9 +60,9 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	if so.Customer != 15444 {
 		t.Fatal("Subscription has incorrect type")
 	}
-    fmt.Println("so.plan ",so.Plan)
+	fmt.Println("so.plan ", so.Plan)
 	if so.Plan != "starter" {
-		t.Fatal("Subscription has incorrect plan2 -> " +so.Plan)
+		t.Fatal("Subscription has incorrect plan2 -> " + so.Plan)
 	}
 
 	if so.Quantity != 1 {
@@ -201,4 +201,114 @@ func TestUnMarshalSubscriptionsPreview(t *testing.T) {
 	if so.RecurringTotal != 50 {
 		t.Fatal("Recurring total should not ")
 	}
+}
+
+func TestSubscriptionPlanUnmarshall(t *testing.T) {
+	s := `{
+      "bill_in": "advance",
+      "bill_in_advance_days": 0,
+      "cancel_at_period_end": false,
+      "canceled_at": null,
+      "contract_period_end": 1627448399,
+      "contract_period_start": 1624856400,
+      "contract_renewal_cycles": null,
+      "contract_renewal_mode": "auto",
+      "created_at": 1624934799,
+      "customer": {
+        "ach_gateway_id": null,
+        "address1": null,
+        "address2": null,
+        "attention_to": null,
+        "autopay": false,
+        "autopay_delay_days": -1,
+        "avalara_entity_use_code": null,
+        "avalara_exemption_number": null,
+        "bill_to_parent": false,
+        "cc_gateway_id": null,
+        "chase": true,
+        "chasing_cadence": null,
+        "city": null,
+        "consolidated": false,
+        "country": "US",
+        "created_at": 1624930142,
+        "credit_hold": false,
+        "credit_limit": null,
+        "currency": "usd",
+        "email": null,
+        "id": 2321739,
+        "language": null,
+        "name": "Parag",
+        "next_chase_step": null,
+        "notes": null,
+        "number": "acme00209",
+        "owner": 831,
+        "parent_customer": null,
+        "payment_terms": "NET 14",
+        "phone": null,
+        "postal_code": null,
+        "state": null,
+        "tax_id": null,
+        "taxable": true,
+        "taxes": [],
+        "type": "company",
+        "object": "customer",
+        "statement_pdf_url": "https://tesla.sandbox.invoiced.com/statements/ReOax2A5W6bIt8V4paAmGvEn/pdf",
+        "sign_up_url": null,
+        "payment_source": null,
+        "sign_up_page": null,
+        "metadata": {}
+      },
+      "cycles": 1,
+      "description": null,
+      "id": 62241,
+      "mrr": 80900,
+      "paused": false,
+      "period_end": 1627448399,
+      "period_start": 1624856400,
+      "plan": {
+        "amount": 80900,
+        "catalog_item": null,
+        "created_at": 1624934793,
+        "currency": "usd",
+        "description": null,
+        "id": "model-z",
+        "interval": "month",
+        "interval_count": 1,
+        "name": "Model Z",
+        "notes": null,
+        "pricing_mode": "per_unit",
+        "quantity_type": "constant",
+        "tiers": null,
+        "object": "plan",
+        "metadata": {}
+      },
+      "quantity": 1,
+      "recurring_total": 80900,
+      "renewed_last": 1624856400,
+      "renews_next": 1627448400,
+      "snap_to_nth_day": null,
+      "start_date": 1624856400,
+      "status": "active",
+      "taxes": [],
+      "object": "subscription",
+      "url": "https://tesla.sandbox.invoiced.com/subscriptions/pE9pBoU0HmF6dyAXxyAYstOk",
+      "approval": null,
+      "payment_source": null,
+      "ship_to": null,
+      "metadata": {},
+      "addons": [],
+      "discounts": []
+    }`
+
+	so := new(Subscription)
+
+	err := json.Unmarshal([]byte(s), so)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if so.Plan != "model-z" {
+		t.Fatal("Plan id is incorrect")
+	}
+
 }
