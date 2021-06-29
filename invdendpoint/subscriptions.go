@@ -3,6 +3,7 @@ package invdendpoint
 import (
 	"encoding/json"
 	"strconv"
+	"strings"
 )
 
 const SubscriptionEndpoint = "/subscriptions"
@@ -15,7 +16,9 @@ type Subscription struct {
 	Customer               int64                  `json:"-"`
 	CustomerFull           *Customer              `json:"-"`
 	CustomerRaw             json.RawMessage        `json:"customer,omitempty"`
-	Plan                  string                 `json:"plan,omitempty"`       // Plan ID
+	Plan                  string                 `json:"-"`       // Plan ID
+	PlanFull           *SubscriptionAddon              `json:"-"`
+	PlanRaw             json.RawMessage        `json:"plan,omitempty"`
 	StartDate             int64                  `json:"start_date,omitempty"` // Timestamp subscription starts (or started)
 	BillIn                string                 `json:"bill_in,omitempty"`    // advance or arrears. Defaults to advance
 	BillInAdvanceDays     int64                  `json:"bill_in_advance_days,omitempty"`
@@ -114,6 +117,20 @@ func (i *Subscription) UnmarshalJSON(data []byte) error {
 		i.Customer = customer.Id
 	}
 
+	aj := i.PlanRaw
+
+	i.Plan  = string(aj)
+	i.Plan = strings.Trim(i.Plan, "\"")
+	plan := new(SubscriptionAddon)
+
+	err = json.Unmarshal(aj, plan)
+
+	if err == nil {
+		i.PlanFull = plan
+		i.Plan = plan.Plan
+	}
+
+
 	return nil
 }
 
@@ -123,6 +140,10 @@ func (i *Subscription) MarshalJSON() ([]byte, error) {
 
 	if i2.Customer > 0 {
 		i2.CustomerRaw = []byte(strconv.FormatInt(i2.Customer, 10))
+	}
+
+	if len(i2.Plan) > 0 {
+		i2.PlanRaw = []byte(i2.Plan)
 	}
 
 	return json.Marshal(i2)

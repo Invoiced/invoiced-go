@@ -2,6 +2,7 @@ package invdendpoint
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 )
 
@@ -50,6 +51,8 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	fmt.Println("Subscription plan -> ",so.Plan)
+
 	if so.Id != 595 {
 		t.Fatal("Subscription has incorrect id")
 	}
@@ -57,9 +60,9 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	if so.Customer != 15444 {
 		t.Fatal("Subscription has incorrect type")
 	}
-
+    fmt.Println("so.plan ",so.Plan)
 	if so.Plan != "starter" {
-		t.Fatal("Subscription has incorrect plan")
+		t.Fatal("Subscription has incorrect plan2 -> " +so.Plan)
 	}
 
 	if so.Quantity != 1 {
