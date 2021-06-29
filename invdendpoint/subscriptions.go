@@ -2,6 +2,7 @@ package invdendpoint
 
 import (
 	"encoding/json"
+	"strconv"
 )
 
 const SubscriptionEndpoint = "/subscriptions"
@@ -11,7 +12,9 @@ type Subscriptions []Subscription
 type Subscription struct {
 	Id                    int64                  `json:"id,omitempty"`         // The subscription’s unique ID
 	Object                string                 `json:"object,omitempty"`     // Object type, subscription
-	Customer              int64                  `json:"customer,omitempty"`   // Associated Customer
+	Customer               int64                  `json:"-"`
+	CustomerFull           *Customer              `json:"-"`
+	CustomerRaw             json.RawMessage        `json:"customer,omitempty"`
 	Plan                  string                 `json:"plan,omitempty"`       // Plan ID
 	StartDate             int64                  `json:"start_date,omitempty"` // Timestamp subscription starts (or started)
 	BillIn                string                 `json:"bill_in,omitempty"`    // advance or arrears. Defaults to advance
@@ -90,4 +93,37 @@ type SubscriptionPreviewInvoice struct {
 	PdfUrl             string                 `json:"pdf_url,omitempty"`              // URL to download the invoice as a PDF
 	CreatedAt          int64                  `json:"created_at,omitempty"`           // Timestamp when created
 	Metadata           map[string]interface{} `json:"metadata,omitempty"`             // A hash of key/value pairs that can store additional information about this object.
+}
+
+func (i *Subscription) UnmarshalJSON(data []byte) error {
+	type subscription2 Subscription
+
+	if err := json.Unmarshal(data, (*subscription2)(i)); err != nil {
+		return err
+	}
+
+	rj := i.CustomerRaw
+
+	i.Customer, _ = strconv.ParseInt(string(rj), 10, 64)
+	customer := new(Customer)
+
+	err := json.Unmarshal(rj, customer)
+
+	if err == nil {
+		i.CustomerFull = customer
+		i.Customer = customer.Id
+	}
+
+	return nil
+}
+
+func (i *Subscription) MarshalJSON() ([]byte, error) {
+	type subscription2 Subscription
+	i2 := (*subscription2)(i)
+
+	if i2.Customer > 0 {
+		i2.CustomerRaw = []byte(strconv.FormatInt(i2.Customer, 10))
+	}
+
+	return json.Marshal(i2)
 }

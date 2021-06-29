@@ -47,7 +47,7 @@ func (c *Subscription) Create(subscription *Subscription) (*Subscription, error)
 		return nil, err
 	}
 
-	subResp := new(Subscription)
+	subResp := c.NewSubscription()
 
 	apiErr := c.create(endpoint, subDataToCreate, subResp)
 
@@ -74,7 +74,7 @@ func (c *Subscription) Cancel() error {
 
 func (c *Subscription) Save() error {
 	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	subResp := new(Subscription)
+	subResp := c.NewSubscription()
 
 	subDataToUpdate, err := SafeSubscriptionsForUpdate(c.Subscription)
 	if err != nil {
@@ -112,10 +112,12 @@ func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.S
 	endpoint := invdendpoint.SubscriptionEndpoint
 	endpoint = addFilterAndSort(endpoint, filter, sort)
 
-	subscriptions := make(Subscriptions, 0)
+	subscriptions := make(invdendpoint.Subscriptions, 0)
+	subscriptionsToReturn := make(Subscriptions,0)
 
 NEXT:
-	tmpSubscriptions := make(Subscriptions, 0)
+	tmpSubscriptions := make(invdendpoint.Subscriptions, 0)
+
 
 	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
 
@@ -130,17 +132,21 @@ NEXT:
 	}
 
 	for _, subscription := range subscriptions {
-		subscription.Connection = c.Connection
+		sub := c.Connection.NewSubscription()
+		subData := subscription
+		sub.Subscription = &subData
+		subscriptionsToReturn = append(subscriptionsToReturn,sub)
 	}
 
-	return subscriptions, nil
+	return subscriptionsToReturn, nil
 }
 
 func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, string, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint
 	endpoint = addFilterAndSort(endpoint, filter, sort)
 
-	subscriptions := make(Subscriptions, 0)
+	subscriptions := make(invdendpoint.Subscriptions, 0)
+	subscriptionsToReturn := make(Subscriptions,0)
 
 	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &subscriptions)
 
@@ -149,10 +155,13 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 	}
 
 	for _, subscription := range subscriptions {
-		subscription.Connection = c.Connection
+		sub := c.Connection.NewSubscription()
+		subData := subscription
+		sub.Subscription = &subData
+		subscriptionsToReturn = append(subscriptionsToReturn,sub)
 	}
 
-	return subscriptions, nextEndpoint, nil
+	return subscriptionsToReturn, nextEndpoint, nil
 }
 
 func (c *Subscription) Preview(subPreviewRequest *invdendpoint.SubscriptionPreviewRequest) (*invdendpoint.SubscriptionPreview, error) {
