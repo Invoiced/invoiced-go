@@ -121,6 +121,30 @@ func (e *Event) ParseInvoicePreviousEvent() (*Invoice, error) {
 	return ie, nil
 }
 
+func (e *Event) ParseSubscriptionEvent() (*Subscription, error) {
+	eoData, err := e.ParseEventObject()
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := eoData.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	bClean := CleanMetaDataArray(b)
+
+	ie := new(Subscription)
+
+	err = json.Unmarshal(bClean, ie)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ie, nil
+}
+
 func (e *Event) ParsePaymentEvent() (*Payment, error) {
 	eoData, err := e.ParseEventObject()
 	if err != nil {
