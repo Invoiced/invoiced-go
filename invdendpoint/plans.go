@@ -16,6 +16,7 @@ type Plan struct {
 	Tiers         []Tier                 `json:"tier,omitempty"`
 	CreatedAt     int64                  `json:"created_at,omitempty"`
 	Metadata      map[string]interface{} `json:"updated_at,omitempty"`
+	NumberOfSubscriptions *int           `json:"num_subscriptions,omitempty"`
 }
 
 type Tier struct {
