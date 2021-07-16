@@ -2,8 +2,8 @@ package invdapi
 
 import (
 	"errors"
-
 	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"strings"
 )
 
 type Plan struct {
@@ -78,6 +78,20 @@ func (c *Plan) Delete() error {
 
 func (c *Plan) Retrieve(id string) (*Plan, error) {
 	endpoint := invdendpoint.PlanEndpoint + "/" + id
+	planEndpoint := new(invdendpoint.Plan)
+
+	plan := &Plan{c.Connection, planEndpoint}
+
+	_, err := c.retrieveDataFromAPI(endpoint, plan)
+	if err != nil {
+		return nil, err
+	}
+
+	return plan, nil
+}
+
+func (c *Plan) RetrieveWithSubNumber(id string) (*Plan, error) {
+	endpoint := invdendpoint.PlanEndpoint + "/" + id + "?include=num_subscriptions"
 
 	planEndpoint := new(invdendpoint.Plan)
 
@@ -91,6 +105,41 @@ func (c *Plan) Retrieve(id string) (*Plan, error) {
 	return plan, nil
 }
 
+func (c *Plan) ListAllSubNumber(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Plans, error) {
+	endpoint := invdendpoint.PlanEndpoint
+
+	endpoint = addFilterAndSort(endpoint, filter, sort)
+
+	if strings.Contains(endpoint,"?") {
+		endpoint = endpoint + "&include=num_subscriptions"
+	} else {
+		endpoint = endpoint + "?include=num_subscriptions"
+	}
+
+	plans := make(Plans, 0)
+
+NEXT:
+	tmpPlans := make(Plans, 0)
+
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpPlans)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	plans = append(plans, tmpPlans...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	for _, plan := range plans {
+		plan.Connection = c.Connection
+	}
+
+	return plans, nil
+}
+
 func (c *Plan) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Plans, error) {
 	endpoint := invdendpoint.PlanEndpoint
 
@@ -101,7 +150,7 @@ func (c *Plan) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Pl
 NEXT:
 	tmpPlans := make(Plans, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpPlans)
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpPlans)
 
 	if apiErr != nil {
 		return nil, apiErr
@@ -109,7 +158,7 @@ NEXT:
 
 	plans = append(plans, tmpPlans...)
 
-	if endpointTmp != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
