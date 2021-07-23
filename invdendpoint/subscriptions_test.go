@@ -10,7 +10,7 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	s := `{
     "id": 595,
     "customer": 15444,
-	"amount": 10.99,
+    "amount": 10.99,
     "plan": "starter",
     "cycles": null,
     "quantity": 1,
