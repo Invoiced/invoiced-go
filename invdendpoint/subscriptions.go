@@ -16,6 +16,7 @@ type Subscription struct {
 	Customer               int64                  `json:"-"`
 	CustomerFull           *Customer              `json:"-"`
 	CustomerRaw             json.RawMessage        `json:"customer,omitempty"`
+	Amount                float64                 `json:"amount,omitempty"`    // The subscription's amount
 	Plan                  string                 `json:"-"`       // Plan ID
 	PlanFull           *Plan              `json:"-"`
 	PlanRaw             json.RawMessage        `json:"plan,omitempty"`
