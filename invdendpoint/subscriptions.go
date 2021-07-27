@@ -13,12 +13,13 @@ type Subscriptions []Subscription
 type Subscription struct {
 	Id                    int64                  `json:"id,omitempty"`         // The subscription’s unique ID
 	Object                string                 `json:"object,omitempty"`     // Object type, subscription
-	Customer               int64                  `json:"-"`
-	CustomerFull           *Customer              `json:"-"`
-	CustomerRaw             json.RawMessage        `json:"customer,omitempty"`
+	Customer              int64                  `json:"-"`
+	CustomerFull          *Customer              `json:"-"`
+	CustomerRaw           json.RawMessage        `json:"customer,omitempty"`
+	Amount                float64                `json:"amount,omitempty"`    // The subscription's amount
 	Plan                  string                 `json:"-"`       // Plan ID
-	PlanFull           *Plan              `json:"-"`
-	PlanRaw             json.RawMessage        `json:"plan,omitempty"`
+	PlanFull              *Plan                  `json:"-"`
+	PlanRaw               json.RawMessage        `json:"plan,omitempty"`
 	StartDate             int64                  `json:"start_date,omitempty"` // Timestamp subscription starts (or started)
 	BillIn                string                 `json:"bill_in,omitempty"`    // advance or arrears. Defaults to advance
 	BillInAdvanceDays     int64                  `json:"bill_in_advance_days,omitempty"`

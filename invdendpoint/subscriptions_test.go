@@ -10,6 +10,7 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	s := `{
     "id": 595,
     "customer": 15444,
+    "amount": 10.99,
     "plan": "starter",
     "cycles": null,
     "quantity": 1,
@@ -63,6 +64,10 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	fmt.Println("so.plan ", so.Plan)
 	if so.Plan != "starter" {
 		t.Fatal("Subscription has incorrect plan2 -> " + so.Plan)
+	}
+
+	if so.Amount != 10.99 {
+		t.Fatal("Subscription has incorrect amount")
 	}
 
 	if so.Quantity != 1 {
