@@ -8,6 +8,7 @@ import (
 func TestUnMarshalSubscriptionAddonObject(t *testing.T) {
 	s := `{
     "id": 3,
+    "amount": 10.99,
     "catalog_item": "Afer",
     "plan" : "test-plan",
     "quantity": 11,
