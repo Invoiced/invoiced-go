@@ -17,6 +17,7 @@ type UserResponse struct {
 	CreatedAt            int64               `json:"created_at,omitempty"`
 	EmailUpdateFrequency string              `json:"email_update_frequency,omitempty"`
 	Id                   int64               `json:"id,omitempty"`
+	LastSignedIn		 int64				 `json:"last_accessed,omitempty"`
 	RestrictionMode      string              `json:"restriction_mode,omitempty"`
 	Restrictions         map[string][]string `json:"restrictions,omitempty"`
 	Role                 string              `json:"role,omitempty"`
