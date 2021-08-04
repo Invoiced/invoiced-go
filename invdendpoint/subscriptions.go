@@ -143,13 +143,16 @@ func (i *Subscription) MarshalJSON() ([]byte, error) {
 		i2.CustomerRaw = []byte(strconv.FormatInt(i2.Customer, 10))
 	}
 
-	b, err := json.Marshal(i2.Plan)
+	if len(i2.Plan) > 0 {
+		b, err := json.Marshal(i2.Plan)
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
+
+		i2.PlanRaw = b
 	}
 
-	i2.PlanRaw = b
 
 
 

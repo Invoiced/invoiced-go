@@ -311,7 +311,8 @@ func TestSubscription_List(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse) {
-		t.Fatal("Error Messages Do Not Match Up")
+		t.Fatal("Error Messages Do Not Match Up",invoiceResp[0].Subscription,"apple",mockResponse,reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse))
+
 	}
 }
 
