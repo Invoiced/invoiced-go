@@ -169,6 +169,30 @@ func (e *Event) ParsePaymentEvent() (*Payment, error) {
 	return ie, nil
 }
 
+func (e *Event) ParseCustomerEvent() (*Customer, error) {
+	eoData, err := e.ParseEventObject()
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := eoData.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	bClean := CleanMetaDataArray(b)
+
+	ie := new(Customer)
+
+	err = json.Unmarshal(bClean, ie)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ie, nil
+}
+
 func CleanMetaDataArray(b []byte) []byte {
 	s := string(b)
 	s1 := strings.Replace(s, `"metadata": []`, ` "metadata": null`, -1)
