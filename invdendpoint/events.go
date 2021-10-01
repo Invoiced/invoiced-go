@@ -16,6 +16,7 @@ type Event struct {
 	Type      string          `json:"type,omitempty"` // Event type
 	Timestamp int64           `json:"timestamp,omitempty"`
 	Data      json.RawMessage `json:"data,omitempty"` // Contains an object property with the object that was subject of the event and an optional previous property for object.updated events that is a hash of the old values that changed during the event
+	User      *User           `json:"user,omitempty"`
 }
 
 type EventObject struct {
