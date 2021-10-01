@@ -101,7 +101,22 @@ func (c *Event) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Even
 }
 
 func (c *Event) Retrieve(id int64) (*Event, error) {
-	endpoint := invdendpoint.EventEndpoint + "/" + strconv.FormatInt(id, 10)
+	endpoint := invdendpoint.EventEndpoint + "/" + strconv.FormatInt(id, 10) + "?include=user"
+
+	eventEndpoint := new(invdendpoint.Event)
+
+	event := &Event{c.Connection, eventEndpoint}
+
+	_, err := c.retrieveDataFromAPI(endpoint, event)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
+}
+
+func (c *Event) RetrieveWithUser(id int64) (*Event, error) {
+	endpoint := invdendpoint.EventEndpoint + "/" + strconv.FormatInt(id, 10) + "?include=user"
 
 	eventEndpoint := new(invdendpoint.Event)
 
