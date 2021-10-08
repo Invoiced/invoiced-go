@@ -47,6 +47,7 @@ type Invoice struct {
 	Attachments            []int64                `json:"attachments,omitempty"`
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"`
 	Sent 				   bool 				  `json:"sent,omitempty"`
+	PaymentPlan 		   int64                  `json:"payment_plan,omitempty"`
 }
 
 func (i *Invoice) TotalTaxAmount() float64 {
