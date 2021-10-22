@@ -14,5 +14,6 @@ type Refund struct {
 	Currency       string  `json:"currency,omitempty"`        // 3-letter ISO code
 	Amount         float64 `json:"amount,omitempty"`          // Payment amount
 	FailureMessage string  `json:"failure_message,omitempty"` // Failure message from the payment gateway (only available when status = failed)
-	CreatedAt      int64   `json:"created_at,omitempty"`      // Timestamp when created
+	CreatedAt      int64   `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt      int64   `json:"updated_at,omitempty"`      // Timestamp when updated
 }

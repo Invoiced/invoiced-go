@@ -32,5 +32,6 @@ type Charge struct {
 	Refunded       bool           `json:"refunded,omitempty"`
 	Refunds        []Refund       `json:"refunds,omitempty"`
 	Disputed       bool           `json:"disputed,omitempty"`
-	CreatedAt      int64          `json:"created_at,omitempty"` // Timestamp when created
+	CreatedAt      int64          `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt      int64          `json:"updated_at,omitempty"` // Timestamp when updated
 }

@@ -13,7 +13,8 @@ type Coupon struct {
 	Duration       int64                  `json:"durationo,omitempty"`
 	ExpirationDate int64                  `json:"expiration_date,omitempty"` // Date coupon expires
 	MaxRedemptions int64                  `json:"max_redemptions,omitempty"` // Max number of times coupon can be used
-	CreatedAt      int64                  `json:"created_at,omitempty"`      // Timestamp when created
+	CreatedAt      int64                  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt      int64                  `json:"updated_at,omitempty"`      // Timestamp when updated
 	Metadata       map[string]interface{} `json:"metadata,omitempty"`        // A hash of key/value pairs that can store additional information about this object
 
 }

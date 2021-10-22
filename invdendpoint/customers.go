@@ -46,7 +46,8 @@ type Customer struct {
 	SignUpPage             int64                  `json:"sign_up_page,omitempty"`
 	SignUpUrl              string                 `json:"sign_up_url,omitempty"`       // URL to download the latest account statement
 	StatementPdfUrl        string                 `json:"statement_pdf_url,omitempty"` // URL to download the latest account statement
-	CreatedAt              int64                  `json:"created_at,omitempty"`        // Timestamp when created
+	CreatedAt              int64                  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt              int64                  `json:"updated_at,omitempty"`        // Timestamp when updated
 	Metadata               map[string]interface{} `json:"metadata,omitempty"`          // A hash of key/value pairs that can store additional information about this object.
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"`
 }

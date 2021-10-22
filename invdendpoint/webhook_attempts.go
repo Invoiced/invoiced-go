@@ -6,7 +6,8 @@ const WebhookEndpoint = "/webhook_attempts"
 
 type WebhookAttempt struct {
 	Attempts  []WebhookAttemptStatus `json:"attempts,omitempty"`
-	CreatedAt int64                  `json:"created_at,omitempty"`
+	CreatedAt int64                  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt int64                  `json:"updated_at,omitempty"`
 	EventId   int64                  `json:"event_id,omitempty"`
 	Id        int64                  `json:"id,omitempty"`
 	Payload   json.RawMessage        `json:"payload,omitempty"`

@@ -45,7 +45,8 @@ type Subscription struct {
 	Taxes                 []Tax                  `json:"taxes,omitempty"`                   // Collection of Tax Rate ID
 	ShipTo                *ShippingDetail        `json:"ship_to,omitempty"`
 	Url                   string                 `json:"url,omitempty"`        // URL to manage the subscription in the billing portal
-	CreatedAt             int64                  `json:"created_at,omitempty"` // Timestamp when created
+	CreatedAt             int64                  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt             int64                  `json:"updated_at,omitempty"` // Timestamp when updated
 	Metadata              map[string]interface{} `json:"metadata,omitempty"`   // A hash of key/value pairs that can store additional information about this object.
 }
 
@@ -95,7 +96,8 @@ type SubscriptionPreviewInvoice struct {
 	Url                string                 `json:"url,omitempty"`                  // URL to view the invoice in the billing portal
 	PaymentUrl         string                 `json:"payment_url,omitempty"`          // URL for the invoice payment page
 	PdfUrl             string                 `json:"pdf_url,omitempty"`              // URL to download the invoice as a PDF
-	CreatedAt          int64                  `json:"created_at,omitempty"`           // Timestamp when created
+	CreatedAt          int64                  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt          int64                  `json:"updated_at,omitempty"`           // Timestamp when updated
 	Metadata           map[string]interface{} `json:"metadata,omitempty"`             // A hash of key/value pairs that can store additional information about this object.
 }
 

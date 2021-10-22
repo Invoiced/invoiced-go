@@ -16,7 +16,8 @@ type Contact struct {
 	State      string `json:"state,omitempty"`       // State or province
 	PostalCode string `json:"postal_code,omitempty"` // Zip or postal code
 	Country    string `json:"country,omitempty"`     // Two-letter ISO code
-	CreatedAt  int64  `json:"created_at,omitempty"`  // Timestamp when created
+	CreatedAt  int64  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt  int64  `json:"updated_at,omitempty"`  // Timestamp when updated
 }
 
 type Contacts []Contact

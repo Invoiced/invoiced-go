@@ -37,7 +37,8 @@ type Card struct {
 	Funding         string `json:"funding,omitempty"`   // Funding instrument, can be credit, debit, prepaid, or unknown
 	FailureReason   string `json:"failure_reason,omitempty"`
 	ReceiptEmail    string `json:"receipt_email,omitempty"`
-	CreatedAt       int64  `json:"created_at,omitempty"`
+	CreatedAt       int64  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt       int64  `json:"updated_at,omitempty"`
 }
 
 type BankAccount struct {
@@ -55,7 +56,8 @@ type BankAccount struct {
 	Country         string `json:"country,omitempty"`        // 2-letter ISO code
 	FailureReason   string `json:"failure_reason,omitempty"`
 	ReceiptEmail    string `json:"receipt_email,omitempty"`
-	CreatedAt       int64  `json:"created_at,omitempty"`
+	CreatedAt       int64  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt       int64  `json:"updated_at,omitempty"`
 }
 
 func (d *PaymentSource) UnmarshalJSON(data []byte) error {
