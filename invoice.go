@@ -17,7 +17,7 @@ type Invoices []*Invoice
 
 func (c *Connection) NewInvoice() *Invoice {
 	invoice := new(invdendpoint.Invoice)
-	return &Invoice{c, invoice, false}
+	return &Invoice{c, invoice}
 }
 
 func (c *Connection) NewPaymentPlanRequest() *invdendpoint.PaymentPlanRequest {
