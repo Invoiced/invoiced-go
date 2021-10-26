@@ -13,5 +13,6 @@ type LetterResponse struct {
 	State                string `json:"state,omitempty"`
 	NumPages             int64  `json:"num_pages,omitempty"`
 	ExpectedDeliveryDate int64  `json:"expected_delivery_date,omitempty"`
-	CreatedAt            int64  `json:"created_at,omitempty"`
+	CreatedAt            int64  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt            int64  `json:"updated_at,omitempty"`
 }

@@ -11,14 +11,13 @@ import (
 type Invoice struct {
 	*Connection
 	*invdendpoint.Invoice
-	IncludeUpdatedAt bool
 }
 
 type Invoices []*Invoice
 
 func (c *Connection) NewInvoice() *Invoice {
 	invoice := new(invdendpoint.Invoice)
-	return &Invoice{c, invoice, false}
+	return &Invoice{c, invoice}
 }
 
 func (c *Connection) NewPaymentPlanRequest() *invdendpoint.PaymentPlanRequest {
@@ -96,13 +95,9 @@ func (c *Invoice) Save() error {
 func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 	url := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	if c.IncludeUpdatedAt {
-		url = addQueryParameter(url, "include", "updated_at")
-	}
-
 	custEndpoint := new(invdendpoint.Invoice)
 
-	invoice := &Invoice{c.Connection, custEndpoint, c.IncludeUpdatedAt}
+	invoice := &Invoice{c.Connection, custEndpoint}
 
 	_, apiErr := c.retrieveDataFromAPI(url, invoice)
 
@@ -131,10 +126,6 @@ func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) 
 	url := invdendpoint.InvoiceEndpoint
 	url = addFilterAndSort(url, filter, sort)
 
-	if c.IncludeUpdatedAt {
-		url = addQueryParameter(url, "include", "updated_at")
-	}
-
 	return c.ListAllHelper(url, filter, sort)
 }
 
@@ -161,9 +152,6 @@ func (c *Invoice) ListHelper(url string, filter *invdendpoint.Filter, sort *invd
 	if len(url) == 0 {
 		url = invdendpoint.InvoiceEndpoint
 		url = addFilterAndSort(url, filter, sort)
-		if c.IncludeUpdatedAt {
-			url = addQueryParameter(url, "include", "updated_at")
-		}
 	}
 
 	invoicesToReturn := make(Invoices, 0)

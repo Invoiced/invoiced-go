@@ -21,5 +21,6 @@ type TextResponse struct {
 	To        string `json:"to,omitempty"`
 	State     string `json:"state,omitempty"`
 	Message   string `json:"message,omitempty"`
-	CreatedAt int64  `json:"created_at,omitempty"`
+	CreatedAt int64  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt int64  `json:"updated_at,omitempty"`
 }

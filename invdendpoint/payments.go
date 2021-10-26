@@ -28,7 +28,8 @@ type Payment struct {
 	Notes     string        `json:"notes,omitempty"` // Internal notes
 	Charge    *Charge       `json:"charge,omitempty"`
 	PdfUrl    string        `json:"pdf_url,omitempty"`    // URL to download the invoice as a PDF
-	CreatedAt int64         `json:"created_at,omitempty"` // Timestamp when created
+	CreatedAt int64         `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt int64         `json:"updated_at,omitempty"` // Timestamp when updated
 	AppliedTo []PaymentItem `json:"applied_to,omitempty"`
 }
 

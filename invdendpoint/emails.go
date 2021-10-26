@@ -33,5 +33,6 @@ type EmailResponse struct {
 	Message      string `json:"message,omitempty"`
 	Opens        int64  `json:"opens,omitempty"`
 	Clicks       int64  `json:"clicks,omitempty"`
-	CreatedAt    int64  `json:"created_at,omitempty"`
+	CreatedAt    int64  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt    int64  `json:"updated_at,omitempty"`
 }

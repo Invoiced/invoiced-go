@@ -6,7 +6,8 @@ type PaymentPlan struct {
 	Status       string                   `json:"status,omitempty"`
 	Installments []PaymentPlanInstallment `json:"installments,omitempty"`
 	Approval     *PaymentPlanApproval     `json:"approval,omitempty"`
-	CreatedAt    int64                    `json:"created_at,omitempty"`
+	CreatedAt    int64                    `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt    int64                    `json:"updated_at,omitempty"`
 }
 
 type PaymentPlanApproval struct {

@@ -15,6 +15,7 @@ type Task struct {
 	CompletedDate     int64  `json:"completed_date,omitempty"`       // Date task was marked complete
 	CompletedByUserId int64  `json:"completed_by_user_id,omitempty"` // User ID who completed task
 	ChaseStepID       int64  `json:"chase_step_id,omitempty"`        // Chasing step ID that created task
-	CreatedAt         int64  `json:"created_at,omitempty"`           // Timestamp when created
+	CreatedAt         int64  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt         int64  `json:"updated_at,omitempty"`           // Timestamp when updated
 
 }

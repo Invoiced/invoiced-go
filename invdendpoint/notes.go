@@ -9,7 +9,8 @@ type Note struct {
 	Object    string `json:"object,omitempty"`     // Object type, note
 	Notes     string `json:"notes,omitempty"`      // Contents of note
 	Customer  int64  `json:"customer,omitempty"`   // Customer associated with note
-	CreatedAt int64  `json:"created_at,omitempty"` // Timestamp when created
+	CreatedAt int64  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt int64  `json:"updated_at,omitempty"` // Timestamp when updated
 	User      *User  `json:"user,omitempty"`       // Object describing user who created note
 }
 

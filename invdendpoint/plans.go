@@ -14,7 +14,8 @@ type Plan struct {
 	Interval      string                 `json:"interval,omitempty"`
 	IntervalCount float64                `json:"interval_count,omitempty"`
 	Tiers         []Tier                 `json:"tier,omitempty"`
-	CreatedAt     int64                  `json:"created_at,omitempty"`
+	CreatedAt     int64                  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt     int64                  `json:"updated_at,omitempty"`
 	Metadata      map[string]interface{} `json:"metadata,omitempty"`
 	NumberOfSubscriptions *int           `json:"num_subscriptions,omitempty"`
 }

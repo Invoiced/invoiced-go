@@ -35,7 +35,8 @@ type Estimate struct {
 	DepositPaid            bool                   `json:"deposit_paid,omoitempty"`            // Deposit Paid
 	Url                    string                 `json:"url,omitempty"`                      // URL to download the invoice as a PDF
 	PdfUrl                 string                 `json:"pdf_url,omitempty"`                  // URL to download the invoice as a PDF
-	CreatedAt              int64                  `json:"created_at,omitempty"`               // Timestamp when created
+	CreatedAt              int64                  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt              int64                  `json:"updated_at,omitempty"`               // Timestamp when updated
 	Metadata               map[string]interface{} `json:"metadata,omitempty"`                 // A hash of key/value pairs that can store additional information about this object.
 	Attachments            []int64                `json:"attachments,omitempty"`              // A list of File IDs to attach to the estimate
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"` // List of payment methods to disable for this estimate, i.e. ["credit_card", "wire_transfer"].

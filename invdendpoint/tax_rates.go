@@ -10,6 +10,7 @@ type TaxRate struct {
 	Value     float64                `json:"value,omitempty"`
 	IsPercent bool                   `json:"is_percent,omitempty"`
 	Inclusive bool                   `json:"inclusive,omitempty"`
-	CreatedAt int64                  `json:"created_at,omitempty"`
+	CreatedAt int64                  `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt int64                  `json:"updated_at,omitempty"`
 	Metadata  map[string]interface{} `json:"metadata,omitempty"`
 }

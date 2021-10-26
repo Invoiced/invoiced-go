@@ -14,7 +14,8 @@ type UserRequest struct {
 }
 
 type UserResponse struct {
-	CreatedAt            int64               `json:"created_at,omitempty"`
+	CreatedAt            int64               `json:"created_at,omitempty"`	//Timestamp when created
+	UpdatedAt            int64               `json:"updated_at,omitempty"`
 	EmailUpdateFrequency string              `json:"email_update_frequency,omitempty"`
 	Id                   int64               `json:"id,omitempty"`
 	LastSignedIn		 int64				 `json:"last_accessed,omitempty"`
