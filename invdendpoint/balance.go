@@ -14,5 +14,5 @@ type BalanceHistories []BalanceHistory
 type BalanceHistory struct {
 	Currency  string `json:"currency,omitempty"`
 	Timestamp int64  `json:"timestamp,omitempty"`
-	Balance   int64  `json:"balance,omitempty"`
+	Balance   float64  `json:"balance,omitempty"`
 }
