@@ -107,6 +107,41 @@ func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 
 	return subscription, nil
 }
+func (c *Subscription) ListAllCanceled(filter *invdendpoint.Filter, sort *invdendpoint.Sort,canceled bool) (Subscriptions, error) {
+	endpoint := invdendpoint.SubscriptionEndpoint
+	if canceled {
+		endpoint = addQueryParameter(endpoint,"canceled","1")
+	}
+	endpoint = addFilterAndSort(endpoint, filter, sort)
+
+	subscriptions := make(invdendpoint.Subscriptions, 0)
+	subscriptionsToReturn := make(Subscriptions,0)
+
+NEXT:
+	tmpSubscriptions := make(invdendpoint.Subscriptions, 0)
+
+
+	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	subscriptions = append(subscriptions, tmpSubscriptions...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	for _, subscription := range subscriptions {
+		sub := c.Connection.NewSubscription()
+		subData := subscription
+		sub.Subscription = &subData
+		subscriptionsToReturn = append(subscriptionsToReturn,sub)
+	}
+
+	return subscriptionsToReturn, nil
+}
 
 func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint
