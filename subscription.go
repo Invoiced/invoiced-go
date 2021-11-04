@@ -226,6 +226,7 @@ func SafeSubscriptionForCreation(sub *invdendpoint.Subscription) (*invdendpoint.
 	subData := new(invdendpoint.Subscription)
 	subData.Customer = sub.Customer
 	subData.Plan = sub.Plan
+	subData.Amount = sub.Amount
 	subData.StartDate = sub.StartDate
 	subData.BillIn = sub.BillIn
 	subData.BillInAdvanceDays = sub.BillInAdvanceDays
@@ -253,6 +254,7 @@ func SafeSubscriptionsForUpdate(sub *invdendpoint.Subscription) (*invdendpoint.S
 	subData := new(invdendpoint.Subscription)
 
 	subData.Plan = sub.Plan
+	subData.Amount = sub.Amount
 	subData.StartDate = sub.StartDate
 	subData.BillIn = sub.BillIn
 	subData.BillInAdvanceDays = sub.BillInAdvanceDays
