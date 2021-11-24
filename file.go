@@ -40,6 +40,22 @@ func (c *File) Create(file *File) (*File, error) {
 	return fileResp, nil
 }
 
+func (c *File) CreateAndUploadFile(filePath,fileType string) (*File, error) {
+	endpoint := invdendpoint.FileEndpoint
+	fileResp := new(File)
+
+
+	apiErr := c.upload(endpoint,filePath,"file",nil,fileType,fileResp)
+
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	fileResp.Connection = c.Connection
+
+	return fileResp, nil
+}
+
 func (c *File) Delete() error {
 	endpoint := invdendpoint.FileEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 

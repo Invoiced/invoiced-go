@@ -4,9 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -183,6 +188,21 @@ func (c *Connection) post(endpoint string, body io.Reader) (*http.Response, erro
 	return resp, err
 }
 
+func (c *Connection) postWithFormData(endpoint string, body io.Reader,formContentType string) (*http.Response, error) {
+	url := c.baseUrl + endpoint
+	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.SetBasicAuth(c.key, "")
+	req.Header.Set("Content-Type", formContentType)
+
+	resp, err := c.client.Do(req)
+
+	return resp, err
+}
+
 func (c *Connection) patch(endpoint string, body io.Reader) (*http.Response, error) {
 	url := c.baseUrl + endpoint
 	req, err := http.NewRequest("PATCH", url, body)
@@ -222,6 +242,74 @@ func (c *Connection) create(endpoint string, requestData interface{}, responseDa
 	body := bytes.NewBuffer(b)
 
 	resp, err := c.post(endpoint, body)
+	if err != nil {
+		return err
+	}
+
+	apiError := checkStatusForError(resp.StatusCode, resp.Body)
+
+	if apiError != nil {
+		return apiError
+	}
+
+	if responseData == nil {
+		return nil
+	}
+
+	err = pushDataIntoStruct(responseData, resp.Body)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// CreateFormFile is a convenience wrapper around CreatePart. It creates
+// a new form-data header with the provided field name and file name.
+func (c *Connection) CreateFormFile(w *multipart.Writer,fieldname, filename string,fileType string) (io.Writer, error) {
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition",
+		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
+			escapeQuotes(fieldname), escapeQuotes(filename)))
+	h.Set("Content-Type", fileType)
+	return w.CreatePart(h)
+}
+
+var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
+
+func escapeQuotes(s string) string {
+	return quoteEscaper.Replace(s)
+}
+
+func (c *Connection) upload(endpoint string,filePath string, fileParamName string, fileParams map[string]string,fileType string, responseData interface{}) error {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	part, err := c.CreateFormFile(writer,fileParamName, filepath.Base(filePath),fileType)
+
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(part, file)
+
+	for key, val := range fileParams {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+
+	if err != nil {
+		return err
+	}
+
+
+	resp, err := c.postWithFormData(endpoint, body,writer.FormDataContentType())
+
 	if err != nil {
 		return err
 	}
