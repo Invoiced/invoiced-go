@@ -298,6 +298,10 @@ func (c *Connection) upload(endpoint string,filePath string, fileParamName strin
 	}
 	_, err = io.Copy(part, file)
 
+	if err != nil {
+		return err
+	}
+
 	for key, val := range fileParams {
 		_ = writer.WriteField(key, val)
 	}
