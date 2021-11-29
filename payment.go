@@ -161,17 +161,15 @@ func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Pa
 	return paymentsToReturn, nextEndpoint, nil
 }
 
-func (c *Payment) SendReceipt(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+func (c *Payment) SendReceipt(emailReq *invdendpoint.EmailRequest)  error {
 	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	emailResp := new(invdendpoint.EmailResponses)
-
-	err := c.create(endpoint, emailReq, emailResp)
+	err := c.create(endpoint, emailReq, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return *emailResp, nil
+	return  nil
 }
 
 // SafePaymentForCreation prunes payment data for just fields that can be used for creation of a payment

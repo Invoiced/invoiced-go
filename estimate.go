@@ -185,17 +185,15 @@ func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 	return invResp, nil
 }
 
-func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) error {
 	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	emailResp := new(invdendpoint.EmailResponses)
-
-	err := c.create(endpoint, emailReq, emailResp)
+	err := c.create(endpoint, emailReq, nil)
 	if err != nil {
-		return nil, err
+		return  err
 	}
 
-	return *emailResp, nil
+	return  nil
 }
 
 func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {

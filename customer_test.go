@@ -398,17 +398,8 @@ func TestCustomer_GetBalance(t *testing.T) {
 func TestCustomer_SendStatementEmail(t *testing.T) {
 	key := "test api key"
 
-	var mockEmailResponse [1]invdendpoint.EmailResponse
 
-	mockResponse := new(invdendpoint.EmailResponse)
-	mockResponse.Id = "1"
-	mockResponse.Message = "hello test"
-
-	mockResponse.CreatedAt = time.Now().UnixNano()
-
-	mockEmailResponse[0] = *mockResponse
-
-	server, err := invdmockserver.New(200, mockEmailResponse, "json", true)
+	server, err := invdmockserver.New(200, nil, "json", true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -418,14 +409,11 @@ func TestCustomer_SendStatementEmail(t *testing.T) {
 
 	subjectEntity := conn.NewCustomer()
 
-	sendResponse, err := subjectEntity.SendStatementEmail(nil)
+	 err = subjectEntity.SendStatementEmail(nil)
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
 
-	if sendResponse[0].Message != "hello test" {
-		t.Fatal("Error: send not completed correctly")
-	}
 }
 
 func TestCustomer_SendStatementText(t *testing.T) {

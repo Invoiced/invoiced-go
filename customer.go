@@ -2,8 +2,8 @@ package invdapi
 
 import (
 	"errors"
-	"strconv"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"strconv"
 )
 
 type Customer struct {
@@ -210,16 +210,16 @@ func (c *Customer) GetBalance() (*invdendpoint.Balance, error) {
 	return custBalance, nil
 }
 
-func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest) (invdendpoint.EmailResponses, error) {
+func (c *Customer) SendStatementEmail(custStmtReq *invdendpoint.EmailRequest)  error {
 	endpoint := invdendpoint.CustomerEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	custStmtResp := new(invdendpoint.EmailResponses)
-	err := c.create(endpoint, custStmtReq, custStmtResp)
+
+	err := c.create(endpoint, custStmtReq, nil)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
-	return *custStmtResp, nil
+	return  nil
 }
 
 func (c *Customer) SendStatementText(custStmtReq *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {

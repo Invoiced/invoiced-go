@@ -350,17 +350,8 @@ func TestPayment_ListAll(t *testing.T) {
 func TestPayment_SendReceipt(t *testing.T) {
 	key := "test api key"
 
-	var mockEmailResponse [1]invdendpoint.EmailResponse
 
-	mockResponse := new(invdendpoint.EmailResponse)
-	mockResponse.Id = "1"
-	mockResponse.Message = "hello test"
-
-	mockResponse.CreatedAt = time.Now().UnixNano()
-
-	mockEmailResponse[0] = *mockResponse
-
-	server, err := invdmockserver.New(200, mockEmailResponse, "json", true)
+	server, err := invdmockserver.New(200, nil, "json", true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -370,12 +361,10 @@ func TestPayment_SendReceipt(t *testing.T) {
 
 	subjectEntity := conn.NewPayment()
 
-	sendResponse, err := subjectEntity.SendReceipt(nil)
+	 err = subjectEntity.SendReceipt(nil)
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
 
-	if sendResponse[0].Message != "hello test" {
-		t.Fatal("Error: send not completed correctly")
-	}
+
 }
