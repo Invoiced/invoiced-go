@@ -111,7 +111,7 @@ func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 func (c *Subscription) ListAllQueryParameters(parameters map[string]string) (Subscriptions, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint
 
-	if parameters != nil && len(parameters) > 0 {
+	if  len(parameters) > 0 {
         for key, value := range parameters {
 			endpoint = addQueryParameter(endpoint,key,value)
 		}
