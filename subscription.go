@@ -107,12 +107,15 @@ func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 
 	return subscription, nil
 }
-func (c *Subscription) ListAllCanceled(filter *invdendpoint.Filter, sort *invdendpoint.Sort,canceled bool) (Subscriptions, error) {
+
+func (c *Subscription) ListAllQueryParameters(parameters map[string]string) (Subscriptions, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint
-	if canceled {
-		endpoint = addQueryParameter(endpoint,"canceled","1")
+
+	if parameters != nil && len(parameters) > 0 {
+        for key, value := range parameters {
+			endpoint = addQueryParameter(endpoint,key,value)
+		}
 	}
-	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	subscriptions := make(invdendpoint.Subscriptions, 0)
 	subscriptionsToReturn := make(Subscriptions,0)
@@ -141,6 +144,20 @@ NEXT:
 	}
 
 	return subscriptionsToReturn, nil
+
+}
+
+func (c *Subscription) ListAllCanceled(filter *invdendpoint.Filter, sort *invdendpoint.Sort,canceled bool) (Subscriptions, error) {
+
+	parameters := make(map[string]string)
+
+	if canceled {
+		parameters["canceled"] = "1"
+
+	}
+
+	return c.ListAllQueryParameters(parameters)
+
 }
 
 func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, error) {
