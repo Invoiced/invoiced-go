@@ -24,11 +24,9 @@ func TestCreditNote_Create(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewCreditNote()
-
-	_, err = entity.Create(&invoiced.CreditNoteRequest{Name: invoiced.String("nomenclature")})
+	_, err = client.Create(&invoiced.CreditNoteRequest{Name: invoiced.String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -48,17 +46,15 @@ func TestCreditNote_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entityToUpdate := client.NewCreditNote()
-
-	err = entityToUpdate.Update(&invoiced.CreditNoteRequest{Name: invoiced.String("new-name")})
+	entityToUpdate, err := client.Update(1234, &invoiced.CreditNoteRequest{Name: invoiced.String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
 	}
 
-	if !reflect.DeepEqual(mockResponse, entityToUpdate.CreditNote) {
+	if !reflect.DeepEqual(mockResponse, entityToUpdate) {
 		t.Fatal("Error: entity not updated correctly")
 	}
 }
@@ -78,18 +74,12 @@ func TestCreditNote_Void(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entityToUpdate := client.NewCreditNote()
-
-	entityToUpdate, err = entityToUpdate.Void()
+	_, err = client.Void(1234)
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
-	}
-
-	if !reflect.DeepEqual(mockResponse, entityToUpdate.CreditNote) {
-		t.Fatal("Error: entity not voided correctly")
 	}
 }
 
@@ -97,7 +87,6 @@ func TestCreditNote_Delete(t *testing.T) {
 	key := "api key"
 
 	mockResponse := ""
-	mockResponseId := int64(1234)
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
 	if err != nil {
@@ -106,13 +95,9 @@ func TestCreditNote_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewCreditNote()
-
-	entity.Id = mockResponseId
-
-	err = entity.Delete()
+	err = client.Delete(1234)
 
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
@@ -134,15 +119,14 @@ func TestCreditNote_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewCreditNote()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	retrievedPayment, err := entity.Retrieve(int64(1234))
+	retrievedPayment, err := client.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedPayment.CreditNote, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -166,10 +150,8 @@ func TestCreditNote_CountErr(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewCreditNote()
-
-	result, err := entity.Count()
+	client := Client{invoiced.NewMockApi(key, server)}
+	result, err := client.Count()
 
 	if err == nil {
 		t.Fatal("Error: ", err)
@@ -199,18 +181,17 @@ func TestCreditNote_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewCreditNote()
+	client := Client{invoiced.NewMockApi(key, server)}
 
 	filter := invoiced.NewFilter()
 	sorter := invoiced.NewSort()
 
-	result, err := entity.ListAll(filter, sorter)
+	result, err := client.ListAll(filter, sorter)
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
 
-	if !reflect.DeepEqual(result[0].CreditNote, mockResponse) {
+	if !reflect.DeepEqual(result[0], mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -225,7 +206,7 @@ func TestCreditNote_ListAttachments(t *testing.T) {
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
 
-	mockResponses = append(mockResponses, *mockResponse)
+	mockResponses = append(mockResponses, mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {
@@ -234,14 +215,14 @@ func TestCreditNote_ListAttachments(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity, err := client.NewCreditNote().ListAttachments()
+	entity, err := client.ListAttachments(1234)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(entity[0].File, mockResponse) {
+	if !reflect.DeepEqual(entity[0], mockResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
@@ -255,11 +236,9 @@ func TestCreditNote_SendEmail(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	subjectEntity := client.NewCreditNote()
-
-	err = subjectEntity.SendEmail(nil)
+	err = client.SendEmail(1234, nil)
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -285,11 +264,9 @@ func TestCreditNote_SendText(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	subjectEntity := client.NewCreditNote()
-
-	sendResponse, err := subjectEntity.SendText(nil)
+	sendResponse, err := client.SendText(1234, nil)
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -314,11 +291,9 @@ func TestCreditNote_SendLetter(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	subjectEntity := client.NewCreditNote()
-
-	sendResponse, err := subjectEntity.SendLetter()
+	sendResponse, err := client.SendLetter(1234)
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}

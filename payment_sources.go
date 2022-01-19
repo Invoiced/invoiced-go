@@ -19,8 +19,6 @@ type PaymentSource struct {
 	Object string `json:"object"`
 }
 
-type PaymentSources []PaymentSource
-
 type Card struct {
 	Brand           string `json:"brand"`
 	Chargeable      bool   `json:"chargeable"`
@@ -57,6 +55,8 @@ type BankAccount struct {
 	UpdatedAt       int64  `json:"updated_at"`
 	Verified        bool   `json:"verified"`
 }
+
+type PaymentSources []*PaymentSource
 
 func (d *PaymentSource) UnmarshalJSON(data []byte) error {
 	temp := struct {

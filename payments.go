@@ -5,8 +5,6 @@ import (
 	"strconv"
 )
 
-const PaymentEndpoint = "/payments"
-
 type PaymentRequest struct {
 	Amount    *float64              `json:"amount,omitempty"`
 	AppliedTo []*PaymentItemRequest `json:"applied_to,omitempty"`
@@ -28,8 +26,6 @@ type PaymentItemRequest struct {
 	Invoice      *int64   `json:"invoice,omitempty"`
 	Type         *string  `json:"type,omitempty"`
 }
-
-type Payments []Payment
 
 type Payment struct {
 	Amount       float64         `json:"amount"`
@@ -63,6 +59,8 @@ type PaymentItem struct {
 	Invoice      int64   `json:"invoice"`
 	Type         string  `json:"type"`
 }
+
+type Payments []*Payment
 
 func (i *Payment) UnmarshalJSON(data []byte) error {
 	type payment2 Payment

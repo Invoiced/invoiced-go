@@ -24,11 +24,9 @@ func TestCoupon_Create(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewCoupon()
-
-	createdEntity, err := entity.Create(&invoiced.CouponRequest{
+	createdEntity, err := client.Create(&invoiced.CouponRequest{
 		Id:   invoiced.String("example"),
 		Name: invoiced.String("nomenclature"),
 	})
@@ -36,8 +34,8 @@ func TestCoupon_Create(t *testing.T) {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(createdEntity.Coupon, mockResponse) {
-		t.Fatal("entity was not created", createdEntity.Coupon, mockResponse)
+	if !reflect.DeepEqual(createdEntity, mockResponse) {
+		t.Fatal("entity was not created", createdEntity, mockResponse)
 	}
 }
 
@@ -55,17 +53,15 @@ func TestCoupon_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entityToUpdate := client.NewCoupon()
-
-	err = entityToUpdate.Update(&invoiced.CouponRequest{Name: invoiced.String("new-name")})
+	coupon, err := client.Update("1234", &invoiced.CouponRequest{Name: invoiced.String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
 	}
 
-	if !reflect.DeepEqual(mockResponse, entityToUpdate.Coupon) {
+	if !reflect.DeepEqual(mockResponse, coupon) {
 		t.Fatal("Error: entity not updated correctly")
 	}
 }
@@ -74,7 +70,6 @@ func TestCoupon_Delete(t *testing.T) {
 	key := "api key"
 
 	mockResponse := ""
-	mockResponseId := "example"
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
 	if err != nil {
@@ -83,13 +78,9 @@ func TestCoupon_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewCoupon()
-
-	entity.Id = mockResponseId
-
-	err = entity.Delete()
+	err = client.Delete("example")
 
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
@@ -111,15 +102,14 @@ func TestCoupon_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewCoupon()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	retrievedPayment, err := entity.Retrieve("example")
+	coupon, err := client.Retrieve("example")
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedPayment.Coupon, mockResponse) {
+	if !reflect.DeepEqual(coupon, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -143,18 +133,17 @@ func TestCoupon_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewCoupon()
+	client := Client{invoiced.NewMockApi(key, server)}
 
 	filter := invoiced.NewFilter()
 	sorter := invoiced.NewSort()
 
-	result, err := entity.ListAll(filter, sorter)
+	result, err := client.ListAll(filter, sorter)
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
 
-	if !reflect.DeepEqual(result[0].Coupon, mockResponse) {
+	if !reflect.DeepEqual(result[0], mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }

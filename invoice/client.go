@@ -16,9 +16,8 @@ func (c *Client) Create(request *invoiced.InvoiceRequest) (*invoiced.Invoice, er
 }
 
 func (c *Client) Retrieve(id int64) (*invoiced.Invoice, error) {
-	url := "/invoices/" + strconv.FormatInt(id, 10)
 	resp := new(invoiced.Invoice)
-	_, err := c.Api.Get(url, resp)
+	_, err := c.Api.Get("/invoices/"+strconv.FormatInt(id, 10), resp)
 	return resp, err
 }
 
@@ -39,23 +38,18 @@ func (c *Client) Delete(id int64) error {
 }
 
 func (c *Client) Count() (int64, error) {
-	count, err := c.Api.Count("/invoices")
-	if err != nil {
-		return -1, err
-	}
-
-	return count, nil
+	return c.Api.Count("/invoices")
 }
 
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Invoices, error) {
 	return c.ListAllHelper(invoiced.AddFilterAndSort("/invoices", filter, sort), filter, sort)
 }
 
-func (c *Client) ListAllHelper(endpoint2 string, filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Invoices, error) {
+func (c *Client) ListAllHelper(endpoint string, filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Invoices, error) {
 	invoices := make(invoiced.Invoices, 0)
 NEXT:
 
-	tmpInvoices, endpoint2, err := c.ListHelper(endpoint2, filter, sort)
+	tmpInvoices, endpoint, err := c.ListHelper(endpoint, filter, sort)
 
 	if err != nil {
 		return nil, err
@@ -63,7 +57,7 @@ NEXT:
 
 	invoices = append(invoices, tmpInvoices...)
 
-	if endpoint2 != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -169,21 +163,21 @@ func (c *Client) Pay(id int64) (*invoiced.Invoice, error) {
 }
 
 func (c *Client) ListAttachments(id int64) (invoiced.Files, error) {
-	endpoint2 := "/invoices/" + strconv.FormatInt(id, 10) + "/attachments"
+	endpoint := "/invoices/" + strconv.FormatInt(id, 10) + "/attachments"
 
 	files := make(invoiced.Files, 0)
 
 NEXT:
 	tempFiles := make(invoiced.Files, 0)
 
-	endpoint2, err := c.Api.Get(endpoint2, &tempFiles)
+	endpoint, err := c.Api.Get(endpoint, &tempFiles)
 	if err != nil {
 		return nil, err
 	}
 
 	files = append(files, tempFiles...)
 
-	if endpoint2 != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
@@ -191,14 +185,14 @@ NEXT:
 }
 
 func (c *Client) RetrieveNotes(id int64) (invoiced.Notes, error) {
-	endpoint2 := "/invoices/" + strconv.FormatInt(id, 10) + "/notes"
+	endpoint := "/invoices/" + strconv.FormatInt(id, 10) + "/notes"
 
 	notes := make(invoiced.Notes, 0)
 
 NEXT:
 	tmpNotes := make(invoiced.Notes, 0)
 
-	endpoint2, err := c.Api.Get(endpoint2, &tmpNotes)
+	endpoint, err := c.Api.Get(endpoint, &tmpNotes)
 
 	if err != nil {
 		return nil, err
@@ -206,7 +200,7 @@ NEXT:
 
 	notes = append(notes, tmpNotes...)
 
-	if endpoint2 != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 

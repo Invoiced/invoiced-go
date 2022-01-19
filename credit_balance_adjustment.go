@@ -1,8 +1,6 @@
 package invoiced
 
-const CreditBalanceAdjustmentsEndpoint = "/credit_balance_adjustments"
-
-type BalanceAdjustmentRequest struct {
+type CreditBalanceAdjustmentRequest struct {
 	Amount   *float64 `json:"amount,omitempty"`
 	Currency *string  `json:"currency,omitempty"`
 	Customer *int64   `json:"customer,omitempty"`
@@ -10,7 +8,7 @@ type BalanceAdjustmentRequest struct {
 	Notes    *string  `json:"notes,omitempty"`
 }
 
-type BalanceAdjustment struct {
+type CreditBalanceAdjustment struct {
 	Amount    float64 `json:"amount,omitempty"`
 	CreatedAt int64   `json:"created_at,omitempty"`
 	Currency  string  `json:"currency,omitempty"`
@@ -21,3 +19,5 @@ type BalanceAdjustment struct {
 	Object    string  `json:"object,omitempty"`
 	UpdatedAt int64   `json:"updated_at,omitempty"`
 }
+
+type CreditBalanceAdjustments []*CreditBalanceAdjustment

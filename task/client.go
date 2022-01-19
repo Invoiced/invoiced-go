@@ -9,69 +9,35 @@ type Client struct {
 	*invoiced.Api
 }
 
-type Tasks []*Client
-
-func (c *Client) Create(request *invoiced.TaskRequest) (*Client, error) {
-	endpoint := invoiced.TaskEndpoint
-	resp := new(Client)
-
-	err := c.Api.Create(endpoint, request, resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+func (c *Client) Create(request *invoiced.TaskRequest) (*invoiced.Task, error) {
+	resp := new(invoiced.Task)
+	err := c.Api.Create("/tasks", request, resp)
+	return resp, err
 }
 
-func (c *Client) Retrieve(id int64) (*Client, error) {
-	endpoint := invoiced.TaskEndpoint + "/" + strconv.FormatInt(id, 10)
-
-	taskEndpoint := new(invoiced.Task)
-
-	task := &Client{c.Client, taskEndpoint}
-
-	_, err := c.Api.Get(endpoint, task)
-	if err != nil {
-		return nil, err
-	}
-
-	return task, nil
+func (c *Client) Retrieve(id int64) (*invoiced.Task, error) {
+	resp := new(invoiced.Task)
+	_, err := c.Api.Get("/tasks/"+strconv.FormatInt(id, 10), resp)
+	return resp, err
 }
 
-func (c *Client) Update(request *invoiced.TaskRequest) error {
-	endpoint := invoiced.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	resp := new(Client)
-
-	err := c.Api.Update(endpoint, request, resp)
-	if err != nil {
-		return err
-	}
-
-	c.Task = resp.Task
-
-	return nil
+func (c *Client) Update(id int64, request *invoiced.TaskRequest) (*invoiced.Task, error) {
+	resp := new(invoiced.Task)
+	err := c.Api.Update("/tasks/"+strconv.FormatInt(id, 10), request, resp)
+	return resp, err
 }
 
-func (c *Client) Delete() error {
-	endpoint := invoiced.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	err := c.Api.Delete(endpoint)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (c *Client) Delete(id int64) error {
+	return c.Api.Delete("/tasks/" + strconv.FormatInt(id, 10))
 }
 
-func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (Tasks, error) {
-	endpoint := invoiced.TaskEndpoint
+func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Tasks, error) {
+	endpoint := invoiced.AddFilterAndSort("/tasks", filter, sort)
 
-	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
-
-	tasks := make(Tasks, 0)
+	tasks := make(invoiced.Tasks, 0)
 
 NEXT:
-	tmpTasks := make(Tasks, 0)
+	tmpTasks := make(invoiced.Tasks, 0)
 
 	endpointTmp, err := c.Api.Get(endpoint, &tmpTasks)
 

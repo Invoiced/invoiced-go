@@ -26,18 +26,16 @@ func TestItem_Create(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	requestEntity := client.NewItem()
-
-	requestEntity, err = requestEntity.Create(&invoiced.ItemRequest{Name: invoiced.String("delivery"), Type: invoiced.String("service")})
+	item, err := client.Create(&invoiced.ItemRequest{Name: invoiced.String("delivery"), Type: invoiced.String("service")})
 
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(requestEntity.Item, mockResponse) {
-		t.Fatal("entity was not created", requestEntity.Item, mockResponse)
+	if !reflect.DeepEqual(item, mockResponse) {
+		t.Fatal("entity was not created", item, mockResponse)
 	}
 }
 
@@ -57,17 +55,15 @@ func TestItem_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entityToUpdate := client.NewItem()
-
-	err = entityToUpdate.Update(&invoiced.ItemRequest{Name: invoiced.String("new-name")})
+	entityToUpdate, err := client.Update("example", &invoiced.ItemRequest{Name: invoiced.String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
 	}
 
-	if !reflect.DeepEqual(mockResponse, entityToUpdate.Item) {
+	if !reflect.DeepEqual(mockResponse, entityToUpdate) {
 		t.Fatal("Error: entity not updated correctly")
 	}
 }
@@ -76,7 +72,6 @@ func TestItem_Delete(t *testing.T) {
 	key := "api key"
 
 	mockResponse := ""
-	mockResponseId := "example"
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
 	if err != nil {
@@ -85,16 +80,11 @@ func TestItem_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-
-	entity := client.NewItem()
-
-	entity.Id = mockResponseId
-
-	err = entity.Delete()
+	client := Client{invoiced.NewMockApi(key, server)}
+	err = client.Delete("example")
 
 	if err != nil {
-		t.Fatal("Error Occured Deleting Client")
+		t.Fatal("Error occurred Deleting Client")
 	}
 }
 
@@ -115,15 +105,14 @@ func TestItem_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewItem()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	retrievedPayment, err := entity.Retrieve(mockResponseId)
+	retrievedPayment, err := client.Retrieve(mockResponseId)
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedPayment.Item, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -131,15 +120,12 @@ func TestItem_Retrieve(t *testing.T) {
 func TestItem_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invoiced.Item
-
+	var mockListResponse [1]*invoiced.Item
 	mockResponse := new(invoiced.Item)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
-
 	mockResponse.CreatedAt = time.Now().UnixNano()
-
-	mockListResponse[0] = *mockResponse
+	mockListResponse[0] = mockResponse
 
 	server, err := invdmockserver.New(200, mockListResponse, "json", true)
 	if err != nil {
@@ -147,18 +133,17 @@ func TestItem_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewItem()
+	client := Client{invoiced.NewMockApi(key, server)}
 
 	filter := invoiced.NewFilter()
 	sorter := invoiced.NewSort()
 
-	result, err := entity.ListAll(filter, sorter)
+	result, err := client.ListAll(filter, sorter)
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(result[0].Item, mockResponse) {
+	if !reflect.DeepEqual(result[0], mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }

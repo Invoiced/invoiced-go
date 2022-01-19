@@ -1,6 +1,6 @@
 package invoiced
 
-const UsersEndpoint = "/members"
+import "net/url"
 
 type MemberRequests []MemberRequest
 
@@ -25,6 +25,8 @@ type Member struct {
 	User                 *User               `json:"user"`
 }
 
+type Members []*Member
+
 type UserEmailUpdateRequest struct {
 	EmailUpdateFrequency *string `json:"email_update_frequency"`
 }
@@ -40,4 +42,22 @@ type User struct {
 	LastName         string `json:"last_name,omitempty"`
 	Registered       bool   `json:"registered,omitempty"`
 	TwoFactorEnabled bool   `json:"two_factor_enabled,omitempty"`
+}
+
+func (u *User) GenerateRegistrationURL(sandbox bool) string {
+	regURl := ""
+	if sandbox {
+		regURl = "https://app.sandbox.invoiced.com/register"
+	} else {
+		regURl = "https://app.invoiced.com/register"
+	}
+
+	regUrlParts, _ := url.Parse(regURl)
+	query := regUrlParts.Query()
+	query.Add("email", u.Email)
+	query.Add("first_name", u.FirstName)
+	query.Add("last_name", u.LastName)
+	regUrlParts.RawQuery = query.Encode()
+
+	return regUrlParts.String()
 }

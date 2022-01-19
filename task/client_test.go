@@ -24,16 +24,15 @@ func TestTask_Create(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewTask()
-	createdEntity, err := entity.Create(&invoiced.TaskRequest{Name: invoiced.String("nomenclature")})
+	createdEntity, err := client.Create(&invoiced.TaskRequest{Name: invoiced.String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(createdEntity.Task, mockResponse) {
-		t.Fatal("entity was not created", createdEntity.Task, mockResponse)
+	if !reflect.DeepEqual(createdEntity, mockResponse) {
+		t.Fatal("entity was not created", createdEntity, mockResponse)
 	}
 }
 
@@ -51,16 +50,15 @@ func TestTask_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entityToUpdate := client.NewTask()
-	err = entityToUpdate.Update(&invoiced.TaskRequest{Name: invoiced.String("new-name")})
+	entityToUpdate, err := client.Update(1234, &invoiced.TaskRequest{Name: invoiced.String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
 	}
 
-	if !reflect.DeepEqual(mockResponse, entityToUpdate.Task) {
+	if !reflect.DeepEqual(mockResponse, entityToUpdate) {
 		t.Fatal("Error: entity not updated correctly")
 	}
 }
@@ -69,7 +67,6 @@ func TestTask_Delete(t *testing.T) {
 	key := "api key"
 
 	mockResponse := ""
-	mockResponseId := int64(1234)
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
 	if err != nil {
@@ -78,13 +75,9 @@ func TestTask_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewTask()
-
-	entity.Id = mockResponseId
-
-	err = entity.Delete()
+	err = client.Delete(1234)
 
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
@@ -106,15 +99,14 @@ func TestTask_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewTask()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	retrievedPayment, err := entity.Retrieve(int64(1234))
+	retrievedPayment, err := client.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedPayment.Task, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -138,18 +130,17 @@ func TestTask_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewTask()
+	client := Client{invoiced.NewMockApi(key, server)}
 
 	filter := invoiced.NewFilter()
 	sorter := invoiced.NewSort()
 
-	result, err := entity.ListAll(filter, sorter)
+	result, err := client.ListAll(filter, sorter)
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
 
-	if !reflect.DeepEqual(result[0].Task, mockResponse) {
+	if !reflect.DeepEqual(result[0], mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }

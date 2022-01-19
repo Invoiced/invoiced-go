@@ -2,7 +2,6 @@ package invoiced
 
 import (
 	"encoding/json"
-	"github.com/Invoiced/invoiced-go/payment"
 	"testing"
 )
 
@@ -27,7 +26,7 @@ func TestUnMarshalPaymentObject(t *testing.T) {
     "metadata": {}
 }`
 
-	so := new(payment.Client)
+	so := new(Payment)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {

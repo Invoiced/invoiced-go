@@ -236,41 +236,9 @@ func (c *Api) Create(endpoint string, requestData interface{}, responseData inte
 	return nil
 }
 
-func (c *Api) create(endpoint string, requestData interface{}, responseData interface{}) error {
-	b, err := json.Marshal(requestData)
-	if err != nil {
-		return err
-	}
-
-	body := bytes.NewBuffer(b)
-
-	resp, err := c.post(endpoint, body)
-	if err != nil {
-		return err
-	}
-
-	apiError := checkStatusForError(resp.StatusCode, resp.Body)
-
-	if apiError != nil {
-		return apiError
-	}
-
-	if responseData == nil {
-		return nil
-	}
-
-	err = pushDataIntoStruct(responseData, resp.Body)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // CreateFormFile is a convenience wrapper around CreatePart. It creates
 // a new form-data header with the provided field name and file name.
-func (c *Api) CreateFormFile(w *multipart.Writer, fieldname, filename string, fileType string) (io.Writer, error) {
+func createFormFile(w *multipart.Writer, fieldname, filename string, fileType string) (io.Writer, error) {
 	h := make(textproto.MIMEHeader)
 	h.Set("Content-Disposition",
 		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
@@ -294,7 +262,7 @@ func (c *Api) Upload(endpoint string, filePath string, fileParamName string, fil
 	}
 	defer file.Close()
 
-	part, err := c.CreateFormFile(writer, fileParamName, filepath.Base(filePath), fileType)
+	part, err := createFormFile(writer, fileParamName, filepath.Base(filePath), fileType)
 
 	if err != nil {
 		return err
@@ -354,50 +322,7 @@ func (c *Api) Delete(endpoint string) error {
 	return nil
 }
 
-func (c *Api) delete(endpoint string) error {
-	resp, err := c.deleteRequest(endpoint)
-	if err != nil {
-		return err
-	}
-
-	apiError := checkStatusForError(resp.StatusCode, resp.Body)
-
-	if apiError != nil {
-		return apiError
-	}
-
-	return nil
-}
-
 func (c *Api) Update(endpoint string, requestData interface{}, responseData interface{}) error {
-	b, err := json.Marshal(requestData)
-	if err != nil {
-		return err
-	}
-
-	body := bytes.NewBuffer(b)
-
-	resp, err := c.patch(endpoint, body)
-	if err != nil {
-		return err
-	}
-
-	apiError := checkStatusForError(resp.StatusCode, resp.Body)
-
-	if apiError != nil {
-		return apiError
-	}
-
-	err = pushDataIntoStruct(responseData, resp.Body)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (c *Api) update(endpoint string, requestData interface{}, responseData interface{}) error {
 	b, err := json.Marshal(requestData)
 	if err != nil {
 		return err
@@ -469,65 +394,7 @@ func (c *Api) Count(endpoint string) (int64, error) {
 	return i, nil
 }
 
-func (c *Api) count(endpoint string) (int64, error) {
-	resp, err := c.get(endpoint)
-	if err != nil {
-		return -1, err
-	}
-
-	defer resp.Body.Close()
-
-	err = checkStatusForError(resp.StatusCode, resp.Body)
-	if err != nil {
-		return 0, err
-	}
-
-	s := resp.Header.Get("X-Total-Count")
-
-	i, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
-		return -1, err
-	}
-
-	return i, nil
-}
-
 func (c *Api) Get(endpoint string, endpointData interface{}) (string, error) {
-	nextURL := ""
-
-	resp, err := c.get(endpoint)
-	if err != nil {
-		return "", err
-	}
-
-	defer resp.Body.Close()
-
-	link := resp.Header.Get("Link")
-
-	if link != "" {
-		nextMap := parseLinkHeader(link)
-
-		if nextMap["self"] != nextMap["next"] {
-			nextURL = nextMap["next"]
-		}
-	}
-
-	apiError := checkStatusForError(resp.StatusCode, resp.Body)
-
-	if apiError != nil {
-		return "", apiError
-	}
-
-	err = pushDataIntoStruct(endpointData, resp.Body)
-
-	if err != nil {
-		return "", err
-	}
-
-	return strings.Replace(nextURL, c.baseUrl, "", -1), nil
-}
-
-func (c *Api) retrieveDataFromAPI(endpoint string, endpointData interface{}) (string, error) {
 	nextURL := ""
 
 	resp, err := c.get(endpoint)

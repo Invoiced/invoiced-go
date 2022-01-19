@@ -24,17 +24,15 @@ func TestTaxRate_Create(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewTaxRate()
-
-	createdEntity, err := entity.Create(&invoiced.TaxRateRequest{Id: invoiced.String("example"), Name: invoiced.String("nomenclature")})
+	createdEntity, err := client.Create(&invoiced.TaxRateRequest{Id: invoiced.String("example"), Name: invoiced.String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(createdEntity.TaxRate, mockResponse) {
-		t.Fatal("entity was not created", createdEntity.TaxRate, mockResponse)
+	if !reflect.DeepEqual(createdEntity, mockResponse) {
+		t.Fatal("entity was not created", createdEntity, mockResponse)
 	}
 }
 
@@ -52,16 +50,15 @@ func TestTaxRate_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entityToUpdate := client.NewTaxRate()
-	err = entityToUpdate.Update(&invoiced.TaxRateRequest{Name: invoiced.String("new-name")})
+	entityToUpdate, err := client.Update("example", &invoiced.TaxRateRequest{Name: invoiced.String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
 	}
 
-	if !reflect.DeepEqual(mockResponse, entityToUpdate.TaxRate) {
+	if !reflect.DeepEqual(mockResponse, entityToUpdate) {
 		t.Fatal("Error: entity not updated correctly")
 	}
 }
@@ -70,7 +67,6 @@ func TestTaxRate_Delete(t *testing.T) {
 	key := "api key"
 
 	mockResponse := ""
-	mockResponseId := "example"
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
 	if err != nil {
@@ -79,13 +75,8 @@ func TestTaxRate_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-
-	entity := client.NewTaxRate()
-
-	entity.Id = mockResponseId
-
-	err = entity.Delete()
+	client := Client{invoiced.NewMockApi(key, server)}
+	err = client.Delete("example")
 
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
@@ -107,15 +98,14 @@ func TestTaxRate_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewTaxRate()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	retrievedPayment, err := entity.Retrieve("example")
+	retrievedPayment, err := client.Retrieve("example")
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedPayment.TaxRate, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }
@@ -139,18 +129,17 @@ func TestTaxRate_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewTaxRate()
+	client := Client{invoiced.NewMockApi(key, server)}
 
 	filter := invoiced.NewFilter()
 	sorter := invoiced.NewSort()
 
-	result, err := entity.ListAll(filter, sorter)
+	result, err := client.ListAll(filter, sorter)
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
 
-	if !reflect.DeepEqual(result[0].TaxRate, mockResponse) {
+	if !reflect.DeepEqual(result[0], mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }

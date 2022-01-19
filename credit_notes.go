@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 )
 
-const CreditNoteEndpoint = "/credit_notes"
-
 type CreditNoteRequest struct {
 	Attachments   []*int64                `json:"attachments,omitempty"`
 	CalculateTax  *bool                   `json:"calculate_taxes,omitempty"`
@@ -24,8 +22,6 @@ type CreditNoteRequest struct {
 	PurchaseOrder *string                 `json:"purchase_order,omitempty"`
 	Taxes         []*TaxRequest           `json:"taxes,omitempty"`
 }
-
-type CreditNotes []CreditNote
 
 type CreditNote struct {
 	Attachments   []int64                `json:"attachments"`
@@ -55,6 +51,8 @@ type CreditNote struct {
 	UpdatedAt     int64                  `json:"updated_at"`
 	Url           string                 `json:"url"`
 }
+
+type CreditNotes []*CreditNote
 
 func (i *CreditNote) String() string {
 	b, _ := json.MarshalIndent(i, "", "    ")

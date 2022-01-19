@@ -9,50 +9,24 @@ type Client struct {
 	*invoiced.Api
 }
 
-func (c *Client) Create(request *invoiced.FileRequest) (*Client, error) {
-	endpoint := invoiced.FileEndpoint
-	resp := new(Client)
-
-	err := c.Api.Create(endpoint, request, resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+func (c *Client) Create(request *invoiced.FileRequest) (*invoiced.File, error) {
+	resp := new(invoiced.File)
+	err := c.Api.Create("/files", request, resp)
+	return resp, err
 }
 
-func (c *Client) CreateAndUploadFile(filePath, fileType string) (*Client, error) {
-	endpoint := invoiced.FileEndpoint
-	resp := new(Client)
-
-	err := c.Api.Upload(endpoint, filePath, "file", nil, fileType, resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+func (c *Client) CreateAndUploadFile(filePath, fileType string) (*invoiced.File, error) {
+	resp := new(invoiced.File)
+	err := c.Api.Upload("/files", filePath, "file", nil, fileType, resp)
+	return resp, err
 }
 
-func (c *Client) Retrieve(id int64) (*Client, error) {
-	endpoint := invoiced.FileEndpoint + "/" + strconv.FormatInt(id, 10)
-
-	file := &Client{c.Client, new(invoiced.File)}
-
-	_, err := c.Api.Get(endpoint, file)
-	if err != nil {
-		return nil, err
-	}
-
-	return file, nil
+func (c *Client) Retrieve(id int64) (*invoiced.File, error) {
+	resp := new(invoiced.File)
+	_, err := c.Api.Get("/files/"+strconv.FormatInt(id, 10), resp)
+	return resp, err
 }
 
-func (c *Client) Delete() error {
-	endpoint := invoiced.FileEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	err := c.Api.Delete(endpoint)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (c *Client) Delete(id int64) error {
+	return c.Api.Delete("/files/" + strconv.FormatInt(id, 10))
 }

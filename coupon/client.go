@@ -1,49 +1,33 @@
 package coupon
 
-import "github.com/Invoiced/invoiced-go"
+import (
+	"github.com/Invoiced/invoiced-go"
+)
 
 type Client struct {
 	*invoiced.Api
 }
 
-func (c *Client) Create(request *invoiced.CouponRequest) (*Client, error) {
-	resp := new(Client)
-
+func (c *Client) Create(request *invoiced.CouponRequest) (*invoiced.Coupon, error) {
+	resp := new(invoiced.Coupon)
 	err := c.Api.Create("/coupons", request, resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return resp, err
 }
 
 func (c *Client) Retrieve(id string) (*invoiced.Coupon, error) {
 	resp := new(invoiced.Coupon)
-	_, err := c.Api.Get("/coupons" + "/" + id, resp)
+	_, err := c.Api.Get("/coupons/"+id, resp)
 	return resp, err
 }
 
-func (c *Client) Update(request *invoiced.CouponRequest) error {
-	endpoint := "/coupons" + "/" + c.Id
-	resp := new(Client)
-
-	err := c.Api.Update(endpoint, request, resp)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (c *Client) Update(id string, request *invoiced.CouponRequest) (*invoiced.Coupon, error) {
+	resp := new(invoiced.Coupon)
+	err := c.Api.Update("/coupons/"+id, request, resp)
+	return resp, err
 }
 
-func (c *Client) Delete() error {
-	endpoint := "/coupons" + "/" + c.Id
-
-	err := c.Api.Delete(endpoint)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (c *Client) Delete(id string) error {
+	return c.Api.Delete("/coupons/" + id)
 }
 
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Coupons, error) {

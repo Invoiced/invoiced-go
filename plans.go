@@ -1,7 +1,5 @@
 package invoiced
 
-const PlanEndpoint = "/plans"
-
 type PlanRequest struct {
 	Amount        *float64                `json:"amount,omitempty"`
 	Currency      *string                 `json:"currency,omitempty"`
@@ -45,3 +43,5 @@ type Tier struct {
 	MinQty   float64 `json:"min_qty"`
 	UnitCost float64 `json:"unit_cost"`
 }
+
+type Plans []*Plan

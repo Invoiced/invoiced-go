@@ -1,7 +1,5 @@
 package invoiced
 
-const ChargeEndpoint = "/charges"
-
 type ChargeRequest struct {
 	Customer          *int64                `json:"customer,omitempty"`
 	Method            *string               `json:"method,omitempty"`

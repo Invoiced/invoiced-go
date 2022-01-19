@@ -9,7 +9,7 @@ type Client struct {
 }
 
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.ChasingCadences, error) {
-	endpoint := invoiced.AddFilterAndSort(invoiced.ChasingCadenceEndpoint, filter, sort)
+	endpoint := invoiced.AddFilterAndSort("/chasing_cadences", filter, sort)
 
 	chasing := make(invoiced.ChasingCadences, 0)
 

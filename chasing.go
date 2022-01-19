@@ -1,9 +1,5 @@
 package invoiced
 
-const ChasingCadenceEndpoint = "/chasing_cadences"
-
-type ChasingCadences []*ChasingCadence
-
 type ChasingCadence struct {
 	AssignmentConditions *string       `json:"assignment_conditions"`
 	AssignmentMode       string        `json:"assignment_mode"`
@@ -34,3 +30,5 @@ type ChasingStep struct {
 	SmsTemplateId   *string `json:"sms_template_id"`
 	UpdatedAt       int64   `json:"updated_at"`
 }
+
+type ChasingCadences []*ChasingCadence

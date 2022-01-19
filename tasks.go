@@ -1,7 +1,5 @@
 package invoiced
 
-const TaskEndpoint = "/tasks"
-
 type TaskRequest struct {
 	Action   *string `json:"action,omitempty"`
 	Complete *bool   `json:"complete,omitempty"`
@@ -10,8 +8,6 @@ type TaskRequest struct {
 	Name     *string `json:"name,omitempty"`
 	User     *int64  `json:"user_id,omitempty"`
 }
-
-type Tasks []Task
 
 type Task struct {
 	Action          string `json:"action"`
@@ -27,3 +23,5 @@ type Task struct {
 	UpdatedAt       int64  `json:"updated_at"`
 	User            int64  `json:"user_id"`
 }
+
+type Tasks []*Task

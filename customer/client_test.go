@@ -259,7 +259,7 @@ func TestCustomerListError(t *testing.T) {
 	_, err = client.ListCustomerByNumber(mockCustomerNumber)
 
 	if err == nil {
-		t.Fatal("Error occured deleting customer")
+		t.Fatal("Error occurred deleting customer")
 	}
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
@@ -527,7 +527,7 @@ func TestCustomer_ListAllContacts(t *testing.T) {
 	mockResponse.Country = invoiced.String("USA")
 	mockResponse.CreatedAt = time.Now().UnixNano()
 
-	mockResponses = append(mockResponses, *mockResponse)
+	mockResponses = append(mockResponses, mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {
@@ -640,8 +640,8 @@ func TestCustomer_ListAllPaymentSources(t *testing.T) {
 	mockResponseAcct := new(invoiced.PaymentSource)
 	mockResponseAcct.Object = "bank_account"
 
-	mockResponses = append(mockResponses, *mockResponseCard)
-	mockResponses = append(mockResponses, *mockResponseAcct)
+	mockResponses = append(mockResponses, mockResponseCard)
+	mockResponses = append(mockResponses, mockResponseAcct)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {
@@ -838,7 +838,7 @@ func TestCustomer_RetrieveNotes(t *testing.T) {
 	mockResponse.Id = mockResponseId
 	mockResponse.Notes = "Mock NoteClient"
 
-	mockResponses = append(mockResponses, *mockResponse)
+	mockResponses = append(mockResponses, mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {

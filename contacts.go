@@ -36,4 +36,4 @@ type Contact struct {
 	UpdatedAt  int64   `json:"updated_at"`
 }
 
-type Contacts []Contact
+type Contacts []*Contact

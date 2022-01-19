@@ -5,53 +5,28 @@ import (
 	"strconv"
 )
 
-const NoteEndpoint = "/notes"
-
 type Client struct {
 	*invoiced.Api
 }
 
-func (c *Client) Create(request *invoiced.NoteRequest) (*Client, error) {
-	endpoint := NoteEndpoint
-	resp := new(Client)
-
-	err := c.Api.Create(endpoint, request, resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+func (c *Client) Create(request *invoiced.NoteRequest) (*invoiced.Note, error) {
+	resp := new(invoiced.Note)
+	err := c.Api.Create("/roles", request, resp)
+	return resp, err
 }
 
-func (c *Client) Update(request *invoiced.NoteRequest) error {
-	endpoint := NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	resp := new(Client)
-
-	err := c.Api.Update(endpoint, request, resp)
-	if err != nil {
-		return err
-	}
-
-	c.Note = resp.Note
-
-	return nil
+func (c *Client) Update(id int64, request *invoiced.NoteRequest) (*invoiced.Note, error) {
+	resp := new(invoiced.Note)
+	err := c.Api.Update("/notes/"+strconv.FormatInt(id, 10), request, resp)
+	return resp, err
 }
 
-func (c *Client) Delete() error {
-	endpoint := NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	err := c.Api.Delete(endpoint)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (c *Client) Delete(id int64) error {
+	return c.Api.Delete("/notes/" + strconv.FormatInt(id, 10))
 }
 
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Notes, error) {
-	endpoint := NoteEndpoint
-
-	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
+	endpoint := invoiced.AddFilterAndSort("/notes", filter, sort)
 
 	notes := make(invoiced.Notes, 0)
 

@@ -5,21 +5,17 @@ import (
 	"strconv"
 )
 
-const endpoint = "/webhook_attempts"
-
 type Client struct {
 	*invoiced.Api
 }
 
-type WebhookAttempts []*invoiced.WebhookAttempt
+func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.WebhookAttempts, error) {
+	endpoint2 := invoiced.AddFilterAndSort("/webhook_attempts", filter, sort)
 
-func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (WebhookAttempts, error) {
-	endpoint2 := invoiced.AddFilterAndSort(endpoint, filter, sort)
-
-	webhookAttempts := make(WebhookAttempts, 0)
+	webhookAttempts := make(invoiced.WebhookAttempts, 0)
 
 NEXT:
-	tmpWebhookAttempts := make(WebhookAttempts, 0)
+	tmpWebhookAttempts := make(invoiced.WebhookAttempts, 0)
 
 	endpoint, err := c.Api.Get(endpoint2, &tmpWebhookAttempts)
 
@@ -37,6 +33,5 @@ NEXT:
 }
 
 func (c *Client) ReAttempt(webhookId int64) error {
-	endpoint2 := endpoint + "/" + strconv.FormatInt(webhookId, 10) + "/retries"
-	return c.Api.Create(endpoint2, nil, nil)
+	return c.Api.PostWithoutData("/webhook_attempts/"+strconv.FormatInt(webhookId, 10)+"/retries", nil)
 }

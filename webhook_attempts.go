@@ -15,3 +15,5 @@ type WebhookAttemptStatus struct {
 	StatusCode int64 `json:"status_code,omitempty"`
 	Timestamp  int64 `json:"timestamp,omitempty"`
 }
+
+type WebhookAttempts []*WebhookAttempt

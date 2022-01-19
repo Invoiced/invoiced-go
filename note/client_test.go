@@ -24,17 +24,15 @@ func TestNote_Create(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewNote()
-
-	createdEntity, err := entity.Create(&invoiced.NoteRequest{Customer: invoiced.Int64(1234)})
+	createdEntity, err := client.Create(&invoiced.NoteRequest{Customer: invoiced.Int64(1234)})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(createdEntity.Note, mockResponse) {
-		t.Fatal("entity was not created", createdEntity.Note, mockResponse)
+	if !reflect.DeepEqual(createdEntity, mockResponse) {
+		t.Fatal("entity was not created", createdEntity, mockResponse)
 	}
 }
 
@@ -52,17 +50,15 @@ func TestNote_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entityToUpdate := client.NewNote()
-
-	err = entityToUpdate.Update(&invoiced.NoteRequest{Notes: invoiced.String("new-notes")})
+	entityToUpdate, err := client.Update(1234, &invoiced.NoteRequest{Notes: invoiced.String("new-notes")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
 	}
 
-	if !reflect.DeepEqual(mockResponse, entityToUpdate.Note) {
+	if !reflect.DeepEqual(mockResponse, entityToUpdate) {
 		t.Fatal("Error: entity not updated correctly")
 	}
 }
@@ -71,7 +67,6 @@ func TestNote_Delete(t *testing.T) {
 	key := "api key"
 
 	mockResponse := ""
-	mockResponseId := int64(1234)
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
 	if err != nil {
@@ -80,13 +75,8 @@ func TestNote_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-
-	entity := client.NewNote()
-
-	entity.Id = mockResponseId
-
-	err = entity.Delete()
+	client := Client{invoiced.NewMockApi(key, server)}
+	err = client.Delete(1234)
 
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
@@ -112,18 +102,17 @@ func TestNote_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewNote()
+	client := Client{invoiced.NewMockApi(key, server)}
 
 	filter := invoiced.NewFilter()
 	sorter := invoiced.NewSort()
 
-	result, err := entity.ListAll(filter, sorter)
+	result, err := client.ListAll(filter, sorter)
 	if err != nil {
 		t.Fatal("Error listing entity", err)
 	}
 
-	if !reflect.DeepEqual(result[0].Note, mockResponse) {
+	if !reflect.DeepEqual(result[0], mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }

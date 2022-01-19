@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 )
 
-const EstimateEndpoint = "/estimates"
-
 type EstimateRequest struct {
 	Approved               *string                 `json:"approved,omitempty"`
 	Attachments            []*int64                `json:"attachments,omitempty"`
@@ -31,8 +29,6 @@ type EstimateRequest struct {
 	Taxes                  []*TaxRequest           `json:"taxes,omitempty"`
 	UpdatedAt              *int64                  `json:"updated_at,omitempty"`
 }
-
-type Estimates []Estimate
 
 type Estimate struct {
 	Approved               string                 `json:"approved"`
@@ -67,6 +63,8 @@ type Estimate struct {
 	UpdatedAt              int64                  `json:"updated_at"`
 	Url                    string                 `json:"url"`
 }
+
+type Estimates []*Estimate
 
 func (i *Estimate) String() string {
 	b, _ := json.MarshalIndent(i, "", "    ")

@@ -3,13 +3,8 @@ package invoiced
 import (
 	"encoding/json"
 	"errors"
-	"github.com/Invoiced/invoiced-go/payment"
 	"strings"
 )
-
-const EventEndpoint = "/events"
-
-type Events []Event
 
 type Event struct {
 	Id        int64           `json:"id"`
@@ -24,6 +19,8 @@ type EventObject struct {
 	Object         *json.RawMessage `json:"object"`
 	PreviousObject *json.RawMessage `json:"previous"`
 }
+
+type Events []*Event
 
 func (e *Event) ParseEventObject() (*json.RawMessage, error) {
 	data := e.Data
@@ -175,7 +172,7 @@ func (e *Event) ParseSubscriptionEvent() (*Subscription, error) {
 	return ie, nil
 }
 
-func (e *Event) ParsePaymentEvent() (*payment.Client, error) {
+func (e *Event) ParsePaymentEvent() (*Payment, error) {
 	eoData, err := e.ParseEventObject()
 	if err != nil {
 		return nil, err
@@ -188,7 +185,7 @@ func (e *Event) ParsePaymentEvent() (*payment.Client, error) {
 
 	bClean := CleanMetaDataArray(b)
 
-	ie := new(payment.Client)
+	ie := new(Payment)
 
 	err = json.Unmarshal(bClean, ie)
 

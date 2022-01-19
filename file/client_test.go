@@ -24,17 +24,15 @@ func TestFile_Create(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewFile()
-
-	createdEntity, err := entity.Create(&invoiced.FileRequest{Name: invoiced.String("nomenclature")})
+	createdEntity, err := client.Create(&invoiced.FileRequest{Name: invoiced.String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
 
-	if !reflect.DeepEqual(createdEntity.File, mockResponse) {
-		t.Fatal("entity was not created", createdEntity.File, mockResponse)
+	if !reflect.DeepEqual(createdEntity, mockResponse) {
+		t.Fatal("entity was not created", createdEntity, mockResponse)
 	}
 }
 
@@ -42,7 +40,6 @@ func TestFile_Delete(t *testing.T) {
 	key := "api key"
 
 	mockResponse := ""
-	mockResponseId := int64(1234)
 
 	server, err := invdmockserver.New(204, mockResponse, "json", true)
 	if err != nil {
@@ -51,13 +48,9 @@ func TestFile_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewFile()
-
-	entity.Id = mockResponseId
-
-	err = entity.Delete()
+	err = client.Delete(1234)
 
 	if err != nil {
 		t.Fatal("Error occurred deleting entity")
@@ -79,15 +72,13 @@ func TestFile_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewFile()
-
-	retrievedPayment, err := entity.Retrieve(int64(1234))
+	client := Client{invoiced.NewMockApi(key, server)}
+	retrievedPayment, err := client.Retrieve(1234)
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}
 
-	if !reflect.DeepEqual(retrievedPayment.File, mockResponse) {
+	if !reflect.DeepEqual(retrievedPayment, mockResponse) {
 		t.Fatal("Error messages do not match up")
 	}
 }

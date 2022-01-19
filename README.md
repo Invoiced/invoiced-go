@@ -62,7 +62,7 @@ invoice, err := client.Invoice.Create(&invoiced.InvoiceRequest{
     PaymentTerms: invoiced.String("NET 30"),
     Items: []*invoiced.LineItemRequest{
         {
-            Description: invoiced.String("Retina` MacBook Pro"),
+            Description: invoiced.String("Retina MacBook Pro"),
             Quantity: invoiced.Float64(5),
             UnitCost: invoiced.Float64(1999.22),
         },

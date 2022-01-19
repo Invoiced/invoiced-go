@@ -1,74 +1,44 @@
 package tax_rate
 
-import "github.com/Invoiced/invoiced-go"
+import (
+	"github.com/Invoiced/invoiced-go"
+)
 
 type Client struct {
 	*invoiced.Api
 }
 
-type TaxRates []*Client
-
-func (c *Client) Create(request *invoiced.TaxRateRequest) (*Client, error) {
-	endpoint := invoiced.RateEndpoint
-	resp := new(Client)
-
-	err := c.Api.Create(endpoint, request, resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+func (c *Client) Create(request *invoiced.TaxRateRequest) (*invoiced.TaxRate, error) {
+	resp := new(invoiced.TaxRate)
+	err := c.Api.Create("/tax_rates", request, resp)
+	return resp, err
 }
 
-func (c *Client) Retrieve(id string) (*Client, error) {
-	endpoint := invoiced.RateEndpoint + "/" + id
-	taxRate := &Client{c.Client, new(invoiced.TaxRate)}
-
-	_, err := c.Api.Get(endpoint, taxRate)
-	if err != nil {
-		return nil, err
-	}
-
-	return taxRate, nil
+func (c *Client) Retrieve(id string) (*invoiced.TaxRate, error) {
+	resp := new(invoiced.TaxRate)
+	_, err := c.Api.Get("/tax_rates/"+id, resp)
+	return resp, err
 }
 
-func (c *Client) Update(request *invoiced.TaxRateRequest) error {
-	endpoint := invoiced.RateEndpoint + "/" + c.Id
-	resp := new(Client)
-
-	err := c.Api.Update(endpoint, request, resp)
-	if err != nil {
-		return err
-	}
-
-	c.TaxRate = resp.TaxRate
-
-	return nil
+func (c *Client) Update(id string, request *invoiced.TaxRateRequest) (*invoiced.TaxRate, error) {
+	resp := new(invoiced.TaxRate)
+	err := c.Api.Update("/tax_rates/"+id, request, resp)
+	return resp, err
 }
 
-func (c *Client) Delete() error {
-	endpoint := invoiced.RateEndpoint + "/" + c.Id
-
-	err := c.Api.Delete(endpoint)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (c *Client) Delete(id string) error {
+	return c.Api.Delete("/tax_rates/" + id)
 }
 
-func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (TaxRates, error) {
-	endpoint := invoiced.RateEndpoint
+func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.TaxRates, error) {
+	endpoint := invoiced.AddFilterAndSort("/tax_rates", filter, sort)
 
-	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
-
-	taxRates := make(TaxRates, 0)
+	taxRates := make(invoiced.TaxRates, 0)
 
 NEXT:
-	tmpTaxRates := make(TaxRates, 0)
+	tmpTaxRates := make(invoiced.TaxRates, 0)
 
 	endpointTmp, err := c.Api.Get(endpoint, &tmpTaxRates)
-
 	if err != nil {
 		return nil, err
 	}

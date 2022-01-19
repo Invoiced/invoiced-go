@@ -17,7 +17,7 @@ func TestUnmarshalBalanceAdjustmentJSON(t *testing.T) {
   "object": "credit_balance_adjustment"
 }`
 
-	so := new(BalanceAdjustment)
+	so := new(CreditBalanceAdjustment)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {

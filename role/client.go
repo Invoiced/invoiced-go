@@ -9,24 +9,14 @@ type Client struct {
 	*invoiced.Api
 }
 
-func (c *Client) Retrieve(id int64) (*Client, error) {
-	endpoint := invoiced.RoleEndpoint + "/" + strconv.FormatInt(id, 10)
-
-	role := new(Client)
-
-	_, err := c.Api.Get(endpoint, role)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return role, nil
+func (c *Client) Retrieve(id int64) (*invoiced.Role, error) {
+	resp := new(invoiced.Role)
+	_, err := c.Api.Get("/roles/"+strconv.FormatInt(id, 10), resp)
+	return resp, err
 }
 
-func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) ([]*Client, error) {
-	endpoint := invoiced.RoleEndpoint
-
-	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
+func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Roles, error) {
+	endpoint := invoiced.AddFilterAndSort("/roles", filter, sort)
 
 	roles := make(invoiced.Roles, 0)
 

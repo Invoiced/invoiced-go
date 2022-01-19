@@ -28,4 +28,4 @@ type PaymentPlanInstallment struct {
 	Id      int64   `json:"id,omitempty"`
 }
 
-type PaymentPlanInstallments []PaymentPlanInstallment
+type PaymentPlanInstallments []*PaymentPlanInstallment

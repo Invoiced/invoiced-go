@@ -1,7 +1,5 @@
 package invoiced
 
-const ItemEndpoint = "/items"
-
 type ItemRequest struct {
 	AvalaraLocationCode *string                 `json:"avalara_location_code,omitempty"`
 	AvalaraTaxCode      *string                 `json:"avalara_tax_code,omitempty"`
@@ -37,4 +35,4 @@ type Item struct {
 	UpdatedAt           int64                  `json:"updated_at"`
 }
 
-type Items []Item
+type Items []*Item

@@ -1,7 +1,5 @@
 package invoiced
 
-const RateEndpoint = "/tax_rates"
-
 type TaxRateRequest struct {
 	Currency  *string                 `json:"currency,omitempty"`
 	Id        *string                 `json:"id,omitempty"`
@@ -24,3 +22,5 @@ type TaxRate struct {
 	UpdatedAt int64                  `json:"updated_at"`
 	Value     float64                `json:"value"`
 }
+
+type TaxRates []*TaxRate

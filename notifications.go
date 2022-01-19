@@ -1,9 +1,5 @@
 package invoiced
 
-const NotificationEndpoint = "/notifications"
-
-type Notifications []Notification
-
 type NotificationRequest struct {
 	Enabled *bool   `json:"enabled,omitempty"`
 	Event   *string `json:"event,omitempty"`
@@ -21,3 +17,5 @@ type Notification struct {
 	Medium     string `json:"medium"`
 	User       int64  `json:"user_id"`
 }
+
+type Notifications []*Notification

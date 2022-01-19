@@ -127,7 +127,7 @@ func TestInvoiceDelete(t *testing.T) {
 	err = client.Delete(2341)
 
 	if err != nil {
-		t.Fatal("Error Occured Deleting Client")
+		t.Fatal("Error occurred Deleting Client")
 	}
 }
 
@@ -149,7 +149,7 @@ func TestInvoiceDeleteError(t *testing.T) {
 	err = client.Delete(1234)
 
 	if err == nil {
-		t.Fatal("Error Occured Deleting Client")
+		t.Fatal("Error occurred Deleting Client")
 	}
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
@@ -236,7 +236,7 @@ func TestInvoiceListError(t *testing.T) {
 	_, err = client.ListInvoiceByNumber(mockInvoiceNumber)
 
 	if err == nil {
-		t.Fatal("Error occured deleting invoice")
+		t.Fatal("Error occurred deleting invoice")
 	}
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {

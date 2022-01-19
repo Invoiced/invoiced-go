@@ -26,16 +26,15 @@ func TestSubscriptionCreate(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	subscription := client.NewSubscription()
-	createdSubscription, err := subscription.Create(&invoiced.SubscriptionRequest{Customer: invoiced.Int64(234112), Plan: invoiced.String("234")})
+	createdSubscription, err := client.Create(&invoiced.SubscriptionRequest{Customer: invoiced.Int64(234112), Plan: invoiced.String("234")})
 	if err != nil {
 		t.Fatal("Error Creating subscription", err)
 	}
 
-	if !reflect.DeepEqual(createdSubscription.Subscription, mockSubscriptionResponse) {
-		t.Fatal("Client Was Not Created Succesfully", createdSubscription.Subscription, mockSubscriptionResponse)
+	if !reflect.DeepEqual(createdSubscription, mockSubscriptionResponse) {
+		t.Fatal("Client Was Not Created Succesfully", createdSubscription, mockSubscriptionResponse)
 	}
 }
 
@@ -53,9 +52,9 @@ func TestSubscriptionCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	subscription := client.NewSubscription()
-	_, err = subscription.Create(&invoiced.SubscriptionRequest{Customer: invoiced.Int64(234112), Plan: invoiced.String("234")})
+	client := Client{invoiced.NewMockApi(key, server)}
+
+	_, err = client.Create(&invoiced.SubscriptionRequest{Customer: invoiced.Int64(234112), Plan: invoiced.String("234")})
 	if err == nil {
 		t.Fatal("Api Should Have Errored Out")
 	}
@@ -82,17 +81,15 @@ func TestSubscriptionUpdate(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	subscriptionToUpdate := client.NewSubscription()
-
-	err = subscriptionToUpdate.Update(&invoiced.SubscriptionRequest{Cycles: invoiced.Int64(42)})
+	subscriptionToUpdate, err := client.Update(1523, &invoiced.SubscriptionRequest{Cycles: invoiced.Int64(42)})
 
 	if err != nil {
 		t.Fatal("Error Updating Client", err)
 	}
 
-	if !reflect.DeepEqual(mockSubscriptionResponse, subscriptionToUpdate.Subscription) {
+	if !reflect.DeepEqual(mockSubscriptionResponse, subscriptionToUpdate) {
 		t.Fatal("Error Client Not Updated Properly")
 	}
 }
@@ -111,10 +108,9 @@ func TestSubscriptionUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	subcriptionToUpdate := client.NewSubscription()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	err = subcriptionToUpdate.Update(&invoiced.SubscriptionRequest{Cycles: invoiced.Int64(42)})
+	_, err = client.Update(1234, &invoiced.SubscriptionRequest{Cycles: invoiced.Int64(42)})
 	if err == nil {
 		t.Fatal("Error Updating subscription", err)
 	}
@@ -128,7 +124,6 @@ func TestSubscriptionDelete(t *testing.T) {
 	key := "api key"
 
 	mocksubscriptionResponse := ""
-	mocksubscriptionID := int64(2341)
 
 	server, err := invdmockserver.New(204, mocksubscriptionResponse, "json", true)
 	if err != nil {
@@ -137,16 +132,11 @@ func TestSubscriptionDelete(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-
-	subscription := client.NewSubscription()
-
-	subscription.Id = mocksubscriptionID
-
-	err = subscription.Cancel()
+	client := Client{invoiced.NewMockApi(key, server)}
+	err = client.Cancel(2341)
 
 	if err != nil {
-		t.Fatal("Error Occured Canceling Client")
+		t.Fatal("Error Occurred Canceling Client")
 	}
 }
 
@@ -157,8 +147,6 @@ func TestSubscriptionDeleteError(t *testing.T) {
 	mockErrorResponse.Type = "invalid_request"
 	mockErrorResponse.Message = "You do not have permission to do that"
 
-	mockSubscriptionID := int64(-999)
-
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
 	if err != nil {
 		t.Fatal(err)
@@ -166,13 +154,8 @@ func TestSubscriptionDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-
-	subscription := client.NewSubscription()
-
-	subscription.Id = mockSubscriptionID
-
-	err = subscription.Cancel()
+	client := Client{invoiced.NewMockApi(key, server)}
+	err = client.Cancel(-999)
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
@@ -197,10 +180,9 @@ func TestSubscription_Count_Error(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewSubscription()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	result, err := entity.Count()
+	result, err := client.Count()
 
 	if result != int64(-1) || err == nil {
 		t.Fatal("Unexpectedly successful")
@@ -224,15 +206,14 @@ func TestSubscriptionRetrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	subscription := client.NewSubscription()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	retrievedSubscription, err := subscription.Retrieve(mockSubscriptionResponseID)
+	retrievedSubscription, err := client.Retrieve(mockSubscriptionResponseID)
 	if err != nil {
 		t.Fatal("Error Creating subscription", err)
 	}
 
-	if !reflect.DeepEqual(retrievedSubscription.Subscription, mockSubscriptionResponse) {
+	if !reflect.DeepEqual(retrievedSubscription, mockSubscriptionResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
@@ -252,10 +233,9 @@ func TestSubscriptionRetrieveError(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	subscription := client.NewSubscription()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	_, err = subscription.Retrieve(mockSubscriptionID)
+	_, err = client.Retrieve(mockSubscriptionID)
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
@@ -272,7 +252,7 @@ func TestSubscription_List(t *testing.T) {
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
 
-	mockResponses = append(mockResponses, *mockResponse)
+	mockResponses = append(mockResponses, mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {
@@ -281,11 +261,9 @@ func TestSubscription_List(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	subscription := client.NewSubscription()
-
-	_, nextEndpoint, err := subscription.List(nil, nil)
+	_, nextEndpoint, err := client.List(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -305,7 +283,7 @@ func TestSubscription_ListAll(t *testing.T) {
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
 
-	mockResponses = append(mockResponses, *mockResponse)
+	mockResponses = append(mockResponses, mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {
@@ -314,11 +292,9 @@ func TestSubscription_ListAll(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	subscription := client.NewSubscription()
-
-	_, err = subscription.ListAll(nil, nil)
+	_, err = client.ListAll(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -337,10 +313,9 @@ func TestSubscription_Preview(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	subscription := client.NewSubscription()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	_, err = subscription.Preview(&invoiced.SubscriptionPreviewRequest{})
+	_, err = client.Preview(&invoiced.SubscriptionPreviewRequest{})
 	if err != nil {
 		t.Fatal("Error Creating subscription", err)
 	}

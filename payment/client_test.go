@@ -1,7 +1,7 @@
-package invoiced
+package payment
 
 import (
-	payment2 "github.com/Invoiced/invoiced-go/payment"
+	"github.com/Invoiced/invoiced-go"
 	"reflect"
 	"testing"
 	"time"
@@ -13,7 +13,7 @@ func TestPaymentCreate(t *testing.T) {
 	key := "test api key"
 
 	mockPaymentResponseID := int64(1523)
-	mockPaymentResponse := new(payment2.Client)
+	mockPaymentResponse := new(invoiced.Payment)
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 	mockPaymentResponse.Customer = 234112
@@ -26,23 +26,21 @@ func TestPaymentCreate(t *testing.T) {
 
 	defer server.Close()
 
-	client := NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	payment := client.NewPayment()
-
-	createdPayment, err := payment.Create(&PaymentRequest{Customer: Int64(234112)})
+	createdPayment, err := client.Create(&invoiced.PaymentRequest{Customer: invoiced.Int64(234112)})
 	if err != nil {
 		t.Fatal("Error Creating payment", err)
 	}
 
-	if !reflect.DeepEqual(createdPayment.Payment, mockPaymentResponse) {
-		t.Fatal("Client Was Not Created Succesfully", createdPayment.Payment, mockPaymentResponse)
+	if !reflect.DeepEqual(createdPayment, mockPaymentResponse) {
+		t.Fatal("Client Was Not Created Succesfully", createdPayment, mockPaymentResponse)
 	}
 }
 
 func TestPaymentCreateError(t *testing.T) {
 	key := "test api key"
-	mockErrorResponse := new(APIError)
+	mockErrorResponse := new(invoiced.APIError)
 	mockErrorResponse.Type = "invalid_request"
 	mockErrorResponse.Message = "Name is invalid"
 	mockErrorResponse.Param = "name"
@@ -54,10 +52,9 @@ func TestPaymentCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	client := NewMockApi(key, server)
-	payment := client.NewPayment()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	_, err = payment.Create(&PaymentRequest{Customer: Int64(234112), Reference: String("234")})
+	_, err = client.Create(&invoiced.PaymentRequest{Customer: invoiced.Int64(234112), Reference: invoiced.String("234")})
 	if err == nil {
 		t.Fatal("Api Should Have Errored Out")
 	}
@@ -71,7 +68,7 @@ func TestPaymentUpdate(t *testing.T) {
 	key := "test api key"
 
 	mockPaymentResponseID := int64(1523)
-	mockPaymentResponse := new(payment2.Client)
+	mockPaymentResponse := new(invoiced.Payment)
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 	mockPaymentResponse.Customer = 234112
@@ -84,17 +81,15 @@ func TestPaymentUpdate(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	paymentToUpdate := client.NewPayment()
-
-	err = paymentToUpdate.Update(&PaymentRequest{Amount: Float64(42)})
+	paymentToUpdate, err := client.Update(1523, &invoiced.PaymentRequest{Amount: invoiced.Float64(42)})
 
 	if err != nil {
 		t.Fatal("Error Updating Client", err)
 	}
 
-	if !reflect.DeepEqual(mockPaymentResponse, paymentToUpdate.Payment) {
+	if !reflect.DeepEqual(mockPaymentResponse, paymentToUpdate) {
 		t.Fatal("Error Client Not Updated Properly")
 	}
 }
@@ -102,7 +97,7 @@ func TestPaymentUpdate(t *testing.T) {
 func TestPaymentUpdateError(t *testing.T) {
 	key := "wrong api key"
 
-	mockErrorResponse := new(APIError)
+	mockErrorResponse := new(invoiced.APIError)
 	mockErrorResponse.Type = "invalid_request"
 	mockErrorResponse.Message = "We could not authenticate the supplied API Key."
 
@@ -113,10 +108,9 @@ func TestPaymentUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	client := NewMockApi(key, server)
-	subcriptionToUpdate := client.NewPayment()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	err = subcriptionToUpdate.Update(&PaymentRequest{Amount: Float64(42)})
+	_, err = client.Update(1234, &invoiced.PaymentRequest{Amount: invoiced.Float64(42)})
 
 	if err == nil {
 		t.Fatal("Error Updating payment", err)
@@ -131,7 +125,6 @@ func TestPaymentDelete(t *testing.T) {
 	key := "api key"
 
 	mockpaymentResponse := ""
-	mockpaymentID := int64(2341)
 
 	server, err := invdmockserver.New(204, mockpaymentResponse, "json", true)
 	if err != nil {
@@ -140,27 +133,21 @@ func TestPaymentDelete(t *testing.T) {
 
 	defer server.Close()
 
-	client := NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	payment := client.NewPayment()
-
-	payment.Id = mockpaymentID
-
-	err = payment.Delete()
+	err = client.Delete(2341)
 
 	if err != nil {
-		t.Fatal("Error Occured Deleting Client")
+		t.Fatal("Error occurred Deleting Client")
 	}
 }
 
 func TestPaymentDeleteError(t *testing.T) {
 	key := "api key"
 
-	mockErrorResponse := new(APIError)
+	mockErrorResponse := new(invoiced.APIError)
 	mockErrorResponse.Type = "invalid_request"
 	mockErrorResponse.Message = "You do not have permission to do that"
-
-	mockPaymentID := int64(-999)
 
 	server, err := invdmockserver.New(403, mockErrorResponse, "json", true)
 	if err != nil {
@@ -169,13 +156,9 @@ func TestPaymentDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	client := NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	payment := client.NewPayment()
-
-	payment.Id = mockPaymentID
-
-	err = payment.Delete()
+	err = client.Delete(-999)
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
@@ -186,11 +169,10 @@ func TestPaymentRetrieve(t *testing.T) {
 	key := "test api key"
 
 	mockPaymentResponseID := int64(1523)
-	mockPaymentResponse := new(payment2.Client)
+	mockPaymentResponse := new(invoiced.Payment)
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.Customer = 234112
 	mockPaymentResponse.Reference = "234"
-
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 
 	server, err := invdmockserver.New(200, mockPaymentResponse, "json", true)
@@ -199,15 +181,14 @@ func TestPaymentRetrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := NewMockApi(key, server)
-	payment := client.NewPayment()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	retrievedPayment, err := payment.Retrieve(mockPaymentResponseID)
+	retrievedPayment, err := client.Retrieve(1523)
 	if err != nil {
 		t.Fatal("Error Creating payment", err)
 	}
 
-	if !reflect.DeepEqual(retrievedPayment.Payment, mockPaymentResponse) {
+	if !reflect.DeepEqual(retrievedPayment, mockPaymentResponse) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
@@ -215,7 +196,7 @@ func TestPaymentRetrieve(t *testing.T) {
 func TestPaymentRetrieveError(t *testing.T) {
 	key := "api key"
 
-	mockErrorResponse := new(APIError)
+	mockErrorResponse := new(invoiced.APIError)
 	mockErrorResponse.Type = "invalid_request"
 	mockErrorResponse.Message = "You do not have permission to do that"
 
@@ -227,10 +208,9 @@ func TestPaymentRetrieveError(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := NewMockApi(key, server)
-	payment := client.NewPayment()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	_, err = payment.Retrieve(mockPaymentID)
+	_, err = client.Retrieve(mockPaymentID)
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
@@ -240,9 +220,9 @@ func TestPaymentRetrieveError(t *testing.T) {
 func TestPayment_Count_Error(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]payment2.Client
+	var mockListResponse [1]invoiced.Payment
 
-	mockResponse := new(payment2.Client)
+	mockResponse := new(invoiced.Payment)
 	mockResponse.Id = int64(1234)
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
@@ -255,10 +235,9 @@ func TestPayment_Count_Error(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := NewMockApi(key, server)
-	entity := client.NewPayment()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	result, err := entity.Count()
+	result, err := client.Count()
 
 	if result != int64(-1) || err == nil {
 		t.Fatal("Unexpectedly successful")
@@ -268,14 +247,13 @@ func TestPayment_Count_Error(t *testing.T) {
 func TestPayment_List(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses Payments
+	var mockResponses invoiced.Payments
 	mockResponseId := int64(1523)
-	mockResponse := new(payment2.Client)
+	mockResponse := new(invoiced.Payment)
 	mockResponse.Id = mockResponseId
-
 	mockResponse.CreatedAt = time.Now().UnixNano()
 
-	mockResponses = append(mockResponses, *mockResponse)
+	mockResponses = append(mockResponses, mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {
@@ -284,11 +262,9 @@ func TestPayment_List(t *testing.T) {
 
 	defer server.Close()
 
-	client := NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	payment := client.NewPayment()
-
-	_, nextEndpoint, err := payment.List(nil, nil)
+	_, nextEndpoint, err := client.List(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -301,14 +277,13 @@ func TestPayment_List(t *testing.T) {
 func TestPayment_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses Payments
+	var mockResponses invoiced.Payments
 	mockResponseId := int64(1523)
-	mockResponse := new(payment2.Client)
+	mockResponse := new(invoiced.Payment)
 	mockResponse.Id = mockResponseId
-
 	mockResponse.CreatedAt = time.Now().UnixNano()
 
-	mockResponses = append(mockResponses, *mockResponse)
+	mockResponses = append(mockResponses, mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {
@@ -317,11 +292,9 @@ func TestPayment_ListAll(t *testing.T) {
 
 	defer server.Close()
 
-	client := NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	payment := client.NewPayment()
-
-	_, err = payment.ListAll(nil, nil)
+	_, err = client.ListAll(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -336,11 +309,9 @@ func TestPayment_SendReceipt(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	subjectEntity := client.NewPayment()
-
-	err = subjectEntity.SendReceipt(nil)
+	err = client.SendReceipt(1234, nil)
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}

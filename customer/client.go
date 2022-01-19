@@ -5,45 +5,39 @@ import (
 	"strconv"
 )
 
-const creditBalanceAdjustmentsEndpoint = "/credit_balance_adjustments"
-const customerEndpoint = "/customers"
-
 type Client struct {
 	*invoiced.Api
 }
 
 func (c *Client) Create(request *invoiced.CustomerRequest) (*invoiced.Customer, error) {
 	resp := new(invoiced.Customer)
-	err := c.Api.Create(customerEndpoint, request, resp)
+	err := c.Api.Create("/customers", request, resp)
 	return resp, err
 }
 
 func (c *Client) Retrieve(id int64) (*invoiced.Customer, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(id, 10)
 	resp := new(invoiced.Customer)
-	_, err := c.Api.Get(endpoint, resp)
+	_, err := c.Api.Get("/customers/"+strconv.FormatInt(id, 10), resp)
 	return resp, err
 }
 
 func (c *Client) Update(id int64, request *invoiced.CustomerRequest) (*invoiced.Customer, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(id, 10)
 	resp := new(invoiced.Customer)
 	err := c.Api.Update(endpoint, request, resp)
 	return resp, err
 }
 
 func (c *Client) Delete(id int64) error {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(id, 10)
-	return c.Api.Delete(endpoint)
+	return c.Api.Delete("/customers/" + strconv.FormatInt(id, 10))
 }
 
 func (c *Client) Count() (int64, error) {
-	return c.Api.Count(customerEndpoint)
+	return c.Api.Count("/customers")
 }
 
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Customers, error) {
-	endpoint := customerEndpoint
-	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
+	endpoint := invoiced.AddFilterAndSort("/customers", filter, sort)
 
 	customers := make(invoiced.Customers, 0)
 
@@ -66,8 +60,7 @@ NEXT:
 }
 
 func (c *Client) List(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Customers, string, error) {
-	endpoint := customerEndpoint
-	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
+	endpoint := invoiced.AddFilterAndSort("/customers", filter, sort)
 	customers := make(invoiced.Customers, 0)
 	nextEndpoint, err := c.Api.Get(endpoint, &customers)
 	return customers, nextEndpoint, err
@@ -93,47 +86,47 @@ func (c *Client) ListCustomerByNumber(customerNumber string) (*invoiced.Customer
 }
 
 func (c *Client) GetBalance(id int64) (*invoiced.Balance, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(id, 10) + "/balance"
+	endpoint := "/customers/" + strconv.FormatInt(id, 10) + "/balance"
 	custBalance := new(invoiced.Balance)
 	_, err := c.Api.Get(endpoint, custBalance)
 	return custBalance, err
 }
 
 func (c *Client) SendStatementEmail(id int64, request *invoiced.SendStatementEmailRequest) error {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(id, 10) + "/emails"
+	endpoint := "/customers/" + strconv.FormatInt(id, 10) + "/emails"
 	return c.Api.Create(endpoint, request, nil)
 }
 
 func (c *Client) SendStatementText(id int64, request *invoiced.SendStatementTextMessageRequest) (invoiced.TextMessages, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(id, 10) + "/text_messages"
+	endpoint := "/customers/" + strconv.FormatInt(id, 10) + "/text_messages"
 	custStmtResp := new(invoiced.TextMessages)
 	err := c.Api.Create(endpoint, request, custStmtResp)
 	return *custStmtResp, err
 }
 
 func (c *Client) SendStatementLetter(id int64, request *invoiced.SendStatementLetterRequest) (*invoiced.Letter, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(id, 10) + "/letters"
+	endpoint := "/customers/" + strconv.FormatInt(id, 10) + "/letters"
 	custStmtResp := new(invoiced.Letter)
 	err := c.Api.Create(endpoint, request, custStmtResp)
 	return custStmtResp, err
 }
 
 func (c *Client) CreateContact(id int64, request *invoiced.ContactRequest) (*invoiced.Contact, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(id, 10) + "/contacts"
+	endpoint := "/customers/" + strconv.FormatInt(id, 10) + "/contacts"
 	contResp := new(invoiced.Contact)
 	err := c.Api.Create(endpoint, request, contResp)
 	return contResp, err
 }
 
 func (c *Client) RetrieveContact(customerId int64, id int64) (*invoiced.Contact, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/contacts/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/contacts/" + strconv.FormatInt(id, 10)
 	retrievedContact := new(invoiced.Contact)
 	_, err := c.Api.Get(endpoint, retrievedContact)
 	return retrievedContact, err
 }
 
 func (c *Client) UpdateContact(customerId int64, id int64, request *invoiced.ContactRequest) (*invoiced.Contact, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/contacts/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/contacts/" + strconv.FormatInt(id, 10)
 
 	contResp := new(invoiced.Contact)
 
@@ -146,7 +139,7 @@ func (c *Client) UpdateContact(customerId int64, id int64, request *invoiced.Con
 }
 
 func (c *Client) ListAllContacts(customerId int64) (invoiced.Contacts, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/contacts"
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/contacts"
 
 	contacts := make(invoiced.Contacts, 0)
 
@@ -169,12 +162,12 @@ NEXT:
 }
 
 func (c *Client) DeleteContact(customerId int64, id int64) error {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/contacts/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/contacts/" + strconv.FormatInt(id, 10)
 	return c.Api.Delete(endpoint)
 }
 
 func (c *Client) RetrieveNotes(customerId int64) (invoiced.Notes, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/notes"
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/notes"
 
 	notes := make(invoiced.Notes, 0)
 
@@ -197,7 +190,7 @@ NEXT:
 }
 
 func (c *Client) CreatePaymentSource(customerId int64, request *invoiced.PaymentSourceRequest) (*invoiced.PaymentSource, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/payment_sources"
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/payment_sources"
 	resp := new(invoiced.PaymentSource)
 
 	err := c.Api.Create(endpoint, request, resp)
@@ -209,7 +202,7 @@ func (c *Client) CreatePaymentSource(customerId int64, request *invoiced.Payment
 }
 
 func (c *Client) ListAllPaymentSources(customerId int64) (invoiced.PaymentSources, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/payment_sources"
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/payment_sources"
 
 	sources := make(invoiced.PaymentSources, 0)
 
@@ -232,17 +225,17 @@ NEXT:
 }
 
 func (c *Client) DeleteCard(customerId int64, id int64) error {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/cards/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/cards/" + strconv.FormatInt(id, 10)
 	return c.Api.Delete(endpoint)
 }
 
 func (c *Client) DeleteBankAccount(customerId int64, id int64) error {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/bank_accounts/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/bank_accounts/" + strconv.FormatInt(id, 10)
 	return c.Api.Delete(endpoint)
 }
 
 func (c *Client) CreatePendingLineItem(customerId int64, request *invoiced.PendingLineItemRequest) (*invoiced.PendingLineItem, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/line_items"
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/line_items"
 	resp := new(invoiced.PendingLineItem)
 
 	err := c.Api.Create(endpoint, request, resp)
@@ -254,7 +247,7 @@ func (c *Client) CreatePendingLineItem(customerId int64, request *invoiced.Pendi
 }
 
 func (c *Client) RetrievePendingLineItem(customerId int64, id int64) (*invoiced.PendingLineItem, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/line_items/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/line_items/" + strconv.FormatInt(id, 10)
 	resp := new(invoiced.PendingLineItem)
 
 	_, err := c.Api.Get(endpoint, resp)
@@ -266,7 +259,7 @@ func (c *Client) RetrievePendingLineItem(customerId int64, id int64) (*invoiced.
 }
 
 func (c *Client) UpdatePendingLineItem(customerId int64, id int64, request *invoiced.PendingLineItemRequest) (*invoiced.PendingLineItem, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/line_items/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/line_items/" + strconv.FormatInt(id, 10)
 	resp := new(invoiced.PendingLineItem)
 
 	err := c.Api.Update(endpoint, request, resp)
@@ -278,7 +271,7 @@ func (c *Client) UpdatePendingLineItem(customerId int64, id int64, request *invo
 }
 
 func (c *Client) ListAllPendingLineItems(customerId int64) (invoiced.PendingLineItems, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/line_items"
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/line_items"
 
 	plis := make(invoiced.PendingLineItems, 0)
 
@@ -301,7 +294,7 @@ NEXT:
 }
 
 func (c *Client) TriggerInvoice(customerId int64) (*invoiced.Invoice, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/invoices"
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/invoices"
 
 	invoice := new(invoiced.Invoice)
 
@@ -314,7 +307,7 @@ func (c *Client) TriggerInvoice(customerId int64) (*invoiced.Invoice, error) {
 }
 
 func (c *Client) ConsolidateInvoices(customerId int64) (*invoiced.Invoice, error) {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/consolidate_invoices"
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/consolidate_invoices"
 
 	invoice := new(invoiced.Invoice)
 
@@ -327,12 +320,6 @@ func (c *Client) ConsolidateInvoices(customerId int64) (*invoiced.Invoice, error
 }
 
 func (c *Client) DeletePendingLineItem(customerId int64, id int64) error {
-	endpoint := customerEndpoint + "/" + strconv.FormatInt(customerId, 10) + "/line_items/" + strconv.FormatInt(id, 10)
+	endpoint := "/customers/" + strconv.FormatInt(customerId, 10) + "/line_items/" + strconv.FormatInt(id, 10)
 	return c.Api.Delete(endpoint)
-}
-
-func (c *Client) CreateCreditBalanceAdjustment(request *invoiced.BalanceAdjustmentRequest) (*invoiced.BalanceAdjustment, error) {
-	resp := new(invoiced.BalanceAdjustment)
-	err := c.Api.Create(creditBalanceAdjustmentsEndpoint, request, resp)
-	return resp, err
 }

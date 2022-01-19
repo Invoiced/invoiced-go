@@ -23,13 +23,12 @@ func TestEvent_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewEvent()
+	client := Client{invoiced.NewMockApi(key, server)}
 
 	filter := invoiced.NewFilter()
 	sorter := invoiced.NewSort()
 
-	_, err = entity.ListAll(filter, sorter)
+	_, err = client.ListAll(filter, sorter)
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -38,12 +37,12 @@ func TestEvent_ListAll(t *testing.T) {
 func TestEvent_List(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses Events
+	var mockResponses invoiced.Events
 	mockResponseId := int64(1523)
 	mockResponse := new(invoiced.Event)
 	mockResponse.Id = mockResponseId
 
-	mockResponses = append(mockResponses, *mockResponse)
+	mockResponses = append(mockResponses, mockResponse)
 
 	server, err := invdmockserver.New(200, mockResponses, "json", true)
 	if err != nil {
@@ -52,11 +51,9 @@ func TestEvent_List(t *testing.T) {
 
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	entity := client.NewEvent()
-
-	_, nextEndpoint, err := entity.List(nil, nil)
+	_, nextEndpoint, err := client.List(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,10 +75,9 @@ func TestEvent_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	client := invoiced.NewMockApi(key, server)
-	entity := client.NewEvent()
+	client := Client{invoiced.NewMockApi(key, server)}
 
-	_, err = entity.Retrieve(int64(1234))
+	_, err = client.Retrieve(int64(1234))
 	if err != nil {
 		t.Fatal("Error retrieving entity", err)
 	}

@@ -1,12 +1,5 @@
 package invoiced
 
-import (
-	"fmt"
-	"io"
-	"mime/multipart"
-	"net/textproto"
-)
-
 func Bool(v bool) *bool {
 	return &v
 }
@@ -49,15 +42,4 @@ func StringValue(v *string) string {
 		return *v
 	}
 	return ""
-}
-
-// CreateFormFile is a convenience wrapper around CreatePart. It creates
-// a new form-data header with the provided field name and file name.
-func (c *Client) CreateFormFile(w *multipart.Writer, fieldname, filename string, fileType string) (io.Writer, error) {
-	h := make(textproto.MIMEHeader)
-	h.Set("Content-Disposition",
-		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
-			escapeQuotes(fieldname), escapeQuotes(filename)))
-	h.Set("Content-Type", fileType)
-	return w.CreatePart(h)
 }

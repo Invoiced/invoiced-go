@@ -1,7 +1,5 @@
 package invoiced
 
-const FileEndpoint = "/files"
-
 type FileRequest struct {
 	Name *string `json:"name,omitempty"`
 	Size *int64  `json:"size,omitempty"`

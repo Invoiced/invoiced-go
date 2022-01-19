@@ -2,7 +2,6 @@ package charge
 
 import (
 	"github.com/Invoiced/invoiced-go"
-	"github.com/Invoiced/invoiced-go/payment"
 	"testing"
 	"time"
 
@@ -13,7 +12,7 @@ func TestCreateCharge(t *testing.T) {
 	key := "test api key"
 
 	mockChargeResponseID := int64(1523)
-	mockChargeResponse := new(payment.Client)
+	mockChargeResponse := new(invoiced.Payment)
 	mockChargeResponse.Id = mockChargeResponseID
 	mockChargeResponse.Customer = 234112
 	mockChargeResponse.Reference = "234"
@@ -57,7 +56,7 @@ func TestCreateRefund(t *testing.T) {
 	defer server.Close()
 
 	client := Client{invoiced.NewMockApi(key, server)}
-	refund, err := client.Refund(234112, &invoiced.RefundRequest{invoiced.Float64(123.00)})
+	refund, err := client.Refund(234112, &invoiced.RefundRequest{Amount: invoiced.Float64(123.00)})
 
 	if err != nil {
 		t.Fatal("Error Creating refund", err)
