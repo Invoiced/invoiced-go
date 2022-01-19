@@ -1,7 +1,6 @@
 package invdapi
 
 import (
-	"errors"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
@@ -17,49 +16,42 @@ func (c *Connection) NewTaxRate() *TaxRate {
 	return &TaxRate{c, taxRate}
 }
 
-func (c *TaxRate) Create(taxRate *TaxRate) (*TaxRate, error) {
+func (c *TaxRate) Create(request *invdendpoint.TaxRateRequest) (*TaxRate, error) {
 	endpoint := invdendpoint.RateEndpoint
+	resp := new(TaxRate)
 
-	taxRateResp := new(TaxRate)
-
-	if taxRate == nil {
-		return nil, errors.New("taxRate is nil")
-	}
-
-	// safe prune file data for creation
-	invdTaxRateDataToCreate, err := SafeTaxRateForCreation(taxRate.TaxRate)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	apiErr := c.create(endpoint, invdTaxRateDataToCreate, taxRateResp)
+	resp.Connection = c.Connection
 
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	taxRateResp.Connection = c.Connection
-
-	return taxRateResp, nil
+	return resp, nil
 }
 
-func (c *TaxRate) Save() error {
+func (c *TaxRate) Retrieve(id string) (*TaxRate, error) {
+	endpoint := invdendpoint.RateEndpoint + "/" + id
+	taxRate := &TaxRate{c.Connection, new(invdendpoint.TaxRate)}
+
+	_, err := c.retrieveDataFromAPI(endpoint, taxRate)
+	if err != nil {
+		return nil, err
+	}
+
+	return taxRate, nil
+}
+
+func (c *TaxRate) Update(request *invdendpoint.TaxRateRequest) error {
 	endpoint := invdendpoint.RateEndpoint + "/" + c.Id
+	resp := new(TaxRate)
 
-	taxRateResp := new(TaxRate)
-
-	invdTaxRatDataToUpdate, err := SafeTaxRateForUpdating(c.TaxRate)
+	err := c.update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
 
-	apiErr := c.update(endpoint, invdTaxRatDataToUpdate, taxRateResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.TaxRate = taxRateResp.TaxRate
+	c.TaxRate = resp.TaxRate
 
 	return nil
 }
@@ -75,21 +67,6 @@ func (c *TaxRate) Delete() error {
 	return nil
 }
 
-func (c *TaxRate) Retrieve(id string) (*TaxRate, error) {
-	endpoint := invdendpoint.RateEndpoint + "/" + id
-
-	taxRateEndpoint := new(invdendpoint.TaxRate)
-
-	taxRate := &TaxRate{c.Connection, taxRateEndpoint}
-
-	_, err := c.retrieveDataFromAPI(endpoint, taxRate)
-	if err != nil {
-		return nil, err
-	}
-
-	return taxRate, nil
-}
-
 func (c *TaxRate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (TaxRates, error) {
 	endpoint := invdendpoint.RateEndpoint
 
@@ -100,10 +77,10 @@ func (c *TaxRate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) 
 NEXT:
 	tmpTaxRates := make(TaxRates, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpTaxRates)
+	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpTaxRates)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	taxRates = append(taxRates, tmpTaxRates...)
@@ -117,35 +94,4 @@ NEXT:
 	}
 
 	return taxRates, nil
-}
-
-// SafetaxRateForCreation prunes tax TaxRate data for just fields that can be used for creation of a tax TaxRate
-func SafeTaxRateForCreation(taxRate *invdendpoint.TaxRate) (*invdendpoint.TaxRate, error) {
-	if taxRate == nil {
-		return nil, errors.New("taxRate is nil")
-	}
-
-	taxRateData := new(invdendpoint.TaxRate)
-	taxRateData.Id = taxRate.Id
-	taxRateData.Name = taxRate.Name
-	taxRateData.Currency = taxRate.Currency
-	taxRateData.Value = taxRate.Value
-	taxRateData.Inclusive = taxRate.Inclusive
-	taxRateData.IsPercent = taxRate.IsPercent
-	taxRateData.Metadata = taxRate.Metadata
-
-	return taxRateData, nil
-}
-
-// SafeTaxRateForUpdating prunes plan data for just fields that can be used for updating of a plan
-func SafeTaxRateForUpdating(taxRate *invdendpoint.TaxRate) (*invdendpoint.TaxRate, error) {
-	if taxRate == nil {
-		return nil, errors.New("taxRate is nil")
-	}
-
-	taxRateData := new(invdendpoint.TaxRate)
-	taxRateData.Name = taxRate.Name
-	taxRateData.Metadata = taxRate.Metadata
-
-	return taxRateData, nil
 }

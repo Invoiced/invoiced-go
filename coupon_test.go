@@ -28,12 +28,10 @@ func TestCoupon_Create(t *testing.T) {
 
 	entity := conn.NewCoupon()
 
-	requestEntity := entity.NewCoupon()
-
-	requestEntity.Id = "example"
-	requestEntity.Name = "nomenclature"
-
-	createdEntity, err := entity.Create(requestEntity)
+	createdEntity, err := entity.Create(&invdendpoint.CouponRequest{
+		Id:   String("example"),
+		Name: String("nomenclature"),
+	})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -61,9 +59,7 @@ func TestCoupon_Save(t *testing.T) {
 
 	entityToUpdate := conn.NewCoupon()
 
-	entityToUpdate.Name = "new-name"
-
-	err = entityToUpdate.Save()
+	err = entityToUpdate.Update(&invdendpoint.CouponRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)

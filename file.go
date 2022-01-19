@@ -1,7 +1,6 @@
 package invdapi
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
@@ -19,41 +18,45 @@ func (c *Connection) NewFile() *File {
 	return &File{c, file}
 }
 
-func (c *File) Create(file *File) (*File, error) {
+func (c *File) Create(request *invdendpoint.FileRequest) (*File, error) {
 	endpoint := invdendpoint.FileEndpoint
-	fileResp := new(File)
+	resp := new(File)
 
-	// safe prune file data for creation
-	invdFileDataToCreate, err := SafeFileForCreation(file.File)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	apiErr := c.create(endpoint, invdFileDataToCreate, fileResp)
+	resp.Connection = c.Connection
 
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	fileResp.Connection = c.Connection
-
-	return fileResp, nil
+	return resp, nil
 }
 
-func (c *File) CreateAndUploadFile(filePath,fileType string) (*File, error) {
+func (c *File) CreateAndUploadFile(filePath, fileType string) (*File, error) {
 	endpoint := invdendpoint.FileEndpoint
-	fileResp := new(File)
+	resp := new(File)
 
-
-	apiErr := c.upload(endpoint,filePath,"file",nil,fileType,fileResp)
-
-	if apiErr != nil {
-		return nil, apiErr
+	err := c.upload(endpoint, filePath, "file", nil, fileType, resp)
+	if err != nil {
+		return nil, err
 	}
 
-	fileResp.Connection = c.Connection
+	resp.Connection = c.Connection
 
-	return fileResp, nil
+	return resp, nil
+}
+
+func (c *File) Retrieve(id int64) (*File, error) {
+	endpoint := invdendpoint.FileEndpoint + "/" + strconv.FormatInt(id, 10)
+
+	file := &File{c.Connection, new(invdendpoint.File)}
+
+	_, err := c.retrieveDataFromAPI(endpoint, file)
+	if err != nil {
+		return nil, err
+	}
+
+	return file, nil
 }
 
 func (c *File) Delete() error {
@@ -65,34 +68,4 @@ func (c *File) Delete() error {
 	}
 
 	return nil
-}
-
-func (c *File) Retrieve(id int64) (*File, error) {
-	endpoint := invdendpoint.FileEndpoint + "/" + strconv.FormatInt(id, 10)
-
-	custEndpoint := new(invdendpoint.File)
-
-	file := &File{c.Connection, custEndpoint}
-
-	_, err := c.retrieveDataFromAPI(endpoint, file)
-	if err != nil {
-		return nil, err
-	}
-
-	return file, nil
-}
-
-// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
-func SafeFileForCreation(file *invdendpoint.File) (*invdendpoint.File, error) {
-	if file == nil {
-		return nil, errors.New("file is nil")
-	}
-
-	fileData := new(invdendpoint.File)
-	fileData.Name = file.Name
-	fileData.Size = file.Size
-	fileData.Type = file.Type
-	fileData.Url = file.Url
-
-	return fileData, nil
 }

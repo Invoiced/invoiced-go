@@ -11,12 +11,12 @@ type APIError struct {
 }
 
 func NewAPIError(typeE, message, param string) *APIError {
-	apiErr := &APIError{typeE, message, param}
-	return apiErr
+	err := &APIError{typeE, message, param}
+	return err
 }
 
-func (apiErr *APIError) Error() string {
-	b, err := json.Marshal(apiErr)
+func (a *APIError) Error() string {
+	b, err := json.Marshal(a)
 	if err != nil {
 		return ""
 	}

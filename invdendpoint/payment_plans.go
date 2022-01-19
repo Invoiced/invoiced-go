@@ -1,12 +1,16 @@
 package invdendpoint
 
+type PaymentPlanRequest struct {
+	Installments []*PaymentPlanInstallment `json:"installments,omitempty"`
+}
+
 type PaymentPlan struct {
+	Approval     *PaymentPlanApproval     `json:"approval,omitempty"`
+	CreatedAt    int64                    `json:"created_at,omitempty"`
 	Id           int64                    `json:"id,omitempty"`
+	Installments []PaymentPlanInstallment `json:"installments,omitempty"`
 	Object       string                   `json:"object,omitempty"`
 	Status       string                   `json:"status,omitempty"`
-	Installments []PaymentPlanInstallment `json:"installments,omitempty"`
-	Approval     *PaymentPlanApproval     `json:"approval,omitempty"`
-	CreatedAt    int64                    `json:"created_at,omitempty"`	//Timestamp when created
 	UpdatedAt    int64                    `json:"updated_at,omitempty"`
 }
 
@@ -25,7 +29,3 @@ type PaymentPlanInstallment struct {
 }
 
 type PaymentPlanInstallments []PaymentPlanInstallment
-
-type PaymentPlanRequest struct {
-	Installments []PaymentPlanInstallment `json:"installments,omitempty"`
-}

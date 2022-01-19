@@ -2,19 +2,31 @@ package invdendpoint
 
 const CouponEndpoint = "/coupons"
 
-type Coupon struct {
-	Id             string                 `json:"id,omitempty"`         // The discount’s unique ID
-	Object         string                 `json:"object,omitempty"`     // Object type, coupon
-	Name           string                 `json:"name,omitempty"`       // Coupon name
-	Currency       string                 `json:"currency,omitempty"`   // 3-letter ISO code
-	Value          int64                  `json:"value,omitempty"`      // Amount
-	IsPercent      bool                   `json:"is_percent,omitempty"` // When true the value is a %
-	Exclusive      bool                   `json:"exclusive,omitempty"`  // exclusive
-	Duration       int64                  `json:"durationo,omitempty"`
-	ExpirationDate int64                  `json:"expiration_date,omitempty"` // Date coupon expires
-	MaxRedemptions int64                  `json:"max_redemptions,omitempty"` // Max number of times coupon can be used
-	CreatedAt      int64                  `json:"created_at,omitempty"`	//Timestamp when created
-	UpdatedAt      int64                  `json:"updated_at,omitempty"`      // Timestamp when updated
-	Metadata       map[string]interface{} `json:"metadata,omitempty"`        // A hash of key/value pairs that can store additional information about this object
+type CouponRequest struct {
+	Currency       *string                 `json:"currency,omitempty"`
+	Duration       *int64                  `json:"durationo,omitempty"`
+	Exclusive      *bool                   `json:"exclusive,omitempty"`
+	ExpirationDate *int64                  `json:"expiration_date,omitempty"`
+	Id             *string                 `json:"id,omitempty"`
+	IsPercent      *bool                   `json:"is_percent,omitempty"`
+	MaxRedemptions *int64                  `json:"max_redemptions,omitempty"`
+	Metadata       *map[string]interface{} `json:"metadata,omitempty"`
+	Name           *string                 `json:"name,omitempty"`
+	Value          *int64                  `json:"value,omitempty"`
+}
 
+type Coupon struct {
+	CreatedAt      int64                  `json:"created_at"`
+	Currency       *string                `json:"currency"`
+	Duration       *int64                 `json:"duration"`
+	Exclusive      bool                   `json:"exclusive"`
+	ExpirationDate *int64                 `json:"expiration_date"`
+	Id             string                 `json:"id"`
+	IsPercent      bool                   `json:"is_percent"`
+	MaxRedemptions *int64                 `json:"max_redemptions"`
+	Metadata       map[string]interface{} `json:"metadata"`
+	Name           string                 `json:"name"`
+	Object         string                 `json:"object"`
+	UpdatedAt      int64                  `json:"updated_at"`
+	Value          int64                  `json:"value"`
 }

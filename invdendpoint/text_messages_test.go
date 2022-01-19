@@ -15,7 +15,7 @@ func TestUnMarshalSmsRequest(t *testing.T) {
   "items": "past_due"
   }`
 
-	so := new(TextRequest)
+	so := new(SendTextMessageRequest)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {
@@ -32,7 +32,7 @@ func TestUnMarshalSmsResponse(t *testing.T) {
     "to": "+12345678900"
 }]`
 
-	so := new(TextResponses)
+	so := new(TextMessages)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {

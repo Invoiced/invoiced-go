@@ -1,7 +1,6 @@
 package invdapi
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
@@ -19,58 +18,18 @@ func (c *Connection) NewTask() *Task {
 	return &Task{c, task}
 }
 
-func (c *Task) Create(task *Task) (*Task, error) {
+func (c *Task) Create(request *invdendpoint.TaskRequest) (*Task, error) {
 	endpoint := invdendpoint.TaskEndpoint
+	resp := new(Task)
 
-	taskResp := new(Task)
-
-	// safe prune file data for creation
-	invdTaskDataToCreate, err := SafeTaskForCreation(task.Task)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	apiErr := c.create(endpoint, invdTaskDataToCreate, taskResp)
+	resp.Connection = c.Connection
 
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	taskResp.Connection = c.Connection
-
-	return taskResp, nil
-}
-
-func (c *Task) Save() error {
-	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	taskResp := new(Task)
-
-	taskDataToUpdate, err := SafeTaskForUpdating(c.Task)
-	if err != nil {
-		return err
-	}
-
-	apiErr := c.update(endpoint, taskDataToUpdate, taskResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.Task = taskResp.Task
-
-	return nil
-}
-
-func (c *Task) Delete() error {
-	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	err := c.delete(endpoint)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return resp, nil
 }
 
 func (c *Task) Retrieve(id int64) (*Task, error) {
@@ -88,6 +47,31 @@ func (c *Task) Retrieve(id int64) (*Task, error) {
 	return task, nil
 }
 
+func (c *Task) Update(request *invdendpoint.TaskRequest) error {
+	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(Task)
+
+	err := c.update(endpoint, request, resp)
+	if err != nil {
+		return err
+	}
+
+	c.Task = resp.Task
+
+	return nil
+}
+
+func (c *Task) Delete() error {
+	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+
+	err := c.delete(endpoint)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *Task) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Tasks, error) {
 	endpoint := invdendpoint.TaskEndpoint
 
@@ -98,10 +82,10 @@ func (c *Task) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Ta
 NEXT:
 	tmpTasks := make(Tasks, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpTasks)
+	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpTasks)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	tasks = append(tasks, tmpTasks...)
@@ -115,36 +99,4 @@ NEXT:
 	}
 
 	return tasks, nil
-}
-
-// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
-func SafeTaskForCreation(task *invdendpoint.Task) (*invdendpoint.Task, error) {
-	if task == nil {
-		return nil, errors.New("task is nil")
-	}
-
-	taskData := new(invdendpoint.Task)
-	taskData.Name = task.Name
-	taskData.Action = task.Action
-	taskData.CustomerId = task.CustomerId
-	taskData.UserId = task.UserId
-	taskData.DueDate = task.DueDate
-
-	return taskData, nil
-}
-
-// SafeCustomerForCreation prunes customer data for just fields that can be used for creation of a customer
-func SafeTaskForUpdating(task *invdendpoint.Task) (*invdendpoint.Task, error) {
-	if task == nil {
-		return nil, errors.New("task is nil")
-	}
-
-	taskData := new(invdendpoint.Task)
-	taskData.Name = task.Name
-	taskData.Action = task.Action
-	taskData.CustomerId = task.CustomerId
-	taskData.UserId = task.UserId
-	taskData.DueDate = task.DueDate
-
-	return taskData, nil
 }

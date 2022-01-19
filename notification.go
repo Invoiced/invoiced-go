@@ -1,8 +1,8 @@
 package invdapi
 
 import (
-	"strconv"
 	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"strconv"
 )
 
 type Notification struct {
@@ -22,10 +22,10 @@ func (c *Notification) Create(notificationRequest *invdendpoint.NotificationRequ
 
 	notificationResp := new(Notification)
 
-	apiErr := c.create(endpoint, notificationRequest, notificationResp)
+	err := c.create(endpoint, notificationRequest, notificationResp)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	notificationResp.Connection = c.Connection
@@ -38,10 +38,10 @@ func (c *Notification) Save(notificationRequest *invdendpoint.NotificationReques
 
 	notifResp := new(Notification)
 
-	apiErr := c.update(endpoint, notificationRequest, notifResp)
+	err := c.update(endpoint, notificationRequest, notifResp)
 
-	if apiErr != nil {
-		return apiErr
+	if err != nil {
+		return err
 	}
 
 	notifResp.Connection = c.Connection
@@ -86,10 +86,10 @@ func (c *Notification) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.S
 NEXT:
 	tmpNotifications := make(Notifications, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpNotifications)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpNotifications)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	notifications = append(notifications, tmpNotifications...)
@@ -104,5 +104,3 @@ NEXT:
 
 	return notifications, nil
 }
-
-

@@ -12,7 +12,6 @@ func TestMockConnection(t *testing.T) {
 	customerData := new(invdendpoint.Customer)
 	customerToCreate := new(Customer)
 	customerToCreate.Customer = customerData
-	customerToCreate.Name = "John Doe"
 
 	server, err := invdmockserver.New(200, customerToCreate, "json", true)
 	if err != nil {
@@ -25,10 +24,10 @@ func TestMockConnection(t *testing.T) {
 
 	customer := conn.NewCustomer()
 
-	customerResp, apiErr := customer.Create(customerToCreate)
+	customerResp, err := customer.Create(&invdendpoint.CustomerRequest{Name: String("John Doe")})
 
-	if apiErr != nil {
-		t.Fatal(apiErr)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	if !reflect.DeepEqual(customerResp, customerToCreate) {

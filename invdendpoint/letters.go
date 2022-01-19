@@ -1,18 +1,18 @@
 package invdendpoint
 
-type LetterRequest struct {
-	Type  string `json:"type,omitempty"`
-	Start int64  `json:"start,omitempty"`
-	End   int64  `json:"end,omitempty"`
-	Items string `json:"items,omitempty"`
+type SendStatementLetterRequest struct {
+	End   *int64  `json:"end,omitempty"`
+	Items *string `json:"items,omitempty"`
+	Start *int64  `json:"start,omitempty"`
+	Type  *string `json:"type,omitempty"`
 }
 
-type LetterResponse struct {
-	Id                   string `json:"id,omitempty"`
-	To                   string `json:"to,omitempty"`
-	State                string `json:"state,omitempty"`
-	NumPages             int64  `json:"num_pages,omitempty"`
-	ExpectedDeliveryDate int64  `json:"expected_delivery_date,omitempty"`
-	CreatedAt            int64  `json:"created_at,omitempty"`	//Timestamp when created
-	UpdatedAt            int64  `json:"updated_at,omitempty"`
+type Letter struct {
+	CreatedAt            int64  `json:"created_at"`
+	ExpectedDeliveryDate int64  `json:"expected_delivery_date"`
+	Id                   string `json:"id"`
+	NumPages             int64  `json:"num_pages"`
+	State                string `json:"state"`
+	To                   string `json:"to"`
+	UpdatedAt            int64  `json:"updated_at"`
 }

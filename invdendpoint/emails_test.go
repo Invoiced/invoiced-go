@@ -12,12 +12,10 @@ func TestUnMarshalCustomerStatementRequest(t *testing.T) {
   "message": "Right world"
   }`
 
-	so := new(EmailRequest)
+	so := new(SendEmailRequest)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
-
-

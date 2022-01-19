@@ -12,19 +12,18 @@ import (
 )
 
 func TestCustomerMetadata(t *testing.T) {
-	conn := NewConnection("", false)
 	m := make(map[string]interface{})
 	m["integration_name"] = "QBO"
-	mockCustomer := conn.NewCustomer()
-	mockCustomer.Id = 34
-	mockCustomer.Metadata = m
+	mockCustomer := &invdendpoint.CustomerRequest{
+		Metadata: &m,
+	}
 
 	b, err := json.Marshal(mockCustomer)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if string(b) != `{"id":34,"metadata":{"integration_name":"QBO"}}` {
+	if string(b) != `{"metadata":{"integration_name":"QBO"}}` {
 		t.Fatal("Json is wrong", "right json =>", string(b))
 	}
 }
@@ -54,21 +53,12 @@ func TestCustomerCreate(t *testing.T) {
 	nowUnix := time.Now().UnixNano()
 	s := strconv.FormatInt(nowUnix, 10)
 
-	customerToCreate := customer.NewCustomer()
-	customerToCreate.Name = "Test Customer Original " + s
-	customerToCreate.Id = mockCustomerResponse.Id
-	mockCustomerResponse.Name = customerToCreate.Name
-	// mockCustomerResponse.Connection = conn
+	mockCustomerResponse.Name = "Test Customer Original " + s
 
 	// Make the call to create our customer
-	createdCustomer, err := customer.Create(customerToCreate)
+	_, err = customer.Create(&invdendpoint.CustomerRequest{Name: String("Test Customer Original " + s)})
 	if err != nil {
 		t.Fatal("Error Creating Customer", err)
-	}
-
-	// Customer that we wanted to create should equal the customer we created
-	if !reflect.DeepEqual(createdCustomer, customerToCreate) {
-		t.Fatal(createdCustomer.Customer, customerToCreate.Customer)
 	}
 }
 
@@ -90,17 +80,14 @@ func TestCustomerCreateError(t *testing.T) {
 
 	custConn := conn.NewCustomer()
 
-	customerToCreate := custConn.NewCustomer()
-	customerToCreate.Email = "example@example.com"
+	_, err = custConn.Create(&invdendpoint.CustomerRequest{Email: String("example@example.com")})
 
-	_, apiErr := custConn.Create(customerToCreate)
-
-	if apiErr == nil {
+	if err == nil {
 		t.Fatal("Api should have errored out")
 	}
 
-	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
-		t.Fatal("Error messages do not match up", mockErrorResponse, ",", apiErr)
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
+		t.Fatal("Error messages do not match up", mockErrorResponse, ",", err)
 	}
 }
 
@@ -125,17 +112,17 @@ func TestCustomerUpdate(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	customerToUpdate := conn.NewCustomer()
-
 	customerToUpdate.Id = mockCustomerResponseID
-	customerToUpdate.Name = "MOCK CUSTOMER"
 	addressToUpdate := "7500 Rialto BLVD"
-	customerToUpdate.Address1 = addressToUpdate
 	mockCustomerResponse.Address1 = addressToUpdate
 
-	apiErr := customerToUpdate.Save()
+	err = customerToUpdate.Update(&invdendpoint.CustomerRequest{
+		Name:     String("MOCK CUSTOMER"),
+		Address1: String(addressToUpdate),
+	})
 
-	if apiErr != nil {
-		t.Fatal("Error Updating Customer", apiErr)
+	if err != nil {
+		t.Fatal("Error Updating Customer", err)
 	}
 
 	if !reflect.DeepEqual(mockCustomerResponse, customerToUpdate.Customer) {
@@ -160,11 +147,12 @@ func TestCustomerUpdateError(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
-	customer.Name = "Parag Patel"
 	customer.Id = 3411111
-	customer.City = "Austin"
 
-	err = customer.Save()
+	err = customer.Update(&invdendpoint.CustomerRequest{
+		Name: String("Parag Patel"),
+		City: String("Austin"),
+	})
 
 	if err == nil {
 		t.Fatal("Error Updating Customer => ", err)
@@ -197,7 +185,7 @@ func TestCustomerDelete(t *testing.T) {
 	err = customer.Delete()
 
 	if err != nil {
-		t.Fatal("Error occured deleting customer")
+		t.Fatal("Error occurred deleting customer")
 	}
 }
 
@@ -398,7 +386,6 @@ func TestCustomer_GetBalance(t *testing.T) {
 func TestCustomer_SendStatementEmail(t *testing.T) {
 	key := "test api key"
 
-
 	server, err := invdmockserver.New(200, nil, "json", true)
 	if err != nil {
 		t.Fatal(err)
@@ -409,7 +396,7 @@ func TestCustomer_SendStatementEmail(t *testing.T) {
 
 	subjectEntity := conn.NewCustomer()
 
-	 err = subjectEntity.SendStatementEmail(nil)
+	err = subjectEntity.SendStatementEmail(nil)
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
@@ -419,9 +406,9 @@ func TestCustomer_SendStatementEmail(t *testing.T) {
 func TestCustomer_SendStatementText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1]invdendpoint.TextResponse
+	var mockTextResponse [1]invdendpoint.TextMessage
 
-	mockResponse := new(invdendpoint.TextResponse)
+	mockResponse := new(invdendpoint.TextMessage)
 	mockResponse.Id = "abcdef"
 	mockResponse.Message = "hello text"
 
@@ -452,7 +439,7 @@ func TestCustomer_SendStatementText(t *testing.T) {
 func TestCustomer_SendStatementLetter(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.LetterResponse)
+	mockResponse := new(invdendpoint.Letter)
 	mockResponse.Id = "abcdef"
 	mockResponse.State = "queued"
 
@@ -496,7 +483,7 @@ func TestCustomer_CreateContact(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
-	subjectEntity, err := defaultEntity.CreateContact(conn.NewContact())
+	subjectEntity, err := defaultEntity.CreateContact(&invdendpoint.ContactRequest{Name: String("entity example")})
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -552,9 +539,7 @@ func TestCustomer_UpdateContact(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
-	subjectEntity := defaultEntity.NewContact()
-	subjectEntity.Id = int64(1234)
-	subjectEntity, err = defaultEntity.UpdateContact(subjectEntity)
+	subjectEntity, err := defaultEntity.UpdateContact(1234, &invdendpoint.ContactRequest{Name: String("entity example 2")})
 
 	if err != nil {
 		t.Fatal("Error:", err)
@@ -573,9 +558,9 @@ func TestCustomer_ListAllContacts(t *testing.T) {
 	mockResponse := new(invdendpoint.Contact)
 	mockResponse.Id = mockResponseId
 	mockResponse.Name = "Mock Contact"
-	mockResponse.Address1 = "23 Wayne street"
-	mockResponse.City = "Austin"
-	mockResponse.Country = "USA"
+	mockResponse.Address1 = String("23 Wayne street")
+	mockResponse.City = String("Austin")
+	mockResponse.Country = String("USA")
 	mockResponse.CreatedAt = time.Now().UnixNano()
 
 	mockResponses = append(mockResponses, *mockResponse)
@@ -613,10 +598,7 @@ func TestCustomer_DeleteContact(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
-	contact := customer.NewContact()
-	contact.Id = int64(1234)
-
-	err = customer.DeleteContact(int64(1234))
+	err = customer.DeleteContact(1234)
 
 	if err != nil {
 		t.Fatal("Error occurred during deletion")
@@ -641,8 +623,7 @@ func TestCustomer_CreatePaymentSource_Card(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
-	intermediate := conn.NewPaymentSource()
-	subjectEntity, err := defaultEntity.CreatePaymentSource(intermediate)
+	subjectEntity, err := defaultEntity.CreatePaymentSource(&invdendpoint.PaymentSourceRequest{})
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -674,8 +655,7 @@ func TestCustomer_CreatePaymentSource_Acct(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
-	intermediate := conn.NewPaymentSource()
-	subjectEntity, err := defaultEntity.CreatePaymentSource(intermediate)
+	subjectEntity, err := defaultEntity.CreatePaymentSource(&invdendpoint.PaymentSourceRequest{})
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -784,7 +764,7 @@ func TestCustomer_CreatePendingLineItem(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
-	subjectEntity, err := defaultEntity.CreatePendingLineItem(conn.NewPendingLineItem())
+	subjectEntity, err := defaultEntity.CreatePendingLineItem(&invdendpoint.PendingLineItemRequest{})
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -836,9 +816,7 @@ func TestCustomer_UpdatePendingLineItem(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	defaultEntity := conn.NewCustomer()
-	subjectEntity := defaultEntity.NewPendingLineItem()
-	subjectEntity.Id = int64(1234)
-	subjectEntity, err = defaultEntity.UpdatePendingLineItem(subjectEntity)
+	subjectEntity, err := defaultEntity.UpdatePendingLineItem(1234, &invdendpoint.PendingLineItemRequest{})
 
 	if err != nil {
 		t.Fatal("Error:", err)
@@ -862,10 +840,8 @@ func TestCustomer_DeletePendingLineItem(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	customer := conn.NewCustomer()
-	contact := customer.NewPendingLineItem()
-	contact.Id = int64(1234)
 
-	err = customer.DeletePendingLineItem(int64(1234))
+	err = customer.DeletePendingLineItem(1234)
 
 	if err != nil {
 		t.Fatal("Error occurred during deletion")

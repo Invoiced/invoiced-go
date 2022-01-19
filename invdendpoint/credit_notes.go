@@ -6,36 +6,54 @@ import (
 
 const CreditNoteEndpoint = "/credit_notes"
 
+type CreditNoteRequest struct {
+	Attachments   []*int64                `json:"attachments,omitempty"`
+	CalculateTax  *bool                   `json:"calculate_taxes,omitempty"`
+	Closed        *bool                   `json:"closed,omitempty"`
+	Currency      *string                 `json:"currency,omitempty"`
+	Customer      *int64                  `json:"customer,omitempty"`
+	Date          *int64                  `json:"date,omitempty"`
+	Discounts     []*DiscountRequest      `json:"discounts,omitempty"`
+	Draft         *bool                   `json:"draft,omitempty"`
+	Items         []*LineItemRequest      `json:"items,omitempty"`
+	Metadata      *map[string]interface{} `json:"metadata,omitempty"`
+	Name          *string                 `json:"name,omitempty"`
+	Notes         *string                 `json:"notes,omitempty"`
+	Number        *string                 `json:"number,omitempty"`
+	Paid          *bool                   `json:"paid,omitempty"`
+	PurchaseOrder *string                 `json:"purchase_order,omitempty"`
+	Taxes         []*TaxRequest           `json:"taxes,omitempty"`
+}
+
 type CreditNotes []CreditNote
 
 type CreditNote struct {
-	Id            int64                  `json:"id,omitempty"`       // The invoice’s unique ID
-	Object        string                 `json:"object,omitempty"`   // Object type, estimate
-	Customer      int64                  `json:"customer,omitempty"` // Customer ID
-	Invoice       int64                  `json:"invoice,omitempty"`  // Customer ID
-	Name          string                 `json:"name,omitempty"`     // Invoice name for internal use, defaults to “Invoice”
-	Number        string                 `json:"number,omitempty"`   // The reference number assigned to the invoice for use in the dashboard
-	Currency      string                 `json:"currency,omitempty"` // 3-letter ISO code
-	Draft         bool                   `json:"draft,omitempty"`    // When false, the invoice is considered outstanding, or when true, the invoice is a draft
-	Closed        bool                   `json:"closed,omitempty"`   // When true, an invoice is closed and considered bad debt. No further payments are allowed.
-	Paid          bool                   `json:"paid,omitempty"`     // When true, an invoice is closed and considered bad debt. No further payments are allowed.
-	Status        string                 `json:"status,omitempty"`   // Invoice state, one of draft, not_sent, sent, viewed, past_due, pending, paid
-	Date          int64                  `json:"date,omitempty"`     // Invoice date
-	PurchaseOrder string                 `json:"purchase_order,omitempty"`
-	Items         []LineItem             `json:"items,omitempty"`           // Collection of Line Items
-	Notes         string                 `json:"notes,omitempty"`           // Additional notes displayed on invoice
-	Subtotal      float64                `json:"subtotal,omitempty"`        // Subtotal
-	Discounts     []Discount             `json:"discounts,omitempty"`       // Collection of Discounts
-	Taxes         []Tax                  `json:"taxes,omitempty"`           // Collection of Taxes
-	Balance       float64                `json:"balance,omitempty"`         // Balance owed
-	Total         float64                `json:"total,omitempty"`           // Total
-	Url           string                 `json:"url,omitempty"`             // URL to download the invoice as a PDF
-	PdfUrl        string                 `json:"pdf_url,omitempty"`         // URL to download the invoice as a PDF
-	CreatedAt     int64                  `json:"created_at,omitempty"`	//Timestamp when created
-	UpdatedAt     int64                  `json:"updated_at,omitempty"`      // Timestamp when updated
-	Metadata      map[string]interface{} `json:"metadata,omitempty"`        // A hash of key/value pairs that can store additional information about this object.
-	Attachments   []int64                `json:"attachments,omitempty"`     // A list of File IDs to attach to the estimate
-	CalculateTax  bool                   `json:"calculate_taxes,omitempty"` // Disables tax calculation, default is true
+	Attachments   []int64                `json:"attachments"`
+	Balance       float64                `json:"balance"`
+	Closed        bool                   `json:"closed"`
+	CreatedAt     int64                  `json:"created_at"`
+	Currency      string                 `json:"currency"`
+	Customer      int64                  `json:"customer"`
+	Date          int64                  `json:"date"`
+	Discounts     []Discount             `json:"discounts"`
+	Draft         bool                   `json:"draft"`
+	Id            int64                  `json:"id"`
+	Invoice       int64                  `json:"invoice"`
+	Items         []LineItem             `json:"items"`
+	Metadata      map[string]interface{} `json:"metadata"`
+	Name          string                 `json:"name"`
+	Notes         string                 `json:"notes"`
+	Number        string                 `json:"number"`
+	Object        string                 `json:"object"`
+	Paid          bool                   `json:"paid"`
+	PdfUrl        string                 `json:"pdf_url"`
+	PurchaseOrder string                 `json:"purchase_order"`
+	Status        string                 `json:"status"`
+	Subtotal      float64                `json:"subtotal"`
+	Taxes         []Tax                  `json:"taxes"`
+	Total         float64                `json:"total"`
+	UpdatedAt     int64                  `json:"updated_at"`
+	Url           string                 `json:"url"`
 }
 
 func (i *CreditNote) String() string {

@@ -28,12 +28,7 @@ func TestFile_Create(t *testing.T) {
 
 	entity := conn.NewFile()
 
-	requestEntity := entity.NewFile()
-
-	requestEntity.Id = int64(1234)
-	requestEntity.Name = "nomenclature"
-
-	createdEntity, err := entity.Create(requestEntity)
+	createdEntity, err := entity.Create(&invdendpoint.FileRequest{Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}

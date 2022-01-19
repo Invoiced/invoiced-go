@@ -49,11 +49,9 @@ for _, invoice := range invoices {
 
 //Let's create a new customer
 customerConn := conn.NewCustomer()
-
-customerToCreate := conn.NewCustomer()
-customerToCreate.Name = "Test Customer"
-
-customerResponse, err := customerConn.Create(customerToCreate)
+customerResponse, err := customerConn.Create(&invdendpoint.CustomerRequest{
+	Name: invdapi.String("Test Customer")
+})
 
 if err != nil {
     panic(err)
@@ -62,21 +60,21 @@ if err != nil {
 fmt.Println("Customer Response => ", customerResponse.Customer)
 
 //Let's create a new invoice
-invoiceToCreate := conn.NewInvoice()
-invoiceToCreate.Customer = customerResponse.Id
+invoiceToCreate := &invdendpoint.InvoiceRequest{}
+invoiceToCreate.Customer = invdapi.Int64(customerResponse.Id)
 
 //Create a Line Item
-lineItem := invdendpoint.LineItem{}
-lineItem.Description = "Retina MacBook Pro"
-lineItem.Quantity = 5
-lineItem.UnitCost = 1999.22
+lineItem := &invdendpoint.LineItem{}
+lineItem.Description = invdapi.String("Retina MacBook Pro")
+lineItem.Quantity = invdapi.Float64(5)
+lineItem.UnitCost = invdapi.Float64(1999.22)
 
 lineItems := append([]invdendpoint.LineItem{}, lineItem)
 
 invoiceToCreate.Items = lineItems
 
 //Add a Payment Term
-invoiceToCreate.PaymentTerms = "NET15"
+invoiceToCreate.PaymentTerms = invdapi.String("NET15")
 
 invoiceResponse, err := invoiceConn.Create(invoiceToCreate)
 
@@ -95,7 +93,7 @@ conn := invdapi.NewConnection("SANDBOX_API_KEY", false)
 
 ## Developing
 
-The test suite can be ran with:
+The test suite can be run with:
 
 ```
 go test ./...

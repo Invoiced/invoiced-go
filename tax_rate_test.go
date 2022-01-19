@@ -28,12 +28,7 @@ func TestTaxRate_Create(t *testing.T) {
 
 	entity := conn.NewTaxRate()
 
-	requestEntity := entity.NewTaxRate()
-
-	requestEntity.Id = "example"
-	requestEntity.Name = "nomenclature"
-
-	createdEntity, err := entity.Create(requestEntity)
+	createdEntity, err := entity.Create(&invdendpoint.TaxRateRequest{Id: String("example"), Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -60,10 +55,7 @@ func TestTaxRate_Save(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewTaxRate()
-
-	entityToUpdate.Name = "new-name"
-
-	err = entityToUpdate.Save()
+	err = entityToUpdate.Update(&invdendpoint.TaxRateRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)

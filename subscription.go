@@ -19,115 +19,90 @@ func (c *Connection) NewSubscription() *Subscription {
 	return &Subscription{c, subscription}
 }
 
-func (c *Connection) NewPreviewRequest() *invdendpoint.SubscriptionPreviewRequest {
-	return &invdendpoint.SubscriptionPreviewRequest{}
-}
-
 func (c *Subscription) Count() (int64, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint
 
-	count, apiErr := c.count(endpoint)
+	count, err := c.count(endpoint)
 
-	if apiErr != nil {
-		return -1, apiErr
+	if err != nil {
+		return -1, err
 	}
 
 	return count, nil
 }
 
-func (c *Subscription) Create(subscription *Subscription) (*Subscription, error) {
+func (c *Subscription) Create(request *invdendpoint.SubscriptionRequest) (*Subscription, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint
+	resp := c.NewSubscription()
 
-	if subscription == nil {
-		return nil, errors.New("Subscription is nil")
-	}
-
-	subDataToCreate, err := SafeSubscriptionForCreation(subscription.Subscription)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	subResp := c.NewSubscription()
+	resp.Connection = c.Connection
 
-	apiErr := c.create(endpoint, subDataToCreate, subResp)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	subResp.Connection = c.Connection
-
-	return subResp, nil
-}
-
-func (c *Subscription) Cancel() error {
-	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	apiErr := c.delete(endpoint)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	return nil
-}
-
-func (c *Subscription) Save() error {
-	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	subResp := c.NewSubscription()
-
-	subDataToUpdate, err := SafeSubscriptionsForUpdate(c.Subscription)
-	if err != nil {
-		return err
-	}
-
-	apiErr := c.update(endpoint, subDataToUpdate, subResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.Subscription = subResp.Subscription
-
-	return nil
+	return resp, nil
 }
 
 func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndpoint := new(invdendpoint.Subscription)
+	subscription := &Subscription{c.Connection, new(invdendpoint.Subscription)}
 
-	subscription := &Subscription{c.Connection, custEndpoint}
+	_, err := c.retrieveDataFromAPI(endpoint, subscription)
 
-	_, apiErr := c.retrieveDataFromAPI(endpoint, subscription)
-
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	return subscription, nil
 }
 
+func (c *Subscription) Update(request *invdendpoint.SubscriptionRequest) error {
+	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := c.NewSubscription()
+
+	err := c.update(endpoint, request, resp)
+	if err != nil {
+		return err
+	}
+
+	c.Subscription = resp.Subscription
+
+	return nil
+}
+
+func (c *Subscription) Cancel() error {
+	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+
+	err := c.delete(endpoint)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *Subscription) ListAllQueryParameters(parameters map[string]string) (Subscriptions, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint
 
-	if  len(parameters) > 0 {
-        for key, value := range parameters {
-			endpoint = addQueryParameter(endpoint,key,value)
+	if len(parameters) > 0 {
+		for key, value := range parameters {
+			endpoint = addQueryParameter(endpoint, key, value)
 		}
 	}
 
 	subscriptions := make(invdendpoint.Subscriptions, 0)
-	subscriptionsToReturn := make(Subscriptions,0)
+	subscriptionsToReturn := make(Subscriptions, 0)
 
 NEXT:
 	tmpSubscriptions := make(invdendpoint.Subscriptions, 0)
 
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
-
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	subscriptions = append(subscriptions, tmpSubscriptions...)
@@ -140,24 +115,21 @@ NEXT:
 		sub := c.Connection.NewSubscription()
 		subData := subscription
 		sub.Subscription = &subData
-		subscriptionsToReturn = append(subscriptionsToReturn,sub)
+		subscriptionsToReturn = append(subscriptionsToReturn, sub)
 	}
 
 	return subscriptionsToReturn, nil
 
 }
 
-func (c *Subscription) ListAllCanceled(filter *invdendpoint.Filter, sort *invdendpoint.Sort,canceled bool) (Subscriptions, error) {
-
+func (c *Subscription) ListAllCanceled(canceled bool) (Subscriptions, error) {
 	parameters := make(map[string]string)
 
 	if canceled {
 		parameters["canceled"] = "1"
-
 	}
 
 	return c.ListAllQueryParameters(parameters)
-
 }
 
 func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, error) {
@@ -165,16 +137,15 @@ func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.S
 	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	subscriptions := make(invdendpoint.Subscriptions, 0)
-	subscriptionsToReturn := make(Subscriptions,0)
+	subscriptionsToReturn := make(Subscriptions, 0)
 
 NEXT:
 	tmpSubscriptions := make(invdendpoint.Subscriptions, 0)
 
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
-
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	subscriptions = append(subscriptions, tmpSubscriptions...)
@@ -187,7 +158,7 @@ NEXT:
 		sub := c.Connection.NewSubscription()
 		subData := subscription
 		sub.Subscription = &subData
-		subscriptionsToReturn = append(subscriptionsToReturn,sub)
+		subscriptionsToReturn = append(subscriptionsToReturn, sub)
 	}
 
 	return subscriptionsToReturn, nil
@@ -198,92 +169,38 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 	endpoint = addFilterAndSort(endpoint, filter, sort)
 
 	subscriptions := make(invdendpoint.Subscriptions, 0)
-	subscriptionsToReturn := make(Subscriptions,0)
+	subscriptionsToReturn := make(Subscriptions, 0)
 
-	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &subscriptions)
+	nextEndpoint, err := c.retrieveDataFromAPI(endpoint, &subscriptions)
 
-	if apiErr != nil {
-		return nil, "", apiErr
+	if err != nil {
+		return nil, "", err
 	}
 
 	for _, subscription := range subscriptions {
 		sub := c.Connection.NewSubscription()
 		subData := subscription
 		sub.Subscription = &subData
-		subscriptionsToReturn = append(subscriptionsToReturn,sub)
+		subscriptionsToReturn = append(subscriptionsToReturn, sub)
 	}
 
 	return subscriptionsToReturn, nextEndpoint, nil
 }
 
-func (c *Subscription) Preview(subPreviewRequest *invdendpoint.SubscriptionPreviewRequest) (*invdendpoint.SubscriptionPreview, error) {
+func (c *Subscription) Preview(request *invdendpoint.SubscriptionPreviewRequest) (*invdendpoint.SubscriptionPreview, error) {
 	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/preview"
 
-	if subPreviewRequest == nil {
+	if request == nil {
 		return nil, errors.New("Subscription is nil")
 	}
 
 	subPreviewResp := new(invdendpoint.SubscriptionPreview)
 
-	apiErr := c.create(endpoint, subPreviewRequest, subPreviewResp)
+	err := c.create(endpoint, request, subPreviewResp)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	return subPreviewResp, nil
-}
-
-// SafeSubscriptionForCreation prunes subscription data for just fields that can be used for creation of a subscription
-func SafeSubscriptionForCreation(sub *invdendpoint.Subscription) (*invdendpoint.Subscription, error) {
-	if sub == nil {
-		return nil, errors.New("Subscription is nil")
-	}
-
-	subData := new(invdendpoint.Subscription)
-	subData.Customer = sub.Customer
-	subData.Plan = sub.Plan
-	subData.Amount = sub.Amount
-	subData.StartDate = sub.StartDate
-	subData.BillIn = sub.BillIn
-	subData.BillInAdvanceDays = sub.BillInAdvanceDays
-	subData.Quantity = sub.Quantity
-	subData.Addons = sub.Addons
-	subData.Discounts = sub.Discounts
-	subData.Cycles = sub.Cycles
-	subData.SnapToNthDay = sub.SnapToNthDay
-	subData.Paused = sub.Paused
-	subData.ContractRenewalCycles = sub.ContractRenewalCycles
-	subData.ContractRenewalMode = sub.ContractRenewalMode
-	subData.Taxes = sub.Taxes
-	subData.CancelAtPeriodEnd = sub.CancelAtPeriodEnd
-	subData.Metadata = sub.Metadata
-
-	return subData, nil
-}
-
-// SafeSubscriptionsForUpdate prunes subscription data for just fields that can be used for updating of a subscription
-func SafeSubscriptionsForUpdate(sub *invdendpoint.Subscription) (*invdendpoint.Subscription, error) {
-	if sub == nil {
-		return nil, errors.New("Subscription is nil")
-	}
-
-	subData := new(invdendpoint.Subscription)
-
-	subData.Plan = sub.Plan
-	subData.Amount = sub.Amount
-	subData.StartDate = sub.StartDate
-	subData.BillIn = sub.BillIn
-	subData.BillInAdvanceDays = sub.BillInAdvanceDays
-	subData.Quantity = sub.Quantity
-	subData.Addons = sub.Addons
-	subData.Paused = sub.Paused
-	subData.Discounts = sub.Discounts
-	subData.ContractRenewalCycles = sub.ContractRenewalCycles
-	subData.ContractRenewalMode = sub.ContractRenewalMode
-	subData.CancelAtPeriodEnd = sub.CancelAtPeriodEnd
-	subData.Prorate = sub.Prorate
-	subData.ProrationDate = sub.ProrationDate
-
-	return subData, nil
 }

@@ -1,7 +1,6 @@
 package invdapi
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
@@ -19,39 +18,30 @@ func (c *Connection) NewNote() *Note {
 	return &Note{c, note}
 }
 
-func (c *Note) Create(createNoteRequest invdendpoint.CreateNoteRequest) (*Note, error) {
+func (c *Note) Create(request *invdendpoint.NoteRequest) (*Note, error) {
 	endpoint := invdendpoint.NoteEndpoint
+	resp := new(Note)
 
-	noteResp := new(Note)
-
-	apiErr := c.create(endpoint, createNoteRequest, noteResp)
-
-	if apiErr != nil {
-		return nil, apiErr
+	err := c.create(endpoint, request, resp)
+	if err != nil {
+		return nil, err
 	}
 
-	noteResp.Connection = c.Connection
+	resp.Connection = c.Connection
 
-	return noteResp, nil
+	return resp, nil
 }
 
-func (c *Note) Save() error {
+func (c *Note) Update(request *invdendpoint.NoteRequest) error {
 	endpoint := invdendpoint.NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(Note)
 
-	noteResp := new(Note)
-
-	noteDataToUpdate, err := SafeNoteForUpdating(c.Note)
+	err := c.update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
 
-	apiErr := c.update(endpoint, noteDataToUpdate, noteResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.Note = noteResp.Note
+	c.Note = resp.Note
 
 	return nil
 }
@@ -77,10 +67,10 @@ func (c *Note) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (No
 NEXT:
 	tmpNotes := make(Notes, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpNotes)
+	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpNotes)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	notes = append(notes, tmpNotes...)
@@ -94,16 +84,4 @@ NEXT:
 	}
 
 	return notes, nil
-}
-
-// SafeCustomerForCreation prunes note data for just fields that can be used for creation of a note
-func SafeNoteForUpdating(note *invdendpoint.Note) (*invdendpoint.Note, error) {
-	if note == nil {
-		return nil, errors.New("task is nil")
-	}
-
-	noteData := new(invdendpoint.Note)
-	noteData.Notes = note.Notes
-
-	return noteData, nil
 }

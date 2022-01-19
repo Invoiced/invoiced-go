@@ -11,17 +11,17 @@ const EventEndpoint = "/events"
 type Events []Event
 
 type Event struct {
-	Id        int64           `json:"id,omitempty"` // The event’s unique ID
-	Object    string          `json:"object,omitempty"`
-	Type      string          `json:"type,omitempty"` // Event type
-	Timestamp int64           `json:"timestamp,omitempty"`
-	Data      json.RawMessage `json:"data,omitempty"` // Contains an object property with the object that was subject of the event and an optional previous property for object.updated events that is a hash of the old values that changed during the event
-	User      *User           `json:"user,omitempty"`
+	Id        int64           `json:"id"`
+	Object    string          `json:"object"`
+	Type      string          `json:"type"`
+	Timestamp int64           `json:"timestamp"`
+	Data      json.RawMessage `json:"data"`
+	User      *User           `json:"user"`
 }
 
 type EventObject struct {
-	Object         *json.RawMessage `json:"object,omitempty"`
-	PreviousObject *json.RawMessage `json:"previous,omitempty"`
+	Object         *json.RawMessage `json:"object"`
+	PreviousObject *json.RawMessage `json:"previous"`
 }
 
 func (e *Event) ParseEventObject() (*json.RawMessage, error) {

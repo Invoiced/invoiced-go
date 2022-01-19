@@ -30,11 +30,7 @@ func TestItem_Create(t *testing.T) {
 
 	requestEntity := conn.NewItem()
 
-	requestEntity.Id = "example"
-	requestEntity.Name = "delivery"
-	requestEntity.Type = "service"
-
-	requestEntity, err = requestEntity.Create(requestEntity)
+	requestEntity, err = requestEntity.Create(&invdendpoint.ItemRequest{Name: String("delivery"), Type: String("service")})
 
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
@@ -65,9 +61,7 @@ func TestItem_Save(t *testing.T) {
 
 	entityToUpdate := conn.NewItem()
 
-	entityToUpdate.Name = "new-name"
-
-	err = entityToUpdate.Save()
+	err = entityToUpdate.Update(&invdendpoint.ItemRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
