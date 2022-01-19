@@ -1,4 +1,4 @@
-package invdapi
+package invoiced
 
 import "testing"
 
