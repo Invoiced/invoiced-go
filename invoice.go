@@ -1,28 +1,26 @@
-package invdapi
+package invoiced
 
 import (
 	"fmt"
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type Invoice struct {
-	*Connection
-	*invdendpoint.Invoice
+type InvoiceClient struct {
+	*Client
+	*Invoice
 }
 
-type Invoices []*Invoice
+type Invoices []*InvoiceClient
 
-func (c *Connection) NewInvoice() *Invoice {
-	invoice := new(invdendpoint.Invoice)
-	return &Invoice{c, invoice}
+func (c *Client) NewInvoice() *InvoiceClient {
+	invoice := new(Invoice)
+	return &InvoiceClient{c, invoice}
 }
 
-func (c *Invoice) Count() (int64, error) {
-	endpoint := invdendpoint.InvoiceEndpoint
+func (c *InvoiceClient) Count() (int64, error) {
+	endpoint := InvoiceEndpoint
 
-	count, err := c.count(endpoint)
+	count, err := c.Api.Count(endpoint)
 	if err != nil {
 		return -1, err
 	}
@@ -30,11 +28,11 @@ func (c *Invoice) Count() (int64, error) {
 	return count, nil
 }
 
-func (c *Invoice) Create(request *invdendpoint.InvoiceRequest) (*Invoice, error) {
-	endpoint := invdendpoint.InvoiceEndpoint
+func (c *InvoiceClient) Create(request *InvoiceRequest) (*InvoiceClient, error) {
+	endpoint := InvoiceEndpoint
 	resp := c.NewInvoice()
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -42,12 +40,12 @@ func (c *Invoice) Create(request *invdendpoint.InvoiceRequest) (*Invoice, error)
 	return resp, nil
 }
 
-func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
-	url := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *InvoiceClient) Retrieve(id int64) (*InvoiceClient, error) {
+	url := InvoiceEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	invoice := &Invoice{c.Connection, new(invdendpoint.Invoice)}
+	invoice := &InvoiceClient{c.Client, new(Invoice)}
 
-	_, err := c.retrieveDataFromAPI(url, invoice)
+	_, err := c.Api.Get(url, invoice)
 	if err != nil {
 		return nil, err
 	}
@@ -55,11 +53,11 @@ func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 	return invoice, nil
 }
 
-func (c *Invoice) Update(request *invdendpoint.InvoiceRequest) error {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	resp := new(invdendpoint.Invoice)
+func (c *InvoiceClient) Update(request *InvoiceRequest) error {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(Invoice)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
@@ -69,11 +67,11 @@ func (c *Invoice) Update(request *invdendpoint.InvoiceRequest) error {
 	return nil
 }
 
-func (c *Invoice) Void() (*Invoice, error) {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
+func (c *InvoiceClient) Void() (*InvoiceClient, error) {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
 	resp := c.NewInvoice()
 
-	err := c.postWithoutData(endpoint, resp)
+	err := c.Api.PostWithoutData(endpoint, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -81,10 +79,10 @@ func (c *Invoice) Void() (*Invoice, error) {
 	return resp, nil
 }
 
-func (c *Invoice) Delete() error {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *InvoiceClient) Delete() error {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -92,14 +90,14 @@ func (c *Invoice) Delete() error {
 	return nil
 }
 
-func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
-	url := invdendpoint.InvoiceEndpoint
-	url = addFilterAndSort(url, filter, sort)
+func (c *InvoiceClient) ListAll(filter *Filter, sort *Sort) (Invoices, error) {
+	url := InvoiceEndpoint
+	url = AddFilterAndSort(url, filter, sort)
 
 	return c.ListAllHelper(url, filter, sort)
 }
 
-func (c *Invoice) ListAllHelper(endpoint string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
+func (c *InvoiceClient) ListAllHelper(endpoint string, filter *Filter, sort *Sort) (Invoices, error) {
 	invoices := make(Invoices, 0)
 NEXT:
 
@@ -118,22 +116,22 @@ NEXT:
 	return invoices, nil
 }
 
-func (c *Invoice) ListHelper(url string, filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
+func (c *InvoiceClient) ListHelper(url string, filter *Filter, sort *Sort) (Invoices, string, error) {
 	if len(url) == 0 {
-		url = invdendpoint.InvoiceEndpoint
-		url = addFilterAndSort(url, filter, sort)
+		url = InvoiceEndpoint
+		url = AddFilterAndSort(url, filter, sort)
 	}
 
 	invoicesToReturn := make(Invoices, 0)
-	invoices := make(invdendpoint.Invoices, 0)
+	invoices := make(Invoices, 0)
 
-	nextEndpoint, err := c.retrieveDataFromAPI(url, &invoices)
+	nextEndpoint, err := c.Api.Get(url, &invoices)
 	if err != nil {
 		return nil, "", err
 	}
 
 	for _, invoice := range invoices {
-		inv := c.Connection.NewInvoice()
+		inv := c.Client.NewInvoice()
 		invData := invoice
 		inv.Invoice = &invData
 		invoicesToReturn = append(invoicesToReturn, inv)
@@ -142,17 +140,17 @@ func (c *Invoice) ListHelper(url string, filter *invdendpoint.Filter, sort *invd
 	return invoicesToReturn, nextEndpoint, nil
 }
 
-func (c *Invoice) ListAllInvoicesStartDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
+func (c *InvoiceClient) ListAllInvoicesStartDate(filter *Filter, sort *Sort, invoiceDate int64) (Invoices, error) {
 	return c.ListAllInvoicesStartEndDate(filter, sort, invoiceDate, 0)
 }
 
-func (c *Invoice) ListAllInvoicesEndDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
+func (c *InvoiceClient) ListAllInvoicesEndDate(filter *Filter, sort *Sort, invoiceDate int64) (Invoices, error) {
 	return c.ListAllInvoicesStartEndDate(filter, sort, 0, invoiceDate)
 }
 
-func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, startDate, endDate int64) (Invoices, error) {
-	url := invdendpoint.InvoiceEndpoint
-	url = addFilterAndSort(url, filter, sort)
+func (c *InvoiceClient) ListAllInvoicesStartEndDate(filter *Filter, sort *Sort, startDate, endDate int64) (Invoices, error) {
+	url := InvoiceEndpoint
+	url = AddFilterAndSort(url, filter, sort)
 
 	if startDate > 0 {
 		startDateString := strconv.FormatInt(startDate, 10)
@@ -167,9 +165,9 @@ func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort 
 	return c.ListAllHelper(url, filter, sort)
 }
 
-func (c *Invoice) ListAllInvoicesUpdatedDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, invoiceDate int64) (Invoices, error) {
-	url := invdendpoint.InvoiceEndpoint
-	url = addFilterAndSort(url, filter, sort)
+func (c *InvoiceClient) ListAllInvoicesUpdatedDate(filter *Filter, sort *Sort, invoiceDate int64) (Invoices, error) {
+	url := InvoiceEndpoint
+	url = AddFilterAndSort(url, filter, sort)
 
 	if invoiceDate > 0 {
 		updatedAfterString := strconv.FormatInt(invoiceDate, 10)
@@ -179,12 +177,12 @@ func (c *Invoice) ListAllInvoicesUpdatedDate(filter *invdendpoint.Filter, sort *
 	return c.ListAllHelper(url, filter, sort)
 }
 
-func (c *Invoice) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, string, error) {
+func (c *InvoiceClient) List(filter *Filter, sort *Sort) (Invoices, string, error) {
 	return c.ListHelper("", filter, sort)
 }
 
-func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
-	filter := invdendpoint.NewFilter()
+func (c *InvoiceClient) ListInvoiceByNumber(invoiceNumber string) (*InvoiceClient, error) {
+	filter := NewFilter()
 	err := filter.Set("number", invoiceNumber)
 	if err != nil {
 		return nil, err
@@ -203,10 +201,10 @@ func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 	return invoices[0], nil
 }
 
-func (c *Invoice) SendEmail(request *invdendpoint.SendEmailRequest) error {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
+func (c *InvoiceClient) SendEmail(request *SendEmailRequest) error {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	err := c.create(endpoint, request, nil)
+	err := c.Api.Create(endpoint, request, nil)
 	if err != nil {
 		return err
 	}
@@ -214,11 +212,11 @@ func (c *Invoice) SendEmail(request *invdendpoint.SendEmailRequest) error {
 	return nil
 }
 
-func (c *Invoice) SendText(request *invdendpoint.SendTextMessageRequest) (invdendpoint.TextMessages, error) {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
-	resp := new(invdendpoint.TextMessages)
+func (c *InvoiceClient) SendText(request *SendTextMessageRequest) (TextMessages, error) {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
+	resp := new(TextMessages)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -226,11 +224,11 @@ func (c *Invoice) SendText(request *invdendpoint.SendTextMessageRequest) (invden
 	return *resp, nil
 }
 
-func (c *Invoice) SendLetter() (*invdendpoint.Letter, error) {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
-	resp := new(invdendpoint.Letter)
+func (c *InvoiceClient) SendLetter() (*Letter, error) {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
+	resp := new(Letter)
 
-	err := c.create(endpoint, nil, resp)
+	err := c.Api.Create(endpoint, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -238,10 +236,10 @@ func (c *Invoice) SendLetter() (*invdendpoint.Letter, error) {
 	return resp, nil
 }
 
-func (c *Invoice) Pay() error {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/pay"
-	invoice := new(invdendpoint.Invoice)
-	err := c.create(endpoint, nil, invoice)
+func (c *InvoiceClient) Pay() error {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/pay"
+	invoice := new(Invoice)
+	err := c.Api.Create(endpoint, nil, invoice)
 	if err != nil {
 		return nil
 	}
@@ -251,15 +249,15 @@ func (c *Invoice) Pay() error {
 	return nil
 }
 
-func (c *Invoice) ListAttachments() (Files, error) {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
+func (c *InvoiceClient) ListAttachments() (Files, error) {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
 
 	files := make(Files, 0)
 
 NEXT:
 	tempFiles := make(Files, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tempFiles)
+	endpoint, err := c.Api.Get(endpoint, &tempFiles)
 
 	if err != nil {
 		return nil, err
@@ -271,22 +269,18 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, invoice := range files {
-		invoice.Connection = c.Connection
-	}
-
 	return files, nil
 }
 
-func (c *Invoice) RetrieveNotes() (Notes, error) {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/notes"
+func (c *InvoiceClient) RetrieveNotes() (Notes, error) {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/notes"
 
 	notes := make(Notes, 0)
 
 NEXT:
 	tmpNotes := make(Notes, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpNotes)
+	endpoint, err := c.Api.Get(endpoint, &tmpNotes)
 
 	if err != nil {
 		return nil, err
@@ -298,31 +292,14 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, invoice := range notes {
-		invoice.Connection = c.Connection
-	}
-
 	return notes, nil
 }
 
-func (c *Invoice) CreatePaymentPlan(request *invdendpoint.PaymentPlanRequest) (*invdendpoint.PaymentPlan, error) {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/payment_plan"
-	resp := new(invdendpoint.PaymentPlan)
+func (c *InvoiceClient) CreatePaymentPlan(request *PaymentPlanRequest) (*PaymentPlan, error) {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/payment_plan"
+	resp := new(PaymentPlan)
 
-	err := c.create(endpoint, request, resp)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (c *Invoice) RetrievePaymentPlan() (*invdendpoint.PaymentPlan, error) {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/payment_plan"
-	resp := new(invdendpoint.PaymentPlan)
-
-	_, err := c.retrieveDataFromAPI(endpoint, resp)
+	err := c.Api.Create(endpoint, request, resp)
 
 	if err != nil {
 		return nil, err
@@ -331,10 +308,23 @@ func (c *Invoice) RetrievePaymentPlan() (*invdendpoint.PaymentPlan, error) {
 	return resp, nil
 }
 
-func (c *Invoice) CancelPaymentPlan() error {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *InvoiceClient) RetrievePaymentPlan() (*PaymentPlan, error) {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/payment_plan"
+	resp := new(PaymentPlan)
 
-	err := c.delete(endpoint)
+	_, err := c.Api.Get(endpoint, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c *InvoiceClient) CancelPaymentPlan() error {
+	endpoint := InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+
+	err := c.Api.Delete(endpoint)
 
 	if err != nil {
 		return err
@@ -343,8 +333,8 @@ func (c *Invoice) CancelPaymentPlan() error {
 	return nil
 }
 
-func (c *Invoice) String() string {
-	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
+func (c *InvoiceClient) String() string {
+	header := fmt.Sprintf("<InvoiceClient id=%d at %p>", c.Id, c)
 
 	return header + " " + "JSON: " + c.Invoice.String()
 }

@@ -1,28 +1,19 @@
-package invdapi
+package invoiced
 
 import (
 	"errors"
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type Subscription struct {
-	*Connection
-	*invdendpoint.Subscription
+type SubscriptionClient struct {
+	*Client
+	*Subscription
 }
 
-type Subscriptions []*Subscription
+func (c *SubscriptionClient) Count() (int64, error) {
+	endpoint := SubscriptionEndpoint
 
-func (c *Connection) NewSubscription() *Subscription {
-	subscription := new(invdendpoint.Subscription)
-	return &Subscription{c, subscription}
-}
-
-func (c *Subscription) Count() (int64, error) {
-	endpoint := invdendpoint.SubscriptionEndpoint
-
-	count, err := c.count(endpoint)
+	count, err := c.Api.Count(endpoint)
 
 	if err != nil {
 		return -1, err
@@ -31,26 +22,24 @@ func (c *Subscription) Count() (int64, error) {
 	return count, nil
 }
 
-func (c *Subscription) Create(request *invdendpoint.SubscriptionRequest) (*Subscription, error) {
-	endpoint := invdendpoint.SubscriptionEndpoint
+func (c *SubscriptionClient) Create(request *SubscriptionRequest) (*Subscription, error) {
+	endpoint := SubscriptionEndpoint
 	resp := c.NewSubscription()
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
-	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *SubscriptionClient) Retrieve(id int64) (*Subscription, error) {
+	endpoint := SubscriptionEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	subscription := &Subscription{c.Connection, new(invdendpoint.Subscription)}
+	subscription := &SubscriptionClient{c.Client, new(Subscription)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, subscription)
+	_, err := c.Api.Get(endpoint, subscription)
 
 	if err != nil {
 		return nil, err
@@ -59,11 +48,11 @@ func (c *Subscription) Retrieve(id int64) (*Subscription, error) {
 	return subscription, nil
 }
 
-func (c *Subscription) Update(request *invdendpoint.SubscriptionRequest) error {
-	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *SubscriptionClient) Update(request *SubscriptionRequest) error {
+	endpoint := SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 	resp := c.NewSubscription()
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
@@ -73,10 +62,10 @@ func (c *Subscription) Update(request *invdendpoint.SubscriptionRequest) error {
 	return nil
 }
 
-func (c *Subscription) Cancel() error {
-	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *SubscriptionClient) Cancel() error {
+	endpoint := SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -84,8 +73,8 @@ func (c *Subscription) Cancel() error {
 	return nil
 }
 
-func (c *Subscription) ListAllQueryParameters(parameters map[string]string) (Subscriptions, error) {
-	endpoint := invdendpoint.SubscriptionEndpoint
+func (c *SubscriptionClient) ListAllQueryParameters(parameters map[string]string) (Subscriptions, error) {
+	endpoint := SubscriptionEndpoint
 
 	if len(parameters) > 0 {
 		for key, value := range parameters {
@@ -93,13 +82,13 @@ func (c *Subscription) ListAllQueryParameters(parameters map[string]string) (Sub
 		}
 	}
 
-	subscriptions := make(invdendpoint.Subscriptions, 0)
+	subscriptions := make(Subscriptions, 0)
 	subscriptionsToReturn := make(Subscriptions, 0)
 
 NEXT:
-	tmpSubscriptions := make(invdendpoint.Subscriptions, 0)
+	tmpSubscriptions := make(Subscriptions, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
+	endpoint, err := c.Api.Get(endpoint, &tmpSubscriptions)
 
 	if err != nil {
 		return nil, err
@@ -112,7 +101,7 @@ NEXT:
 	}
 
 	for _, subscription := range subscriptions {
-		sub := c.Connection.NewSubscription()
+		sub := c.Client.NewSubscription()
 		subData := subscription
 		sub.Subscription = &subData
 		subscriptionsToReturn = append(subscriptionsToReturn, sub)
@@ -122,7 +111,7 @@ NEXT:
 
 }
 
-func (c *Subscription) ListAllCanceled(canceled bool) (Subscriptions, error) {
+func (c *SubscriptionClient) ListAllCanceled(canceled bool) (Subscriptions, error) {
 	parameters := make(map[string]string)
 
 	if canceled {
@@ -132,17 +121,17 @@ func (c *Subscription) ListAllCanceled(canceled bool) (Subscriptions, error) {
 	return c.ListAllQueryParameters(parameters)
 }
 
-func (c *Subscription) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, error) {
-	endpoint := invdendpoint.SubscriptionEndpoint
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+func (c *SubscriptionClient) ListAll(filter *Filter, sort *Sort) (Subscriptions, error) {
+	endpoint := SubscriptionEndpoint
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
-	subscriptions := make(invdendpoint.Subscriptions, 0)
+	subscriptions := make(Subscriptions, 0)
 	subscriptionsToReturn := make(Subscriptions, 0)
 
 NEXT:
-	tmpSubscriptions := make(invdendpoint.Subscriptions, 0)
+	tmpSubscriptions := make(Subscriptions, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpSubscriptions)
+	endpoint, err := c.Api.Get(endpoint, &tmpSubscriptions)
 
 	if err != nil {
 		return nil, err
@@ -155,7 +144,7 @@ NEXT:
 	}
 
 	for _, subscription := range subscriptions {
-		sub := c.Connection.NewSubscription()
+		sub := c.Client.NewSubscription()
 		subData := subscription
 		sub.Subscription = &subData
 		subscriptionsToReturn = append(subscriptionsToReturn, sub)
@@ -164,21 +153,21 @@ NEXT:
 	return subscriptionsToReturn, nil
 }
 
-func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Subscriptions, string, error) {
-	endpoint := invdendpoint.SubscriptionEndpoint
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+func (c *SubscriptionClient) List(filter *Filter, sort *Sort) (Subscriptions, string, error) {
+	endpoint := SubscriptionEndpoint
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
-	subscriptions := make(invdendpoint.Subscriptions, 0)
+	subscriptions := make(Subscriptions, 0)
 	subscriptionsToReturn := make(Subscriptions, 0)
 
-	nextEndpoint, err := c.retrieveDataFromAPI(endpoint, &subscriptions)
+	nextEndpoint, err := c.Api.Get(endpoint, &subscriptions)
 
 	if err != nil {
 		return nil, "", err
 	}
 
 	for _, subscription := range subscriptions {
-		sub := c.Connection.NewSubscription()
+		sub := c.Client.NewSubscription()
 		subData := subscription
 		sub.Subscription = &subData
 		subscriptionsToReturn = append(subscriptionsToReturn, sub)
@@ -187,16 +176,16 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 	return subscriptionsToReturn, nextEndpoint, nil
 }
 
-func (c *Subscription) Preview(request *invdendpoint.SubscriptionPreviewRequest) (*invdendpoint.SubscriptionPreview, error) {
-	endpoint := invdendpoint.SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/preview"
+func (c *SubscriptionClient) Preview(request *SubscriptionPreviewRequest) (*SubscriptionPreview, error) {
+	endpoint := SubscriptionEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/preview"
 
 	if request == nil {
-		return nil, errors.New("Subscription is nil")
+		return nil, errors.New("SubscriptionClient is nil")
 	}
 
-	subPreviewResp := new(invdendpoint.SubscriptionPreview)
+	subPreviewResp := new(SubscriptionPreview)
 
-	err := c.create(endpoint, request, subPreviewResp)
+	err := c.Api.Create(endpoint, request, subPreviewResp)
 
 	if err != nil {
 		return nil, err

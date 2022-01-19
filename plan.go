@@ -1,41 +1,38 @@
-package invdapi
+package invoiced
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"strings"
 )
 
-type Plan struct {
-	*Connection
-	*invdendpoint.Plan
+type PlanClient struct {
+	*Client
+	*PlanClient
 }
 
-type Plans []*Plan
+type Plans []*PlanClient
 
-func (c *Connection) NewPlan() *Plan {
-	plan := new(invdendpoint.Plan)
-	return &Plan{c, plan}
+func (c *Client) NewPlan() *PlanClient {
+	plan := new(PlanClient)
+	return &PlanClient{c, plan}
 }
 
-func (c *Plan) Create(request *invdendpoint.PlanRequest) (*Plan, error) {
-	endpoint := invdendpoint.PlanEndpoint
-	resp := new(Plan)
+func (c *PlanClient) Create(request *PlanRequest) (*PlanClient, error) {
+	endpoint := PlanEndpoint
+	resp := new(PlanClient)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
-
-	resp.Connection = c.Connection
 
 	return resp, nil
 }
 
-func (c *Plan) Retrieve(id string) (*Plan, error) {
-	endpoint := invdendpoint.PlanEndpoint + "/" + id
-	plan := &Plan{c.Connection, new(invdendpoint.Plan)}
+func (c *PlanClient) Retrieve(id string) (*PlanClient, error) {
+	endpoint := PlanEndpoint + "/" + id
+	plan := &PlanClient{c.Client, new(PlanClient)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, plan)
+	_, err := c.Api.Get(endpoint, plan)
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +40,11 @@ func (c *Plan) Retrieve(id string) (*Plan, error) {
 	return plan, nil
 }
 
-func (c *Plan) RetrieveWithSubNumber(id string) (*Plan, error) {
-	endpoint := invdendpoint.PlanEndpoint + "/" + id + "?include=num_subscriptions"
-	plan := &Plan{c.Connection, new(invdendpoint.Plan)}
+func (c *PlanClient) RetrieveWithSubNumber(id string) (*PlanClient, error) {
+	endpoint := PlanEndpoint + "/" + id + "?include=num_subscriptions"
+	plan := &PlanClient{c.Client, new(PlanClient)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, plan)
+	_, err := c.Api.Get(endpoint, plan)
 	if err != nil {
 		return nil, err
 	}
@@ -55,24 +52,24 @@ func (c *Plan) RetrieveWithSubNumber(id string) (*Plan, error) {
 	return plan, nil
 }
 
-func (c *Plan) Update(request *invdendpoint.PlanRequest) error {
-	endpoint := invdendpoint.PlanEndpoint + "/" + c.Id
-	resp := new(Plan)
+func (c *PlanClient) Update(request *PlanRequest) error {
+	endpoint := PlanEndpoint + "/" + c.Id
+	resp := new(PlanClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
 
-	c.Plan = resp.Plan
+	c.PlanClient = resp.PlanClient
 
 	return nil
 }
 
-func (c *Plan) Delete() error {
-	endpoint := invdendpoint.PlanEndpoint + "/" + c.Id
+func (c *PlanClient) Delete() error {
+	endpoint := PlanEndpoint + "/" + c.Id
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -80,10 +77,10 @@ func (c *Plan) Delete() error {
 	return nil
 }
 
-func (c *Plan) ListAllSubNumber(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Plans, error) {
-	endpoint := invdendpoint.PlanEndpoint
+func (c *PlanClient) ListAllSubNumber(filter *Filter, sort *Sort) (Plans, error) {
+	endpoint := PlanEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	if strings.Contains(endpoint, "?") {
 		endpoint = endpoint + "&include=num_subscriptions"
@@ -96,7 +93,7 @@ func (c *Plan) ListAllSubNumber(filter *invdendpoint.Filter, sort *invdendpoint.
 NEXT:
 	tmpPlans := make(Plans, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpPlans)
+	endpoint, err := c.Api.Get(endpoint, &tmpPlans)
 
 	if err != nil {
 		return nil, err
@@ -108,24 +105,20 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, plan := range plans {
-		plan.Connection = c.Connection
-	}
-
 	return plans, nil
 }
 
-func (c *Plan) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Plans, error) {
-	endpoint := invdendpoint.PlanEndpoint
+func (c *PlanClient) ListAll(filter *Filter, sort *Sort) (Plans, error) {
+	endpoint := PlanEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	plans := make(Plans, 0)
 
 NEXT:
 	tmpPlans := make(Plans, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpPlans)
+	endpoint, err := c.Api.Get(endpoint, &tmpPlans)
 
 	if err != nil {
 		return nil, err
@@ -135,10 +128,6 @@ NEXT:
 
 	if endpoint != "" {
 		goto NEXT
-	}
-
-	for _, plan := range plans {
-		plan.Connection = c.Connection
 	}
 
 	return plans, nil

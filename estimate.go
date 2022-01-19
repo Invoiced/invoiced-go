@@ -1,28 +1,26 @@
-package invdapi
+package invoiced
 
 import (
 	"fmt"
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type Estimate struct {
-	*Connection
-	*invdendpoint.Estimate
+type EstimateClient struct {
+	*Client
+	*Estimate
 }
 
-type Estimates []*Estimate
+type Estimates []*EstimateClient
 
-func (c *Connection) NewEstimate() *Estimate {
-	estimate := new(invdendpoint.Estimate)
-	return &Estimate{c, estimate}
+func (c *Client) NewEstimate() *EstimateClient {
+	estimate := new(Estimate)
+	return &EstimateClient{c, estimate}
 }
 
-func (c *Estimate) Count() (int64, error) {
-	endpoint := invdendpoint.EstimateEndpoint
+func (c *EstimateClient) Count() (int64, error) {
+	endpoint := EstimateEndpoint
 
-	count, err := c.count(endpoint)
+	count, err := c.Api.Count(endpoint)
 
 	if err != nil {
 		return -1, err
@@ -31,26 +29,24 @@ func (c *Estimate) Count() (int64, error) {
 	return count, nil
 }
 
-func (c *Estimate) Create(request *invdendpoint.EstimateRequest) (*Estimate, error) {
-	endpoint := invdendpoint.EstimateEndpoint
-	resp := new(Estimate)
+func (c *EstimateClient) Create(request *EstimateRequest) (*EstimateClient, error) {
+	endpoint := EstimateEndpoint
+	resp := new(EstimateClient)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *EstimateClient) Retrieve(id int64) (*EstimateClient, error) {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	estimate := &Estimate{c.Connection, new(invdendpoint.Estimate)}
+	estimate := &EstimateClient{c.Client, new(Estimate)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, estimate)
+	_, err := c.Api.Get(endpoint, estimate)
 
 	if err != nil {
 		return nil, err
@@ -59,11 +55,11 @@ func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
 	return estimate, nil
 }
 
-func (c *Estimate) Update(request *invdendpoint.EstimateRequest) error {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	resp := new(Estimate)
+func (c *EstimateClient) Update(request *EstimateRequest) error {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(EstimateClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
@@ -73,25 +69,23 @@ func (c *Estimate) Update(request *invdendpoint.EstimateRequest) error {
 	return nil
 }
 
-func (c *Estimate) Void() (*Estimate, error) {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
-	resp := new(Estimate)
+func (c *EstimateClient) Void() (*EstimateClient, error) {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
+	resp := new(EstimateClient)
 
-	err := c.postWithoutData(endpoint, resp)
+	err := c.Api.PostWithoutData(endpoint, resp)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Estimate) Delete() error {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *EstimateClient) Delete() error {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 
 	if err != nil {
 		return err
@@ -100,17 +94,17 @@ func (c *Estimate) Delete() error {
 	return nil
 }
 
-func (c *Estimate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Estimates, error) {
-	endpoint := invdendpoint.EstimateEndpoint
+func (c *EstimateClient) ListAll(filter *Filter, sort *Sort) (Estimates, error) {
+	endpoint := EstimateEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	estimates := make(Estimates, 0)
 
 NEXT:
 	tmpInvoices := make(Estimates, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpInvoices)
+	endpoint, err := c.Api.Get(endpoint, &tmpInvoices)
 
 	if err != nil {
 		return nil, err
@@ -122,38 +116,30 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, estimate := range estimates {
-		estimate.Connection = c.Connection
-	}
-
 	return estimates, nil
 }
 
-func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Estimates, string, error) {
-	endpoint := invdendpoint.EstimateEndpoint
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+func (c *EstimateClient) List(filter *Filter, sort *Sort) (Estimates, string, error) {
+	endpoint := EstimateEndpoint
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	estimates := make(Estimates, 0)
 
-	nextEndpoint, err := c.retrieveDataFromAPI(endpoint, &estimates)
+	nextEndpoint, err := c.Api.Get(endpoint, &estimates)
 
 	if err != nil {
 		return nil, "", err
 	}
 
-	for _, estimate := range estimates {
-		estimate.Connection = c.Connection
-	}
-
 	return estimates, nextEndpoint, nil
 }
 
-func (c *Estimate) GenerateInvoice() (*Invoice, error) {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/invoice"
+func (c *EstimateClient) GenerateInvoice() (*InvoiceClient, error) {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/invoice"
 
 	invResp := c.NewInvoice()
 
-	err := c.postWithoutData(endpoint, invResp)
+	err := c.Api.PostWithoutData(endpoint, invResp)
 
 	if err != nil {
 		return nil, err
@@ -162,10 +148,10 @@ func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 	return invResp, nil
 }
 
-func (c *Estimate) SendEmail(emailReq *invdendpoint.SendEmailRequest) error {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
+func (c *EstimateClient) SendEmail(emailReq *SendEmailRequest) error {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	err := c.create(endpoint, emailReq, nil)
+	err := c.Api.Create(endpoint, emailReq, nil)
 	if err != nil {
 		return err
 	}
@@ -173,12 +159,12 @@ func (c *Estimate) SendEmail(emailReq *invdendpoint.SendEmailRequest) error {
 	return nil
 }
 
-func (c *Estimate) SendText(req *invdendpoint.SendTextMessageRequest) (invdendpoint.TextMessages, error) {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
+func (c *EstimateClient) SendText(req *SendTextMessageRequest) (TextMessages, error) {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
 
-	resp := new(invdendpoint.TextMessages)
+	resp := new(TextMessages)
 
-	err := c.create(endpoint, req, resp)
+	err := c.Api.Create(endpoint, req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -186,12 +172,12 @@ func (c *Estimate) SendText(req *invdendpoint.SendTextMessageRequest) (invdendpo
 	return *resp, nil
 }
 
-func (c *Estimate) SendLetter() (*invdendpoint.Letter, error) {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
+func (c *EstimateClient) SendLetter() (*Letter, error) {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
 
-	resp := new(invdendpoint.Letter)
+	resp := new(Letter)
 
-	err := c.create(endpoint, nil, resp)
+	err := c.Api.Create(endpoint, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -199,15 +185,15 @@ func (c *Estimate) SendLetter() (*invdendpoint.Letter, error) {
 	return resp, nil
 }
 
-func (c *Estimate) ListAttachments() (Files, error) {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
+func (c *EstimateClient) ListAttachments() (Files, error) {
+	endpoint := EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
 
 	files := make(Files, 0)
 
 NEXT:
 	tempFiles := make(Files, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tempFiles)
+	endpoint, err := c.Api.Get(endpoint, &tempFiles)
 
 	if err != nil {
 		return nil, err
@@ -219,15 +205,11 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, estimate := range files {
-		estimate.Connection = c.Connection
-	}
-
 	return files, nil
 }
 
-func (c *Estimate) String() string {
-	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
+func (c *EstimateClient) String() string {
+	header := fmt.Sprintf("<InvoiceClient id=%d at %p>", c.Id, c)
 
 	return header + " " + "JSON: " + c.Estimate.String()
 }

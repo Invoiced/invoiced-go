@@ -1,27 +1,25 @@
-package invdapi
+package invoiced
 
 import "C"
 import (
 	"fmt"
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type CreditNote struct {
-	*Connection
-	*invdendpoint.CreditNote
+type CreditNoteClient struct {
+	*Client
+	*CreditNote
 }
 
-type CreditNotes []*CreditNote
+type CreditNotes []*CreditNoteClient
 
-func (c *Connection) NewCreditNote() *CreditNote {
-	creditNote := new(invdendpoint.CreditNote)
-	return &CreditNote{c, creditNote}
+func (c *Client) NewCreditNote() *CreditNoteClient {
+	creditNote := new(CreditNote)
+	return &CreditNoteClient{c, creditNote}
 }
 
-func (c *CreditNote) Count() (int64, error) {
-	count, err := c.count(invdendpoint.CreditNoteEndpoint)
+func (c *CreditNoteClient) Count() (int64, error) {
+	count, err := c.Api.Count(CreditNoteEndpoint)
 
 	if err != nil {
 		return -1, err
@@ -30,25 +28,23 @@ func (c *CreditNote) Count() (int64, error) {
 	return count, nil
 }
 
-func (c *CreditNote) Create(request *invdendpoint.CreditNoteRequest) (*CreditNote, error) {
-	resp := new(CreditNote)
+func (c *CreditNoteClient) Create(request *CreditNoteRequest) (*CreditNoteClient, error) {
+	resp := new(CreditNoteClient)
 
-	err := c.create(invdendpoint.CreditNoteEndpoint, request, resp)
+	err := c.Api.Create(CreditNoteEndpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *CreditNote) Retrieve(id int64) (*CreditNote, error) {
-	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *CreditNoteClient) Retrieve(id int64) (*CreditNoteClient, error) {
+	endpoint := CreditNoteEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	creditNote := &CreditNote{c.Connection, new(invdendpoint.CreditNote)}
+	creditNote := &CreditNoteClient{c.Client, new(CreditNote)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, creditNote)
+	_, err := c.Api.Get(endpoint, creditNote)
 
 	if err != nil {
 		return nil, err
@@ -57,11 +53,11 @@ func (c *CreditNote) Retrieve(id int64) (*CreditNote, error) {
 	return creditNote, nil
 }
 
-func (c *CreditNote) Update(request *invdendpoint.CreditNoteRequest) error {
-	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	resp := new(CreditNote)
+func (c *CreditNoteClient) Update(request *CreditNoteRequest) error {
+	endpoint := CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(CreditNoteClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 
 	if err != nil {
 		return err
@@ -72,25 +68,23 @@ func (c *CreditNote) Update(request *invdendpoint.CreditNoteRequest) error {
 	return nil
 }
 
-func (c *CreditNote) Void() (*CreditNote, error) {
-	resp := new(CreditNote)
+func (c *CreditNoteClient) Void() (*CreditNoteClient, error) {
+	resp := new(CreditNoteClient)
 
-	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
+	endpoint := CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
 
-	err := c.postWithoutData(endpoint, resp)
+	err := c.Api.PostWithoutData(endpoint, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *CreditNote) Delete() error {
-	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *CreditNoteClient) Delete() error {
+	endpoint := CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -98,15 +92,15 @@ func (c *CreditNote) Delete() error {
 	return nil
 }
 
-func (c *CreditNote) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (CreditNotes, error) {
-	endpoint := addFilterAndSort(invdendpoint.CreditNoteEndpoint, filter, sort)
+func (c *CreditNoteClient) ListAll(filter *Filter, sort *Sort) (CreditNotes, error) {
+	endpoint := AddFilterAndSort(CreditNoteEndpoint, filter, sort)
 
 	creditNotes := make(CreditNotes, 0)
 
 NEXT:
 	tmpCreditNotes := make(CreditNotes, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpCreditNotes)
+	endpoint, err := c.Api.Get(endpoint, &tmpCreditNotes)
 
 	if err != nil {
 		return nil, err
@@ -118,22 +112,18 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, creditNote := range creditNotes {
-		creditNote.Connection = c.Connection
-	}
-
 	return creditNotes, nil
 }
 
-func (c *CreditNote) ListAttachments() (Files, error) {
-	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
+func (c *CreditNoteClient) ListAttachments() (Files, error) {
+	endpoint := CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/attachments"
 
 	files := make(Files, 0)
 
 NEXT:
 	tempFiles := make(Files, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tempFiles)
+	endpoint, err := c.Api.Get(endpoint, &tempFiles)
 
 	if err != nil {
 		return nil, err
@@ -145,17 +135,13 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, creditNote := range files {
-		creditNote.Connection = c.Connection
-	}
-
 	return files, nil
 }
 
-func (c *CreditNote) SendEmail(emailReq *invdendpoint.SendEmailRequest) error {
-	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
+func (c *CreditNoteClient) SendEmail(emailReq *SendEmailRequest) error {
+	endpoint := CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	err := c.create(endpoint, emailReq, nil)
+	err := c.Api.Create(endpoint, emailReq, nil)
 	if err != nil {
 		return err
 	}
@@ -163,11 +149,11 @@ func (c *CreditNote) SendEmail(emailReq *invdendpoint.SendEmailRequest) error {
 	return nil
 }
 
-func (c *CreditNote) SendText(req *invdendpoint.SendTextMessageRequest) (invdendpoint.TextMessages, error) {
-	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
-	resp := new(invdendpoint.TextMessages)
+func (c *CreditNoteClient) SendText(req *SendTextMessageRequest) (TextMessages, error) {
+	endpoint := CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
+	resp := new(TextMessages)
 
-	err := c.create(endpoint, req, resp)
+	err := c.Api.Create(endpoint, req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -175,11 +161,11 @@ func (c *CreditNote) SendText(req *invdendpoint.SendTextMessageRequest) (invdend
 	return *resp, nil
 }
 
-func (c *CreditNote) SendLetter() (*invdendpoint.Letter, error) {
-	endpoint := invdendpoint.CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
-	resp := new(invdendpoint.Letter)
+func (c *CreditNoteClient) SendLetter() (*Letter, error) {
+	endpoint := CreditNoteEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
+	resp := new(Letter)
 
-	err := c.create(endpoint, nil, resp)
+	err := c.Api.Create(endpoint, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -187,8 +173,8 @@ func (c *CreditNote) SendLetter() (*invdendpoint.Letter, error) {
 	return resp, nil
 }
 
-func (c *CreditNote) String() string {
-	header := fmt.Sprintf("<CreditNote id=%d at %p>", c.Id, c)
+func (c *CreditNoteClient) String() string {
+	header := fmt.Sprintf("<CreditNoteClient id=%d at %p>", c.Id, c)
 
 	return header + " " + "JSON: " + c.CreditNote.String()
 }

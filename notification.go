@@ -1,58 +1,39 @@
-package invdapi
+package invoiced
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"strconv"
 )
 
-type Notification struct {
-	*Connection
-	*invdendpoint.Notification
+type NotificationClient struct {
+	*Client
+	*NotificationClient
 }
 
-type Notifications []*Notification
-
-func (c *Connection) NewNotification() *Notification {
-	notification := new(invdendpoint.Notification)
-	return &Notification{c, notification}
+func (c *Client) NewNotification() *NotificationClient {
+	notification := new(NotificationClient)
+	return &NotificationClient{c, notification}
 }
 
-func (c *Notification) Create(notificationRequest *invdendpoint.NotificationRequest) (*Notification, error) {
-	endpoint := invdendpoint.NotificationEndpoint
+func (c *NotificationClient) Create(notificationRequest *NotificationRequest) (*Notification, error) {
+	endpoint := NotificationEndpoint
 
 	notificationResp := new(Notification)
 
-	err := c.create(endpoint, notificationRequest, notificationResp)
+	err := c.Api.Create(endpoint, notificationRequest, notificationResp)
 
 	if err != nil {
 		return nil, err
 	}
-
-	notificationResp.Connection = c.Connection
 
 	return notificationResp, nil
 }
 
-func (c *Notification) Save(notificationRequest *invdendpoint.NotificationRequest, id int64) error {
-	endpoint := invdendpoint.NotificationEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *NotificationClient) Save(notificationRequest *NotificationRequest, id int64) error {
+	endpoint := NotificationEndpoint + "/" + strconv.FormatInt(id, 10)
 
 	notifResp := new(Notification)
 
-	err := c.update(endpoint, notificationRequest, notifResp)
-
-	if err != nil {
-		return err
-	}
-
-	notifResp.Connection = c.Connection
-
-	return nil
-}
-
-func (c *Notification) Delete(id int64) error {
-	endpoint := invdendpoint.NotificationEndpoint + "/" + strconv.FormatInt(id, 10)
-
-	err := c.delete(endpoint)
+	err := c.Api.Update(endpoint, notificationRequest, notifResp)
 
 	if err != nil {
 		return err
@@ -61,32 +42,42 @@ func (c *Notification) Delete(id int64) error {
 	return nil
 }
 
-func (c *Notification) Retrieve(id int64) (*Notification, error) {
-	endpoint := invdendpoint.NotificationEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *NotificationClient) Delete(id int64) error {
+	endpoint := NotificationEndpoint + "/" + strconv.FormatInt(id, 10)
+
+	err := c.Api.Delete(endpoint)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *NotificationClient) Retrieve(id int64) (*Notification, error) {
+	endpoint := NotificationEndpoint + "/" + strconv.FormatInt(id, 10)
 
 	notifResp := new(Notification)
 
-	_, err := c.retrieveDataFromAPI(endpoint, notifResp)
+	_, err := c.Api.Get(endpoint, notifResp)
 	if err != nil {
 		return nil, err
 	}
 
-	notifResp.Connection = c.Connection
-
 	return notifResp, nil
 }
 
-func (c *Notification) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Notifications, error) {
-	endpoint := invdendpoint.NotificationEndpoint
+func (c *NotificationClient) ListAll(filter *Filter, sort *Sort) (Notifications, error) {
+	endpoint := NotificationEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	notifications := make(Notifications, 0)
 
 NEXT:
 	tmpNotifications := make(Notifications, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpNotifications)
+	endpoint, err := c.Api.Get(endpoint, &tmpNotifications)
 
 	if err != nil {
 		return nil, err
@@ -96,10 +87,6 @@ NEXT:
 
 	if endpoint != "" {
 		goto NEXT
-	}
-
-	for _, notification := range notifications {
-		notification.Connection = c.Connection
 	}
 
 	return notifications, nil

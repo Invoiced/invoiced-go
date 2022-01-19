@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestCreditNote_Create(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.CreditNote)
+	mockResponse := new(CreditNote)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "nomenclature"
@@ -24,11 +23,11 @@ func TestCreditNote_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewCreditNote()
+	entity := client.NewCreditNote()
 
-	_, err = entity.Create(&invdendpoint.CreditNoteRequest{Name: String("nomenclature")})
+	_, err = entity.Create(&CreditNoteRequest{Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -37,7 +36,7 @@ func TestCreditNote_Create(t *testing.T) {
 func TestCreditNote_Save(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.CreditNote)
+	mockResponse := new(CreditNote)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -48,11 +47,11 @@ func TestCreditNote_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewCreditNote()
+	entityToUpdate := client.NewCreditNote()
 
-	err = entityToUpdate.Update(&invdendpoint.CreditNoteRequest{Name: String("new-name")})
+	err = entityToUpdate.Update(&CreditNoteRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -66,7 +65,7 @@ func TestCreditNote_Save(t *testing.T) {
 func TestCreditNote_Void(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.CreditNote)
+	mockResponse := new(CreditNote)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -78,9 +77,9 @@ func TestCreditNote_Void(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewCreditNote()
+	entityToUpdate := client.NewCreditNote()
 
 	entityToUpdate, err = entityToUpdate.Void()
 
@@ -106,9 +105,9 @@ func TestCreditNote_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewCreditNote()
+	entity := client.NewCreditNote()
 
 	entity.Id = mockResponseId
 
@@ -122,7 +121,7 @@ func TestCreditNote_Delete(t *testing.T) {
 func TestCreditNote_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.CreditNote)
+	mockResponse := new(CreditNote)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -134,8 +133,8 @@ func TestCreditNote_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewCreditNote()
+	client := NewMockApi(key, server)
+	entity := client.NewCreditNote()
 
 	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
@@ -150,9 +149,9 @@ func TestCreditNote_Retrieve(t *testing.T) {
 func TestCreditNote_CountErr(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.CreditNote
+	var mockListResponse [1]CreditNote
 
-	mockResponse := new(invdendpoint.CreditNote)
+	mockResponse := new(CreditNote)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -166,8 +165,8 @@ func TestCreditNote_CountErr(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewCreditNote()
+	client := NewMockApi(key, server)
+	entity := client.NewCreditNote()
 
 	result, err := entity.Count()
 
@@ -183,9 +182,9 @@ func TestCreditNote_CountErr(t *testing.T) {
 func TestCreditNote_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.CreditNote
+	var mockListResponse [1]CreditNote
 
-	mockResponse := new(invdendpoint.CreditNote)
+	mockResponse := new(CreditNote)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -199,11 +198,11 @@ func TestCreditNote_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewCreditNote()
+	client := NewMockApi(key, server)
+	entity := client.NewCreditNote()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
 	if err != nil {
@@ -218,9 +217,9 @@ func TestCreditNote_ListAll(t *testing.T) {
 func TestCreditNote_ListAttachments(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses invdendpoint.Files
+	var mockResponses Files
 	mockResponseId := int64(1523)
-	mockResponse := new(invdendpoint.File)
+	mockResponse := new(File)
 	mockResponse.Id = mockResponseId
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
@@ -234,9 +233,9 @@ func TestCreditNote_ListAttachments(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity, err := conn.NewCreditNote().ListAttachments()
+	entity, err := client.NewCreditNote().ListAttachments()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -255,9 +254,9 @@ func TestCreditNote_SendEmail(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewCreditNote()
+	subjectEntity := client.NewCreditNote()
 
 	err = subjectEntity.SendEmail(nil)
 	if err != nil {
@@ -269,9 +268,9 @@ func TestCreditNote_SendEmail(t *testing.T) {
 func TestCreditNote_SendText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1]invdendpoint.TextMessage
+	var mockTextResponse [1]TextMessage
 
-	mockResponse := new(invdendpoint.TextMessage)
+	mockResponse := new(TextMessage)
 	mockResponse.Id = "abcdef"
 	mockResponse.Message = "hello text"
 
@@ -285,9 +284,9 @@ func TestCreditNote_SendText(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewCreditNote()
+	subjectEntity := client.NewCreditNote()
 
 	sendResponse, err := subjectEntity.SendText(nil)
 	if err != nil {
@@ -302,7 +301,7 @@ func TestCreditNote_SendText(t *testing.T) {
 func TestCreditNote_SendLetter(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Letter)
+	mockResponse := new(Letter)
 	mockResponse.Id = "abcdef"
 	mockResponse.State = "queued"
 
@@ -314,9 +313,9 @@ func TestCreditNote_SendLetter(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewCreditNote()
+	subjectEntity := client.NewCreditNote()
 
 	sendResponse, err := subjectEntity.SendLetter()
 	if err != nil {

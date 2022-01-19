@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestTaxRate_Create(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.TaxRate)
+	mockResponse := new(TaxRate)
 	mockResponse.Id = "example"
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "nomenclature"
@@ -24,11 +23,11 @@ func TestTaxRate_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewTaxRate()
+	entity := client.NewTaxRate()
 
-	createdEntity, err := entity.Create(&invdendpoint.TaxRateRequest{Id: String("example"), Name: String("nomenclature")})
+	createdEntity, err := entity.Create(&TaxRateRequest{Id: String("example"), Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -41,7 +40,7 @@ func TestTaxRate_Create(t *testing.T) {
 func TestTaxRate_Save(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.TaxRate)
+	mockResponse := new(TaxRate)
 	mockResponse.Id = "example"
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -52,10 +51,10 @@ func TestTaxRate_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewTaxRate()
-	err = entityToUpdate.Update(&invdendpoint.TaxRateRequest{Name: String("new-name")})
+	entityToUpdate := client.NewTaxRate()
+	err = entityToUpdate.Update(&TaxRateRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -79,9 +78,9 @@ func TestTaxRate_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewTaxRate()
+	entity := client.NewTaxRate()
 
 	entity.Id = mockResponseId
 
@@ -95,7 +94,7 @@ func TestTaxRate_Delete(t *testing.T) {
 func TestTaxRate_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.TaxRate)
+	mockResponse := new(TaxRate)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
 
@@ -107,8 +106,8 @@ func TestTaxRate_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewTaxRate()
+	client := NewMockApi(key, server)
+	entity := client.NewTaxRate()
 
 	retrievedPayment, err := entity.Retrieve("example")
 	if err != nil {
@@ -123,9 +122,9 @@ func TestTaxRate_Retrieve(t *testing.T) {
 func TestTaxRate_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.TaxRate
+	var mockListResponse [1]TaxRate
 
-	mockResponse := new(invdendpoint.TaxRate)
+	mockResponse := new(TaxRate)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
 
@@ -139,11 +138,11 @@ func TestTaxRate_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewTaxRate()
+	client := NewMockApi(key, server)
+	entity := client.NewTaxRate()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
 	if err != nil {

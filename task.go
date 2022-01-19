@@ -1,45 +1,41 @@
-package invdapi
+package invoiced
 
 import (
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type Task struct {
-	*Connection
-	*invdendpoint.Task
+type TaskClient struct {
+	*Client
+	*Task
 }
 
-type Tasks []*Task
+type Tasks []*TaskClient
 
-func (c *Connection) NewTask() *Task {
-	task := new(invdendpoint.Task)
-	return &Task{c, task}
+func (c *Client) NewTask() *TaskClient {
+	task := new(Task)
+	return &TaskClient{c, task}
 }
 
-func (c *Task) Create(request *invdendpoint.TaskRequest) (*Task, error) {
-	endpoint := invdendpoint.TaskEndpoint
-	resp := new(Task)
+func (c *TaskClient) Create(request *TaskRequest) (*TaskClient, error) {
+	endpoint := TaskEndpoint
+	resp := new(TaskClient)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Task) Retrieve(id int64) (*Task, error) {
-	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *TaskClient) Retrieve(id int64) (*TaskClient, error) {
+	endpoint := TaskEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	taskEndpoint := new(invdendpoint.Task)
+	taskEndpoint := new(Task)
 
-	task := &Task{c.Connection, taskEndpoint}
+	task := &TaskClient{c.Client, taskEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endpoint, task)
+	_, err := c.Api.Get(endpoint, task)
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +43,11 @@ func (c *Task) Retrieve(id int64) (*Task, error) {
 	return task, nil
 }
 
-func (c *Task) Update(request *invdendpoint.TaskRequest) error {
-	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	resp := new(Task)
+func (c *TaskClient) Update(request *TaskRequest) error {
+	endpoint := TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(TaskClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
@@ -61,10 +57,10 @@ func (c *Task) Update(request *invdendpoint.TaskRequest) error {
 	return nil
 }
 
-func (c *Task) Delete() error {
-	endpoint := invdendpoint.TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *TaskClient) Delete() error {
+	endpoint := TaskEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -72,17 +68,17 @@ func (c *Task) Delete() error {
 	return nil
 }
 
-func (c *Task) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Tasks, error) {
-	endpoint := invdendpoint.TaskEndpoint
+func (c *TaskClient) ListAll(filter *Filter, sort *Sort) (Tasks, error) {
+	endpoint := TaskEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	tasks := make(Tasks, 0)
 
 NEXT:
 	tmpTasks := make(Tasks, 0)
 
-	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpTasks)
+	endpointTmp, err := c.Api.Get(endpoint, &tmpTasks)
 
 	if err != nil {
 		return nil, err
@@ -92,10 +88,6 @@ NEXT:
 
 	if endpointTmp != "" {
 		goto NEXT
-	}
-
-	for _, task := range tasks {
-		task.Connection = c.Connection
 	}
 
 	return tasks, nil

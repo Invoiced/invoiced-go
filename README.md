@@ -25,18 +25,17 @@ First, you must instantiate a new client
 ```go
 import "github.com/Invoiced/invoiced-go"
 
-conn := invdapi.NewConnection("API_KEY", false)
+client := invoiced.New("API_KEY", false)
 ```
 
 Then, API calls can be made like this:
 
 ```go
-import "github.com/Invoiced/invoiced-go/invdendpoint"
+import "github.com/Invoiced/invoiced-go"
 import "fmt"
 
 //Get All The Invoices With Auto Pagination
-invoiceConn := conn.NewInvoice()
-invoices, err := invoiceConn.ListAll(nil, nil)
+invoices, err := client.Invoice.ListAll(nil, nil)
 
 if err != nil {
     panic(err)
@@ -48,35 +47,34 @@ for _, invoice := range invoices {
 }
 
 //Let's create a new customer
-customerConn := conn.NewCustomer()
-customerResponse, err := customerConn.Create(&invdendpoint.CustomerRequest{
-	Name: invdapi.String("Test Customer")
+customer, err := client.Customer.Create(&invoiced.CustomerRequest{
+	Name: invoiced.String("Test Customer")
 })
 
 if err != nil {
     panic(err)
 }
 
-fmt.Println("Customer Response => ", customerResponse.Customer)
+fmt.Println("Customer Response => ", customer)
 
 //Let's create a new invoice
-invoiceToCreate := &invdendpoint.InvoiceRequest{}
-invoiceToCreate.Customer = invdapi.Int64(customerResponse.Id)
+invoiceToCreate := &invoiced.InvoiceRequest{}
+invoiceToCreate.Customer = invoiced.Int64(customerResponse.Id)
 
 //Create a Line Item
-lineItem := &invdendpoint.LineItem{}
-lineItem.Description = invdapi.String("Retina MacBook Pro")
-lineItem.Quantity = invdapi.Float64(5)
-lineItem.UnitCost = invdapi.Float64(1999.22)
+lineItem := &invoiced.LineItem{}
+lineItem.Description = invoiced.String("Retina MacBook Pro")
+lineItem.Quantity = invoiced.Float64(5)
+lineItem.UnitCost = invoiced.Float64(1999.22)
 
-lineItems := append([]invdendpoint.LineItem{}, lineItem)
+lineItems := append([]invoiced.LineItem{}, lineItem)
 
 invoiceToCreate.Items = lineItems
 
 //Add a Payment Term
-invoiceToCreate.PaymentTerms = invdapi.String("NET15")
+invoiceToCreate.PaymentTerms = invoiced.String("NET15")
 
-invoiceResponse, err := invoiceConn.Create(invoiceToCreate)
+invoiceResponse, err := client.Invoice.Create(invoiceToCreate)
 
 if err != nil {
     panic(err)
@@ -88,7 +86,7 @@ fmt.Println("Invoice Response => ", invoiceResponse.Invoice)
 If you want to use the sandbox API instead then you must set the second argument on the client to `true` like this:
 
 ```go
-conn := invdapi.NewConnection("SANDBOX_API_KEY", false)
+client := invoiced.New("SANDBOX_API_KEY", false)
 ```
 
 ## Developing

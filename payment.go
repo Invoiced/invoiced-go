@@ -1,27 +1,23 @@
-package invdapi
+package invoiced
 
 import (
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type Payment struct {
-	*Connection
-	*invdendpoint.Payment
+type PaymentClient struct {
+	*Client
+	*PaymentClient
 }
 
-type Payments []*Payment
-
-func (c *Connection) NewPayment() *Payment {
-	p := new(invdendpoint.Payment)
-	return &Payment{c, p}
+func (c *Client) NewPayment() *PaymentClient {
+	p := new(PaymentClient)
+	return &PaymentClient{c, p}
 }
 
-func (c *Payment) Count() (int64, error) {
-	endpoint := invdendpoint.PaymentEndpoint
+func (c *PaymentClient) Count() (int64, error) {
+	endpoint := PaymentEndpoint
 
-	count, err := c.count(endpoint)
+	count, err := c.Api.Count(endpoint)
 
 	if err != nil {
 		return -1, err
@@ -30,25 +26,23 @@ func (c *Payment) Count() (int64, error) {
 	return count, nil
 }
 
-func (c *Payment) Create(request *invdendpoint.PaymentRequest) (*Payment, error) {
-	endpoint := invdendpoint.PaymentEndpoint
+func (c *PaymentClient) Create(request *PaymentRequest) (*Payment, error) {
+	endpoint := PaymentEndpoint
 	resp := c.NewPayment()
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Payment) Retrieve(id int64) (*Payment, error) {
-	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(id, 10)
-	payment := &Payment{c.Connection, new(invdendpoint.Payment)}
+func (c *PaymentClient) Retrieve(id int64) (*Payment, error) {
+	endpoint := PaymentEndpoint + "/" + strconv.FormatInt(id, 10)
+	payment := &Payment{c.Client, new(Payment)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, payment)
+	_, err := c.Api.Get(endpoint, payment)
 	if err != nil {
 		return nil, err
 	}
@@ -56,24 +50,24 @@ func (c *Payment) Retrieve(id int64) (*Payment, error) {
 	return payment, nil
 }
 
-func (c *Payment) Update(request *invdendpoint.PaymentRequest) error {
-	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *PaymentClient) Update(request *PaymentRequest) error {
+	endpoint := PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 	resp := c.NewPayment()
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
 
-	c.Payment = resp.Payment
+	c.PaymentClient = resp.PaymentClient
 
 	return nil
 }
 
-func (c *Payment) Delete() error {
-	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *PaymentClient) Delete() error {
+	endpoint := PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 
 	if err != nil {
 		return err
@@ -82,17 +76,17 @@ func (c *Payment) Delete() error {
 	return nil
 }
 
-func (c *Payment) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Payments, error) {
-	endpoint := invdendpoint.PaymentEndpoint
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+func (c *PaymentClient) ListAll(filter *Filter, sort *Sort) (Payments, error) {
+	endpoint := PaymentEndpoint
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
-	payments := make(invdendpoint.Payments, 0)
+	payments := make(Payments, 0)
 	paymentsToReturn := make(Payments, 0)
 
 NEXT:
-	tmpPayments := make(invdendpoint.Payments, 0)
+	tmpPayments := make(Payments, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpPayments)
+	endpoint, err := c.Api.Get(endpoint, &tmpPayments)
 
 	if err != nil {
 		return nil, err
@@ -105,32 +99,32 @@ NEXT:
 	}
 
 	for _, payment := range payments {
-		inv := c.Connection.NewPayment()
+		inv := c.Client.NewPayment()
 		invData := payment
-		inv.Payment = &invData
+		inv.PaymentClient = &invData
 		paymentsToReturn = append(paymentsToReturn, inv)
 	}
 
 	return paymentsToReturn, nil
 }
 
-func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Payments, string, error) {
-	endpoint := invdendpoint.PaymentEndpoint
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+func (c *PaymentClient) List(filter *Filter, sort *Sort) (Payments, string, error) {
+	endpoint := PaymentEndpoint
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
-	payments := make(invdendpoint.Payments, 0)
+	payments := make(Payments, 0)
 	paymentsToReturn := make(Payments, 0)
 
-	nextEndpoint, err := c.retrieveDataFromAPI(endpoint, &payments)
+	nextEndpoint, err := c.Api.Get(endpoint, &payments)
 
 	if err != nil {
 		return nil, "", err
 	}
 
 	for _, payment := range payments {
-		inv := c.Connection.NewPayment()
+		inv := c.Client.NewPayment()
 		invData := payment
-		inv.Payment = &invData
+		inv.PaymentClient = &invData
 		paymentsToReturn = append(paymentsToReturn, inv)
 
 	}
@@ -138,10 +132,10 @@ func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Pa
 	return paymentsToReturn, nextEndpoint, nil
 }
 
-func (c *Payment) SendReceipt(request *invdendpoint.SendEmailRequest) error {
-	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
+func (c *PaymentClient) SendReceipt(request *SendEmailRequest) error {
+	endpoint := PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	err := c.create(endpoint, request, nil)
+	err := c.Api.Create(endpoint, request, nil)
 	if err != nil {
 		return err
 	}

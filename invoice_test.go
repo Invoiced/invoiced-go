@@ -1,4 +1,4 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
@@ -14,7 +13,7 @@ func TestInvoiceCreate(t *testing.T) {
 	key := "test api key"
 
 	mockInvoiceResponseID := int64(1523)
-	mockInvoiceResponse := new(invdendpoint.Invoice)
+	mockInvoiceResponse := new(Invoice)
 	mockInvoiceResponse.Id = mockInvoiceResponseID
 
 	nowUnix := time.Now().UnixNano()
@@ -27,11 +26,11 @@ func TestInvoiceCreate(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	invoice := conn.NewInvoice()
+	invoice := client.NewInvoice()
 
-	_, err = invoice.Create(&invdendpoint.InvoiceRequest{Name: String("Test invoice Original " + s)})
+	_, err = invoice.Create(&InvoiceRequest{Name: String("Test invoice Original " + s)})
 	if err != nil {
 		t.Fatal("Error Creating invoice", err)
 	}
@@ -51,11 +50,11 @@ func TestInvoiceCreateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	invoice := conn.NewInvoice()
+	invoice := client.NewInvoice()
 
-	_, err = invoice.Create(&invdendpoint.InvoiceRequest{Closed: Bool(false)})
+	_, err = invoice.Create(&InvoiceRequest{Closed: Bool(false)})
 
 	if err == nil {
 		t.Fatal("Api Should Have Errored Out")
@@ -71,7 +70,7 @@ func TestInvoiceUpdate(t *testing.T) {
 
 	mockInvoiceResponseID := int64(1523)
 	mockUpdatedTime := time.Now().UnixNano()
-	mockInvoiceResponse := new(invdendpoint.Invoice)
+	mockInvoiceResponse := new(Invoice)
 	mockInvoiceResponse.Id = mockInvoiceResponseID
 	mockInvoiceResponse.CreatedAt = mockUpdatedTime
 	mockInvoiceResponse.Name = "MOCK invoice"
@@ -85,12 +84,12 @@ func TestInvoiceUpdate(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	invoiceToUpdate := conn.NewInvoice()
+	client := NewMockApi(key, server)
+	invoiceToUpdate := client.NewInvoice()
 
-	err = invoiceToUpdate.Update(&invdendpoint.InvoiceRequest{Name: String("Test")})
+	err = invoiceToUpdate.Update(&InvoiceRequest{Name: String("Test")})
 	if err != nil {
-		t.Fatal("Error Updating Invoice", err)
+		t.Fatal("Error Updating InvoiceClient", err)
 	}
 }
 
@@ -108,10 +107,10 @@ func TestInvoiceUpdateError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	invoiceToUpdate := conn.NewInvoice()
+	client := NewMockApi(key, server)
+	invoiceToUpdate := client.NewInvoice()
 
-	err = invoiceToUpdate.Update(&invdendpoint.InvoiceRequest{Closed: Bool(false)})
+	err = invoiceToUpdate.Update(&InvoiceRequest{Closed: Bool(false)})
 	if err == nil {
 		t.Fatal("Error Updating invoice", err)
 	}
@@ -134,16 +133,16 @@ func TestInvoiceDelete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	invoice := conn.NewInvoice()
+	invoice := client.NewInvoice()
 
 	invoice.Id = mockinvoiceID
 
 	err = invoice.Delete()
 
 	if err != nil {
-		t.Fatal("Error Occured Deleting Invoice")
+		t.Fatal("Error Occured Deleting InvoiceClient")
 	}
 }
 
@@ -161,14 +160,14 @@ func TestInvoiceDeleteError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	invoice := conn.NewInvoice()
+	invoice := client.NewInvoice()
 
 	err = invoice.Delete()
 
 	if err == nil {
-		t.Fatal("Error Occured Deleting Invoice")
+		t.Fatal("Error Occured Deleting InvoiceClient")
 	}
 
 	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
@@ -179,10 +178,10 @@ func TestInvoiceDeleteError(t *testing.T) {
 func TestInvoiceListAllByNumber(t *testing.T) {
 	key := "test api key"
 
-	var mockInvoicesResponse invdendpoint.Invoices
+	var mockInvoicesResponse Invoices
 	mockInvoiceResponseID := int64(1523)
 	mockInvoiceNumber := "INV-3421"
-	mockInvoiceResponse := new(invdendpoint.Invoice)
+	mockInvoiceResponse := new(Invoice)
 	mockInvoiceResponse.Id = mockInvoiceResponseID
 	mockInvoiceResponse.Number = mockInvoiceNumber
 	mockInvoiceResponse.PaymentTerms = "NET15"
@@ -197,9 +196,9 @@ func TestInvoiceListAllByNumber(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	invoice := conn.NewInvoice()
+	invoice := client.NewInvoice()
 
 	_, err = invoice.ListInvoiceByNumber(mockInvoiceNumber)
 	if err != nil {
@@ -210,10 +209,10 @@ func TestInvoiceListAllByNumber(t *testing.T) {
 func TestInvoiceList(t *testing.T) {
 	key := "test api key"
 
-	var mockInvoicesResponse invdendpoint.Invoices
+	var mockInvoicesResponse Invoices
 	mockInvoiceResponseID := int64(1523)
 	mockInvoiceNumber := "INV-3421"
-	mockInvoiceResponse := new(invdendpoint.Invoice)
+	mockInvoiceResponse := new(Invoice)
 	mockInvoiceResponse.Id = mockInvoiceResponseID
 	mockInvoiceResponse.Number = mockInvoiceNumber
 	mockInvoiceResponse.PaymentTerms = "NET15"
@@ -229,9 +228,9 @@ func TestInvoiceList(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	invoice := conn.NewInvoice()
+	invoice := client.NewInvoice()
 
 	_, nextEndpoint, err := invoice.List(nil, nil)
 	if err != nil {
@@ -259,9 +258,9 @@ func TestInvoiceListError(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	invoice := conn.NewInvoice()
+	invoice := client.NewInvoice()
 
 	_, err = invoice.ListInvoiceByNumber(mockInvoiceNumber)
 
@@ -277,9 +276,9 @@ func TestInvoiceListError(t *testing.T) {
 func TestInvoice_Count_Error(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Invoice
+	var mockListResponse [1]Invoice
 
-	mockResponse := new(invdendpoint.Invoice)
+	mockResponse := new(Invoice)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -293,8 +292,8 @@ func TestInvoice_Count_Error(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewInvoice()
+	client := NewMockApi(key, server)
+	entity := client.NewInvoice()
 
 	result, err := entity.Count()
 
@@ -310,7 +309,7 @@ func TestInvoice_Count_Error(t *testing.T) {
 func TestInvoice_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Invoice)
+	mockResponse := new(Invoice)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -322,8 +321,8 @@ func TestInvoice_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewInvoice()
+	client := NewMockApi(key, server)
+	entity := client.NewInvoice()
 
 	_, err = entity.Retrieve(int64(1234))
 	if err != nil {
@@ -334,7 +333,7 @@ func TestInvoice_Retrieve(t *testing.T) {
 func TestInvoice_Void(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Invoice)
+	mockResponse := new(Invoice)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -346,9 +345,9 @@ func TestInvoice_Void(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewInvoice()
+	entityToUpdate := client.NewInvoice()
 
 	_, err = entityToUpdate.Void()
 
@@ -366,9 +365,9 @@ func TestInvoice_SendEmail(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewInvoice()
+	subjectEntity := client.NewInvoice()
 
 	err = subjectEntity.SendEmail(nil)
 	if err != nil {
@@ -380,9 +379,9 @@ func TestInvoice_SendEmail(t *testing.T) {
 func TestInvoice_SendText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1]invdendpoint.TextMessage
+	var mockTextResponse [1]TextMessage
 
-	mockResponse := new(invdendpoint.TextMessage)
+	mockResponse := new(TextMessage)
 	mockResponse.Id = "abcdef"
 	mockResponse.Message = "hello text"
 
@@ -396,9 +395,9 @@ func TestInvoice_SendText(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewInvoice()
+	subjectEntity := client.NewInvoice()
 
 	sendResponse, err := subjectEntity.SendText(nil)
 	if err != nil {
@@ -413,7 +412,7 @@ func TestInvoice_SendText(t *testing.T) {
 func TestInvoice_SendLetter(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Letter)
+	mockResponse := new(Letter)
 	mockResponse.Id = "abcdef"
 	mockResponse.State = "queued"
 
@@ -425,9 +424,9 @@ func TestInvoice_SendLetter(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewInvoice()
+	subjectEntity := client.NewInvoice()
 
 	sendResponse, err := subjectEntity.SendLetter()
 	if err != nil {
@@ -442,7 +441,7 @@ func TestInvoice_SendLetter(t *testing.T) {
 func TestInvoice_Pay(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Invoice)
+	mockResponse := new(Invoice)
 	mockResponse.Id = int64(1234)
 	mockResponse.Balance = float64(0)
 
@@ -454,9 +453,9 @@ func TestInvoice_Pay(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewInvoice()
+	subjectEntity := client.NewInvoice()
 
 	err = subjectEntity.Pay()
 
@@ -472,9 +471,9 @@ func TestInvoice_Pay(t *testing.T) {
 func TestInvoice_ListAttachments(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses invdendpoint.Files
+	var mockResponses Files
 	mockResponseId := int64(1523)
-	mockResponse := new(invdendpoint.File)
+	mockResponse := new(File)
 	mockResponse.Id = mockResponseId
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
@@ -488,9 +487,9 @@ func TestInvoice_ListAttachments(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewInvoice()
+	entity := client.NewInvoice()
 	entity.Id = 2
 	attachments, err := entity.ListAttachments()
 	if err != nil {
@@ -505,9 +504,9 @@ func TestInvoice_ListAttachments(t *testing.T) {
 func TestInvoice_RetrieveNotes(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses invdendpoint.Notes
+	var mockResponses Notes
 	mockResponseId := int64(1523)
-	mockResponse := new(invdendpoint.Note)
+	mockResponse := new(Note)
 	mockResponse.Id = mockResponseId
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
@@ -521,9 +520,9 @@ func TestInvoice_RetrieveNotes(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewInvoice()
+	entity := client.NewInvoice()
 	entity.Id = 2
 	notes, err := entity.RetrieveNotes()
 	if err != nil {
@@ -538,7 +537,7 @@ func TestInvoice_RetrieveNotes(t *testing.T) {
 func TestInvoice_CreatePaymentPlan(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.PaymentPlan)
+	mockResponse := new(PaymentPlan)
 	mockResponse.Id = int64(1234)
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
@@ -547,9 +546,9 @@ func TestInvoice_CreatePaymentPlan(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity, err := conn.NewInvoice().CreatePaymentPlan(&invdendpoint.PaymentPlanRequest{})
+	subjectEntity, err := client.NewInvoice().CreatePaymentPlan(&PaymentPlanRequest{})
 	if err != nil {
 		t.Fatal("Error:", err)
 	}
@@ -562,7 +561,7 @@ func TestInvoice_CreatePaymentPlan(t *testing.T) {
 func TestInvoice_RetrievePaymentPlan(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.PaymentPlan)
+	mockResponse := new(PaymentPlan)
 	mockResponse.Id = int64(1234)
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
@@ -571,9 +570,9 @@ func TestInvoice_RetrievePaymentPlan(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	defaultEntity := conn.NewInvoice()
+	defaultEntity := client.NewInvoice()
 	subjectEntity, err := defaultEntity.RetrievePaymentPlan()
 	if err != nil {
 		t.Fatal("Error:", err)
@@ -594,9 +593,9 @@ func TestInvoice_CancelPaymentPlan(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	err = conn.NewInvoice().CancelPaymentPlan()
+	err = client.NewInvoice().CancelPaymentPlan()
 
 	if err != nil {
 		t.Fatal("Error occurred during deletion")

@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestEstimate_Create(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Estimate)
+	mockResponse := new(Estimate)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "nomenclature"
@@ -24,11 +23,11 @@ func TestEstimate_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewEstimate()
+	entity := client.NewEstimate()
 
-	createdEntity, err := entity.Create(&invdendpoint.EstimateRequest{Name: String("nomenclature")})
+	createdEntity, err := entity.Create(&EstimateRequest{Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -41,7 +40,7 @@ func TestEstimate_Create(t *testing.T) {
 func TestEstimate_Save(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Estimate)
+	mockResponse := new(Estimate)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -52,11 +51,11 @@ func TestEstimate_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewEstimate()
+	entityToUpdate := client.NewEstimate()
 
-	err = entityToUpdate.Update(&invdendpoint.EstimateRequest{Name: String("new-name")})
+	err = entityToUpdate.Update(&EstimateRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -80,9 +79,9 @@ func TestEstimate_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewEstimate()
+	entity := client.NewEstimate()
 
 	entity.Id = mockResponseId
 
@@ -96,7 +95,7 @@ func TestEstimate_Delete(t *testing.T) {
 func TestEstimate_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Estimate)
+	mockResponse := new(Estimate)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -108,8 +107,8 @@ func TestEstimate_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewEstimate()
+	client := NewMockApi(key, server)
+	entity := client.NewEstimate()
 
 	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
@@ -124,9 +123,9 @@ func TestEstimate_Retrieve(t *testing.T) {
 func TestEstimate_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Estimate
+	var mockListResponse [1]Estimate
 
-	mockResponse := new(invdendpoint.Estimate)
+	mockResponse := new(Estimate)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -140,11 +139,11 @@ func TestEstimate_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewEstimate()
+	client := NewMockApi(key, server)
+	entity := client.NewEstimate()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
 	if err != nil {
@@ -159,7 +158,7 @@ func TestEstimate_ListAll(t *testing.T) {
 func TestEstimate_Void(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Estimate)
+	mockResponse := new(Estimate)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -171,9 +170,9 @@ func TestEstimate_Void(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewEstimate()
+	entityToUpdate := client.NewEstimate()
 
 	entityToUpdate, err = entityToUpdate.Void()
 
@@ -189,9 +188,9 @@ func TestEstimate_Void(t *testing.T) {
 func TestEstimate_Count_Error(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Estimate
+	var mockListResponse [1]Estimate
 
-	mockResponse := new(invdendpoint.Estimate)
+	mockResponse := new(Estimate)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -205,8 +204,8 @@ func TestEstimate_Count_Error(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewEstimate()
+	client := NewMockApi(key, server)
+	entity := client.NewEstimate()
 
 	result, err := entity.Count()
 
@@ -228,9 +227,9 @@ func TestEstimate_SendEmail(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewEstimate()
+	subjectEntity := client.NewEstimate()
 
 	err = subjectEntity.SendEmail(nil)
 	if err != nil {
@@ -242,9 +241,9 @@ func TestEstimate_SendEmail(t *testing.T) {
 func TestEstimate_SendText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1]invdendpoint.TextMessage
+	var mockTextResponse [1]TextMessage
 
-	mockResponse := new(invdendpoint.TextMessage)
+	mockResponse := new(TextMessage)
 	mockResponse.Id = "abcdef"
 	mockResponse.Message = "hello text"
 
@@ -258,9 +257,9 @@ func TestEstimate_SendText(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewEstimate()
+	subjectEntity := client.NewEstimate()
 
 	sendResponse, err := subjectEntity.SendText(nil)
 	if err != nil {
@@ -275,7 +274,7 @@ func TestEstimate_SendText(t *testing.T) {
 func TestEstimate_SendLetter(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Letter)
+	mockResponse := new(Letter)
 	mockResponse.Id = "abcdef"
 	mockResponse.State = "queued"
 
@@ -287,9 +286,9 @@ func TestEstimate_SendLetter(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	subjectEntity := conn.NewEstimate()
+	subjectEntity := client.NewEstimate()
 
 	sendResponse, err := subjectEntity.SendLetter()
 	if err != nil {
@@ -304,10 +303,10 @@ func TestEstimate_SendLetter(t *testing.T) {
 func TestEstimate_List(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses invdendpoint.Estimates
+	var mockResponses Estimates
 	mockResponseId := int64(1523)
 	mockNumber := "INV-3421"
-	mockResponse := new(invdendpoint.Estimate)
+	mockResponse := new(Estimate)
 	mockResponse.Id = mockResponseId
 	mockResponse.Number = mockNumber
 	mockResponse.PaymentTerms = "NET15"
@@ -323,9 +322,9 @@ func TestEstimate_List(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewEstimate()
+	entity := client.NewEstimate()
 
 	entityResp, nextEndpoint, err := entity.List(nil, nil)
 	if err != nil {
@@ -344,7 +343,7 @@ func TestEstimate_List(t *testing.T) {
 func TestEstimate_GenerateInvoice(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Invoice)
+	mockResponse := new(Invoice)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "entity example"
 
@@ -354,9 +353,9 @@ func TestEstimate_GenerateInvoice(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	defaultEntity := conn.NewEstimate()
+	defaultEntity := client.NewEstimate()
 	subjectEntity, err := defaultEntity.GenerateInvoice()
 	if err != nil {
 		t.Fatal("Error:", err)
@@ -370,9 +369,9 @@ func TestEstimate_GenerateInvoice(t *testing.T) {
 func TestEstimate_ListAttachments(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses invdendpoint.Files
+	var mockResponses Files
 	mockResponseId := int64(1523)
-	mockResponse := new(invdendpoint.File)
+	mockResponse := new(File)
 	mockResponse.Id = mockResponseId
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
@@ -386,9 +385,9 @@ func TestEstimate_ListAttachments(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity, err := conn.NewEstimate().ListAttachments()
+	entity, err := client.NewEstimate().ListAttachments()
 	if err != nil {
 		t.Fatal(err)
 	}

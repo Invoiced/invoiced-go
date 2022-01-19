@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestCoupon_Create(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Coupon)
+	mockResponse := new(Coupon)
 	mockResponse.Id = "example"
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "nomenclature"
@@ -24,11 +23,11 @@ func TestCoupon_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewCoupon()
+	entity := client.NewCoupon()
 
-	createdEntity, err := entity.Create(&invdendpoint.CouponRequest{
+	createdEntity, err := entity.Create(&CouponRequest{
 		Id:   String("example"),
 		Name: String("nomenclature"),
 	})
@@ -44,7 +43,7 @@ func TestCoupon_Create(t *testing.T) {
 func TestCoupon_Save(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Coupon)
+	mockResponse := new(Coupon)
 	mockResponse.Id = "example"
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -55,11 +54,11 @@ func TestCoupon_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewCoupon()
+	entityToUpdate := client.NewCoupon()
 
-	err = entityToUpdate.Update(&invdendpoint.CouponRequest{Name: String("new-name")})
+	err = entityToUpdate.Update(&CouponRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -83,9 +82,9 @@ func TestCoupon_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewCoupon()
+	entity := client.NewCoupon()
 
 	entity.Id = mockResponseId
 
@@ -99,7 +98,7 @@ func TestCoupon_Delete(t *testing.T) {
 func TestCoupon_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Coupon)
+	mockResponse := new(Coupon)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
 
@@ -111,8 +110,8 @@ func TestCoupon_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewCoupon()
+	client := NewMockApi(key, server)
+	entity := client.NewCoupon()
 
 	retrievedPayment, err := entity.Retrieve("example")
 	if err != nil {
@@ -127,9 +126,9 @@ func TestCoupon_Retrieve(t *testing.T) {
 func TestCoupon_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Coupon
+	var mockListResponse [1]Coupon
 
-	mockResponse := new(invdendpoint.Coupon)
+	mockResponse := new(Coupon)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
 
@@ -143,11 +142,11 @@ func TestCoupon_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewCoupon()
+	client := NewMockApi(key, server)
+	entity := client.NewCoupon()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
 	if err != nil {

@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestNote_Create(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Note)
+	mockResponse := new(Note)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Notes = "nomenclature"
@@ -24,11 +23,11 @@ func TestNote_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewNote()
+	entity := client.NewNote()
 
-	createdEntity, err := entity.Create(&invdendpoint.NoteRequest{Customer: Int64(1234)})
+	createdEntity, err := entity.Create(&NoteRequest{Customer: Int64(1234)})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -41,7 +40,7 @@ func TestNote_Create(t *testing.T) {
 func TestNote_Save(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Note)
+	mockResponse := new(Note)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Notes = "new-notes"
@@ -52,11 +51,11 @@ func TestNote_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewNote()
+	entityToUpdate := client.NewNote()
 
-	err = entityToUpdate.Update(&invdendpoint.NoteRequest{Notes: String("new-notes")})
+	err = entityToUpdate.Update(&NoteRequest{Notes: String("new-notes")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -80,9 +79,9 @@ func TestNote_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewNote()
+	entity := client.NewNote()
 
 	entity.Id = mockResponseId
 
@@ -96,9 +95,9 @@ func TestNote_Delete(t *testing.T) {
 func TestNote_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Note
+	var mockListResponse [1]Note
 
-	mockResponse := new(invdendpoint.Note)
+	mockResponse := new(Note)
 	mockResponse.Id = int64(1234)
 	mockResponse.Notes = "nomenclature"
 
@@ -112,11 +111,11 @@ func TestNote_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewNote()
+	client := NewMockApi(key, server)
+	entity := client.NewNote()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
 	if err != nil {

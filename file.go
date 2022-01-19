@@ -1,57 +1,51 @@
-package invdapi
+package invoiced
 
 import (
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type File struct {
-	*Connection
-	*invdendpoint.File
+type FileClient struct {
+	*Client
+	*File
 }
 
-type Files []*File
+type Files []*FileClient
 
-func (c *Connection) NewFile() *File {
-	file := new(invdendpoint.File)
-	return &File{c, file}
+func (c *Client) NewFile() *FileClient {
+	file := new(File)
+	return &FileClient{c, file}
 }
 
-func (c *File) Create(request *invdendpoint.FileRequest) (*File, error) {
-	endpoint := invdendpoint.FileEndpoint
-	resp := new(File)
+func (c *FileClient) Create(request *FileRequest) (*FileClient, error) {
+	endpoint := FileEndpoint
+	resp := new(FileClient)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *File) CreateAndUploadFile(filePath, fileType string) (*File, error) {
-	endpoint := invdendpoint.FileEndpoint
-	resp := new(File)
+func (c *FileClient) CreateAndUploadFile(filePath, fileType string) (*FileClient, error) {
+	endpoint := FileEndpoint
+	resp := new(FileClient)
 
-	err := c.upload(endpoint, filePath, "file", nil, fileType, resp)
+	err := c.Api.Upload(endpoint, filePath, "file", nil, fileType, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *File) Retrieve(id int64) (*File, error) {
-	endpoint := invdendpoint.FileEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *FileClient) Retrieve(id int64) (*FileClient, error) {
+	endpoint := FileEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	file := &File{c.Connection, new(invdendpoint.File)}
+	file := &FileClient{c.Client, new(File)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, file)
+	_, err := c.Api.Get(endpoint, file)
 	if err != nil {
 		return nil, err
 	}
@@ -59,10 +53,10 @@ func (c *File) Retrieve(id int64) (*File, error) {
 	return file, nil
 }
 
-func (c *File) Delete() error {
-	endpoint := invdendpoint.FileEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *FileClient) Delete() error {
+	endpoint := FileEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}

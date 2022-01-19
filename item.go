@@ -1,41 +1,35 @@
-package invdapi
+package invoiced
 
-import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-)
-
-type Item struct {
-	*Connection
-	*invdendpoint.Item
+type ItemClient struct {
+	*Client
+	*Item
 }
 
-type Items []*Item
+type Items []*ItemClient
 
-func (c *Connection) NewItem() *Item {
-	item := new(invdendpoint.Item)
-	return &Item{c, item}
+func (c *Client) NewItem() *ItemClient {
+	item := new(Item)
+	return &ItemClient{c, item}
 }
 
-func (c *Item) Create(request *invdendpoint.ItemRequest) (*Item, error) {
-	endpoint := invdendpoint.ItemEndpoint
-	resp := new(Item)
+func (c *ItemClient) Create(request *ItemRequest) (*ItemClient, error) {
+	endpoint := ItemEndpoint
+	resp := new(ItemClient)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Item) Retrieve(id string) (*Item, error) {
-	endpoint := invdendpoint.ItemEndpoint + "/" + id
+func (c *ItemClient) Retrieve(id string) (*ItemClient, error) {
+	endpoint := ItemEndpoint + "/" + id
 
-	item := &Item{c.Connection, new(invdendpoint.Item)}
+	item := &ItemClient{c.Client, new(Item)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, item)
+	_, err := c.Api.Get(endpoint, item)
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +37,11 @@ func (c *Item) Retrieve(id string) (*Item, error) {
 	return item, nil
 }
 
-func (c *Item) Update(request *invdendpoint.ItemRequest) error {
-	endpoint := invdendpoint.ItemEndpoint + "/" + c.Id
-	resp := new(Item)
+func (c *ItemClient) Update(request *ItemRequest) error {
+	endpoint := ItemEndpoint + "/" + c.Id
+	resp := new(ItemClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
@@ -57,10 +51,10 @@ func (c *Item) Update(request *invdendpoint.ItemRequest) error {
 	return nil
 }
 
-func (c *Item) Delete() error {
-	endpoint := invdendpoint.ItemEndpoint + "/" + c.Id
+func (c *ItemClient) Delete() error {
+	endpoint := ItemEndpoint + "/" + c.Id
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -68,17 +62,17 @@ func (c *Item) Delete() error {
 	return nil
 }
 
-func (c *Item) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Items, error) {
-	endpoint := invdendpoint.ItemEndpoint
+func (c *ItemClient) ListAll(filter *Filter, sort *Sort) (Items, error) {
+	endpoint := ItemEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	items := make(Items, 0)
 
 NEXT:
 	tmpItems := make(Items, 0)
 
-	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpItems)
+	endpointTmp, err := c.Api.Get(endpoint, &tmpItems)
 
 	if err != nil {
 		return nil, err
@@ -88,10 +82,6 @@ NEXT:
 
 	if endpointTmp != "" {
 		goto NEXT
-	}
-
-	for _, item := range items {
-		item.Connection = c.Connection
 	}
 
 	return items, nil

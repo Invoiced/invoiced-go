@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"testing"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestEvent_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Event
+	var mockListResponse [1]Event
 
-	mockResponse := new(invdendpoint.Event)
+	mockResponse := new(Event)
 	mockResponse.Id = int64(123)
 
 	mockListResponse[0] = *mockResponse
@@ -23,11 +22,11 @@ func TestEvent_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewEvent()
+	client := NewMockApi(key, server)
+	entity := client.NewEvent()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	_, err = entity.ListAll(filter, sorter)
 	if err != nil {
@@ -38,9 +37,9 @@ func TestEvent_ListAll(t *testing.T) {
 func TestEvent_List(t *testing.T) {
 	key := "test api key"
 
-	var mockResponses invdendpoint.Events
+	var mockResponses Events
 	mockResponseId := int64(1523)
-	mockResponse := new(invdendpoint.Event)
+	mockResponse := new(Event)
 	mockResponse.Id = mockResponseId
 
 	mockResponses = append(mockResponses, *mockResponse)
@@ -52,9 +51,9 @@ func TestEvent_List(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewEvent()
+	entity := client.NewEvent()
 
 	_, nextEndpoint, err := entity.List(nil, nil)
 	if err != nil {
@@ -69,7 +68,7 @@ func TestEvent_List(t *testing.T) {
 func TestEvent_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Event)
+	mockResponse := new(Event)
 	mockResponse.Id = int64(1234)
 
 	server, err := invdmockserver.New(200, mockResponse, "json", true)
@@ -78,8 +77,8 @@ func TestEvent_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewEvent()
+	client := NewMockApi(key, server)
+	entity := client.NewEvent()
 
 	_, err = entity.Retrieve(int64(1234))
 	if err != nil {

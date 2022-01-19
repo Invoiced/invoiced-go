@@ -1,40 +1,34 @@
-package invdapi
+package invoiced
 
-import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-)
-
-type TaxRate struct {
-	*Connection
-	*invdendpoint.TaxRate
+type TaxRateClient struct {
+	*Client
+	*TaxRate
 }
 
-type TaxRates []*TaxRate
+type TaxRates []*TaxRateClient
 
-func (c *Connection) NewTaxRate() *TaxRate {
-	taxRate := new(invdendpoint.TaxRate)
-	return &TaxRate{c, taxRate}
+func (c *Client) NewTaxRate() *TaxRateClient {
+	taxRate := new(TaxRate)
+	return &TaxRateClient{c, taxRate}
 }
 
-func (c *TaxRate) Create(request *invdendpoint.TaxRateRequest) (*TaxRate, error) {
-	endpoint := invdendpoint.RateEndpoint
-	resp := new(TaxRate)
+func (c *TaxRateClient) Create(request *TaxRateRequest) (*TaxRateClient, error) {
+	endpoint := RateEndpoint
+	resp := new(TaxRateClient)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *TaxRate) Retrieve(id string) (*TaxRate, error) {
-	endpoint := invdendpoint.RateEndpoint + "/" + id
-	taxRate := &TaxRate{c.Connection, new(invdendpoint.TaxRate)}
+func (c *TaxRateClient) Retrieve(id string) (*TaxRateClient, error) {
+	endpoint := RateEndpoint + "/" + id
+	taxRate := &TaxRateClient{c.Client, new(TaxRate)}
 
-	_, err := c.retrieveDataFromAPI(endpoint, taxRate)
+	_, err := c.Api.Get(endpoint, taxRate)
 	if err != nil {
 		return nil, err
 	}
@@ -42,11 +36,11 @@ func (c *TaxRate) Retrieve(id string) (*TaxRate, error) {
 	return taxRate, nil
 }
 
-func (c *TaxRate) Update(request *invdendpoint.TaxRateRequest) error {
-	endpoint := invdendpoint.RateEndpoint + "/" + c.Id
-	resp := new(TaxRate)
+func (c *TaxRateClient) Update(request *TaxRateRequest) error {
+	endpoint := RateEndpoint + "/" + c.Id
+	resp := new(TaxRateClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
@@ -56,10 +50,10 @@ func (c *TaxRate) Update(request *invdendpoint.TaxRateRequest) error {
 	return nil
 }
 
-func (c *TaxRate) Delete() error {
-	endpoint := invdendpoint.RateEndpoint + "/" + c.Id
+func (c *TaxRateClient) Delete() error {
+	endpoint := RateEndpoint + "/" + c.Id
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -67,17 +61,17 @@ func (c *TaxRate) Delete() error {
 	return nil
 }
 
-func (c *TaxRate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (TaxRates, error) {
-	endpoint := invdendpoint.RateEndpoint
+func (c *TaxRateClient) ListAll(filter *Filter, sort *Sort) (TaxRates, error) {
+	endpoint := RateEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	taxRates := make(TaxRates, 0)
 
 NEXT:
 	tmpTaxRates := make(TaxRates, 0)
 
-	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpTaxRates)
+	endpointTmp, err := c.Api.Get(endpoint, &tmpTaxRates)
 
 	if err != nil {
 		return nil, err
@@ -87,10 +81,6 @@ NEXT:
 
 	if endpointTmp != "" {
 		goto NEXT
-	}
-
-	for _, taxRate := range taxRates {
-		taxRate.Connection = c.Connection
 	}
 
 	return taxRates, nil

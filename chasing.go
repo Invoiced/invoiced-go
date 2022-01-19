@@ -1,44 +1,36 @@
-package invdapi
+package invoiced
 
-import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-)
-
-type ChasingCadence struct {
-	*Connection
-	*invdendpoint.ChasingCadence
-}
+const ChasingCadenceEndpoint = "/chasing_cadences"
 
 type ChasingCadences []*ChasingCadence
 
-func (c *Connection) NewChasingCadence() *ChasingCadence {
-	chasing := new(invdendpoint.ChasingCadence)
-	return &ChasingCadence{c, chasing}
+type ChasingCadence struct {
+	AssignmentConditions *string       `json:"assignment_conditions"`
+	AssignmentMode       string        `json:"assignment_mode"`
+	CreatedAt            int64         `json:"created_at"`
+	UpdatedAt            int64         `json:"updated_at"`
+	Frequency            string        `json:"frequency"`
+	Id                   int64         `json:"id"`
+	LastRun              *int64        `json:"last_run"`
+	MinBalance           *float64      `json:"min_balance"`
+	Name                 string        `json:"name"`
+	NextRun              *int64        `json:"nextrun"`
+	NumCustomers         int64         `json:"num_customers"`
+	Object               string        `json:"object"`
+	Paused               bool          `json:"paused"`
+	RunDate              int64         `json:"run_date"`
+	Steps                []ChasingStep `json:"steps"`
+	TimeOfDay            int64         `json:"time_of_day"`
 }
 
-func (c *ChasingCadence) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (ChasingCadences, error) {
-	endpoint := addFilterAndSort(invdendpoint.ChasingCadenceEndpoint, filter, sort)
-
-	chasing := make(ChasingCadences, 0)
-
-NEXT:
-	tmpChasing := make(ChasingCadences, 0)
-
-	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpChasing)
-
-	if err != nil {
-		return nil, err
-	}
-
-	chasing = append(chasing, tmpChasing...)
-
-	if endpointTmp != "" {
-		goto NEXT
-	}
-
-	for _, chase := range chasing {
-		chase.Connection = c.Connection
-	}
-
-	return chasing, nil
+type ChasingStep struct {
+	Action          string  `json:"action"`
+	AssignedUserId  *int64  `json:"assigned_user_id"`
+	CreatedAt       int64   `json:"created_at"`
+	EmailTemplateId *string `json:"email_template_id"`
+	Id              int64   `json:"id"`
+	Name            string  `json:"name"`
+	Schedule        string  `json:"schedule"`
+	SmsTemplateId   *string `json:"sms_template_id"`
+	UpdatedAt       int64   `json:"updated_at"`
 }

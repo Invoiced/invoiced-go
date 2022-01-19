@@ -1,42 +1,36 @@
-package invdapi
+package invoiced
 
-import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
-)
-
-type Coupon struct {
-	*Connection
-	*invdendpoint.Coupon
+type CouponClient struct {
+	*Client
+	*Coupon
 }
 
-type Coupons []*Coupon
+type Coupons []*CouponClient
 
-func (c *Connection) NewCoupon() *Coupon {
-	coupon := new(invdendpoint.Coupon)
-	return &Coupon{c, coupon}
+func (c *Client) NewCoupon() *CouponClient {
+	coupon := new(Coupon)
+	return &CouponClient{c, coupon}
 }
 
-func (c *Coupon) Create(request *invdendpoint.CouponRequest) (*Coupon, error) {
-	resp := new(Coupon)
+func (c *CouponClient) Create(request *CouponRequest) (*CouponClient, error) {
+	resp := new(CouponClient)
 
-	err := c.create(invdendpoint.CouponEndpoint, request, resp)
+	err := c.Api.Create(CouponEndpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Coupon) Retrieve(id string) (*Coupon, error) {
-	endpoint := invdendpoint.CouponEndpoint + "/" + id
+func (c *CouponClient) Retrieve(id string) (*CouponClient, error) {
+	endpoint := CouponEndpoint + "/" + id
 
-	couponEndpoint := new(invdendpoint.Coupon)
+	couponEndpoint := new(Coupon)
 
-	coupon := &Coupon{c.Connection, couponEndpoint}
+	coupon := &CouponClient{c.Client, couponEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endpoint, coupon)
+	_, err := c.Api.Get(endpoint, coupon)
 	if err != nil {
 		return nil, err
 	}
@@ -44,11 +38,11 @@ func (c *Coupon) Retrieve(id string) (*Coupon, error) {
 	return coupon, nil
 }
 
-func (c *Coupon) Update(request *invdendpoint.CouponRequest) error {
-	endpoint := invdendpoint.CouponEndpoint + "/" + c.Id
-	resp := new(Coupon)
+func (c *CouponClient) Update(request *CouponRequest) error {
+	endpoint := CouponEndpoint + "/" + c.Id
+	resp := new(CouponClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
@@ -58,10 +52,10 @@ func (c *Coupon) Update(request *invdendpoint.CouponRequest) error {
 	return nil
 }
 
-func (c *Coupon) Delete() error {
-	endpoint := invdendpoint.CouponEndpoint + "/" + c.Id
+func (c *CouponClient) Delete() error {
+	endpoint := CouponEndpoint + "/" + c.Id
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -69,15 +63,15 @@ func (c *Coupon) Delete() error {
 	return nil
 }
 
-func (c *Coupon) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Coupons, error) {
-	endpoint := addFilterAndSort(invdendpoint.CouponEndpoint, filter, sort)
+func (c *CouponClient) ListAll(filter *Filter, sort *Sort) (Coupons, error) {
+	endpoint := AddFilterAndSort(CouponEndpoint, filter, sort)
 
 	coupons := make(Coupons, 0)
 
 NEXT:
 	tmpCoupons := make(Coupons, 0)
 
-	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpCoupons)
+	endpointTmp, err := c.Api.Get(endpoint, &tmpCoupons)
 
 	if err != nil {
 		return nil, err
@@ -87,10 +81,6 @@ NEXT:
 
 	if endpointTmp != "" {
 		goto NEXT
-	}
-
-	for _, coupon := range coupons {
-		coupon.Connection = c.Connection
 	}
 
 	return coupons, nil

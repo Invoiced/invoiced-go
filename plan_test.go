@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestPlan_Create(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Plan)
+	mockResponse := new(PlanClient)
 	mockResponse.Id = "example"
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "nomenclature"
@@ -24,11 +23,11 @@ func TestPlan_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewPlan()
+	entity := client.NewPlan()
 
-	createdEntity, err := entity.Create(&invdendpoint.PlanRequest{Id: String("example"), Name: String("nomenclature")})
+	createdEntity, err := entity.Create(&PlanRequest{Id: String("example"), Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -41,7 +40,7 @@ func TestPlan_Create(t *testing.T) {
 func TestPlan_Save(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Plan)
+	mockResponse := new(PlanClient)
 	mockResponse.Id = "example"
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -52,10 +51,10 @@ func TestPlan_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewPlan()
-	err = entityToUpdate.Update(&invdendpoint.PlanRequest{Name: String("new-name")})
+	entityToUpdate := client.NewPlan()
+	err = entityToUpdate.Update(&PlanRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -79,9 +78,9 @@ func TestPlan_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewPlan()
+	entity := client.NewPlan()
 
 	entity.Id = mockResponseId
 
@@ -95,7 +94,7 @@ func TestPlan_Delete(t *testing.T) {
 func TestPlan_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Plan)
+	mockResponse := new(PlanClient)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
 
@@ -107,8 +106,8 @@ func TestPlan_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewPlan()
+	client := NewMockApi(key, server)
+	entity := client.NewPlan()
 
 	retrievedPayment, err := entity.Retrieve("example")
 	if err != nil {
@@ -123,9 +122,9 @@ func TestPlan_Retrieve(t *testing.T) {
 func TestPlan_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Plan
+	var mockListResponse [1]PlanClient
 
-	mockResponse := new(invdendpoint.Plan)
+	mockResponse := new(PlanClient)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
 
@@ -139,11 +138,11 @@ func TestPlan_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewPlan()
+	client := NewMockApi(key, server)
+	entity := client.NewPlan()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
 	if err != nil {

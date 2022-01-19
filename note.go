@@ -1,42 +1,38 @@
-package invdapi
+package invoiced
 
 import (
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type Note struct {
-	*Connection
-	*invdendpoint.Note
+type NoteClient struct {
+	*Client
+	*Note
 }
 
-type Notes []*Note
+type Notes []*NoteClient
 
-func (c *Connection) NewNote() *Note {
-	note := new(invdendpoint.Note)
-	return &Note{c, note}
+func (c *Client) NewNote() *NoteClient {
+	note := new(Note)
+	return &NoteClient{c, note}
 }
 
-func (c *Note) Create(request *invdendpoint.NoteRequest) (*Note, error) {
-	endpoint := invdendpoint.NoteEndpoint
-	resp := new(Note)
+func (c *NoteClient) Create(request *NoteRequest) (*NoteClient, error) {
+	endpoint := NoteEndpoint
+	resp := new(NoteClient)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Note) Update(request *invdendpoint.NoteRequest) error {
-	endpoint := invdendpoint.NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	resp := new(Note)
+func (c *NoteClient) Update(request *NoteRequest) error {
+	endpoint := NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(NoteClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
@@ -46,10 +42,10 @@ func (c *Note) Update(request *invdendpoint.NoteRequest) error {
 	return nil
 }
 
-func (c *Note) Delete() error {
-	endpoint := invdendpoint.NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+func (c *NoteClient) Delete() error {
+	endpoint := NoteEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	err := c.delete(endpoint)
+	err := c.Api.Delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -57,17 +53,17 @@ func (c *Note) Delete() error {
 	return nil
 }
 
-func (c *Note) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Notes, error) {
-	endpoint := invdendpoint.NoteEndpoint
+func (c *NoteClient) ListAll(filter *Filter, sort *Sort) (Notes, error) {
+	endpoint := NoteEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	notes := make(Notes, 0)
 
 NEXT:
 	tmpNotes := make(Notes, 0)
 
-	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpNotes)
+	endpointTmp, err := c.Api.Get(endpoint, &tmpNotes)
 
 	if err != nil {
 		return nil, err
@@ -77,10 +73,6 @@ NEXT:
 
 	if endpointTmp != "" {
 		goto NEXT
-	}
-
-	for _, note := range notes {
-		note.Connection = c.Connection
 	}
 
 	return notes, nil

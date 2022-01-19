@@ -1,49 +1,44 @@
-package invdapi
+package invoiced
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"strconv"
 )
 
-type Role struct {
-	*Connection
-	*invdendpoint.Role
+type RoleClient struct {
+	*Client
+	*Role
 }
 
-type Roles []*Role
-
-func (c *Connection) NewRole() *Role {
-	role := new(invdendpoint.Role)
-	return &Role{c, role}
-}
-
-func (c *Role) Retrieve(id int64) (*Role, error) {
-	endpoint := invdendpoint.RoleEndpoint + "/" + strconv.FormatInt(id, 10)
-
+func (c *Client) NewRole() *RoleClient {
 	role := new(Role)
+	return &RoleClient{c, role}
+}
 
-	_, err := c.retrieveDataFromAPI(endpoint, role)
+func (c *RoleClient) Retrieve(id int64) (*RoleClient, error) {
+	endpoint := RoleEndpoint + "/" + strconv.FormatInt(id, 10)
+
+	role := new(RoleClient)
+
+	_, err := c.Api.Get(endpoint, role)
 
 	if err != nil {
 		return nil, err
 	}
 
-	role.Connection = c.Connection
-
 	return role, nil
 }
 
-func (c *Role) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) ([]*Role, error) {
-	endpoint := invdendpoint.RoleEndpoint
+func (c *RoleClient) ListAll(filter *Filter, sort *Sort) ([]*RoleClient, error) {
+	endpoint := RoleEndpoint
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	roles := make(Roles, 0)
 
 NEXT:
 	tmpRoles := make(Roles, 0)
 
-	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpRoles)
+	endpointTmp, err := c.Api.Get(endpoint, &tmpRoles)
 
 	if err != nil {
 		return nil, err
@@ -53,10 +48,6 @@ NEXT:
 
 	if endpointTmp != "" {
 		goto NEXT
-	}
-
-	for _, role := range roles {
-		role.Connection = c.Connection
 	}
 
 	return roles, nil

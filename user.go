@@ -1,75 +1,56 @@
-package invdapi
+package invoiced
 
 import (
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"net/url"
 	"strconv"
-	"strings"
 )
 
-type Member struct {
-	*Connection
-	*invdendpoint.Member
+type MemberClient struct {
+	*Client
+	*Member
 }
 
-type Users []*Member
+type Users []*MemberClient
 
-func (c *Connection) NewMember() *Member {
-	user := new(invdendpoint.Member)
-	return &Member{c, user}
+func (c *Client) NewMember() *MemberClient {
+	user := new(Member)
+	return &MemberClient{c, user}
 }
 
-func (c *Member) Create(request *invdendpoint.MemberRequest) (*Member, error) {
-	endpoint := invdendpoint.UsersEndpoint
+func (c *MemberClient) Create(request *MemberRequest) (*MemberClient, error) {
+	endpoint := UsersEndpoint
 
-	resp := new(Member)
+	resp := new(MemberClient)
 
-	err := c.create(endpoint, request, resp)
+	err := c.Api.Create(endpoint, request, resp)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Member) Retrieve(id int64) (*Member, error) {
-	endpoint := invdendpoint.UsersEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *MemberClient) Retrieve(id int64) (*MemberClient, error) {
+	endpoint := UsersEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	resp := new(Member)
+	resp := new(MemberClient)
 
-	_, err := c.retrieveDataFromAPI(endpoint, resp)
+	_, err := c.Api.Get(endpoint, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Member) Update(request *invdendpoint.MemberRequest, id int64) error {
-	endpoint := invdendpoint.UsersEndpoint + "/" + strconv.FormatInt(id, 10)
+func (c *MemberClient) Update(request *MemberRequest, id int64) error {
+	endpoint := UsersEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	resp := new(Member)
+	resp := new(MemberClient)
 
-	err := c.update(endpoint, request, resp)
+	err := c.Api.Update(endpoint, request, resp)
 
-	if err != nil {
-		return err
-	}
-
-	resp.Connection = c.Connection
-
-	return nil
-}
-
-func (c *Member) Delete(id int64) error {
-	endpoint := invdendpoint.UsersEndpoint + "/" + strconv.FormatInt(id, 10)
-
-	err := c.delete(endpoint)
 	if err != nil {
 		return err
 	}
@@ -77,17 +58,28 @@ func (c *Member) Delete(id int64) error {
 	return nil
 }
 
-func (c *Member) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Users, error) {
-	endpoint := invdendpoint.UsersEndpoint
+func (c *MemberClient) Delete(id int64) error {
+	endpoint := UsersEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+	err := c.Api.Delete(endpoint)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *MemberClient) ListAll(filter *Filter, sort *Sort) (Users, error) {
+	endpoint := UsersEndpoint
+
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	users := make(Users, 0)
 
 NEXT:
 	tmpUsers := make(Users, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpUsers)
+	endpoint, err := c.Api.Get(endpoint, &tmpUsers)
 
 	if err != nil {
 		return nil, err
@@ -99,35 +91,29 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, user := range users {
-		user.Connection = c.Connection
-	}
-
 	return users, nil
 }
 
-func (c *Member) SetUserEmailFrequency(id int64, request *invdendpoint.UserEmailUpdateRequest) (*Member, error) {
-	endpoint := invdendpoint.UsersEndpoint + "/" + strconv.FormatInt(id, 10) + "/frequency"
+func (c *MemberClient) SetUserEmailFrequency(id int64, request *UserEmailUpdateRequest) (*MemberClient, error) {
+	endpoint := UsersEndpoint + "/" + strconv.FormatInt(id, 10) + "/frequency"
 
-	resp := new(Member)
-	err := c.update(endpoint, request, resp)
+	resp := new(MemberClient)
+	err := c.Api.Update(endpoint, request, resp)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp.Connection = c.Connection
-
 	return resp, nil
 }
 
-func (c *Member) SendInvite(id int64) error {
-	endpoint := invdendpoint.UsersEndpoint + "/" + strconv.FormatInt(id, 10) + "/invites"
+func (c *MemberClient) SendInvite(id int64) error {
+	endpoint := UsersEndpoint + "/" + strconv.FormatInt(id, 10) + "/invites"
 
-	request := new(invdendpoint.UserInvite)
+	request := new(UserInvite)
 	request.Id = id
 
-	err := c.create(endpoint, request, nil)
+	err := c.Api.Create(endpoint, request, nil)
 
 	if err != nil {
 		return err
@@ -136,10 +122,10 @@ func (c *Member) SendInvite(id int64) error {
 	return nil
 }
 
-func (c *Member) GenerateRegistrationURL() string {
+func (c *MemberClient) GenerateRegistrationURL() string {
 	regURl := ""
 
-	if strings.Contains(c.Connection.baseUrl, "sandbox") {
+	if c.Client.Api.Sandbox {
 		regURl = "https://app.sandbox.invoiced.com/register"
 	} else {
 		regURl = "https://app.invoiced.com/register"

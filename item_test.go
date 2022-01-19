@@ -1,11 +1,10 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
@@ -13,7 +12,7 @@ func TestItem_Create(t *testing.T) {
 	key := "test api key"
 
 	mockResponseId := "example"
-	mockResponse := new(invdendpoint.Item)
+	mockResponse := new(Item)
 	mockResponse.Id = mockResponseId
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "delivery"
@@ -26,11 +25,11 @@ func TestItem_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	requestEntity := conn.NewItem()
+	requestEntity := client.NewItem()
 
-	requestEntity, err = requestEntity.Create(&invdendpoint.ItemRequest{Name: String("delivery"), Type: String("service")})
+	requestEntity, err = requestEntity.Create(&ItemRequest{Name: String("delivery"), Type: String("service")})
 
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
@@ -45,7 +44,7 @@ func TestItem_Save(t *testing.T) {
 	key := "test api key"
 
 	mockResponseId := "delivery"
-	mockResponse := new(invdendpoint.Item)
+	mockResponse := new(Item)
 	mockResponse.Id = mockResponseId
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -57,11 +56,11 @@ func TestItem_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewItem()
+	entityToUpdate := client.NewItem()
 
-	err = entityToUpdate.Update(&invdendpoint.ItemRequest{Name: String("new-name")})
+	err = entityToUpdate.Update(&ItemRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -85,16 +84,16 @@ func TestItem_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewItem()
+	entity := client.NewItem()
 
 	entity.Id = mockResponseId
 
 	err = entity.Delete()
 
 	if err != nil {
-		t.Fatal("Error Occured Deleting Payment")
+		t.Fatal("Error Occured Deleting PaymentClient")
 	}
 }
 
@@ -102,7 +101,7 @@ func TestItem_Retrieve(t *testing.T) {
 	key := "test api key"
 
 	mockResponseId := "example"
-	mockResponse := new(invdendpoint.Item)
+	mockResponse := new(Item)
 	mockResponse.Id = mockResponseId
 	mockResponse.Name = "delivery"
 	mockResponse.Type = "service"
@@ -115,8 +114,8 @@ func TestItem_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewItem()
+	client := NewMockApi(key, server)
+	entity := client.NewItem()
 
 	retrievedPayment, err := entity.Retrieve(mockResponseId)
 	if err != nil {
@@ -131,9 +130,9 @@ func TestItem_Retrieve(t *testing.T) {
 func TestItem_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Item
+	var mockListResponse [1]Item
 
-	mockResponse := new(invdendpoint.Item)
+	mockResponse := new(Item)
 	mockResponse.Id = "example"
 	mockResponse.Name = "nomenclature"
 
@@ -147,11 +146,11 @@ func TestItem_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewItem()
+	client := NewMockApi(key, server)
+	entity := client.NewItem()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
 	if err != nil {

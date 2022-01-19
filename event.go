@@ -1,26 +1,24 @@
-package invdapi
+package invoiced
 
 import (
 	"strconv"
-
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
-type Event struct {
-	*Connection
-	*invdendpoint.Event
+type EventClient struct {
+	*Client
+	*Event
 }
 
-type Events []*Event
+type Events []*EventClient
 
-func (c *Connection) NewEvent() *Event {
-	event := new(invdendpoint.Event)
-	return &Event{c, event}
+func (c *Client) NewEvent() *EventClient {
+	event := new(Event)
+	return &EventClient{c, event}
 }
 
-func (c *Event) ListAllByDatesAndUser(filter *invdendpoint.Filter, sort *invdendpoint.Sort, startDate int64, endDate int64, user string, objectType string, objectID int64) (Events, error) {
-	endpoint := invdendpoint.EventEndpoint
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+func (c *EventClient) ListAllByDatesAndUser(filter *Filter, sort *Sort, startDate int64, endDate int64, user string, objectType string, objectID int64) (Events, error) {
+	endpoint := EventEndpoint
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 	endpoint = addQueryParameter(endpoint, "start_date", strconv.FormatInt(startDate, 10))
 	endpoint = addQueryParameter(endpoint, "end_date", strconv.FormatInt(endDate, 10))
 	endpoint = addQueryParameter(endpoint, "from", user)
@@ -34,7 +32,7 @@ func (c *Event) ListAllByDatesAndUser(filter *invdendpoint.Filter, sort *invdend
 NEXT:
 	tmpEvents := make(Events, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpEvents)
+	endpoint, err := c.Api.Get(endpoint, &tmpEvents)
 
 	if err != nil {
 		return nil, err
@@ -46,23 +44,19 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, event := range events {
-		event.Connection = c.Connection
-	}
-
 	return events, nil
 }
 
-func (c *Event) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Events, error) {
-	endpoint := invdendpoint.EventEndpoint
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+func (c *EventClient) ListAll(filter *Filter, sort *Sort) (Events, error) {
+	endpoint := EventEndpoint
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	events := make(Events, 0)
 
 NEXT:
 	tmpEvents := make(Events, 0)
 
-	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpEvents)
+	endpoint, err := c.Api.Get(endpoint, &tmpEvents)
 
 	if err != nil {
 		return nil, err
@@ -74,40 +68,32 @@ NEXT:
 		goto NEXT
 	}
 
-	for _, event := range events {
-		event.Connection = c.Connection
-	}
-
 	return events, nil
 }
 
-func (c *Event) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Events, string, error) {
-	endpoint := invdendpoint.EventEndpoint
-	endpoint = addFilterAndSort(endpoint, filter, sort)
+func (c *EventClient) List(filter *Filter, sort *Sort) (Events, string, error) {
+	endpoint := EventEndpoint
+	endpoint = AddFilterAndSort(endpoint, filter, sort)
 
 	events := make(Events, 0)
 
-	nextEndpoint, err := c.retrieveDataFromAPI(endpoint, &events)
+	nextEndpoint, err := c.Api.Get(endpoint, &events)
 
 	if err != nil {
 		return nil, "", err
 	}
 
-	for _, event := range events {
-		event.Connection = c.Connection
-	}
-
 	return events, nextEndpoint, nil
 }
 
-func (c *Event) Retrieve(id int64) (*Event, error) {
-	endpoint := invdendpoint.EventEndpoint + "/" + strconv.FormatInt(id, 10) + "?include=user"
+func (c *EventClient) Retrieve(id int64) (*EventClient, error) {
+	endpoint := EventEndpoint + "/" + strconv.FormatInt(id, 10) + "?include=user"
 
-	eventEndpoint := new(invdendpoint.Event)
+	eventEndpoint := new(Event)
 
-	event := &Event{c.Connection, eventEndpoint}
+	event := &EventClient{c.Client, eventEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endpoint, event)
+	_, err := c.Api.Get(endpoint, event)
 	if err != nil {
 		return nil, err
 	}
@@ -115,14 +101,14 @@ func (c *Event) Retrieve(id int64) (*Event, error) {
 	return event, nil
 }
 
-func (c *Event) RetrieveWithUser(id int64) (*Event, error) {
-	endpoint := invdendpoint.EventEndpoint + "/" + strconv.FormatInt(id, 10) + "?include=user"
+func (c *EventClient) RetrieveWithUser(id int64) (*EventClient, error) {
+	endpoint := EventEndpoint + "/" + strconv.FormatInt(id, 10) + "?include=user"
 
-	eventEndpoint := new(invdendpoint.Event)
+	eventEndpoint := new(Event)
 
-	event := &Event{c.Connection, eventEndpoint}
+	event := &EventClient{c.Client, eventEndpoint}
 
-	_, err := c.retrieveDataFromAPI(endpoint, event)
+	_, err := c.Api.Get(endpoint, event)
 	if err != nil {
 		return nil, err
 	}

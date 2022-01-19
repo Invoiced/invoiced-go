@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestFile_Create(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.File)
+	mockResponse := new(File)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "nomenclature"
@@ -24,11 +23,11 @@ func TestFile_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewFile()
+	entity := client.NewFile()
 
-	createdEntity, err := entity.Create(&invdendpoint.FileRequest{Name: String("nomenclature")})
+	createdEntity, err := entity.Create(&FileRequest{Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -51,9 +50,9 @@ func TestFile_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewFile()
+	entity := client.NewFile()
 
 	entity.Id = mockResponseId
 
@@ -67,7 +66,7 @@ func TestFile_Delete(t *testing.T) {
 func TestFile_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.File)
+	mockResponse := new(File)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -79,8 +78,8 @@ func TestFile_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewFile()
+	client := NewMockApi(key, server)
+	entity := client.NewFile()
 
 	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {

@@ -1,18 +1,17 @@
-package invdapi
+package invoiced
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"github.com/Invoiced/invoiced-go/invdendpoint"
 	"github.com/Invoiced/invoiced-go/invdmockserver"
 )
 
 func TestTask_Create(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Task)
+	mockResponse := new(Task)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "nomenclature"
@@ -24,10 +23,10 @@ func TestTask_Create(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewTask()
-	createdEntity, err := entity.Create(&invdendpoint.TaskRequest{Name: String("nomenclature")})
+	entity := client.NewTask()
+	createdEntity, err := entity.Create(&TaskRequest{Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -40,7 +39,7 @@ func TestTask_Create(t *testing.T) {
 func TestTask_Save(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Task)
+	mockResponse := new(Task)
 	mockResponse.Id = int64(1234)
 	mockResponse.CreatedAt = time.Now().UnixNano()
 	mockResponse.Name = "new-name"
@@ -51,10 +50,10 @@ func TestTask_Save(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entityToUpdate := conn.NewTask()
-	err = entityToUpdate.Update(&invdendpoint.TaskRequest{Name: String("new-name")})
+	entityToUpdate := client.NewTask()
+	err = entityToUpdate.Update(&TaskRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -78,9 +77,9 @@ func TestTask_Delete(t *testing.T) {
 
 	defer server.Close()
 
-	conn := mockConnection(key, server)
+	client := NewMockApi(key, server)
 
-	entity := conn.NewTask()
+	entity := client.NewTask()
 
 	entity.Id = mockResponseId
 
@@ -94,7 +93,7 @@ func TestTask_Delete(t *testing.T) {
 func TestTask_Retrieve(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.Task)
+	mockResponse := new(Task)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -106,8 +105,8 @@ func TestTask_Retrieve(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewTask()
+	client := NewMockApi(key, server)
+	entity := client.NewTask()
 
 	retrievedPayment, err := entity.Retrieve(int64(1234))
 	if err != nil {
@@ -122,9 +121,9 @@ func TestTask_Retrieve(t *testing.T) {
 func TestTask_ListAll(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]invdendpoint.Task
+	var mockListResponse [1]Task
 
-	mockResponse := new(invdendpoint.Task)
+	mockResponse := new(Task)
 	mockResponse.Id = int64(1234)
 	mockResponse.Name = "nomenclature"
 
@@ -138,11 +137,11 @@ func TestTask_ListAll(t *testing.T) {
 	}
 	defer server.Close()
 
-	conn := mockConnection(key, server)
-	entity := conn.NewTask()
+	client := NewMockApi(key, server)
+	entity := client.NewTask()
 
-	filter := invdendpoint.NewFilter()
-	sorter := invdendpoint.NewSort()
+	filter := NewFilter()
+	sorter := NewSort()
 
 	result, err := entity.ListAll(filter, sorter)
 	if err != nil {
