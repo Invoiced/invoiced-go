@@ -7,39 +7,61 @@ import (
 
 const PaymentEndpoint = "/payments"
 
+type PaymentRequest struct {
+	Amount    *float64              `json:"amount,omitempty"`
+	AppliedTo []*PaymentItemRequest `json:"applied_to,omitempty"`
+	Currency  *string               `json:"currency,omitempty"`
+	Customer  *int64                `json:"-"`
+	Date      *int64                `json:"date,omitempty"`
+	Method    *string               `json:"method,omitempty"`
+	Notes     *string               `json:"notes,omitempty"`
+	Reference *string               `json:"reference,omitempty"`
+	Source    *string               `json:"source,omitempty"`
+	Voided    *bool                 `json:"voided,omitempty"`
+}
+
+type PaymentItemRequest struct {
+	Amount       *float64 `json:"amount,omitempty"`
+	CreditNote   *int64   `json:"credit_note,omitempty"`
+	DocumentType *int64   `json:"document_type,omitempty"`
+	Estimate     *int64   `json:"estimate,omitempty"`
+	Invoice      *int64   `json:"invoice,omitempty"`
+	Type         *string  `json:"type,omitempty"`
+}
+
 type Payments []Payment
 
 type Payment struct {
-	Id        int64         `json:"id,omitempty"`       // The payment’s unique ID
-	Object    string        `json:"object,omitempty"`   // Object type, payment
-	Customer               int64                  `json:"-"`
-	CustomerFull           *Customer              `json:"-"`
-	CustomerRaw             json.RawMessage        `json:"customer,omitempty"`
-	Date      int64         `json:"date,omitempty"`     // Payment date, defaults to current timestamp
-	Method    string        `json:"method,omitempty"`   // Payment instrument used to facilitate payment, defaults to other
-	Matched   bool          `json:"matched,omitempty"`
-	Voided    bool          `json:"voided,omitempty"`
-	Status    string        `json:"status,omitempty"`   // Payment status
-	Currency  string        `json:"currency,omitempty"` // 3-letter ISO code
-	Amount    float64       `json:"amount,omitempty"`   // Payment amount
-	Balance   float64       `json:"balance,omitempty"`
-	Reference string        `json:"reference,omitempty"`
-	Source    string        `json:"source,omitempty"`
-	Notes     string        `json:"notes,omitempty"` // Internal notes
-	Charge    *Charge       `json:"charge,omitempty"`
-	PdfUrl    string        `json:"pdf_url,omitempty"`    // URL to download the invoice as a PDF
-	CreatedAt int64         `json:"created_at,omitempty"`	//Timestamp when created
-	UpdatedAt int64         `json:"updated_at,omitempty"` // Timestamp when updated
-	AppliedTo []PaymentItem `json:"applied_to,omitempty"`
+	Amount       float64         `json:"amount"`
+	AppliedTo    []PaymentItem   `json:"applied_to"`
+	Balance      float64         `json:"balance"`
+	Charge       *Charge         `json:"charge"`
+	CreatedAt    int64           `json:"created_at"`
+	Currency     string          `json:"currency"`
+	Customer     int64           `json:"-"`
+	CustomerFull *Customer       `json:"-"`
+	CustomerRaw  json.RawMessage `json:"customer"`
+	Date         int64           `json:"date"`
+	Id           int64           `json:"id"`
+	Matched      bool            `json:"matched"`
+	Method       string          `json:"method"`
+	Notes        string          `json:"notes"`
+	Object       string          `json:"object"`
+	PdfUrl       string          `json:"pdf_url"`
+	Reference    string          `json:"reference"`
+	Source       string          `json:"source"`
+	Status       string          `json:"status"`
+	UpdatedAt    int64           `json:"updated_at"`
+	Voided       bool            `json:"voided"`
 }
 
 type PaymentItem struct {
-	Type         string  `json:"type,omitempty"`
-	Invoice      int64   `json:"invoice,omitempty"`
-	CreditNote   int64   `json:"credit_note,omitempty"`
-	Estimate     int64   `json:"estimate,omitempty"`
-	DocumentType int64   `json:"document_type,omitempty"`
-	Amount       float64 `json:"amount,omitempty"`
+	Amount       float64 `json:"amount"`
+	CreditNote   int64   `json:"credit_note"`
+	DocumentType int64   `json:"document_type"`
+	Estimate     int64   `json:"estimate"`
+	Invoice      int64   `json:"invoice"`
+	Type         string  `json:"type"`
 }
 
 func (i *Payment) UnmarshalJSON(data []byte) error {

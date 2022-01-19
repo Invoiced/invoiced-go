@@ -1,8 +1,6 @@
 package invdapi
 
 import (
-	"errors"
-
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
@@ -18,60 +16,17 @@ func (c *Connection) NewCoupon() *Coupon {
 	return &Coupon{c, coupon}
 }
 
-func (c *Coupon) Create(coupon *Coupon) (*Coupon, error) {
-	couponResp := new(Coupon)
+func (c *Coupon) Create(request *invdendpoint.CouponRequest) (*Coupon, error) {
+	resp := new(Coupon)
 
-	if coupon == nil {
-		return nil, errors.New("coupon is nil")
-	}
-
-	// safe prune file data for creation
-	invdCouponDataToCreate, err := SafeCouponForCreation(coupon.Coupon)
+	err := c.create(invdendpoint.CouponEndpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	apiErr := c.create(invdendpoint.CouponEndpoint, invdCouponDataToCreate, couponResp)
+	resp.Connection = c.Connection
 
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	couponResp.Connection = c.Connection
-
-	return couponResp, nil
-}
-
-func (c *Coupon) Save() error {
-	endpoint := invdendpoint.CouponEndpoint + "/" + c.Id
-
-	taxRateResp := new(Coupon)
-
-	invdTaxRatDataToUpdate, err := SafeCouponForUpdating(c.Coupon)
-	if err != nil {
-		return err
-	}
-
-	apiErr := c.update(endpoint, invdTaxRatDataToUpdate, taxRateResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.Coupon = taxRateResp.Coupon
-
-	return nil
-}
-
-func (c *Coupon) Delete() error {
-	endpoint := invdendpoint.CouponEndpoint + "/" + c.Id
-
-	err := c.delete(endpoint)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return resp, nil
 }
 
 func (c *Coupon) Retrieve(id string) (*Coupon, error) {
@@ -89,6 +44,31 @@ func (c *Coupon) Retrieve(id string) (*Coupon, error) {
 	return coupon, nil
 }
 
+func (c *Coupon) Update(request *invdendpoint.CouponRequest) error {
+	endpoint := invdendpoint.CouponEndpoint + "/" + c.Id
+	resp := new(Coupon)
+
+	err := c.update(endpoint, request, resp)
+	if err != nil {
+		return err
+	}
+
+	c.Coupon = resp.Coupon
+
+	return nil
+}
+
+func (c *Coupon) Delete() error {
+	endpoint := invdendpoint.CouponEndpoint + "/" + c.Id
+
+	err := c.delete(endpoint)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *Coupon) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Coupons, error) {
 	endpoint := addFilterAndSort(invdendpoint.CouponEndpoint, filter, sort)
 
@@ -97,10 +77,10 @@ func (c *Coupon) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (
 NEXT:
 	tmpCoupons := make(Coupons, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpCoupons)
+	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpCoupons)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	coupons = append(coupons, tmpCoupons...)
@@ -114,37 +94,4 @@ NEXT:
 	}
 
 	return coupons, nil
-}
-
-// SafeCouponForCreation prunes coupon data for just fields that can be used for creation of a coupon
-func SafeCouponForCreation(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, error) {
-	if coupon == nil {
-		return nil, errors.New("coupon is nil")
-	}
-
-	couponData := new(invdendpoint.Coupon)
-	couponData.Id = coupon.Id
-	couponData.Name = coupon.Name
-	couponData.Currency = coupon.Currency
-	couponData.Value = coupon.Value
-	couponData.IsPercent = coupon.IsPercent
-	couponData.Exclusive = coupon.Exclusive
-	couponData.ExpirationDate = coupon.ExpirationDate
-	couponData.MaxRedemptions = coupon.MaxRedemptions
-	couponData.Metadata = coupon.Metadata
-
-	return couponData, nil
-}
-
-// SafeTaxRateForUpdating prunes coupon data for just fields that can be used for updating of a plan
-func SafeCouponForUpdating(coupon *invdendpoint.Coupon) (*invdendpoint.Coupon, error) {
-	if coupon == nil {
-		return nil, errors.New("coupon is nil")
-	}
-
-	couponData := new(invdendpoint.Coupon)
-	couponData.Name = coupon.Name
-	couponData.Metadata = coupon.Metadata
-
-	return couponData, nil
 }

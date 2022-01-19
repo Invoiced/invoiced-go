@@ -28,12 +28,7 @@ func TestEstimate_Create(t *testing.T) {
 
 	entity := conn.NewEstimate()
 
-	requestEntity := entity.NewEstimate()
-
-	requestEntity.Id = int64(1234)
-	requestEntity.Name = "nomenclature"
-
-	createdEntity, err := entity.Create(requestEntity)
+	createdEntity, err := entity.Create(&invdendpoint.EstimateRequest{Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -61,9 +56,7 @@ func TestEstimate_Save(t *testing.T) {
 
 	entityToUpdate := conn.NewEstimate()
 
-	entityToUpdate.Name = "new-name"
-
-	err = entityToUpdate.Save()
+	err = entityToUpdate.Update(&invdendpoint.EstimateRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -229,7 +222,6 @@ func TestEstimate_Count_Error(t *testing.T) {
 func TestEstimate_SendEmail(t *testing.T) {
 	key := "test api key"
 
-
 	server, err := invdmockserver.New(200, nil, "json", true)
 	if err != nil {
 		t.Fatal(err)
@@ -250,9 +242,9 @@ func TestEstimate_SendEmail(t *testing.T) {
 func TestEstimate_SendText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1]invdendpoint.TextResponse
+	var mockTextResponse [1]invdendpoint.TextMessage
 
-	mockResponse := new(invdendpoint.TextResponse)
+	mockResponse := new(invdendpoint.TextMessage)
 	mockResponse.Id = "abcdef"
 	mockResponse.Message = "hello text"
 
@@ -283,7 +275,7 @@ func TestEstimate_SendText(t *testing.T) {
 func TestEstimate_SendLetter(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.LetterResponse)
+	mockResponse := new(invdendpoint.Letter)
 	mockResponse.Id = "abcdef"
 	mockResponse.State = "queued"
 

@@ -28,18 +28,9 @@ func TestCreditNote_Create(t *testing.T) {
 
 	entity := conn.NewCreditNote()
 
-	requestEntity := entity.NewCreditNote()
-
-	requestEntity.Id = int64(1234)
-	requestEntity.Name = "nomenclature"
-
-	createdEntity, err := entity.Create(requestEntity)
+	_, err = entity.Create(&invdendpoint.CreditNoteRequest{Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
-	}
-
-	if !reflect.DeepEqual(createdEntity.CreditNote, mockResponse) {
-		t.Fatal("entity was not created", createdEntity.CreditNote, mockResponse)
 	}
 }
 
@@ -61,9 +52,7 @@ func TestCreditNote_Save(t *testing.T) {
 
 	entityToUpdate := conn.NewCreditNote()
 
-	entityToUpdate.Name = "new-name"
-
-	err = entityToUpdate.Save()
+	err = entityToUpdate.Update(&invdendpoint.CreditNoteRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
@@ -260,7 +249,6 @@ func TestCreditNote_ListAttachments(t *testing.T) {
 func TestCreditNote_SendEmail(t *testing.T) {
 	key := "test api key"
 
-
 	server, err := invdmockserver.New(200, nil, "json", true)
 	if err != nil {
 		t.Fatal(err)
@@ -276,15 +264,14 @@ func TestCreditNote_SendEmail(t *testing.T) {
 		t.Fatal("Error with send", err)
 	}
 
-
 }
 
 func TestCreditNote_SendText(t *testing.T) {
 	key := "test api key"
 
-	var mockTextResponse [1]invdendpoint.TextResponse
+	var mockTextResponse [1]invdendpoint.TextMessage
 
-	mockResponse := new(invdendpoint.TextResponse)
+	mockResponse := new(invdendpoint.TextMessage)
 	mockResponse.Id = "abcdef"
 	mockResponse.Message = "hello text"
 
@@ -315,7 +302,7 @@ func TestCreditNote_SendText(t *testing.T) {
 func TestCreditNote_SendLetter(t *testing.T) {
 	key := "test api key"
 
-	mockResponse := new(invdendpoint.LetterResponse)
+	mockResponse := new(invdendpoint.Letter)
 	mockResponse.Id = "abcdef"
 	mockResponse.State = "queued"
 

@@ -1,7 +1,6 @@
 package invdapi
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 
@@ -20,106 +19,77 @@ func (c *Connection) NewInvoice() *Invoice {
 	return &Invoice{c, invoice}
 }
 
-func (c *Connection) NewPaymentPlanRequest() *invdendpoint.PaymentPlanRequest {
-	return &invdendpoint.PaymentPlanRequest{}
-}
-
 func (c *Invoice) Count() (int64, error) {
 	endpoint := invdendpoint.InvoiceEndpoint
 
-	count, apiErr := c.count(endpoint)
-
-	if apiErr != nil {
-		return -1, apiErr
+	count, err := c.count(endpoint)
+	if err != nil {
+		return -1, err
 	}
 
 	return count, nil
 }
 
-func (c *Invoice) Create(invoice *Invoice) (*Invoice, error) {
+func (c *Invoice) Create(request *invdendpoint.InvoiceRequest) (*Invoice, error) {
 	endpoint := invdendpoint.InvoiceEndpoint
-	invResp := c.NewInvoice()
+	resp := c.NewInvoice()
 
-	if invoice == nil {
-		return nil, errors.New("invoice cannot be nil")
-	}
-
-	// safe prune invoice data for creation
-	invdInvToCreate, err := SafeInvoiceForCreation(invoice.Invoice)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	apiErr := c.create(endpoint, invdInvToCreate, invResp)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	return invResp, nil
-}
-
-func (c *Invoice) Delete() error {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	apiErr := c.delete(endpoint)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	return nil
-}
-
-func (c *Invoice) Save() error {
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	invResp := new(invdendpoint.Invoice)
-
-	invDataToUpdate, err := SafeInvoiceForUpdate(c.Invoice)
-	if err != nil {
-		return err
-	}
-
-	apiErr := c.update(endpoint, invDataToUpdate, invResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.Invoice = invResp
-
-	return nil
+	return resp, nil
 }
 
 func (c *Invoice) Retrieve(id int64) (*Invoice, error) {
 	url := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndpoint := new(invdendpoint.Invoice)
+	invoice := &Invoice{c.Connection, new(invdendpoint.Invoice)}
 
-	invoice := &Invoice{c.Connection, custEndpoint}
-
-	_, apiErr := c.retrieveDataFromAPI(url, invoice)
-
-	if apiErr != nil {
-		return nil, apiErr
+	_, err := c.retrieveDataFromAPI(url, invoice)
+	if err != nil {
+		return nil, err
 	}
 
 	return invoice, nil
 }
 
-func (c *Invoice) Void() (*Invoice, error) {
-	invResp := c.NewInvoice()
+func (c *Invoice) Update(request *invdendpoint.InvoiceRequest) error {
+	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(invdendpoint.Invoice)
 
-	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
-
-	apiErr := c.postWithoutData(endpoint, invResp)
-
-	if apiErr != nil {
-		return nil, apiErr
+	err := c.update(endpoint, request, resp)
+	if err != nil {
+		return err
 	}
 
-	return invResp, nil
+	c.Invoice = resp
+
+	return nil
+}
+
+func (c *Invoice) Void() (*Invoice, error) {
+	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
+	resp := c.NewInvoice()
+
+	err := c.postWithoutData(endpoint, resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c *Invoice) Delete() error {
+	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+
+	err := c.delete(endpoint)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Invoice) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Invoices, error) {
@@ -133,10 +103,10 @@ func (c *Invoice) ListAllHelper(endpoint string, filter *invdendpoint.Filter, so
 	invoices := make(Invoices, 0)
 NEXT:
 
-	tmpInvoices, endpoint, apiErr := c.ListHelper(endpoint, filter, sort)
+	tmpInvoices, endpoint, err := c.ListHelper(endpoint, filter, sort)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	invoices = append(invoices, tmpInvoices...)
@@ -157,10 +127,9 @@ func (c *Invoice) ListHelper(url string, filter *invdendpoint.Filter, sort *invd
 	invoicesToReturn := make(Invoices, 0)
 	invoices := make(invdendpoint.Invoices, 0)
 
-	nextEndpoint, apiErr := c.retrieveDataFromAPI(url, &invoices)
-
-	if apiErr != nil {
-		return nil, "", apiErr
+	nextEndpoint, err := c.retrieveDataFromAPI(url, &invoices)
+	if err != nil {
+		return nil, "", err
 	}
 
 	for _, invoice := range invoices {
@@ -168,7 +137,6 @@ func (c *Invoice) ListHelper(url string, filter *invdendpoint.Filter, sort *invd
 		invData := invoice
 		inv.Invoice = &invData
 		invoicesToReturn = append(invoicesToReturn, inv)
-
 	}
 
 	return invoicesToReturn, nextEndpoint, nil
@@ -185,7 +153,6 @@ func (c *Invoice) ListAllInvoicesEndDate(filter *invdendpoint.Filter, sort *invd
 func (c *Invoice) ListAllInvoicesStartEndDate(filter *invdendpoint.Filter, sort *invdendpoint.Sort, startDate, endDate int64) (Invoices, error) {
 	url := invdendpoint.InvoiceEndpoint
 	url = addFilterAndSort(url, filter, sort)
-
 
 	if startDate > 0 {
 		startDateString := strconv.FormatInt(startDate, 10)
@@ -236,23 +203,22 @@ func (c *Invoice) ListInvoiceByNumber(invoiceNumber string) (*Invoice, error) {
 	return invoices[0], nil
 }
 
-func (c *Invoice) SendEmail(emailReq *invdendpoint.EmailRequest) error{
+func (c *Invoice) SendEmail(request *invdendpoint.SendEmailRequest) error {
 	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	err := c.create(endpoint, emailReq, nil)
+	err := c.create(endpoint, request, nil)
 	if err != nil {
-		return  err
+		return err
 	}
 
-	return  nil
+	return nil
 }
 
-func (c *Invoice) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+func (c *Invoice) SendText(request *invdendpoint.SendTextMessageRequest) (invdendpoint.TextMessages, error) {
 	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
+	resp := new(invdendpoint.TextMessages)
 
-	resp := new(invdendpoint.TextResponses)
-
-	err := c.create(endpoint, req, resp)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -260,10 +226,9 @@ func (c *Invoice) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResp
 	return *resp, nil
 }
 
-func (c *Invoice) SendLetter() (*invdendpoint.LetterResponse, error) {
+func (c *Invoice) SendLetter() (*invdendpoint.Letter, error) {
 	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
-
-	resp := new(invdendpoint.LetterResponse)
+	resp := new(invdendpoint.Letter)
 
 	err := c.create(endpoint, nil, resp)
 	if err != nil {
@@ -294,10 +259,10 @@ func (c *Invoice) ListAttachments() (Files, error) {
 NEXT:
 	tempFiles := make(Files, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tempFiles)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tempFiles)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	files = append(files, tempFiles...)
@@ -321,10 +286,10 @@ func (c *Invoice) RetrieveNotes() (Notes, error) {
 NEXT:
 	tmpNotes := make(Notes, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpNotes)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpNotes)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	notes = append(notes, tmpNotes...)
@@ -340,45 +305,39 @@ NEXT:
 	return notes, nil
 }
 
-func (c *Invoice) CreatePaymentPlan(paymentPlanRequest *invdendpoint.PaymentPlanRequest) (*invdendpoint.PaymentPlan, error) {
+func (c *Invoice) CreatePaymentPlan(request *invdendpoint.PaymentPlanRequest) (*invdendpoint.PaymentPlan, error) {
 	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/payment_plan"
+	resp := new(invdendpoint.PaymentPlan)
 
-	if paymentPlanRequest == nil {
-		return nil, errors.New("paymentPlanRequest cannot be nil")
+	err := c.create(endpoint, request, resp)
+
+	if err != nil {
+		return nil, err
 	}
 
-	paymentPlanResp := new(invdendpoint.PaymentPlan)
-
-	apiErr := c.create(endpoint, paymentPlanRequest, paymentPlanResp)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	return paymentPlanResp, nil
+	return resp, nil
 }
 
 func (c *Invoice) RetrievePaymentPlan() (*invdendpoint.PaymentPlan, error) {
 	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/payment_plan"
+	resp := new(invdendpoint.PaymentPlan)
 
-	paymentPlanResp := new(invdendpoint.PaymentPlan)
+	_, err := c.retrieveDataFromAPI(endpoint, resp)
 
-	_, apiErr := c.retrieveDataFromAPI(endpoint, paymentPlanResp)
-
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
-	return paymentPlanResp, nil
+	return resp, nil
 }
 
 func (c *Invoice) CancelPaymentPlan() error {
 	endpoint := invdendpoint.InvoiceEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	apiErr := c.delete(endpoint)
+	err := c.delete(endpoint)
 
-	if apiErr != nil {
-		return apiErr
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -388,65 +347,4 @@ func (c *Invoice) String() string {
 	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
 
 	return header + " " + "JSON: " + c.Invoice.String()
-}
-
-// SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
-func SafeInvoiceForCreation(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, error) {
-	if inv == nil {
-		return nil, errors.New("Invoice is nil or Invoice.Invoice is nil")
-	}
-
-	invData := new(invdendpoint.Invoice)
-	invData.Customer = inv.Customer
-	invData.Name = inv.Name
-	invData.Number = inv.Number
-	invData.Currency = inv.Currency
-	invData.PaymentTerms = inv.PaymentTerms
-	invData.Date = inv.Date
-	invData.DueDate = inv.DueDate
-	invData.Draft = inv.Draft
-	invData.Closed = inv.Closed
-	invData.Items = inv.Items
-	invData.Notes = inv.Notes
-	invData.Discounts = inv.Discounts
-	invData.Metadata = inv.Metadata
-	invData.Attachments = inv.Attachments
-	invData.DisabledPaymentMethods = inv.DisabledPaymentMethods
-	invData.Taxes = inv.Taxes
-	invData.AutoPay = inv.AutoPay
-	invData.ShipTo = inv.ShipTo
-	invData.PurchaseOrder = inv.PurchaseOrder
-	invData.Sent = inv.Sent
-
-	return invData, nil
-}
-
-// SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
-func SafeInvoiceForUpdate(inv *invdendpoint.Invoice) (*invdendpoint.Invoice, error) {
-	if inv == nil {
-		return nil, errors.New("Invoice is nil or Invoice.Invoice is nil")
-	}
-
-	invData := new(invdendpoint.Invoice)
-	invData.Name = inv.Name
-	invData.Number = inv.Number
-	invData.Currency = inv.Currency
-	invData.PaymentTerms = inv.PaymentTerms
-	invData.Date = inv.Date
-	invData.DueDate = inv.DueDate
-	invData.Draft = inv.Draft
-	invData.Closed = inv.Closed
-	invData.Items = inv.Items
-	invData.Notes = inv.Notes
-	invData.Discounts = inv.Discounts
-	invData.Metadata = inv.Metadata
-	invData.Attachments = inv.Attachments
-	invData.DisabledPaymentMethods = inv.DisabledPaymentMethods
-	invData.Taxes = inv.Taxes
-	invData.AutoPay = inv.AutoPay
-	invData.ShipTo = inv.ShipTo
-	invData.PurchaseOrder = inv.PurchaseOrder
-	invData.Sent = inv.Sent
-
-	return invData, nil
 }

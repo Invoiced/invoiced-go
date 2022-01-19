@@ -12,7 +12,7 @@ func TestUnMarshalLetterRequest(t *testing.T) {
   "items": "past_due"
   }`
 
-	so := new(LetterRequest)
+	so := new(SendStatementLetterRequest)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {
@@ -30,7 +30,7 @@ func TestUnMarshalLetterResponse(t *testing.T) {
   "to": "Acme Inc.\n5301 Southwest Pkwy\nAustin, TX 78735"
 }`
 
-	so := new(LetterResponse)
+	so := new(Letter)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {

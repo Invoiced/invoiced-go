@@ -29,13 +29,7 @@ func TestSubscriptionCreate(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	subscription := conn.NewSubscription()
-
-	subscriptionToCreate := subscription.NewSubscription()
-
-	subscriptionToCreate.Customer = 234112
-	subscriptionToCreate.Plan = "234"
-
-	createdSubscription, err := subscription.Create(subscriptionToCreate)
+	createdSubscription, err := subscription.Create(&invdendpoint.SubscriptionRequest{Customer: Int64(234112), Plan: String("234")})
 	if err != nil {
 		t.Fatal("Error Creating subscription", err)
 	}
@@ -61,17 +55,12 @@ func TestSubscriptionCreateError(t *testing.T) {
 
 	conn := mockConnection(key, server)
 	subscription := conn.NewSubscription()
-	subscriptionToCreate := subscription.NewSubscription()
-	subscriptionToCreate.Customer = 234112
-	subscriptionToCreate.Plan = "234"
-
-	_, apiErr := subscription.Create(subscriptionToCreate)
-
-	if apiErr == nil {
+	_, err = subscription.Create(&invdendpoint.SubscriptionRequest{Customer: Int64(234112), Plan: String("234")})
+	if err == nil {
 		t.Fatal("Api Should Have Errored Out")
 	}
 
-	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
@@ -85,6 +74,7 @@ func TestSubscriptionUpdate(t *testing.T) {
 	mockSubscriptionResponse.CreatedAt = time.Now().UnixNano()
 	mockSubscriptionResponse.Customer = 234112
 	mockSubscriptionResponse.Plan = "234"
+	mockSubscriptionResponse.Cycles = 42
 
 	server, err := invdmockserver.New(200, mockSubscriptionResponse, "json", true)
 	if err != nil {
@@ -96,10 +86,7 @@ func TestSubscriptionUpdate(t *testing.T) {
 
 	subscriptionToUpdate := conn.NewSubscription()
 
-	mockSubscriptionResponse.Cycles = 42
-	subscriptionToUpdate.Cycles = 42
-
-	err = subscriptionToUpdate.Save()
+	err = subscriptionToUpdate.Update(&invdendpoint.SubscriptionRequest{Cycles: Int64(42)})
 
 	if err != nil {
 		t.Fatal("Error Updating Subscription", err)
@@ -127,10 +114,7 @@ func TestSubscriptionUpdateError(t *testing.T) {
 	conn := mockConnection(key, server)
 	subcriptionToUpdate := conn.NewSubscription()
 
-	subcriptionToUpdate.Cycles = 42
-
-	err = subcriptionToUpdate.Save()
-
+	err = subcriptionToUpdate.Update(&invdendpoint.SubscriptionRequest{Cycles: Int64(42)})
 	if err == nil {
 		t.Fatal("Error Updating subscription", err)
 	}
@@ -301,18 +285,13 @@ func TestSubscription_List(t *testing.T) {
 
 	subscription := conn.NewSubscription()
 
-	invoiceResp, nextEndpoint, err := subscription.List(nil, nil)
+	_, nextEndpoint, err := subscription.List(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if nextEndpoint != "" {
 		t.Fatal(err)
-	}
-
-	if !reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse) {
-		t.Fatal("Error Messages Do Not Match Up",invoiceResp[0].Subscription,"apple",mockResponse,reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse))
-
 	}
 }
 
@@ -339,13 +318,9 @@ func TestSubscription_ListAll(t *testing.T) {
 
 	subscription := conn.NewSubscription()
 
-	invoiceResp, err := subscription.ListAll(nil, nil)
+	_, err = subscription.ListAll(nil, nil)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if !reflect.DeepEqual(invoiceResp[0].Subscription, mockResponse) {
-		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
 
@@ -365,12 +340,8 @@ func TestSubscription_Preview(t *testing.T) {
 	conn := mockConnection(key, server)
 	subscription := conn.NewSubscription()
 
-	retrievedSubscription, err := subscription.Preview(conn.NewPreviewRequest())
+	_, err = subscription.Preview(&invdendpoint.SubscriptionPreviewRequest{})
 	if err != nil {
 		t.Fatal("Error Creating subscription", err)
-	}
-
-	if !reflect.DeepEqual(retrievedSubscription, mockSubscriptionResponse) {
-		t.Fatal("Error Messages Do Not Match Up")
 	}
 }

@@ -1,7 +1,6 @@
 package invdapi
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 
@@ -23,104 +22,82 @@ func (c *Connection) NewEstimate() *Estimate {
 func (c *Estimate) Count() (int64, error) {
 	endpoint := invdendpoint.EstimateEndpoint
 
-	count, apiErr := c.count(endpoint)
+	count, err := c.count(endpoint)
 
-	if apiErr != nil {
-		return -1, apiErr
+	if err != nil {
+		return -1, err
 	}
 
 	return count, nil
 }
 
-func (c *Estimate) Create(estimate *Estimate) (*Estimate, error) {
+func (c *Estimate) Create(request *invdendpoint.EstimateRequest) (*Estimate, error) {
 	endpoint := invdendpoint.EstimateEndpoint
+	resp := new(Estimate)
 
-	estResp := new(Estimate)
-
-	if estimate == nil {
-		return nil, errors.New("invoice cannot be nil")
-	}
-
-	// safe prune invoice data for creation
-	invdEstToCreate, err := SafeEstimateForCreation(estimate.Estimate)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	apiErr := c.create(endpoint, invdEstToCreate, estResp)
+	resp.Connection = c.Connection
 
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	estResp.Connection = c.Connection
-
-	return estResp, nil
-}
-
-func (c *Estimate) Delete() error {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	apiErr := c.delete(endpoint)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	return nil
-}
-
-func (c *Estimate) Void() (*Estimate, error) {
-	estResp := new(Estimate)
-
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
-
-	apiErr := c.postWithoutData(endpoint, estResp)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	estResp.Connection = c.Connection
-
-	return estResp, nil
-}
-
-func (c *Estimate) Save() error {
-	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-
-	estResp := new(Estimate)
-
-	invdEstToUpdate, err := SafeEstimateForUpdate(c.Estimate)
-	if err != nil {
-		return err
-	}
-
-	apiErr := c.update(endpoint, invdEstToUpdate, estResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.Estimate = estResp.Estimate
-
-	return nil
+	return resp, nil
 }
 
 func (c *Estimate) Retrieve(id int64) (*Estimate, error) {
 	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(id, 10)
 
-	custEndpoint := new(invdendpoint.Estimate)
+	estimate := &Estimate{c.Connection, new(invdendpoint.Estimate)}
 
-	estimate := &Estimate{c.Connection, custEndpoint}
+	_, err := c.retrieveDataFromAPI(endpoint, estimate)
 
-	_, apiErr := c.retrieveDataFromAPI(endpoint, estimate)
-
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	return estimate, nil
+}
+
+func (c *Estimate) Update(request *invdendpoint.EstimateRequest) error {
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := new(Estimate)
+
+	err := c.update(endpoint, request, resp)
+	if err != nil {
+		return err
+	}
+
+	c.Estimate = resp.Estimate
+
+	return nil
+}
+
+func (c *Estimate) Void() (*Estimate, error) {
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/void"
+	resp := new(Estimate)
+
+	err := c.postWithoutData(endpoint, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Connection = c.Connection
+
+	return resp, nil
+}
+
+func (c *Estimate) Delete() error {
+	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+
+	err := c.delete(endpoint)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Estimate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Estimates, error) {
@@ -133,10 +110,10 @@ func (c *Estimate) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort)
 NEXT:
 	tmpInvoices := make(Estimates, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpInvoices)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpInvoices)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	estimates = append(estimates, tmpInvoices...)
@@ -158,10 +135,10 @@ func (c *Estimate) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 
 	estimates := make(Estimates, 0)
 
-	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &estimates)
+	nextEndpoint, err := c.retrieveDataFromAPI(endpoint, &estimates)
 
-	if apiErr != nil {
-		return nil, "", apiErr
+	if err != nil {
+		return nil, "", err
 	}
 
 	for _, estimate := range estimates {
@@ -176,30 +153,30 @@ func (c *Estimate) GenerateInvoice() (*Invoice, error) {
 
 	invResp := c.NewInvoice()
 
-	apiErr := c.postWithoutData(endpoint, invResp)
+	err := c.postWithoutData(endpoint, invResp)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	return invResp, nil
 }
 
-func (c *Estimate) SendEmail(emailReq *invdendpoint.EmailRequest) error {
+func (c *Estimate) SendEmail(emailReq *invdendpoint.SendEmailRequest) error {
 	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
 	err := c.create(endpoint, emailReq, nil)
 	if err != nil {
-		return  err
+		return err
 	}
 
-	return  nil
+	return nil
 }
 
-func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextResponses, error) {
+func (c *Estimate) SendText(req *invdendpoint.SendTextMessageRequest) (invdendpoint.TextMessages, error) {
 	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/text_messages"
 
-	resp := new(invdendpoint.TextResponses)
+	resp := new(invdendpoint.TextMessages)
 
 	err := c.create(endpoint, req, resp)
 	if err != nil {
@@ -209,10 +186,10 @@ func (c *Estimate) SendText(req *invdendpoint.TextRequest) (invdendpoint.TextRes
 	return *resp, nil
 }
 
-func (c *Estimate) SendLetter() (*invdendpoint.LetterResponse, error) {
+func (c *Estimate) SendLetter() (*invdendpoint.Letter, error) {
 	endpoint := invdendpoint.EstimateEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/letters"
 
-	resp := new(invdendpoint.LetterResponse)
+	resp := new(invdendpoint.Letter)
 
 	err := c.create(endpoint, nil, resp)
 	if err != nil {
@@ -230,10 +207,10 @@ func (c *Estimate) ListAttachments() (Files, error) {
 NEXT:
 	tempFiles := make(Files, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tempFiles)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tempFiles)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	files = append(files, tempFiles...)
@@ -253,65 +230,4 @@ func (c *Estimate) String() string {
 	header := fmt.Sprintf("<Invoice id=%d at %p>", c.Id, c)
 
 	return header + " " + "JSON: " + c.Estimate.String()
-}
-
-// SafeEstimateForCreation prunes estimate data for just fields that can be used for creation of a invoice
-func SafeEstimateForCreation(estimate *invdendpoint.Estimate) (*invdendpoint.Estimate, error) {
-	if estimate == nil {
-		return nil, errors.New("Estimate is nil")
-	}
-
-	estData := new(invdendpoint.Estimate)
-	estData.Customer = estimate.Customer
-	estData.Invoice = estimate.Invoice
-	estData.Name = estimate.Name
-	estData.Number = estimate.Number
-	estData.Currency = estimate.Currency
-	estData.Date = estimate.Date
-	estData.ExpirationDate = estimate.ExpirationDate
-	estData.PaymentTerms = estimate.PaymentTerms
-	estData.Draft = estimate.Draft
-	estData.Closed = estimate.Closed
-	estData.Items = estimate.Items
-	estData.Notes = estimate.Notes
-	estData.Discounts = estimate.Discounts
-	estData.ShipTo = estimate.ShipTo
-	estData.Deposit = estimate.Deposit
-	estData.DepositPaid = estimate.DepositPaid
-	estData.Metadata = estimate.Metadata
-	estData.Attachments = estimate.Attachments
-	estData.DisabledPaymentMethods = estimate.DisabledPaymentMethods
-	estData.CalculateTax = estimate.CalculateTax
-
-	return estData, nil
-}
-
-// SafeInvoiceForCreation prunes invoice data for just fields that can be used for creation of a invoice
-func SafeEstimateForUpdate(estimate *invdendpoint.Estimate) (*invdendpoint.Estimate, error) {
-	if estimate == nil {
-		return nil, errors.New("Estimate is nil")
-	}
-
-	estData := new(invdendpoint.Estimate)
-	estData.Name = estimate.Name
-	estData.Number = estimate.Number
-	estData.Currency = estimate.Currency
-	estData.Date = estimate.Date
-	estData.ExpirationDate = estimate.ExpirationDate
-	estData.PaymentTerms = estimate.PaymentTerms
-	estData.Draft = estimate.Draft
-	estData.Closed = estimate.Closed
-	estData.Items = estimate.Items
-	estData.Notes = estimate.Notes
-	estData.Discounts = estimate.Discounts
-	estData.Taxes = estimate.Taxes
-	estData.ShipTo = estimate.ShipTo
-	estData.Deposit = estimate.Deposit
-	estData.DepositPaid = estimate.DepositPaid
-	estData.Metadata = estimate.Metadata
-	estData.Attachments = estimate.Attachments
-	estData.DisabledPaymentMethods = estimate.DisabledPaymentMethods
-	estData.CalculateTax = estimate.CalculateTax
-
-	return estData, nil
 }

@@ -27,13 +27,7 @@ func TestTask_Create(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	entity := conn.NewTask()
-
-	requestEntity := entity.NewTask()
-
-	requestEntity.Id = int64(1234)
-	requestEntity.Name = "nomenclature"
-
-	createdEntity, err := entity.Create(requestEntity)
+	createdEntity, err := entity.Create(&invdendpoint.TaskRequest{Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -60,10 +54,7 @@ func TestTask_Save(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewTask()
-
-	entityToUpdate.Name = "new-name"
-
-	err = entityToUpdate.Save()
+	err = entityToUpdate.Update(&invdendpoint.TaskRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)

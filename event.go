@@ -34,10 +34,10 @@ func (c *Event) ListAllByDatesAndUser(filter *invdendpoint.Filter, sort *invdend
 NEXT:
 	tmpEvents := make(Events, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpEvents)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpEvents)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	events = append(events, tmpEvents...)
@@ -62,10 +62,10 @@ func (c *Event) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (E
 NEXT:
 	tmpEvents := make(Events, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpEvents)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpEvents)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	events = append(events, tmpEvents...)
@@ -87,10 +87,10 @@ func (c *Event) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Even
 
 	events := make(Events, 0)
 
-	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &events)
+	nextEndpoint, err := c.retrieveDataFromAPI(endpoint, &events)
 
-	if apiErr != nil {
-		return nil, "", apiErr
+	if err != nil {
+		return nil, "", err
 	}
 
 	for _, event := range events {

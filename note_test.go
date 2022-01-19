@@ -28,9 +28,7 @@ func TestNote_Create(t *testing.T) {
 
 	entity := conn.NewNote()
 
-	request := invdendpoint.CreateNoteRequest{CustomerID: int64(1234)}
-
-	createdEntity, err := entity.Create(request)
+	createdEntity, err := entity.Create(&invdendpoint.NoteRequest{Customer: Int64(1234)})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -58,9 +56,7 @@ func TestNote_Save(t *testing.T) {
 
 	entityToUpdate := conn.NewNote()
 
-	entityToUpdate.Notes = "new-notes"
-
-	err = entityToUpdate.Save()
+	err = entityToUpdate.Update(&invdendpoint.NoteRequest{Notes: String("new-notes")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)

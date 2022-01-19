@@ -30,11 +30,7 @@ func TestPaymentCreate(t *testing.T) {
 
 	payment := conn.NewPayment()
 
-	paymentToCreate := payment.NewPayment()
-
-	paymentToCreate.Customer = 234112
-
-	createdPayment, err := payment.Create(paymentToCreate)
+	createdPayment, err := payment.Create(&invdendpoint.PaymentRequest{Customer: Int64(234112)})
 	if err != nil {
 		t.Fatal("Error Creating payment", err)
 	}
@@ -60,17 +56,13 @@ func TestPaymentCreateError(t *testing.T) {
 
 	conn := mockConnection(key, server)
 	payment := conn.NewPayment()
-	paymentToCreate := payment.NewPayment()
-	paymentToCreate.Customer = 234112
-	paymentToCreate.Reference = "234"
 
-	_, apiErr := payment.Create(paymentToCreate)
-
-	if apiErr == nil {
+	_, err = payment.Create(&invdendpoint.PaymentRequest{Customer: Int64(234112), Reference: String("234")})
+	if err == nil {
 		t.Fatal("Api Should Have Errored Out")
 	}
 
-	if !reflect.DeepEqual(mockErrorResponse.Error(), apiErr.Error()) {
+	if !reflect.DeepEqual(mockErrorResponse.Error(), err.Error()) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
@@ -84,6 +76,7 @@ func TestPaymentUpdate(t *testing.T) {
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 	mockPaymentResponse.Customer = 234112
 	mockPaymentResponse.Reference = "234"
+	mockPaymentResponse.Amount = 42
 
 	server, err := invdmockserver.New(200, mockPaymentResponse, "json", true)
 	if err != nil {
@@ -95,10 +88,7 @@ func TestPaymentUpdate(t *testing.T) {
 
 	paymentToUpdate := conn.NewPayment()
 
-	mockPaymentResponse.Amount = 42
-	paymentToUpdate.Amount = 42
-
-	err = paymentToUpdate.Save()
+	err = paymentToUpdate.Update(&invdendpoint.PaymentRequest{Amount: Float64(42)})
 
 	if err != nil {
 		t.Fatal("Error Updating Payment", err)
@@ -126,9 +116,7 @@ func TestPaymentUpdateError(t *testing.T) {
 	conn := mockConnection(key, server)
 	subcriptionToUpdate := conn.NewPayment()
 
-	subcriptionToUpdate.Amount = 42
-
-	err = subcriptionToUpdate.Save()
+	err = subcriptionToUpdate.Update(&invdendpoint.PaymentRequest{Amount: Float64(42)})
 
 	if err == nil {
 		t.Fatal("Error Updating payment", err)
@@ -300,17 +288,13 @@ func TestPayment_List(t *testing.T) {
 
 	payment := conn.NewPayment()
 
-	invoiceResp, nextEndpoint, err := payment.List(nil, nil)
+	_, nextEndpoint, err := payment.List(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if nextEndpoint != "" {
 		t.Fatal(err)
-	}
-
-	if !reflect.DeepEqual(invoiceResp[0].Payment, mockResponse) {
-		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
 
@@ -335,21 +319,16 @@ func TestPayment_ListAll(t *testing.T) {
 
 	conn := mockConnection(key, server)
 
-	subscription := conn.NewPayment()
+	payment := conn.NewPayment()
 
-	invoiceResp, err := subscription.ListAll(nil, nil)
+	_, err = payment.ListAll(nil, nil)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if !reflect.DeepEqual(invoiceResp[0].Payment, mockResponse) {
-		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
 
 func TestPayment_SendReceipt(t *testing.T) {
 	key := "test api key"
-
 
 	server, err := invdmockserver.New(200, nil, "json", true)
 	if err != nil {
@@ -361,10 +340,9 @@ func TestPayment_SendReceipt(t *testing.T) {
 
 	subjectEntity := conn.NewPayment()
 
-	 err = subjectEntity.SendReceipt(nil)
+	err = subjectEntity.SendReceipt(nil)
 	if err != nil {
 		t.Fatal("Error with send", err)
 	}
-
 
 }

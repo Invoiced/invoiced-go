@@ -297,10 +297,6 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 	if so.CreatedAt != 1415229884 {
 		t.Fatal("CreatedAt is incorrect")
 	}
-
-	if so.CalculateTaxes != true {
-		t.Fatal("CalculateTaxes flag is incorrect")
-	}
 }
 
 func TestTotalTaxAmount(t *testing.T) {

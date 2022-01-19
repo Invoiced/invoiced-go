@@ -24,10 +24,10 @@ func (c *ChasingCadence) ListAll(filter *invdendpoint.Filter, sort *invdendpoint
 NEXT:
 	tmpChasing := make(ChasingCadences, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpChasing)
+	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpChasing)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	chasing = append(chasing, tmpChasing...)

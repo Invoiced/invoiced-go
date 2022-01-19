@@ -27,10 +27,10 @@ func (c *WebhookAttempt) ListAll(filter *invdendpoint.Filter, sort *invdendpoint
 NEXT:
 	tmpWebhookAttempts := make(WebhookAttempts, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpWebhookAttempts)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpWebhookAttempts)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	webhookAttempts = append(webhookAttempts, tmpWebhookAttempts...)
@@ -48,12 +48,12 @@ NEXT:
 
 func (c *WebhookAttempt) ReAttempt(webhookId int64) error {
 
-		endpoint := invdendpoint.WebhookEndpoint + "/" + strconv.FormatInt(webhookId, 10) + "/retries"
+	endpoint := invdendpoint.WebhookEndpoint + "/" + strconv.FormatInt(webhookId, 10) + "/retries"
 
-		err := c.create(endpoint, nil, nil)
-		if err != nil {
-			return err
-		}
-
-		return  nil
+	err := c.create(endpoint, nil, nil)
+	if err != nil {
+		return err
 	}
+
+	return nil
+}

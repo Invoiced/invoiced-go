@@ -188,7 +188,7 @@ func (c *Connection) post(endpoint string, body io.Reader) (*http.Response, erro
 	return resp, err
 }
 
-func (c *Connection) postWithFormData(endpoint string, body io.Reader,formContentType string) (*http.Response, error) {
+func (c *Connection) postWithFormData(endpoint string, body io.Reader, formContentType string) (*http.Response, error) {
 	url := c.baseUrl + endpoint
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
@@ -267,7 +267,7 @@ func (c *Connection) create(endpoint string, requestData interface{}, responseDa
 
 // CreateFormFile is a convenience wrapper around CreatePart. It creates
 // a new form-data header with the provided field name and file name.
-func (c *Connection) CreateFormFile(w *multipart.Writer,fieldname, filename string,fileType string) (io.Writer, error) {
+func (c *Connection) CreateFormFile(w *multipart.Writer, fieldname, filename string, fileType string) (io.Writer, error) {
 	h := make(textproto.MIMEHeader)
 	h.Set("Content-Disposition",
 		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
@@ -282,7 +282,7 @@ func escapeQuotes(s string) string {
 	return quoteEscaper.Replace(s)
 }
 
-func (c *Connection) upload(endpoint string,filePath string, fileParamName string, fileParams map[string]string,fileType string, responseData interface{}) error {
+func (c *Connection) upload(endpoint string, filePath string, fileParamName string, fileParams map[string]string, fileType string, responseData interface{}) error {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	file, err := os.Open(filePath)
@@ -291,7 +291,7 @@ func (c *Connection) upload(endpoint string,filePath string, fileParamName strin
 	}
 	defer file.Close()
 
-	part, err := c.CreateFormFile(writer,fileParamName, filepath.Base(filePath),fileType)
+	part, err := c.CreateFormFile(writer, fileParamName, filepath.Base(filePath), fileType)
 
 	if err != nil {
 		return err
@@ -311,8 +311,7 @@ func (c *Connection) upload(endpoint string,filePath string, fileParamName strin
 		return err
 	}
 
-
-	resp, err := c.postWithFormData(endpoint, body,writer.FormDataContentType())
+	resp, err := c.postWithFormData(endpoint, body, writer.FormDataContentType())
 
 	if err != nil {
 		return err
@@ -409,10 +408,9 @@ func (c *Connection) count(endpoint string) (int64, error) {
 
 	defer resp.Body.Close()
 
-	apiErr := checkStatusForError(resp.StatusCode, resp.Body)
-
-	if apiErr != nil {
-		return 0, apiErr
+	err = checkStatusForError(resp.StatusCode, resp.Body)
+	if err != nil {
+		return 0, err
 	}
 
 	s := resp.Header.Get("X-Total-Count")
@@ -458,4 +456,48 @@ func (c *Connection) retrieveDataFromAPI(endpoint string, endpointData interface
 	}
 
 	return strings.Replace(nextURL, c.baseUrl, "", -1), nil
+}
+
+func Bool(v bool) *bool {
+	return &v
+}
+
+func BoolValue(v *bool) bool {
+	if v != nil {
+		return *v
+	}
+	return false
+}
+
+func Float64(v float64) *float64 {
+	return &v
+}
+
+func Float64Value(v *float64) float64 {
+	if v != nil {
+		return *v
+	}
+	return 0
+}
+
+func Int64(v int64) *int64 {
+	return &v
+}
+
+func Int64Value(v *int64) int64 {
+	if v != nil {
+		return *v
+	}
+	return 0
+}
+
+func String(v string) *string {
+	return &v
+}
+
+func StringValue(v *string) string {
+	if v != nil {
+		return *v
+	}
+	return ""
 }

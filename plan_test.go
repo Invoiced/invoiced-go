@@ -28,12 +28,7 @@ func TestPlan_Create(t *testing.T) {
 
 	entity := conn.NewPlan()
 
-	requestEntity := entity.NewPlan()
-
-	requestEntity.Id = "example"
-	requestEntity.Name = "nomenclature"
-
-	createdEntity, err := entity.Create(requestEntity)
+	createdEntity, err := entity.Create(&invdendpoint.PlanRequest{Id: String("example"), Name: String("nomenclature")})
 	if err != nil {
 		t.Fatal("Error Creating entity", err)
 	}
@@ -60,10 +55,7 @@ func TestPlan_Save(t *testing.T) {
 	conn := mockConnection(key, server)
 
 	entityToUpdate := conn.NewPlan()
-
-	entityToUpdate.Name = "new-name"
-
-	err = entityToUpdate.Save()
+	err = entityToUpdate.Update(&invdendpoint.PlanRequest{Name: String("new-name")})
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)

@@ -6,50 +6,94 @@ import (
 
 const CustomerEndpoint = "/customers"
 
+type CustomerRequest struct {
+	Address1               *string                 `json:"address1,omitempty"`
+	Address2               *string                 `json:"address2,omitempty"`
+	AttentionTo            *string                 `json:"attention_to,omitempty"`
+	AutoPay                *bool                   `json:"autopay,omitempty"`
+	AutoPayDelays          *int64                  `json:"autopay_delay_days,omitempty"`
+	AvalaraEntityUseCode   *string                 `json:"avalara_entity_use_code,omitempty"`
+	AvalaraExemptionNumber *string                 `json:"avalara_exemption_number,omitempty"`
+	BillToParent           *bool                   `json:"bill_to_parent,omitempty"`
+	Chase                  *bool                   `json:"boolean,omitempty"`
+	ChasingCadence         *int64                  `json:"chasing_cadence,omitempty"`
+	City                   *string                 `json:"city,omitempty"`
+	Country                *string                 `json:"country,omitempty"`
+	CreatedAt              *int64                  `json:"created_at,omitempty"`
+	CreditHold             *bool                   `json:"credit_hold,omitempty"`
+	CreditLimit            *float64                `json:"credit_limit,omitempty"`
+	Currency               *string                 `json:"currency,omitempty"`
+	DisabledPaymentMethods []*string               `json:"disabled_payment_methods,omitempty"`
+	Email                  *string                 `json:"email,omitempty"`
+	Id                     *int64                  `json:"id,omitempty"`
+	Language               *string                 `json:"language,omitempty"`
+	Metadata               *map[string]interface{} `json:"metadata,omitempty"`
+	Name                   *string                 `json:"name,omitempty"`
+	NextChaseStep          *int64                  `json:"next_chase_step,omitempty"`
+	Notes                  *string                 `json:"notes,omitempty"`
+	Number                 *string                 `json:"number,omitempty"`
+	Object                 *string                 `json:"object,omitempty"`
+	Owner                  *int64                  `json:"owner,omitempty"`
+	ParentCustomer         *int64                  `json:"parent_customer,omitempty"`
+	PaymentSource          *PaymentSource          `json:"payment_source,omitempty"`
+	PaymentTerms           *string                 `json:"payment_terms,omitempty"`
+	Phone                  *string                 `json:"phone,omitempty"`
+	PostalCode             *string                 `json:"postal_code,omitempty"`
+	SignUpPage             *int64                  `json:"sign_up_page,omitempty"`
+	SignUpUrl              *string                 `json:"sign_up_url,omitempty"`
+	State                  *string                 `json:"state,omitempty"`
+	StatementPdfUrl        *string                 `json:"statement_pdf_url,omitempty"`
+	TaxId                  *string                 `json:"taxid,omitempty"`
+	Taxable                *bool                   `json:"taxable,omitempty"`
+	Taxes                  []*TaxRate              `json:"taxes,omitempty"`
+	Type                   *string                 `json:"type,omitempty"`
+	UpdatedAt              *int64                  `json:"updated_at,omitempty"`
+}
+
 type Customers []Customer
 
 type Customer struct {
-	Id                     int64                  `json:"id,omitempty"` // The customer’s unique ID
-	Object                 string                 `json:"object,omitempty"`
-	Name                   string                 `json:"name,omitempty"`               // Customer name
-	Number                 string                 `json:"number,omitempty"`             // A unique ID to help tie your customer to your external systems
-	Email                  string                 `json:"email,omitempty"`              // Email address
-	AutoPay                bool                   `json:"autopay,omitempty"`            // Autopay
-	AutoPayDelays          int                    `json:"autopay_delay_days,omitempty"` // Number of days to delay AutoPay
-	PaymentTerms           string                 `json:"payment_terms,omitempty"`      // Payment terms used for manual collection mode, i.e. “NET 30”
-	PaymentSource          *PaymentSource         `json:"payment_source,omitempty"`     // Customer’s payment source, if attached
-	AttentionTo            string                 `json:"attention_to,omitempty"`       // Used for ATTN: address line if company
-	Address1               string                 `json:"address1,omitempty"`           // First address line
-	Address2               string                 `json:"address2,omitempty"`           // Optional second address line
-	City                   string                 `json:"city,omitempty"`               // City
-	State                  string                 `json:"state,omitempty"`              // State or province
-	PostalCode             string                 `json:"postal_code,omitempty"`        // Zip or postal code
-	Country                string                 `json:"country,omitempty"`            // Two-letter ISO code
-	Language               string                 `json:"language,omitempty"`           // Two-letter ISO code
-	Currency               string                 `json:"currency,omitempty"`           // Three-letter ISO code
-	Chase                  bool                   `json:"boolean,omitempty"`            // Chasing enabled? - defaults to true
-	ChasingCadence         int64                  `json:"chasing_cadence,omitempty"`    // Cadence ID
-	NextChaseStep          int64                  `json:"next_chase_step,omitempty"`
-	Phone                  string                 `json:"phone,omitempty"`                    // Phone #
-	CreditHold             bool                   `json:"credit_hold,omitempty"`              // When true, customer is on credit hold
-	CreditLimit            float64                `json:"credit_limit,omitempty"`             // Customer credit limit
-	Owner                  int64                  `json:"owner,omitempty"`                    // Customer credit limit
-	Taxable                bool                   `json:"taxable,omitempty"`                  // Customer taxable?
-	Taxes                  []TaxRate              `json:"taxes,omitempty"`                    // Collection of Tax Rate IDs
-	TaxId                  string                 `json:"taxid,omitempty"`                    // Tax ID to be displayed on documents
-	AvalaraEntityUseCode   string                 `json:"avalara_entity_use_code,omitempty"`  // Avalara-specific entity use code
-	AvalaraExemptionNumber string                 `json:"avalara_exemption_number,omitempty"` // Tax-exempt number to pass to Avalara
-	Type                   string                 `json:"type,omitempty"`                     // Organization type, company or person
-	BillToParent           bool                   `json:"bill_to_parent,omitempty"`           // Parent customer ID
-	ParentCustomer         int64                  `json:"parent_customer,omitempty"`          // Parent customer ID
-	Notes                  string                 `json:"notes,omitempty"`                    // Private customer notes
-	SignUpPage             int64                  `json:"sign_up_page,omitempty"`
-	SignUpUrl              string                 `json:"sign_up_url,omitempty"`       // URL to download the latest account statement
-	StatementPdfUrl        string                 `json:"statement_pdf_url,omitempty"` // URL to download the latest account statement
-	CreatedAt              int64                  `json:"created_at,omitempty"`	//Timestamp when created
-	UpdatedAt              int64                  `json:"updated_at,omitempty"`        // Timestamp when updated
-	Metadata               map[string]interface{} `json:"metadata,omitempty"`          // A hash of key/value pairs that can store additional information about this object.
-	DisabledPaymentMethods []string               `json:"disabled_payment_methods,omitempty"`
+	Address1               string                 `json:"address1"`
+	Address2               string                 `json:"address2"`
+	AttentionTo            string                 `json:"attention_to"`
+	AutoPay                bool                   `json:"autopay"`
+	AutoPayDelays          int64                  `json:"autopay_delay_days"`
+	AvalaraEntityUseCode   string                 `json:"avalara_entity_use_code"`
+	AvalaraExemptionNumber string                 `json:"avalara_exemption_number"`
+	BillToParent           bool                   `json:"bill_to_parent"`
+	Chase                  bool                   `json:"boolean"`
+	ChasingCadence         int64                  `json:"chasing_cadence"`
+	City                   string                 `json:"city"`
+	Country                string                 `json:"country"`
+	CreatedAt              int64                  `json:"created_at"`
+	CreditHold             bool                   `json:"credit_hold"`
+	CreditLimit            float64                `json:"credit_limit"`
+	Currency               string                 `json:"currency"`
+	DisabledPaymentMethods []string               `json:"disabled_payment_methods"`
+	Email                  string                 `json:"email"`
+	Id                     int64                  `json:"id"`
+	Language               string                 `json:"language"`
+	Metadata               map[string]interface{} `json:"metadata"`
+	Name                   string                 `json:"name"`
+	NextChaseStep          int64                  `json:"next_chase_step"`
+	Notes                  string                 `json:"notes"`
+	Number                 string                 `json:"number"`
+	Object                 string                 `json:"object"`
+	Owner                  int64                  `json:"owner"`
+	ParentCustomer         int64                  `json:"parent_customer"`
+	PaymentSource          *PaymentSource         `json:"payment_source"`
+	PaymentTerms           string                 `json:"payment_terms"`
+	Phone                  string                 `json:"phone"`
+	PostalCode             string                 `json:"postal_code"`
+	SignUpPage             int64                  `json:"sign_up_page"`
+	SignUpUrl              string                 `json:"sign_up_url"`
+	State                  string                 `json:"state"`
+	StatementPdfUrl        string                 `json:"statement_pdf_url"`
+	TaxId                  string                 `json:"taxid"`
+	Taxable                bool                   `json:"taxable"`
+	Taxes                  []TaxRate              `json:"taxes"`
+	Type                   string                 `json:"type"`
+	UpdatedAt              int64                  `json:"updated_at"`
 }
 
 func (c *Customer) String() string {

@@ -39,7 +39,7 @@ func TestUnMarshalContactObject(t *testing.T) {
 		t.Fatal("Primary should be true")
 	}
 
-	if so.Email != "nancy.talty@example.com" {
+	if *so.Email != "nancy.talty@example.com" {
 		t.Fatal("Primary should be true")
 	}
 

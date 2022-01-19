@@ -1,7 +1,6 @@
 package invdapi
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/Invoiced/invoiced-go/invdendpoint"
@@ -15,94 +14,72 @@ type Payment struct {
 type Payments []*Payment
 
 func (c *Connection) NewPayment() *Payment {
-	 p := new(invdendpoint.Payment)
-	return &Payment{c,  p}
+	p := new(invdendpoint.Payment)
+	return &Payment{c, p}
 }
 
 func (c *Payment) Count() (int64, error) {
 	endpoint := invdendpoint.PaymentEndpoint
 
-	count, apiErr := c.count(endpoint)
+	count, err := c.count(endpoint)
 
-	if apiErr != nil {
-		return -1, apiErr
+	if err != nil {
+		return -1, err
 	}
 
 	return count, nil
 }
 
-func (c *Payment) Create(payment *Payment) (*Payment, error) {
+func (c *Payment) Create(request *invdendpoint.PaymentRequest) (*Payment, error) {
 	endpoint := invdendpoint.PaymentEndpoint
-	txnResp := c.NewPayment()
+	resp := c.NewPayment()
 
-	if payment == nil {
-		return nil, errors.New("payment cannot be nil")
-	}
-
-	// safe prune invoice data for creation
-	invdTransDataToCreate, err := SafePaymentForCreation(payment.Payment)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	apiErr := c.create(endpoint, invdTransDataToCreate, txnResp)
+	resp.Connection = c.Connection
 
-	if apiErr != nil {
-		return nil, apiErr
+	return resp, nil
+}
+
+func (c *Payment) Retrieve(id int64) (*Payment, error) {
+	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(id, 10)
+	payment := &Payment{c.Connection, new(invdendpoint.Payment)}
+
+	_, err := c.retrieveDataFromAPI(endpoint, payment)
+	if err != nil {
+		return nil, err
 	}
 
-	txnResp.Connection = c.Connection
+	return payment, nil
+}
 
-	return txnResp, nil
+func (c *Payment) Update(request *invdendpoint.PaymentRequest) error {
+	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
+	resp := c.NewPayment()
+
+	err := c.update(endpoint, request, resp)
+	if err != nil {
+		return err
+	}
+
+	c.Payment = resp.Payment
+
+	return nil
 }
 
 func (c *Payment) Delete() error {
 	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
 
-	apiErr := c.delete(endpoint)
+	err := c.delete(endpoint)
 
-	if apiErr != nil {
-		return apiErr
-	}
-
-	return nil
-}
-
-func (c *Payment) Save() error {
-	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10)
-	txnResp := c.NewPayment()
-
-	// safe prune invoice data for updating
-	invdTransDataToUpdate, err := SafePaymentForUpdate(c.Payment)
 	if err != nil {
 		return err
 	}
 
-	apiErr := c.update(endpoint, invdTransDataToUpdate, txnResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.Payment = txnResp.Payment
-
 	return nil
-}
-
-func (c *Payment) Retrieve(id int64) (*Payment, error) {
-	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(id, 10)
-
-	custEndpoint := new(invdendpoint.Payment)
-
-	payment := &Payment{c.Connection, custEndpoint}
-
-	_, apiErr := c.retrieveDataFromAPI(endpoint, payment)
-
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	return payment, nil
 }
 
 func (c *Payment) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Payments, error) {
@@ -115,10 +92,10 @@ func (c *Payment) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) 
 NEXT:
 	tmpPayments := make(invdendpoint.Payments, 0)
 
-	endpoint, apiErr := c.retrieveDataFromAPI(endpoint, &tmpPayments)
+	endpoint, err := c.retrieveDataFromAPI(endpoint, &tmpPayments)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	payments = append(payments, tmpPayments...)
@@ -144,10 +121,10 @@ func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Pa
 	payments := make(invdendpoint.Payments, 0)
 	paymentsToReturn := make(Payments, 0)
 
-	nextEndpoint, apiErr := c.retrieveDataFromAPI(endpoint, &payments)
+	nextEndpoint, err := c.retrieveDataFromAPI(endpoint, &payments)
 
-	if apiErr != nil {
-		return nil, "", apiErr
+	if err != nil {
+		return nil, "", err
 	}
 
 	for _, payment := range payments {
@@ -161,54 +138,13 @@ func (c *Payment) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Pa
 	return paymentsToReturn, nextEndpoint, nil
 }
 
-func (c *Payment) SendReceipt(emailReq *invdendpoint.EmailRequest)  error {
+func (c *Payment) SendReceipt(request *invdendpoint.SendEmailRequest) error {
 	endpoint := invdendpoint.PaymentEndpoint + "/" + strconv.FormatInt(c.Id, 10) + "/emails"
 
-	err := c.create(endpoint, emailReq, nil)
+	err := c.create(endpoint, request, nil)
 	if err != nil {
 		return err
 	}
 
-	return  nil
-}
-
-// SafePaymentForCreation prunes payment data for just fields that can be used for creation of a payment
-func SafePaymentForCreation(payment *invdendpoint.Payment) (*invdendpoint.Payment, error) {
-	if payment == nil {
-		return nil, errors.New("Payment is nil")
-	}
-
-	paymentData := new(invdendpoint.Payment)
-	paymentData.Customer = payment.Customer
-	paymentData.Date = payment.Date
-	paymentData.Method = payment.Method
-	paymentData.Currency = payment.Currency
-	paymentData.Amount = payment.Amount
-	paymentData.Notes = payment.Notes
-	paymentData.Source = payment.Source
-	paymentData.Reference = payment.Reference
-	paymentData.AppliedTo = payment.AppliedTo
-
-	return paymentData, nil
-}
-
-// SafePaymentForUpdate prunes payment data for just fields that can be used for creation of a payment
-func SafePaymentForUpdate(payment *invdendpoint.Payment) (*invdendpoint.Payment, error) {
-	if payment == nil {
-		return nil, errors.New("Payment is nil")
-	}
-
-	paymentData := new(invdendpoint.Payment)
-
-	paymentData.Customer = payment.Customer
-	paymentData.Date = payment.Date
-	paymentData.Method = payment.Method
-	paymentData.Currency = payment.Currency
-	paymentData.Amount = payment.Amount
-	paymentData.Notes = payment.Notes
-	paymentData.Source = payment.Source
-	paymentData.Reference = payment.Reference
-	paymentData.AppliedTo = payment.AppliedTo
-
-	return paymentData, nil
+	return nil
 }

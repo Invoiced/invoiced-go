@@ -1,8 +1,6 @@
 package invdapi
 
 import (
-	"errors"
-
 	"github.com/Invoiced/invoiced-go/invdendpoint"
 )
 
@@ -18,49 +16,43 @@ func (c *Connection) NewItem() *Item {
 	return &Item{c, item}
 }
 
-func (c *Item) Create(item *Item) (*Item, error) {
+func (c *Item) Create(request *invdendpoint.ItemRequest) (*Item, error) {
 	endpoint := invdendpoint.ItemEndpoint
+	resp := new(Item)
 
-	itemResp := new(Item)
-
-	if item == nil {
-		return nil, errors.New("item is nil")
-	}
-
-	// safe prune file data for creation
-	invdItemDataToCreate, err := SafeItemForCreation(item.Item)
+	err := c.create(endpoint, request, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	apiErr := c.create(endpoint, invdItemDataToCreate, itemResp)
+	resp.Connection = c.Connection
 
-	if apiErr != nil {
-		return nil, apiErr
-	}
-
-	itemResp.Connection = c.Connection
-
-	return itemResp, nil
+	return resp, nil
 }
 
-func (c *Item) Save() error {
+func (c *Item) Retrieve(id string) (*Item, error) {
+	endpoint := invdendpoint.ItemEndpoint + "/" + id
+
+	item := &Item{c.Connection, new(invdendpoint.Item)}
+
+	_, err := c.retrieveDataFromAPI(endpoint, item)
+	if err != nil {
+		return nil, err
+	}
+
+	return item, nil
+}
+
+func (c *Item) Update(request *invdendpoint.ItemRequest) error {
 	endpoint := invdendpoint.ItemEndpoint + "/" + c.Id
+	resp := new(Item)
 
-	itemResp := new(Item)
-
-	itemDataToUpdate, err := SafeItemForUpdating(c.Item)
+	err := c.update(endpoint, request, resp)
 	if err != nil {
 		return err
 	}
 
-	apiErr := c.update(endpoint, itemDataToUpdate, itemResp)
-
-	if apiErr != nil {
-		return apiErr
-	}
-
-	c.Item = itemResp.Item
+	c.Item = resp.Item
 
 	return nil
 }
@@ -76,21 +68,6 @@ func (c *Item) Delete() error {
 	return nil
 }
 
-func (c *Item) Retrieve(id string) (*Item, error) {
-	endpoint := invdendpoint.ItemEndpoint + "/" + id
-
-	itemEndpoint := new(invdendpoint.Item)
-
-	item := &Item{c.Connection, itemEndpoint}
-
-	_, err := c.retrieveDataFromAPI(endpoint, item)
-	if err != nil {
-		return nil, err
-	}
-
-	return item, nil
-}
-
 func (c *Item) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (Items, error) {
 	endpoint := invdendpoint.ItemEndpoint
 
@@ -101,10 +78,10 @@ func (c *Item) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) (It
 NEXT:
 	tmpItems := make(Items, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpItems)
+	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpItems)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	items = append(items, tmpItems...)
@@ -118,42 +95,4 @@ NEXT:
 	}
 
 	return items, nil
-}
-
-// SafeForCreation prunes item data for just fields that can be used for creation of an item
-func SafeItemForCreation(item *invdendpoint.Item) (*invdendpoint.Item, error) {
-	if item == nil {
-		return nil, errors.New("task is nil")
-	}
-
-	itemData := new(invdendpoint.Item)
-	itemData.Id = item.Id
-	itemData.Name = item.Name
-	itemData.Currency = item.Currency
-	itemData.UnitCost = item.UnitCost
-	itemData.Description = item.Description
-	itemData.Type = item.Type
-	itemData.Taxable = item.Taxable
-	itemData.AvalaraTaxCode = item.AvalaraTaxCode
-	itemData.GlAccount = item.GlAccount
-	itemData.Discountable = item.Discountable
-	itemData.Metadata = item.Metadata
-
-	return itemData, nil
-}
-
-// SafeForUpdating prunes item data for just fields that can be used for updating of an item
-func SafeItemForUpdating(item *invdendpoint.Item) (*invdendpoint.Item, error) {
-	if item == nil {
-		return nil, errors.New("task is nil")
-	}
-
-	itemData := new(invdendpoint.Item)
-
-	itemData.Name = item.Name
-	itemData.Description = item.Description
-	itemData.Type = item.Type
-	itemData.Metadata = item.Metadata
-
-	return itemData, nil
 }

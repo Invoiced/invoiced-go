@@ -1,8 +1,8 @@
 package invdapi
 
 import (
-"strconv"
-"github.com/Invoiced/invoiced-go/invdendpoint"
+	"github.com/Invoiced/invoiced-go/invdendpoint"
+	"strconv"
 )
 
 type Role struct {
@@ -17,9 +17,8 @@ func (c *Connection) NewRole() *Role {
 	return &Role{c, role}
 }
 
-
 func (c *Role) Retrieve(id int64) (*Role, error) {
-	endpoint := invdendpoint.RoleEndpoint+ "/" + strconv.FormatInt(id, 10)
+	endpoint := invdendpoint.RoleEndpoint + "/" + strconv.FormatInt(id, 10)
 
 	role := new(Role)
 
@@ -44,10 +43,10 @@ func (c *Role) ListAll(filter *invdendpoint.Filter, sort *invdendpoint.Sort) ([]
 NEXT:
 	tmpRoles := make(Roles, 0)
 
-	endpointTmp, apiErr := c.retrieveDataFromAPI(endpoint, &tmpRoles)
+	endpointTmp, err := c.retrieveDataFromAPI(endpoint, &tmpRoles)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	roles = append(roles, tmpRoles...)
@@ -62,5 +61,3 @@ NEXT:
 
 	return roles, nil
 }
-
-

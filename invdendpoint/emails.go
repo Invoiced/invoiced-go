@@ -1,18 +1,26 @@
 package invdendpoint
 
-type EmailRequest struct {
-	To       []EmailDetail `json:"to,omitempty"`
-	Bcc      string        `json:"bcc,omitempty"`
-	Subject  string        `json:"subject,omitempty"`
-	Message  string        `json:"message,omitempty"`
-	Template string        `json:"template,omitempty"`
-	Type     string        `json:"type,omitempty"`
-	Start    int64         `json:"start,omitempty"`
-	End      int64         `json:"end,omitempty"`
-	Items    string        `json:"items,omitempty"`
+type SendStatementEmailRequest struct {
+	Bcc      *string           `json:"bcc,omitempty"`
+	End      *int64            `json:"end,omitempty"`
+	Items    *string           `json:"items,omitempty"`
+	Message  *string           `json:"message,omitempty"`
+	Start    *int64            `json:"start,omitempty"`
+	Subject  *string           `json:"subject,omitempty"`
+	Template *string           `json:"template,omitempty"`
+	To       []*EmailRecipient `json:"to,omitempty"`
+	Type     *string           `json:"type,omitempty"`
 }
 
-type EmailDetail struct {
-	Name  string `json:"name,omitempty"`
-	Email string `json:"email,omitempty"`
+type SendEmailRequest struct {
+	Bcc      *string           `json:"bcc,omitempty"`
+	Message  *string           `json:"message,omitempty"`
+	Subject  *string           `json:"subject,omitempty"`
+	Template *string           `json:"template,omitempty"`
+	To       []*EmailRecipient `json:"to,omitempty"`
+}
+
+type EmailRecipient struct {
+	Email *string `json:"email,omitempty"`
+	Name  *string `json:"name,omitempty"`
 }

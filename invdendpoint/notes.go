@@ -2,20 +2,20 @@ package invdendpoint
 
 const NoteEndpoint = "/notes"
 
+type NoteRequest struct {
+	Customer *int64  `json:"customer_id,omitempty"`
+	Invoice  *int64  `json:"invoice_id,omitempty"`
+	Notes    *string `json:"notes,omitempty"`
+}
+
 type Notes []Note
 
 type Note struct {
-	Id        int64  `json:"id,omitempty"`         // The note’s unique ID
-	Object    string `json:"object,omitempty"`     // Object type, note
-	Notes     string `json:"notes,omitempty"`      // Contents of note
-	Customer  int64  `json:"customer,omitempty"`   // Customer associated with note
-	CreatedAt int64  `json:"created_at,omitempty"`	//Timestamp when created
-	UpdatedAt int64  `json:"updated_at,omitempty"` // Timestamp when updated
-	User      *User  `json:"user,omitempty"`       // Object describing user who created note
-}
-
-type CreateNoteRequest struct {
-	CustomerID int64  `json:"customer_id,omitempty"` // Associated customer’s unique ID
-	InvoiceID  int64  `json:"invoice_id,omitempty"`  // Associated invoice’s unique ID
-	Notes      string `json:"notes,omitempty"`       // Contents of Notes
+	CreatedAt int64  `json:"created_at"`
+	Customer  int64  `json:"customer"`
+	Id        int64  `json:"id"`
+	Notes     string `json:"notes"`
+	Object    string `json:"object"`
+	UpdatedAt int64  `json:"updated_at"`
+	User      *User  `json:"user"`
 }

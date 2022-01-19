@@ -22,10 +22,10 @@ func (c *Charge) Create(chargeRequest *invdendpoint.ChargeRequest) (*Payment, er
 		return nil, errors.New("chargeRequest cannot be nil")
 	}
 
-	apiErr := c.create(invdendpoint.ChargeEndpoint, chargeRequest, payment)
+	err := c.create(invdendpoint.ChargeEndpoint, chargeRequest, payment)
 
-	if apiErr != nil {
-		return nil, apiErr
+	if err != nil {
+		return nil, err
 	}
 
 	payment.Connection = c.Connection

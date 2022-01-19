@@ -1,7 +1,12 @@
 package invdendpoint
 
+type TaxRequest struct {
+	Amount  *float64 `json:"amount,omitempty"`
+	TaxRate *TaxRate `json:"tax_rate,omitempty"`
+}
+
 type Tax struct {
-	Id      int64   `json:"id,omitempty"`       // The tax’s unique ID
-	Amount  float64 `json:"amount,omitempty"`   // Tax amount
-	TaxRate TaxRate `json:"tax_rate,omitempty"` // Tax Rate the tax was computed from, if any
+	Amount  float64 `json:"amount"`
+	Id      int64   `json:"id"`
+	TaxRate TaxRate `json:"tax_rate"`
 }
