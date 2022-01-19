@@ -15,7 +15,7 @@ type EstimateRequest struct {
 	Customer               *int64                  `json:"customer,omitempty"`
 	Date                   *int64                  `json:"date,omitempty"`
 	Deposit                *float64                `json:"deposit,omitempty"`
-	DepositPaid            *bool                   `json:"deposit_paid,omoitempty"`
+	DepositPaid            *bool                   `json:"deposit_paid,omitempty"`
 	DisabledPaymentMethods []*string               `json:"disabled_payment_methods,omitempty"`
 	Discounts              []*DiscountRequest      `json:"discounts,omitempty"`
 	Draft                  *bool                   `json:"draft,omitempty"`
@@ -43,7 +43,7 @@ type Estimate struct {
 	Customer               int64                  `json:"customer"`
 	Date                   int64                  `json:"date"`
 	Deposit                float64                `json:"deposit"`
-	DepositPaid            bool                   `json:"deposit_paid,omoitempty"`
+	DepositPaid            bool                   `json:"deposit_paid"`
 	DisabledPaymentMethods []string               `json:"disabled_payment_methods"`
 	Discounts              []Discount             `json:"discounts"`
 	Draft                  bool                   `json:"draft"`

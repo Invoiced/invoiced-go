@@ -350,7 +350,7 @@ func TestInvoice_Void(t *testing.T) {
 
 	entityToUpdate := conn.NewInvoice()
 
-	entityToUpdate, err = entityToUpdate.Void()
+	_, err = entityToUpdate.Void()
 
 	if err != nil {
 		t.Fatal("Error updating entity", err)
