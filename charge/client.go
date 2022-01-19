@@ -2,6 +2,7 @@ package charge
 
 import (
 	"github.com/Invoiced/invoiced-go"
+	"github.com/Invoiced/invoiced-go/payment"
 	"strconv"
 )
 
@@ -11,8 +12,8 @@ type Client struct {
 	Api *invoiced.Api
 }
 
-func (c *Client) Create(request *invoiced.ChargeRequest) (*invoiced.PaymentClient, error) {
-	payment := new(invoiced.PaymentClient)
+func (c *Client) Create(request *invoiced.ChargeRequest) (*payment.Client, error) {
+	payment := new(payment.Client)
 	err := c.Api.Create(endpoint, request, payment)
 	return payment, err
 }

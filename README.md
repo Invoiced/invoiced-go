@@ -23,9 +23,9 @@ go get -u https://github.com/Invoiced/invoiced-go
 First, you must instantiate a new client
 
 ```go
-import "github.com/Invoiced/invoiced-go"
+import "github.com/Invoiced/invoiced-go/api"
 
-client := invoiced.New("API_KEY", false)
+client := api.New("API_KEY", false)
 ```
 
 Then, API calls can be made like this:
@@ -34,19 +34,18 @@ Then, API calls can be made like this:
 import "github.com/Invoiced/invoiced-go"
 import "fmt"
 
-//Get All The Invoices With Auto Pagination
+// Get all invoices with auto pagination
 invoices, err := client.Invoice.ListAll(nil, nil)
-
 if err != nil {
     panic(err)
 }
 
-//Let's print all the invoices
+// Let's print all the invoices
 for _, invoice := range invoices {
     fmt.Println(invoice)
 }
 
-//Let's create a new customer
+// Let's create a new customer
 customer, err := client.Customer.Create(&invoiced.CustomerRequest{
 	Name: invoiced.String("Test Customer")
 })
@@ -57,36 +56,30 @@ if err != nil {
 
 fmt.Println("Customer Response => ", customer)
 
-//Let's create a new invoice
-invoiceToCreate := &invoiced.InvoiceRequest{}
-invoiceToCreate.Customer = invoiced.Int64(customerResponse.Id)
-
-//Create a Line Item
-lineItem := &invoiced.LineItem{}
-lineItem.Description = invoiced.String("Retina MacBook Pro")
-lineItem.Quantity = invoiced.Float64(5)
-lineItem.UnitCost = invoiced.Float64(1999.22)
-
-lineItems := append([]invoiced.LineItem{}, lineItem)
-
-invoiceToCreate.Items = lineItems
-
-//Add a Payment Term
-invoiceToCreate.PaymentTerms = invoiced.String("NET15")
-
-invoiceResponse, err := client.Invoice.Create(invoiceToCreate)
+// Let's create a new invoice
+invoice, err := client.Invoice.Create(&invoiced.InvoiceRequest{
+    Customer: invoiced.Int64(customerResponse.Id),
+    PaymentTerms: invoiced.String("NET 30"),
+    Items: []*invoiced.LineItemRequest{
+        {
+            Description: invoiced.String("Retina` MacBook Pro"),
+            Quantity: invoiced.Float64(5),
+            UnitCost: invoiced.Float64(1999.22),
+        },
+    },
+})
 
 if err != nil {
     panic(err)
 }
 
-fmt.Println("Invoice Response => ", invoiceResponse.Invoice)
+fmt.Println("Invoice Response => ", invoice)
 ```
 
 If you want to use the sandbox API instead then you must set the second argument on the client to `true` like this:
 
 ```go
-client := invoiced.New("SANDBOX_API_KEY", false)
+client := api.New("SANDBOX_API_KEY", false)
 ```
 
 ## Developing

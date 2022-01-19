@@ -3,6 +3,7 @@ package invoiced
 import (
 	"encoding/json"
 	"errors"
+	"github.com/Invoiced/invoiced-go/payment"
 	"strings"
 )
 
@@ -174,7 +175,7 @@ func (e *Event) ParseSubscriptionEvent() (*Subscription, error) {
 	return ie, nil
 }
 
-func (e *Event) ParsePaymentEvent() (*PaymentClient, error) {
+func (e *Event) ParsePaymentEvent() (*payment.Client, error) {
 	eoData, err := e.ParseEventObject()
 	if err != nil {
 		return nil, err
@@ -187,7 +188,7 @@ func (e *Event) ParsePaymentEvent() (*PaymentClient, error) {
 
 	bClean := CleanMetaDataArray(b)
 
-	ie := new(PaymentClient)
+	ie := new(payment.Client)
 
 	err = json.Unmarshal(bClean, ie)
 

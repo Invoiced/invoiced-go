@@ -2,6 +2,7 @@ package invoiced
 
 import (
 	"encoding/json"
+	"github.com/Invoiced/invoiced-go/plan"
 	"testing"
 )
 
@@ -22,7 +23,7 @@ func TestUnmarshalPlanObject(t *testing.T) {
   "tiers": null
 }`
 
-	so := new(PlanClient)
+	so := new(plan.Client)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {

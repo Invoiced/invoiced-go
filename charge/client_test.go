@@ -2,6 +2,7 @@ package charge
 
 import (
 	"github.com/Invoiced/invoiced-go"
+	"github.com/Invoiced/invoiced-go/payment"
 	"testing"
 	"time"
 
@@ -12,7 +13,7 @@ func TestCreateCharge(t *testing.T) {
 	key := "test api key"
 
 	mockChargeResponseID := int64(1523)
-	mockChargeResponse := new(invoiced.PaymentClient)
+	mockChargeResponse := new(payment.Client)
 	mockChargeResponse.Id = mockChargeResponseID
 	mockChargeResponse.Customer = 234112
 	mockChargeResponse.Reference = "234"
@@ -66,4 +67,3 @@ func TestCreateRefund(t *testing.T) {
 		t.Fatal("Error Messages Do Not Match Up")
 	}
 }
-

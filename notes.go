@@ -1,14 +1,10 @@
 package invoiced
 
-const NoteEndpoint = "/notes"
-
 type NoteRequest struct {
 	Customer *int64  `json:"customer_id,omitempty"`
 	Invoice  *int64  `json:"invoice_id,omitempty"`
 	Notes    *string `json:"notes,omitempty"`
 }
-
-type Notes []Note
 
 type Note struct {
 	CreatedAt int64  `json:"created_at"`
@@ -19,3 +15,5 @@ type Note struct {
 	UpdatedAt int64  `json:"updated_at"`
 	User      *User  `json:"user"`
 }
+
+type Notes []*Note

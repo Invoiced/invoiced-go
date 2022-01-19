@@ -19,8 +19,6 @@ type TextMessageRecipient struct {
 	Phone *string `json:"phone,omitempty"`
 }
 
-type TextMessages []TextMessage
-
 type TextMessage struct {
 	Id        string `json:"id"`
 	To        string `json:"to"`
@@ -29,3 +27,5 @@ type TextMessage struct {
 	CreatedAt int64  `json:"created_at"`
 	UpdatedAt int64  `json:"updated_at"`
 }
+
+type TextMessages []*TextMessage

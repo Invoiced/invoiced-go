@@ -120,7 +120,7 @@ func parseLinkUrl(s string) string {
 	return trimmed
 }
 
-func addQueryParameter(url string, name string, value string) string {
+func AddQueryParameter(url string, name string, value string) string {
 	if strings.Contains(url, "?") {
 		url += "&"
 	} else {

@@ -95,7 +95,7 @@ func TestUnMarshalSubscriptionObject(t *testing.T) {
 	}
 
 	if so.Addons[0].Plan != "ipad-license" {
-		t.Fatal("Subscription Addon PlanClient 0 has incorrect value")
+		t.Fatal("Subscription Addon Client 0 has incorrect value")
 	}
 
 	if so.Addons[0].Quantity != 11 {
@@ -313,7 +313,7 @@ func TestSubscriptionPlanUnmarshall(t *testing.T) {
 	}
 
 	if so.Plan != "model-z" {
-		t.Fatal("PlanClient id is incorrect")
+		t.Fatal("Client id is incorrect")
 	}
 
 }

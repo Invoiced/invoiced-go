@@ -1,6 +1,7 @@
 package invoiced
 
 import (
+	payment2 "github.com/Invoiced/invoiced-go/payment"
 	"reflect"
 	"testing"
 	"time"
@@ -12,7 +13,7 @@ func TestPaymentCreate(t *testing.T) {
 	key := "test api key"
 
 	mockPaymentResponseID := int64(1523)
-	mockPaymentResponse := new(PaymentClient)
+	mockPaymentResponse := new(payment2.Client)
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 	mockPaymentResponse.Customer = 234112
@@ -35,7 +36,7 @@ func TestPaymentCreate(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(createdPayment.Payment, mockPaymentResponse) {
-		t.Fatal("PaymentClient Was Not Created Succesfully", createdPayment.Payment, mockPaymentResponse)
+		t.Fatal("Client Was Not Created Succesfully", createdPayment.Payment, mockPaymentResponse)
 	}
 }
 
@@ -70,7 +71,7 @@ func TestPaymentUpdate(t *testing.T) {
 	key := "test api key"
 
 	mockPaymentResponseID := int64(1523)
-	mockPaymentResponse := new(PaymentClient)
+	mockPaymentResponse := new(payment2.Client)
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.CreatedAt = time.Now().UnixNano()
 	mockPaymentResponse.Customer = 234112
@@ -90,11 +91,11 @@ func TestPaymentUpdate(t *testing.T) {
 	err = paymentToUpdate.Update(&PaymentRequest{Amount: Float64(42)})
 
 	if err != nil {
-		t.Fatal("Error Updating PaymentClient", err)
+		t.Fatal("Error Updating Client", err)
 	}
 
 	if !reflect.DeepEqual(mockPaymentResponse, paymentToUpdate.Payment) {
-		t.Fatal("Error PaymentClient Not Updated Properly")
+		t.Fatal("Error Client Not Updated Properly")
 	}
 }
 
@@ -148,7 +149,7 @@ func TestPaymentDelete(t *testing.T) {
 	err = payment.Delete()
 
 	if err != nil {
-		t.Fatal("Error Occured Deleting PaymentClient")
+		t.Fatal("Error Occured Deleting Client")
 	}
 }
 
@@ -185,7 +186,7 @@ func TestPaymentRetrieve(t *testing.T) {
 	key := "test api key"
 
 	mockPaymentResponseID := int64(1523)
-	mockPaymentResponse := new(PaymentClient)
+	mockPaymentResponse := new(payment2.Client)
 	mockPaymentResponse.Id = mockPaymentResponseID
 	mockPaymentResponse.Customer = 234112
 	mockPaymentResponse.Reference = "234"
@@ -239,9 +240,9 @@ func TestPaymentRetrieveError(t *testing.T) {
 func TestPayment_Count_Error(t *testing.T) {
 	key := "test api key"
 
-	var mockListResponse [1]PaymentClient
+	var mockListResponse [1]payment2.Client
 
-	mockResponse := new(PaymentClient)
+	mockResponse := new(payment2.Client)
 	mockResponse.Id = int64(1234)
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
@@ -269,7 +270,7 @@ func TestPayment_List(t *testing.T) {
 
 	var mockResponses Payments
 	mockResponseId := int64(1523)
-	mockResponse := new(PaymentClient)
+	mockResponse := new(payment2.Client)
 	mockResponse.Id = mockResponseId
 
 	mockResponse.CreatedAt = time.Now().UnixNano()
@@ -302,7 +303,7 @@ func TestPayment_ListAll(t *testing.T) {
 
 	var mockResponses Payments
 	mockResponseId := int64(1523)
-	mockResponse := new(PaymentClient)
+	mockResponse := new(payment2.Client)
 	mockResponse.Id = mockResponseId
 
 	mockResponse.CreatedAt = time.Now().UnixNano()

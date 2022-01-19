@@ -1,18 +1,18 @@
 package invoiced
 
 type Balance struct {
-	Currency         string           `json:"currency"`
 	AvailableCredits float64          `json:"available_credits"`
-	PastDue          bool             `json:"past_due"`
-	Histories        BalanceHistories `json:"history"`
-	TotalOutstanding float64          `json:"total_outstanding"`
+	Currency         string           `json:"currency"`
 	DueNow           float64          `json:"due_now"`
+	Histories        BalanceHistories `json:"history"`
+	PastDue          bool             `json:"past_due"`
+	TotalOutstanding float64          `json:"total_outstanding"`
 }
-
-type BalanceHistories []BalanceHistory
 
 type BalanceHistory struct {
+	Balance   float64 `json:"balance"`
 	Currency  string  `json:"currency"`
 	Timestamp int64   `json:"timestamp"`
-	Balance   float64 `json:"balance"`
 }
+
+type BalanceHistories []*BalanceHistory

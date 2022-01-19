@@ -199,7 +199,7 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 	}
 
 	if so.PaymentTerms != "NET 14" {
-		t.Fatal("PaymentClient terms are incorrect")
+		t.Fatal("Client terms are incorrect")
 	}
 
 	if so.Items[0].Id != 7 {
@@ -287,7 +287,7 @@ func TestUnMarshalInvoiceObject(t *testing.T) {
 	}
 
 	if so.PaymentUrl != "https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY/payment" {
-		t.Fatal("PaymentClient Url is incorrect")
+		t.Fatal("Client Url is incorrect")
 	}
 
 	if so.PdfUrl != "https://dundermifflin.invoiced.com/invoices/IZmXbVOPyvfD3GPBmyd6FwXY/pdf" {

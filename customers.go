@@ -33,19 +33,19 @@ type CustomerRequest struct {
 	Object                 *string                 `json:"object,omitempty"`
 	Owner                  *int64                  `json:"owner,omitempty"`
 	ParentCustomer         *int64                  `json:"parent_customer,omitempty"`
-	PaymentSource          *PaymentSource `json:"payment_source,omitempty"`
-	PaymentTerms           *string        `json:"payment_terms,omitempty"`
-	Phone                  *string        `json:"phone,omitempty"`
-	PostalCode             *string        `json:"postal_code,omitempty"`
-	SignUpPage             *int64         `json:"sign_up_page,omitempty"`
-	SignUpUrl              *string        `json:"sign_up_url,omitempty"`
-	State                  *string        `json:"state,omitempty"`
-	StatementPdfUrl        *string        `json:"statement_pdf_url,omitempty"`
-	TaxId                  *string        `json:"taxid,omitempty"`
-	Taxable                *bool          `json:"taxable,omitempty"`
-	Taxes                  []*TaxRate     `json:"taxes,omitempty"`
-	Type                   *string        `json:"type,omitempty"`
-	UpdatedAt              *int64         `json:"updated_at,omitempty"`
+	PaymentSource          *PaymentSource          `json:"payment_source,omitempty"`
+	PaymentTerms           *string                 `json:"payment_terms,omitempty"`
+	Phone                  *string                 `json:"phone,omitempty"`
+	PostalCode             *string                 `json:"postal_code,omitempty"`
+	SignUpPage             *int64                  `json:"sign_up_page,omitempty"`
+	SignUpUrl              *string                 `json:"sign_up_url,omitempty"`
+	State                  *string                 `json:"state,omitempty"`
+	StatementPdfUrl        *string                 `json:"statement_pdf_url,omitempty"`
+	TaxId                  *string                 `json:"taxid,omitempty"`
+	Taxable                *bool                   `json:"taxable,omitempty"`
+	Taxes                  []*TaxRate              `json:"taxes,omitempty"`
+	Type                   *string                 `json:"type,omitempty"`
+	UpdatedAt              *int64                  `json:"updated_at,omitempty"`
 }
 
 type Customers []*Customer
@@ -79,19 +79,19 @@ type Customer struct {
 	Object                 string                 `json:"object"`
 	Owner                  int64                  `json:"owner"`
 	ParentCustomer         int64                  `json:"parent_customer"`
-	PaymentSource          *PaymentSource `json:"payment_source"`
-	PaymentTerms           string         `json:"payment_terms"`
-	Phone                  string         `json:"phone"`
-	PostalCode             string         `json:"postal_code"`
-	SignUpPage             int64          `json:"sign_up_page"`
-	SignUpUrl              string         `json:"sign_up_url"`
-	State                  string         `json:"state"`
-	StatementPdfUrl        string         `json:"statement_pdf_url"`
-	TaxId                  string         `json:"taxid"`
-	Taxable                bool           `json:"taxable"`
-	Taxes                  []TaxRate      `json:"taxes"`
-	Type                   string         `json:"type"`
-	UpdatedAt              int64          `json:"updated_at"`
+	PaymentSource          *PaymentSource         `json:"payment_source"`
+	PaymentTerms           string                 `json:"payment_terms"`
+	Phone                  string                 `json:"phone"`
+	PostalCode             string                 `json:"postal_code"`
+	SignUpPage             int64                  `json:"sign_up_page"`
+	SignUpUrl              string                 `json:"sign_up_url"`
+	State                  string                 `json:"state"`
+	StatementPdfUrl        string                 `json:"statement_pdf_url"`
+	TaxId                  string                 `json:"taxid"`
+	Taxable                bool                   `json:"taxable"`
+	Taxes                  []TaxRate              `json:"taxes"`
+	Type                   string                 `json:"type"`
+	UpdatedAt              int64                  `json:"updated_at"`
 }
 
 func (c *Customer) String() string {

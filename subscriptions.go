@@ -2,6 +2,7 @@ package invoiced
 
 import (
 	"encoding/json"
+	"github.com/Invoiced/invoiced-go/plan"
 	"strconv"
 	"strings"
 )
@@ -61,7 +62,7 @@ type Subscription struct {
 	PeriodEnd             int64                  `json:"period_end"`
 	PeriodStart           int64                  `json:"period_start"`
 	Plan                  string                 `json:"-"`
-	PlanFull              *PlanClient            `json:"-"`
+	PlanFull              *plan.Client           `json:"-"`
 	PlanRaw               json.RawMessage        `json:"plan"`
 	Prorate               bool                   `json:"prorate"`
 	Quantity              float64                `json:"quantity"`
@@ -149,7 +150,7 @@ func (i *Subscription) UnmarshalJSON(data []byte) error {
 	i.Plan = string(aj)
 	i.Plan = strings.Trim(i.Plan, "\"")
 
-	plan := new(PlanClient)
+	plan := new(plan.Client)
 
 	err = json.Unmarshal(aj, plan)
 

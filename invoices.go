@@ -5,8 +5,6 @@ import (
 	"strconv"
 )
 
-const InvoiceEndpoint = "/invoices"
-
 type InvoiceRequest struct {
 	Attachments            []*int64                `json:"attachments,omitempty"`
 	AutoPay                *bool                   `json:"autopay,omitempty"`
@@ -31,8 +29,6 @@ type InvoiceRequest struct {
 	ShipTo                 *ShippingDetailRequest  `json:"ship_to,omitempty"`
 	Taxes                  []*TaxRequest           `json:"taxes,omitempty"`
 }
-
-type Invoices []Invoice
 
 type Invoice struct {
 	Attachments            []int64                `json:"attachments"`
@@ -74,6 +70,8 @@ type Invoice struct {
 	UpdatedAt              int64                  `json:"updated_at"`
 	Url                    string                 `json:"url"`
 }
+
+type Invoices []*Invoice
 
 func (i *Invoice) TotalTaxAmount() float64 {
 	totalTax := 0.0

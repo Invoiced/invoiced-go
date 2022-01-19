@@ -3,7 +3,7 @@ package invoiced
 const ChargeEndpoint = "/charges"
 
 type ChargeRequest struct {
-	Customer          *int64                             `json:"customer,omitempty"`
+	Customer          *int64                `json:"customer,omitempty"`
 	Method            *string               `json:"method,omitempty"`
 	Currency          *string               `json:"currency,omitempty"`
 	Amount            *float64              `json:"amount,omitempty"`

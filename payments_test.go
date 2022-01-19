@@ -2,6 +2,7 @@ package invoiced
 
 import (
 	"encoding/json"
+	"github.com/Invoiced/invoiced-go/payment"
 	"testing"
 )
 
@@ -26,7 +27,7 @@ func TestUnMarshalPaymentObject(t *testing.T) {
     "metadata": {}
 }`
 
-	so := new(PaymentClient)
+	so := new(payment.Client)
 
 	err := json.Unmarshal([]byte(s), so)
 	if err != nil {
@@ -34,30 +35,30 @@ func TestUnMarshalPaymentObject(t *testing.T) {
 	}
 
 	if so.Id != 20939 {
-		t.Fatal("PaymentClient has incorrect periodstart")
+		t.Fatal("Client has incorrect periodstart")
 	}
 
 	if so.Customer != 15460 {
-		t.Fatal("PaymentClient has incorrect periodstart")
+		t.Fatal("Client has incorrect periodstart")
 	}
 
 	if so.Date != 1410843600 {
-		t.Fatal("PaymentClient has incorrect invoice")
+		t.Fatal("Client has incorrect invoice")
 	}
 
 	if so.Currency != "usd" {
-		t.Fatal("PaymentClient has incorrect currency")
+		t.Fatal("Client has incorrect currency")
 	}
 
 	if so.Amount != 800 {
-		t.Fatal("PaymentClient has incorrect amount")
+		t.Fatal("Client has incorrect amount")
 	}
 
 	if so.PdfUrl != "https://dundermifflin.invoiced.com/payments/IZmXbVOPyvfD3GPBmyd6FwXY/pdf" {
-		t.Fatal("PaymentClient has incorrect pdf")
+		t.Fatal("Client has incorrect pdf")
 	}
 
 	if so.CreatedAt != 1415228628 {
-		t.Fatal("PaymentClient has incorrect createdAt")
+		t.Fatal("Client has incorrect createdAt")
 	}
 }

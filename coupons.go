@@ -1,7 +1,5 @@
 package invoiced
 
-const CouponEndpoint = "/coupons"
-
 type CouponRequest struct {
 	Currency       *string                 `json:"currency,omitempty"`
 	Duration       *int64                  `json:"durationo,omitempty"`
@@ -30,3 +28,5 @@ type Coupon struct {
 	UpdatedAt      int64                  `json:"updated_at"`
 	Value          int64                  `json:"value"`
 }
+
+type Coupons []*Coupon

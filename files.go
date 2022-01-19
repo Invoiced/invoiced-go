@@ -20,4 +20,4 @@ type File struct {
 	Url       string `json:"url"`
 }
 
-type Files []File
+type Files []*File
