@@ -73,10 +73,5 @@ func (c *Client) List(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Pa
 func (c *Client) SendReceipt(id int64, request *invoiced.SendEmailRequest) error {
 	endpoint := "/payments/" + strconv.FormatInt(id, 10) + "/emails"
 
-	err := c.Api.Create(endpoint, request, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.Api.Create(endpoint, request, nil)
 }
