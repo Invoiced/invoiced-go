@@ -138,7 +138,7 @@ func (c *Api) get(endpoint string) (*http.Response, error) {
 	}
 
 	req.SetBasicAuth(c.Key, "")
-	req.Header.Set("User-Agent", "Invoiced Go/" + version)
+	req.Header.Set("User-Agent", "Invoiced Go/"+version)
 
 	resp, err := c.client.Do(req)
 
@@ -153,7 +153,7 @@ func (c *Api) post(endpoint string, body io.Reader) (*http.Response, error) {
 	}
 
 	req.SetBasicAuth(c.Key, "")
-	req.Header.Set("User-Agent", "Invoiced Go/" + version)
+	req.Header.Set("User-Agent", "Invoiced Go/"+version)
 	req.Header.Set("Content-Type", requestType)
 
 	resp, err := c.client.Do(req)
@@ -169,7 +169,7 @@ func (c *Api) postWithFormData(endpoint string, body io.Reader, formContentType 
 	}
 
 	req.SetBasicAuth(c.Key, "")
-	req.Header.Set("User-Agent", "Invoiced Go/" + version)
+	req.Header.Set("User-Agent", "Invoiced Go/"+version)
 	req.Header.Set("Content-Type", formContentType)
 
 	resp, err := c.client.Do(req)
@@ -185,7 +185,7 @@ func (c *Api) patch(endpoint string, body io.Reader) (*http.Response, error) {
 	}
 
 	req.SetBasicAuth(c.Key, "")
-	req.Header.Set("User-Agent", "Invoiced Go/" + version)
+	req.Header.Set("User-Agent", "Invoiced Go/"+version)
 	req.Header.Set("Content-Type", requestType)
 
 	resp, err := c.client.Do(req)
@@ -201,7 +201,7 @@ func (c *Api) deleteRequest(endpoint string) (*http.Response, error) {
 	}
 
 	req.SetBasicAuth(c.Key, "")
-	req.Header.Set("User-Agent", "Invoiced Go/" + version)
+	req.Header.Set("User-Agent", "Invoiced Go/"+version)
 	req.Header.Set("Content-Type", requestType)
 
 	resp, err := c.client.Do(req)
