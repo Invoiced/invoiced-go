@@ -1,7 +1,7 @@
 package event
 
 import (
-	"github.com/Invoiced/invoiced-go"
+	"github.com/Invoiced/invoiced-go/v2"
 	"strconv"
 )
 

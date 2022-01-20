@@ -1,7 +1,7 @@
 package invdmockserver
 
 import (
-	"github.com/Invoiced/invoiced-go/invdutil"
+	"github.com/Invoiced/invoiced-go/v2/invdutil"
 )
 
 type RequestObject struct {

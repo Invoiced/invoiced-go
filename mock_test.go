@@ -3,8 +3,7 @@ package invoiced
 import (
 	"reflect"
 	"testing"
-
-	"github.com/Invoiced/invoiced-go/invdmockserver"
+	"github.com/Invoiced/invoiced-go/v2/invdmockserver"
 )
 
 func TestMockConnection(t *testing.T) {

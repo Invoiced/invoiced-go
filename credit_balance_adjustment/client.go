@@ -1,7 +1,7 @@
 package credit_balance_adjustment
 
 import (
-	"github.com/Invoiced/invoiced-go"
+	"github.com/Invoiced/invoiced-go/v2"
 	"strconv"
 )
 

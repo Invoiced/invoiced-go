@@ -1,12 +1,11 @@
 package subscription
 
 import (
-	"github.com/Invoiced/invoiced-go"
+	"github.com/Invoiced/invoiced-go/v2"
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/Invoiced/invoiced-go/invdmockserver"
+	"github.com/Invoiced/invoiced-go/v2/invdmockserver"
 )
 
 func TestSubscriptionCreate(t *testing.T) {

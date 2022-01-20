@@ -1,7 +1,7 @@
 package webhook_attempt
 
 import (
-	"github.com/Invoiced/invoiced-go"
+	"github.com/Invoiced/invoiced-go/v2"
 	"strconv"
 )
 
