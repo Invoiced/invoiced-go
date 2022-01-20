@@ -1,7 +1,13 @@
 package invoiced
 
 type PaymentPlanRequest struct {
-	Installments []*PaymentPlanInstallment `json:"installments,omitempty"`
+	Installments []*PaymentPlanInstallmentRequest `json:"installments,omitempty"`
+}
+
+type PaymentPlanInstallmentRequest struct {
+	Amount  *float64 `json:"amount,omitempty"`
+	Balance *float64 `json:"balance,omitempty"`
+	Date    *int64   `json:"date,omitempty"`
 }
 
 type PaymentPlan struct {
