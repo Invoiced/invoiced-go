@@ -96,36 +96,5 @@ NEXT:
 }
 
 func (c *Client) SendEmail(id int64, request *invoiced.SendEmailRequest) error {
-	endpoint := "/credit_notes/" + strconv.FormatInt(id, 10) + "/emails"
-
-	err := c.Api.Create(endpoint, request, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (c *Client) SendText(id int64, request *invoiced.SendTextMessageRequest) (invoiced.TextMessages, error) {
-	endpoint := "/credit_notes/" + strconv.FormatInt(id, 10) + "/text_messages"
-	resp := new(invoiced.TextMessages)
-
-	err := c.Api.Create(endpoint, request, resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return *resp, nil
-}
-
-func (c *Client) SendLetter(id int64) (*invoiced.Letter, error) {
-	endpoint := "/credit_notes/" + strconv.FormatInt(id, 10) + "/letters"
-	resp := new(invoiced.Letter)
-
-	err := c.Api.Create(endpoint, nil, resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return c.Api.Create("/credit_notes/" + strconv.FormatInt(id, 10) + "/emails", request, nil)
 }
