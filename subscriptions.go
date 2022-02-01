@@ -16,13 +16,13 @@ type SubscriptionRequest struct {
 	ContractPeriodStart   *int64                      `json:"contract_period_start,omitempty"`
 	ContractRenewalCycles *int64                      `json:"contract_renewal_cycles,omitempty"`
 	ContractRenewalMode   *string                     `json:"contract_renewal_mode,omitempty"`
-	Customer              *int64                      `json:"-"`
+	Customer              *int64                      `json:"customer,omitempty"`
 	Cycles                *int64                      `json:"cycles,omitempty"`
 	Discounts             []*DiscountRequest          `json:"discount,omitempty"`
 	Metadata              *map[string]interface{}     `json:"metadata,omitempty"`
-	Paused                *bool                       `json:"paused"`
+	Paused                *bool                       `json:"paused,omitempty"`
 	PeriodEnd             *int64                      `json:"period_end,omitempty"`
-	Plan                  *string                     `json:"-"`
+	Plan                  *string                     `json:"plan,omitempty"`
 	Prorate               *bool                       `json:"prorate,omitempty"`
 	ProrationDate         *int64                      `json:"proration_date,omitempty"`
 	Quantity              *float64                    `json:"quantity,omitempty"`
