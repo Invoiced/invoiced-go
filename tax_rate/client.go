@@ -1,7 +1,7 @@
 package tax_rate
 
 import (
-	"github.com/Invoiced/invoiced-go/v2"
+	"github.com/strongdm/invoiced-go/v2"
 )
 
 type Client struct {

@@ -1,8 +1,9 @@
 package estimate
 
 import (
-	"github.com/Invoiced/invoiced-go/v2"
 	"strconv"
+
+	"github.com/strongdm/invoiced-go/v2"
 )
 
 type Client struct {
@@ -86,7 +87,7 @@ func (c *Client) GenerateInvoice(id int64) (*invoiced.Invoice, error) {
 }
 
 func (c *Client) SendEmail(id int64, request *invoiced.SendEmailRequest) error {
-	return c.Api.Create("/estimates/" + strconv.FormatInt(id, 10) + "/emails", request, nil)
+	return c.Api.Create("/estimates/"+strconv.FormatInt(id, 10)+"/emails", request, nil)
 }
 
 func (c *Client) ListAttachments(id int64) (invoiced.Files, error) {

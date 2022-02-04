@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-	"github.com/Invoiced/invoiced-go/v2/invdutil"
+
+	"github.com/strongdm/invoiced-go/v2/invdutil"
 )
 
 func TestUnMarshalEventObject(t *testing.T) {

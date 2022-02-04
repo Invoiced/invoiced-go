@@ -1,9 +1,10 @@
 package event
 
 import (
-	"github.com/Invoiced/invoiced-go/v2"
 	"testing"
-	"github.com/Invoiced/invoiced-go/v2/invdmockserver"
+
+	"github.com/strongdm/invoiced-go/v2"
+	"github.com/strongdm/invoiced-go/v2/invdmockserver"
 )
 
 func TestEvent_ListAll(t *testing.T) {

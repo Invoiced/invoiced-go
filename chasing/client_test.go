@@ -1,11 +1,12 @@
 package chasing
 
 import (
-	"github.com/Invoiced/invoiced-go/v2"
 	"reflect"
 	"testing"
 	"time"
-	"github.com/Invoiced/invoiced-go/v2/invdmockserver"
+
+	"github.com/strongdm/invoiced-go/v2"
+	"github.com/strongdm/invoiced-go/v2/invdmockserver"
 )
 
 func TestChasingCadence_ListAll(t *testing.T) {

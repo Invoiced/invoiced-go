@@ -25,7 +25,7 @@ import (
 // 	[prune]
 // 		unused-packages = true
 // 		[[prune.project]]
-// 			name = "github.com/Invoiced/invoiced-go"
+// 			name = "github.com/strongdm/invoiced-go"
 // 			unused-packages = false
 
 func NewMockApi(key string, server *httptest.Server) *Api {
