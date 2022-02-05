@@ -1,4 +1,4 @@
-package credit_note
+package creditnote
 
 import "C"
 import (

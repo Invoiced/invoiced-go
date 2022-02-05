@@ -1,4 +1,4 @@
-package tax_rate
+package taxrate
 
 import (
 	"github.com/Invoiced/invoiced-go/v2"

@@ -1,4 +1,4 @@
-package webhook_attempt
+package webhookattempt
 
 import (
 	"github.com/Invoiced/invoiced-go/v2"
