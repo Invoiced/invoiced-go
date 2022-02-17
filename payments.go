@@ -21,7 +21,7 @@ type PaymentRequest struct {
 type PaymentItemRequest struct {
 	Amount       *float64 `json:"amount,omitempty"`
 	CreditNote   *int64   `json:"credit_note,omitempty"`
-	DocumentType *int64   `json:"document_type,omitempty"`
+	DocumentType *string  `json:"document_type,omitempty"`
 	Estimate     *int64   `json:"estimate,omitempty"`
 	Invoice      *int64   `json:"invoice,omitempty"`
 	Type         *string  `json:"type,omitempty"`
@@ -54,7 +54,7 @@ type Payment struct {
 type PaymentItem struct {
 	Amount       float64 `json:"amount"`
 	CreditNote   int64   `json:"credit_note"`
-	DocumentType int64   `json:"document_type"`
+	DocumentType string  `json:"document_type"`
 	Estimate     int64   `json:"estimate"`
 	Invoice      int64   `json:"invoice"`
 	Type         string  `json:"type"`
