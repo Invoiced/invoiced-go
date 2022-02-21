@@ -1,6 +1,10 @@
 invoiced-go
 ========
 
+**SDM changes**: Add Active flag to Customer
+
+========
+
 This repository contains the Go client library for the [Invoiced](https://invoiced.com) API.
 
 [![Build Status](https://travis-ci.com/Invoiced/invoiced-go.svg?branch=master)](https://travis-ci.com/Invoiced/invoiced-go)

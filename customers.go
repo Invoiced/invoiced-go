@@ -92,6 +92,7 @@ type Customer struct {
 	Taxes                  []TaxRate              `json:"taxes"`
 	Type                   string                 `json:"type"`
 	UpdatedAt              int64                  `json:"updated_at"`
+	Active                 bool                   `json:"active"`
 }
 
 func (c *Customer) String() string {
