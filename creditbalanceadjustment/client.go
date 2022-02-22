@@ -1,4 +1,4 @@
-package credit_balance_adjustment
+package creditbalanceadjustment
 
 import (
 	"strconv"
