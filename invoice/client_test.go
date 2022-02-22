@@ -1,12 +1,13 @@
 package invoice
 
 import (
-	"github.com/Invoiced/invoiced-go/v2"
 	"reflect"
 	"strconv"
 	"testing"
 	"time"
-	"github.com/Invoiced/invoiced-go/v2/invdmockserver"
+
+	"github.com/strongdm/invoiced-go/v2"
+	"github.com/strongdm/invoiced-go/v2/invdmockserver"
 )
 
 func TestInvoiceCreate(t *testing.T) {

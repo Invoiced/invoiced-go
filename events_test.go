@@ -3,9 +3,10 @@ package invoiced
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Invoiced/invoiced-go/v2/invdutil"
 	"strings"
 	"testing"
+
+	"github.com/strongdm/invoiced-go/v2/invdutil"
 )
 
 func TestUnMarshalEventObject(t *testing.T) {

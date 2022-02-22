@@ -1,8 +1,9 @@
 package plan
 
 import (
-	"github.com/Invoiced/invoiced-go/v2"
 	"strings"
+
+	"github.com/strongdm/invoiced-go/v2"
 )
 
 type Client struct {

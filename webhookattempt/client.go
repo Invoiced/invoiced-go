@@ -1,8 +1,9 @@
 package webhookattempt
 
 import (
-	"github.com/Invoiced/invoiced-go/v2"
 	"strconv"
+
+	"github.com/strongdm/invoiced-go/v2"
 )
 
 type Client struct {

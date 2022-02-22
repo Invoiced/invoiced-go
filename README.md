@@ -15,7 +15,7 @@ This repository contains the Go client library for the [Invoiced](https://invoic
 The Invoiced package can be installed like this:
 
 ```
-go get -u https://github.com/Invoiced/invoiced-go/v2
+go get -u https://github.com/strongdm/invoiced-go/v2
 ```
 
 ## Requirements
@@ -27,7 +27,7 @@ go get -u https://github.com/Invoiced/invoiced-go/v2
 First, you must instantiate a new client
 
 ```go
-import "github.com/Invoiced/invoiced-go/v2/api"
+import "github.com/strongdm/invoiced-go/v2/api"
 
 client := api.New("API_KEY", false)
 ```
@@ -35,7 +35,7 @@ client := api.New("API_KEY", false)
 Then, API calls can be made like this:
 
 ```go
-import "github.com/Invoiced/invoiced-go/v2"
+import "github.com/strongdm/invoiced-go/v2"
 import "fmt"
 
 // Get all invoices with auto pagination

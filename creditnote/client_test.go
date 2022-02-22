@@ -1,11 +1,12 @@
 package creditnote
 
 import (
-	"github.com/Invoiced/invoiced-go/v2"
-	"github.com/Invoiced/invoiced-go/v2/invdmockserver"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/strongdm/invoiced-go/v2"
+	"github.com/strongdm/invoiced-go/v2/invdmockserver"
 )
 
 func TestCreditNote_Create(t *testing.T) {

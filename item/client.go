@@ -1,6 +1,6 @@
 package item
 
-import "github.com/Invoiced/invoiced-go/v2"
+import "github.com/strongdm/invoiced-go/v2"
 
 type Client struct {
 	*invoiced.Api
