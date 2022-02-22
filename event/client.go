@@ -10,14 +10,23 @@ type Client struct {
 }
 
 func (c *Client) ListAllByDatesAndUser(filter *invoiced.Filter, sort *invoiced.Sort, startDate int64, endDate int64, user string, objectType string, objectID int64) (invoiced.Events, error) {
+
+	if len(user) > 0 {
+		if filter == nil {
+			filter = invoiced.NewFilter()
+		}
+		filter.Set("user_id",user)
+	}
+
 	endpoint := invoiced.AddFilterAndSort("/events", filter, sort)
 	endpoint = invoiced.AddQueryParameter(endpoint, "start_date", strconv.FormatInt(startDate, 10))
 	endpoint = invoiced.AddQueryParameter(endpoint, "end_date", strconv.FormatInt(endDate, 10))
-	endpoint = invoiced.AddQueryParameter(endpoint, "from", user)
+
 	if len(objectType) > 0 {
 		relatesTo := objectType + "," + strconv.FormatInt(objectID, 10)
 		endpoint = invoiced.AddQueryParameter(endpoint, "related_to", relatesTo)
 	}
+
 
 	events := make(invoiced.Events, 0)
 
