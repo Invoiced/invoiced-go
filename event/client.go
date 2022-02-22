@@ -15,7 +15,11 @@ func (c *Client) ListAllByDatesAndUser(filter *invoiced.Filter, sort *invoiced.S
 		if filter == nil {
 			filter = invoiced.NewFilter()
 		}
-		filter.Set("user_id",user)
+		err := filter.Set("user_id",user)
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	endpoint := invoiced.AddFilterAndSort("/events", filter, sort)
