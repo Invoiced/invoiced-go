@@ -11,7 +11,7 @@ type InvoiceRequest struct {
 	CalculateTaxes         *bool                   `json:"calculate_taxes,omitempty"`
 	Closed                 *bool                   `json:"closed,omitempty"`
 	Currency               *string                 `json:"currency,omitempty"`
-	Customer               *int64                  `json:"-"`
+	Customer               *int64                  `json:"customer"`
 	Date                   *int64                  `json:"date,omitempty"`
 	DisabledPaymentMethods []*string               `json:"disabled_payment_methods,omitempty"`
 	Discounts              []*DiscountRequest      `json:"discounts,omitempty"`
