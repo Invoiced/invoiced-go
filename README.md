@@ -1,7 +1,10 @@
 invoiced-go
 ========
 
-**SDM changes**: Add Active flag to Customer
+**SDM changes**: 
+- Add Active flag to Customer
+- Add 'customer' tag to InvoiceRequest
+
 
 ========
 
