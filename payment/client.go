@@ -58,6 +58,41 @@ NEXT:
 	return payments, nil
 }
 
+func (c *Client) ListAllStartEndDate(filter *invoiced.Filter, sort *invoiced.Sort,startDate,endDate int64) (invoiced.Payments, error) {
+	endpoint := "/payments"
+
+	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
+
+	if startDate > 0 {
+		startDateString := strconv.FormatInt(startDate, 10)
+		endpoint = invoiced.AddQueryParameter(endpoint, "start_date", startDateString)
+	}
+
+	if endDate > 0 {
+		endDateString := strconv.FormatInt(endDate, 10)
+		endpoint = invoiced.AddQueryParameter(endpoint, "end_date", endDateString)
+	}
+
+	payments := make(invoiced.Payments, 0)
+
+NEXT:
+	tmpPayments := make(invoiced.Payments, 0)
+
+	endpoint, err := c.Api.Get(endpoint, &tmpPayments)
+
+	if err != nil {
+		return nil, err
+	}
+
+	payments = append(payments, tmpPayments...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	return payments, nil
+}
+
 func (c *Client) List(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Payments, string, error) {
 	endpoint := invoiced.AddFilterAndSort("/payments", filter, sort)
 	payments := make(invoiced.Payments, 0)
