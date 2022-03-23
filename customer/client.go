@@ -21,6 +21,12 @@ func (c *Client) Retrieve(id int64) (*invoiced.Customer, error) {
 	return resp, err
 }
 
+func (c *Client) RetrieveAccountingSyncStatus(id int64) (*invoiced.AccountingSyncStatus, error) {
+	resp := new(invoiced.AccountingSyncStatus)
+	_, err := c.Api.Get("/customers/"+strconv.FormatInt(id, 10)+ "/accounting_sync_status", resp)
+	return resp, err
+}
+
 func (c *Client) Update(id int64, request *invoiced.CustomerRequest) (*invoiced.Customer, error) {
 	endpoint := "/customers/" + strconv.FormatInt(id, 10)
 	resp := new(invoiced.Customer)
