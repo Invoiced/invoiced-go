@@ -72,6 +72,7 @@ func (d *PaymentSource) UnmarshalJSON(data []byte) error {
 		}
 		d.Card = &c
 		d.BankAccount = nil
+		d.Object = temp.Object
 	} else if temp.Object == "bank_account" {
 		var ba BankAccount
 		if err := json.Unmarshal(data, &ba); err != nil {
@@ -79,6 +80,7 @@ func (d *PaymentSource) UnmarshalJSON(data []byte) error {
 		}
 		d.BankAccount = &ba
 		d.Card = nil
+		d.Object = temp.Object
 	} else {
 		return errors.New("Invalid object value")
 	}
