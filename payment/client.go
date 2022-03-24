@@ -43,7 +43,6 @@ func (c *Client) Count() (int64, error) {
 
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Payments, error) {
 	endpoint := invoiced.AddFilterAndSort("/payments", filter, sort)
-
 	payments := make(invoiced.Payments, 0)
 
 NEXT:
@@ -117,6 +116,8 @@ func (c *Client) ListAllStartEndDateExpand(filter *invoiced.Filter, sort *invoic
 	if expand != nil && len(expand.String()) > 0 {
 		endpoint = invoiced.AddQueryParameter(endpoint, "expand", expand.String())
 	}
+
+	endpoint = invoiced.AddQueryParameter(endpoint, "include", "applied_to")
 
 	payments := make(invoiced.Payments, 0)
 
