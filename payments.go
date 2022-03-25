@@ -6,16 +6,17 @@ import (
 )
 
 type PaymentRequest struct {
-	Amount    *float64              `json:"amount,omitempty"`
-	AppliedTo []*PaymentItemRequest `json:"applied_to,omitempty"`
-	Currency  *string               `json:"currency,omitempty"`
-	Customer  *int64                `json:"-"`
-	Date      *int64                `json:"date,omitempty"`
-	Method    *string               `json:"method,omitempty"`
-	Notes     *string               `json:"notes,omitempty"`
-	Reference *string               `json:"reference,omitempty"`
-	Source    *string               `json:"source,omitempty"`
-	Voided    *bool                 `json:"voided,omitempty"`
+	Amount    *float64               `json:"amount,omitempty"`
+	AppliedTo []*PaymentItemRequest  `json:"applied_to,omitempty"`
+	Currency  *string                `json:"currency,omitempty"`
+	Customer  *int64                 `json:"-"`
+	Date      *int64                 `json:"date,omitempty"`
+	Method    *string                `json:"method,omitempty"`
+	Notes     *string                `json:"notes,omitempty"`
+	Metadata  map[string]interface{} `json:"metadata"`
+	Reference *string                `json:"reference,omitempty"`
+	Source    *string                `json:"source,omitempty"`
+	Voided    *bool                  `json:"voided,omitempty"`
 }
 
 type PaymentItemRequest struct {
@@ -28,27 +29,28 @@ type PaymentItemRequest struct {
 }
 
 type Payment struct {
-	Amount       float64         `json:"amount"`
-	AppliedTo    []PaymentItem   `json:"applied_to"`
-	Balance      float64         `json:"balance"`
-	Charge       *Charge         `json:"charge"`
-	CreatedAt    int64           `json:"created_at"`
-	Currency     string          `json:"currency"`
-	Customer     int64           `json:"-"`
-	CustomerFull *Customer       `json:"-"`
-	CustomerRaw  json.RawMessage `json:"customer"`
-	Date         int64           `json:"date"`
-	Id           int64           `json:"id"`
-	Matched      bool            `json:"matched"`
-	Method       string          `json:"method"`
-	Notes        string          `json:"notes"`
-	Object       string          `json:"object"`
-	PdfUrl       string          `json:"pdf_url"`
-	Reference    string          `json:"reference"`
-	Source       string          `json:"source"`
-	Status       string          `json:"status"`
-	UpdatedAt    int64           `json:"updated_at"`
-	Voided       bool            `json:"voided"`
+	Amount       float64                `json:"amount"`
+	AppliedTo    []PaymentItem          `json:"applied_to"`
+	Balance      float64                `json:"balance"`
+	Charge       *Charge                `json:"charge"`
+	CreatedAt    int64                  `json:"created_at"`
+	Currency     string                 `json:"currency"`
+	Customer     int64                  `json:"-"`
+	CustomerFull *Customer              `json:"-"`
+	CustomerRaw  json.RawMessage        `json:"customer"`
+	Date         int64                  `json:"date"`
+	Id           int64                  `json:"id"`
+	Matched      bool                   `json:"matched"`
+	Metadata     map[string]interface{} `json:"metadata"`
+	Method       string                 `json:"method"`
+	Notes        string                 `json:"notes"`
+	Object       string                 `json:"object"`
+	PdfUrl       string                 `json:"pdf_url"`
+	Reference    string                 `json:"reference"`
+	Source       string                 `json:"source"`
+	Status       string                 `json:"status"`
+	UpdatedAt    int64                  `json:"updated_at"`
+	Voided       bool                   `json:"voided"`
 }
 
 type PaymentItem struct {
