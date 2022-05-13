@@ -98,6 +98,47 @@ NEXT:
 	return payments, nil
 }
 
+func (c *Client) ListAllUpdatedBeforeAfterExpand(filter *invoiced.Filter, sort *invoiced.Sort,expand *invoiced.Expand,updatedAfter,updatedBefore int64) (invoiced.Payments, error) {
+	endpoint := "/payments"
+
+	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
+
+	if updatedAfter > 0 {
+		updatedAfterString := strconv.FormatInt(updatedAfter, 10)
+		endpoint = invoiced.AddQueryParameter(endpoint, "updated_after", updatedAfterString)
+	}
+
+	if updatedBefore > 0 {
+		updatedBeforestring := strconv.FormatInt(updatedBefore, 10)
+		endpoint = invoiced.AddQueryParameter(endpoint, "updated_before", updatedBeforestring)
+	}
+
+	if expand != nil && len(expand.String()) > 0 {
+		endpoint = invoiced.AddQueryParameter(endpoint, "expand", expand.String())
+	}
+
+	endpoint = invoiced.AddQueryParameter(endpoint, "include", "applied_to")
+
+	payments := make(invoiced.Payments, 0)
+
+NEXT:
+	tmpPayments := make(invoiced.Payments, 0)
+
+	endpoint, err := c.Api.Get(endpoint, &tmpPayments)
+
+	if err != nil {
+		return nil, err
+	}
+
+	payments = append(payments, tmpPayments...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	return payments, nil
+}
+
 func (c *Client) ListAllStartEndDateExpand(filter *invoiced.Filter, sort *invoiced.Sort,expand *invoiced.Expand,startDate,endDate int64) (invoiced.Payments, error) {
 	endpoint := "/payments"
 
