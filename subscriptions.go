@@ -141,3 +141,22 @@ func (c *Subscription) List(filter *invdendpoint.Filter, sort *invdendpoint.Sort
 	return subscriptions, nextEndPoint, nil
 
 }
+
+// SetCancelAtPeriodEnd sets the cancel_at_period_end field for the given subscription ID.
+// This is a convenience function to save having to fetch or construct a whole Subscription
+// object in order to call Subscription.Save() on it.
+func (c *Connection) SetCancelAtPeriodEnd(subscriptionID int64, val bool) (*Subscription, error) {
+	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endPoint = makeEndPointSingular(endPoint, subscriptionID)
+
+	type PartialSubscription struct {
+		CancelAtPeriodEnd bool `json:"cancel_at_period_end"`
+	}
+	req := PartialSubscription{
+		CancelAtPeriodEnd: val,
+	}
+	resp := new(invdendpoint.Subscription)
+	err := c.update(endPoint, req, resp)
+	subscription := &Subscription{c, resp}
+	return subscription, err
+}
