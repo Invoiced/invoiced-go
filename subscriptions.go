@@ -160,3 +160,10 @@ func (c *Connection) SetCancelAtPeriodEnd(subscriptionID int64, val bool) (*Subs
 	subscription := &Subscription{c, resp}
 	return subscription, err
 }
+
+// CancelSubscription calls: DELETE /subscriptions/:subscriptionID
+func (c *Connection) CancelSubscription(subscriptionID int64) error {
+	endPoint := c.MakeEndPointURL(invdendpoint.SubscriptionsEndPoint)
+	endPoint = makeEndPointSingular(endPoint, subscriptionID)
+	return c.delete(endPoint)
+}
