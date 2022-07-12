@@ -1,6 +1,6 @@
 package invoiced
 
-const version = "2.4.4"
+const version = "2.5.0"
 
 func Version() string {
 	return version

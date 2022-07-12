@@ -21,6 +21,12 @@ func (c *Client) Retrieve(id int64) (*invoiced.Subscription, error) {
 	return resp, err
 }
 
+func (c *Client) RetrievePlanCustomerExpanded(id int64) (*invoiced.Subscription, error) {
+	resp := new(invoiced.Subscription)
+	_, err := c.Api.Get("/subscriptions/"+strconv.FormatInt(id, 10) + "expand=plan,customer,addons.catalog_item,addons.plan", resp)
+	return resp, err
+}
+
 func (c *Client) Update(id int64, request *invoiced.SubscriptionRequest) (*invoiced.Subscription, error) {
 	endpoint := "/subscriptions/" + strconv.FormatInt(id, 10)
 	resp := new(invoiced.Subscription)
