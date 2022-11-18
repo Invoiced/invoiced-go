@@ -105,3 +105,53 @@ func AddFilterAndSort(url string, filter *Filter, sort *Sort) string {
 
 	return url
 }
+
+func AddFilterAndMetaFilterAndSort(url string, filter *Filter, metaFilter *Filter, sort *Sort) (string,error) {
+	emptyFilter := true
+	emptySort := true
+
+	if filter != nil {
+		if filter.metadata == true {
+			return "",errors.New("filter parameter should not have metadata")
+		}
+	}
+
+
+	if metaFilter != nil {
+		if metaFilter.metadata == false {
+			return "",errors.New("Metafilter parameter should have metadata")
+		}
+	}
+
+
+	filterString := ""
+
+	if (filter != nil && filter.String() != "") ||  (metaFilter != nil && metaFilter.String() != ""){
+		emptyFilter = false
+		if filter != nil {
+			filterString = filter.String()
+			if metaFilter != nil {
+				filterString = filterString + "&" + metaFilter.String()
+			}
+		} else if metaFilter != nil {
+			filterString = metaFilter.String()
+		}
+
+	}
+
+	if sort != nil && sort.String() != "" {
+		emptySort = false
+	}
+
+
+
+	if !emptyFilter && !emptySort {
+		return url + "?" + filterString + "&" + sort.String(),nil
+	} else if !emptyFilter && emptySort {
+		return url + "?" + filterString, nil
+	} else if emptyFilter && !emptySort {
+		return url + "?" + filterString, nil
+	}
+
+	return url, nil
+}

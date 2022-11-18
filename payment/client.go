@@ -63,6 +63,31 @@ NEXT:
 	return payments, nil
 }
 
+func (c *Client) ListAllMetadataFilter(filter *invoiced.Filter, metaFilter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Payments, error) {
+	endpoint, err := invoiced.AddFilterAndMetaFilterAndSort("/payments", filter,metaFilter, sort)
+	if err != nil {
+		return nil, err
+	}
+	payments := make(invoiced.Payments, 0)
+
+NEXT:
+	tmpPayments := make(invoiced.Payments, 0)
+
+	endpoint, err = c.Api.Get(endpoint, &tmpPayments)
+
+	if err != nil {
+		return nil, err
+	}
+
+	payments = append(payments, tmpPayments...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	return payments, nil
+}
+
 func (c *Client) ListAllStartEndDate(filter *invoiced.Filter, sort *invoiced.Sort,startDate,endDate int64) (invoiced.Payments, error) {
 	endpoint := "/payments"
 
