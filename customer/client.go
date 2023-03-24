@@ -1,6 +1,7 @@
 package customer
 
 import (
+	"errors"
 	"github.com/Invoiced/invoiced-go/v2"
 	"strconv"
 )
@@ -106,6 +107,10 @@ func (c *Client) ListCustomerByName(name string) (*invoiced.Customer, error) {
 
 	if len(customers) == 0 {
 		return nil, nil
+	}
+
+	if len(customers) > 1 {
+		return nil, errors.New("More than one customer found with the same name")
 	}
 
 	return customers[0], nil
