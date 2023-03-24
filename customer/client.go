@@ -23,7 +23,7 @@ func (c *Client) Retrieve(id int64) (*invoiced.Customer, error) {
 
 func (c *Client) RetrieveAccountingSyncStatus(id int64) (*invoiced.AccountingSyncStatus, error) {
 	resp := new(invoiced.AccountingSyncStatus)
-	_, err := c.Api.Get("/customers/"+strconv.FormatInt(id, 10)+ "/accounting_sync_status", resp)
+	_, err := c.Api.Get("/customers/"+strconv.FormatInt(id, 10)+"/accounting_sync_status", resp)
 	return resp, err
 }
 
@@ -89,6 +89,27 @@ func (c *Client) ListCustomerByNumber(customerNumber string) (*invoiced.Customer
 	}
 
 	return customers[0], nil
+}
+
+//lists the customer by name
+func (c *Client) ListCustomerByName(name string) (*invoiced.Customer, error) {
+	filter := invoiced.NewFilter()
+	err := filter.Set("name", name)
+	if err != nil {
+		return nil, err
+	}
+
+	customers, err := c.ListAll(filter, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(customers) == 0 {
+		return nil, nil
+	}
+
+	return customers[0], nil
+
 }
 
 func (c *Client) GetBalance(id int64) (*invoiced.Balance, error) {
