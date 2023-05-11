@@ -39,7 +39,7 @@ func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced
 NEXT:
 	tmpTasks := make(invoiced.Tasks, 0)
 
-	endpointTmp, err := c.Api.Get(endpoint, &tmpTasks)
+	endpoint, err := c.Api.Get(endpoint, &tmpTasks)
 
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ NEXT:
 
 	tasks = append(tasks, tmpTasks...)
 
-	if endpointTmp != "" {
+	if endpoint != "" {
 		goto NEXT
 	}
 
