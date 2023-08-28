@@ -43,6 +43,35 @@ func (c *Client) Count() (int64, error) {
 	return c.Api.Count("/customers")
 }
 
+func (c *Client) ListAllConnectedPaymentSource(filter *invoiced.Filter, sort *invoiced.Sort, paymentMethodConnected bool) (invoiced.Customers, error) {
+	endpoint := invoiced.AddFilterAndSort("/customers", filter, sort)
+
+	if paymentMethodConnected {
+		endpoint = invoiced.AddQueryParameter(endpoint, "payment_source", "1")
+	} else {
+		endpoint = invoiced.AddQueryParameter(endpoint, "payment_source", "0")
+	}
+
+	customers := make(invoiced.Customers, 0)
+
+NEXT:
+	tmpCustomers := make(invoiced.Customers, 0)
+
+	endpoint, err := c.Api.Get(endpoint, &tmpCustomers)
+
+	if err != nil {
+		return nil, err
+	}
+
+	customers = append(customers, tmpCustomers...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	return customers, nil
+}
+
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Customers, error) {
 	endpoint := invoiced.AddFilterAndSort("/customers", filter, sort)
 
@@ -92,7 +121,7 @@ func (c *Client) ListCustomerByNumber(customerNumber string) (*invoiced.Customer
 	return customers[0], nil
 }
 
-//lists the customer by name
+// ListCustomerByName lists the customer by name
 func (c *Client) ListCustomerByName(name string) (*invoiced.Customer, error) {
 	filter := invoiced.NewFilter()
 	err := filter.Set("name", name)
@@ -110,7 +139,7 @@ func (c *Client) ListCustomerByName(name string) (*invoiced.Customer, error) {
 	}
 
 	if len(customers) > 1 {
-		return nil, errors.New("More than one customer found with the same name")
+		return nil, errors.New("more than one customer found with the same name")
 	}
 
 	return customers[0], nil
