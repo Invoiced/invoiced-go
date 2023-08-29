@@ -72,6 +72,40 @@ NEXT:
 	return customers, nil
 }
 
+func (c *Client) ListAllConnectedPaymentSourceByMetadata(filter *invoiced.Filter, metadataFilter *invoiced.Filter, sort *invoiced.Sort, paymentMethodConnected bool) (invoiced.Customers, error) {
+
+	endpoint, err := invoiced.AddFilterAndMetaFilterAndSort("/customers", filter, metadataFilter, sort)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if paymentMethodConnected {
+		endpoint = invoiced.AddQueryParameter(endpoint, "payment_source", "1")
+	} else {
+		endpoint = invoiced.AddQueryParameter(endpoint, "payment_source", "0")
+	}
+
+	customers := make(invoiced.Customers, 0)
+
+NEXT:
+	tmpCustomers := make(invoiced.Customers, 0)
+
+	endpoint, err = c.Api.Get(endpoint, &tmpCustomers)
+
+	if err != nil {
+		return nil, err
+	}
+
+	customers = append(customers, tmpCustomers...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	return customers, nil
+}
+
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Customers, error) {
 	endpoint := invoiced.AddFilterAndSort("/customers", filter, sort)
 
