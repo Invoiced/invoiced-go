@@ -18,6 +18,7 @@ type InvoiceRequest struct {
 	Draft                  *bool                   `json:"draft,omitempty"`
 	DueDate                *int64                  `json:"due_date,omitempty"`
 	Items                  []*LineItemRequest      `json:"items,omitempty"`
+	LateFees               *bool                   `json:"late_fees,omitempty"`
 	Metadata               *map[string]interface{} `json:"metadata,omitempty"`
 	Name                   *string                 `json:"name,omitempty"`
 	NextPaymentAttempt     *int64                  `json:"next_payment_attempt,omitempty"`

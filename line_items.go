@@ -5,6 +5,7 @@ type LineItemRequest struct {
 	Description  *string                 `json:"description,omitempty"`
 	Discountable *bool                   `json:"discountable,omitempty"`
 	Discounts    []*DiscountRequest      `json:"discounts,omitempty"`
+	Id           *int64                  `json:"id,omitempty"`
 	Item         *string                 `json:"catalog_item,omitempty"`
 	Metadata     *map[string]interface{} `json:"metadata,omitempty"`
 	Name         *string                 `json:"name,omitempty"`
