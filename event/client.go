@@ -51,22 +51,12 @@ NEXT:
 	return events, nil
 }
 
-func (c *Client) ListAllByDatesAndEventType(filter *invoiced.Filter, sort *invoiced.Sort, startDate int64, endDate int64, eventType string) (invoiced.Events, error) {
-
-	if len(eventType) > 0 {
-		if filter == nil {
-			filter = invoiced.NewFilter()
-		}
-		err := filter.Set("type", eventType)
-
-		if err != nil {
-			return nil, err
-		}
-	}
+func (c *Client) ListAllByDatesAndEventType(filter *invoiced.Filter, sort *invoiced.Sort, startDate int64, endDate int64, objectType string) (invoiced.Events, error) {
 
 	endpoint := invoiced.AddFilterAndSort("/events", filter, sort)
 	endpoint = invoiced.AddQueryParameter(endpoint, "start_date", strconv.FormatInt(startDate, 10))
 	endpoint = invoiced.AddQueryParameter(endpoint, "end_date", strconv.FormatInt(endDate, 10))
+	endpoint = invoiced.AddQueryParameter(endpoint, "type", objectType)
 
 	events := make(invoiced.Events, 0)
 
