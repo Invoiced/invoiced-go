@@ -15,7 +15,7 @@ func (c *Client) ListAllByDatesAndUser(filter *invoiced.Filter, sort *invoiced.S
 		if filter == nil {
 			filter = invoiced.NewFilter()
 		}
-		err := filter.Set("user_id",user)
+		err := filter.Set("user_id", user)
 
 		if err != nil {
 			return nil, err
@@ -31,6 +31,42 @@ func (c *Client) ListAllByDatesAndUser(filter *invoiced.Filter, sort *invoiced.S
 		endpoint = invoiced.AddQueryParameter(endpoint, "related_to", relatesTo)
 	}
 
+	events := make(invoiced.Events, 0)
+
+NEXT:
+	tmpEvents := make(invoiced.Events, 0)
+
+	endpoint, err := c.Api.Get(endpoint, &tmpEvents)
+
+	if err != nil {
+		return nil, err
+	}
+
+	events = append(events, tmpEvents...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	return events, nil
+}
+
+func (c *Client) ListAllByDatesAndEventType(filter *invoiced.Filter, sort *invoiced.Sort, startDate int64, endDate int64, eventType string) (invoiced.Events, error) {
+
+	if len(eventType) > 0 {
+		if filter == nil {
+			filter = invoiced.NewFilter()
+		}
+		err := filter.Set("type", eventType)
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	endpoint := invoiced.AddFilterAndSort("/events", filter, sort)
+	endpoint = invoiced.AddQueryParameter(endpoint, "start_date", strconv.FormatInt(startDate, 10))
+	endpoint = invoiced.AddQueryParameter(endpoint, "end_date", strconv.FormatInt(endDate, 10))
 
 	events := make(invoiced.Events, 0)
 
