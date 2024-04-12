@@ -120,6 +120,54 @@ func (e *Event) ParseInvoicePreviousEvent() (*Invoice, error) {
 	return ie, nil
 }
 
+func (e *Event) ParseCreditNoteEvent() (*CreditNote, error) {
+	eoData, err := e.ParseEventObject()
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := eoData.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	bClean := CleanMetaDataArray(b)
+
+	ie := new(CreditNote)
+
+	err = json.Unmarshal(bClean, ie)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ie, nil
+}
+
+func (e *Event) ParseCreditNotePreviousEvent() (*CreditNote, error) {
+	eoData, err := e.ParseCreditNotePreviousEvent()
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := eoData.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	bClean := CleanMetaDataArray(b)
+
+	ie := new(CreditNote)
+
+	err = json.Unmarshal(bClean, ie)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ie, nil
+}
+
 func (e *Event) ParseCustomerPreviousEvent() (*Customer, error) {
 	eoData, err := e.ParseEventPreviousObject()
 	if err != nil {
@@ -174,6 +222,30 @@ func (e *Event) ParseSubscriptionEvent() (*Subscription, error) {
 
 func (e *Event) ParsePaymentEvent() (*Payment, error) {
 	eoData, err := e.ParseEventObject()
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := eoData.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	bClean := CleanMetaDataArray(b)
+
+	ie := new(Payment)
+
+	err = json.Unmarshal(bClean, ie)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ie, nil
+}
+
+func (e *Event) ParsePaymentPreviousEvent() (*Payment, error) {
+	eoData, err := e.ParseEventPreviousObject()
 	if err != nil {
 		return nil, err
 	}
