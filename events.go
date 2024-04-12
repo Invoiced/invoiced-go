@@ -145,7 +145,7 @@ func (e *Event) ParseCreditNoteEvent() (*CreditNote, error) {
 }
 
 func (e *Event) ParseCreditNotePreviousEvent() (*CreditNote, error) {
-	eoData, err := e.ParseCreditNotePreviousEvent()
+	eoData, err := e.ParseEventPreviousObject()
 	if err != nil {
 		return nil, err
 	}
