@@ -2,6 +2,7 @@ package invoiced
 
 import (
 	"encoding/json"
+	"strconv"
 )
 
 type CreditNoteRequest struct {
@@ -29,7 +30,9 @@ type CreditNote struct {
 	Closed        bool                   `json:"closed"`
 	CreatedAt     int64                  `json:"created_at"`
 	Currency      string                 `json:"currency"`
-	Customer      int64                  `json:"customer"`
+	Customer      int64                  `json:"-"`
+	CustomerFull  *Customer              `json:"-"`
+	CustomerRaw   json.RawMessage        `json:"customer"`
 	Date          int64                  `json:"date"`
 	Discounts     []Discount             `json:"discounts"`
 	Draft         bool                   `json:"draft"`
@@ -58,4 +61,36 @@ func (i *CreditNote) String() string {
 	b, _ := json.MarshalIndent(i, "", "    ")
 
 	return string(b)
+}
+
+func (i *CreditNote) UnmarshalJSON(data []byte) error {
+	type creditNote2 CreditNote
+	if err := json.Unmarshal(data, (*creditNote2)(i)); err != nil {
+		return err
+	}
+
+	rj := i.CustomerRaw
+
+	i.Customer, _ = strconv.ParseInt(string(rj), 10, 64)
+	customer := new(Customer)
+
+	err := json.Unmarshal(rj, customer)
+
+	if err == nil {
+		i.CustomerFull = customer
+		i.Customer = customer.Id
+	}
+
+	return nil
+}
+
+func (i *CreditNote) MarshalJSON() ([]byte, error) {
+	type creditNote2 CreditNote
+	i2 := (*creditNote2)(i)
+
+	if i2.Customer > 0 {
+		i2.CustomerRaw = []byte(strconv.FormatInt(i2.Customer, 10))
+	}
+
+	return json.Marshal(i2)
 }
