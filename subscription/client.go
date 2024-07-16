@@ -23,7 +23,7 @@ func (c *Client) Retrieve(id int64) (*invoiced.Subscription, error) {
 
 func (c *Client) RetrievePlanCustomerExpanded(id int64) (*invoiced.Subscription, error) {
 	resp := new(invoiced.Subscription)
-	_, err := c.Api.Get("/subscriptions/"+strconv.FormatInt(id, 10) + "?expand=plan,customer,addons.catalog_item,addons.plan", resp)
+	_, err := c.Api.Get("/subscriptions/"+strconv.FormatInt(id, 10)+"?expand=plan,customer,addons.catalog_item,addons.plan", resp)
 	return resp, err
 }
 
@@ -92,6 +92,31 @@ func (c *Client) ListAllCanceled(canceled bool) (invoiced.Subscriptions, error) 
 func (c *Client) ListAll(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Subscriptions, error) {
 	endpoint := "/subscriptions"
 	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
+
+	subscriptions := make(invoiced.Subscriptions, 0)
+
+NEXT:
+	tmpSubscriptions := make(invoiced.Subscriptions, 0)
+
+	endpoint, err := c.Api.Get(endpoint, &tmpSubscriptions)
+
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptions = append(subscriptions, tmpSubscriptions...)
+
+	if endpoint != "" {
+		goto NEXT
+	}
+
+	return subscriptions, nil
+}
+
+func (c *Client) ListAllCustomerExpanded(filter *invoiced.Filter, sort *invoiced.Sort) (invoiced.Subscriptions, error) {
+	endpoint := "/subscriptions"
+	endpoint = invoiced.AddFilterAndSort(endpoint, filter, sort)
+	endpoint = invoiced.AddQueryParameter(endpoint, "expand", "customer")
 
 	subscriptions := make(invoiced.Subscriptions, 0)
 
