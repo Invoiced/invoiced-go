@@ -62,6 +62,7 @@ type Subscription struct {
 	Prorate               bool                   `json:"prorate"`
 	Quantity              float64                `json:"quantity"`
 	RecurringTotal        float64                `json:"recurring_total"`
+	RenewsNext            int64                  `json:"renews_next"`
 	ShipTo                *ShippingDetail        `json:"ship_to"`
 	StartDate             int64                  `json:"start_date"`
 	Status                string                 `json:"status"`
